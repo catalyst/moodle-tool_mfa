@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 //
 /**
- * Strings for component 'tool_totp', language 'en'.
+ * Strings for component 'tool_mfa', language 'en'.
  *
- * @package     tool_totp
+ * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,5 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'TOTP 2FA';
-$string['privacy:metadata'] = 'TOTP 2FA plugin does not store any personal data';
+$string['pluginname'] = 'Moodle MFA plugin';
+$string['privacy:metadata'] = 'Moodle MFA plugin does not store any personal data';

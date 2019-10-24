@@ -16,13 +16,13 @@
 /**
  * Privacy provider.
  *
- * @package     tool_totp
+ * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_totp\privacy;
+namespace tool_mfa\privacy;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -31,7 +31,7 @@ use core_privacy\local\legacy_polyfill;
 
 /**
  * Class provider
- * @package tool_totp\privacy
+ * @package tool_mfa\privacy
  */
 class provider implements null_provider {
     use legacy_polyfill;

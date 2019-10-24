@@ -17,7 +17,7 @@
 /**
  * Plugin version and other meta-data are defined here.
  *
- * @package     tool_totp
+ * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,6 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2019102400;      // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2019101800;      // Requires MDL-66173 improvement.
-$plugin->component = 'tool_totp';
+$plugin->component = 'tool_mfa';
 $plugin->release   = 'v0.1';
 $plugin->maturity  = MATURITY_STABLE;
