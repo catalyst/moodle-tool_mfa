@@ -13,21 +13,29 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-//
 /**
- * Strings for component 'tool_mfa', language 'en'.
+ * Moodle MFA plugin lib
  *
  * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Moodle MFA plugin';
-$string['header'] = 'You don\'t have your 2FA configured. Please, scan this QR code and enter the code below for confirmation';
-$string['privacy:metadata'] = 'Moodle MFA plugin does not store any personal data';
-$string['verification_code'] = 'Enter verification code';
-$string['verification_code_help'] = 'Enter verification code for confirmation';
-$string['error:verification_code'] = 'Verification code is wrong';
+function tool_mfa_after_require_login() {
+    if (true !== $_SESSION['USER']->tool_mfa_authenticated) {
+        if ($GLOBALS['ME'] != '/admin/tool/mfa/totp.php') {
+            redirect(new moodle_url('/admin/tool/mfa/totp.php'));
+        }
+    }
+}
+
+function tool_mfa_logout() {
+    $authsequence = get_enabled_auth_plugins();
+    foreach($authsequence as $authname) {
+        $authplugin = get_auth_plugin($authname);
+        $authplugin->logoutpage_hook();
+    }
+    require_logout();
+}

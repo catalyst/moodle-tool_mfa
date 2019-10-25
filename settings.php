@@ -13,9 +13,9 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-//
+
 /**
- * Strings for component 'tool_mfa', language 'en'.
+ * Settings
  *
  * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
@@ -25,9 +25,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Moodle MFA plugin';
-$string['header'] = 'You don\'t have your 2FA configured. Please, scan this QR code and enter the code below for confirmation';
-$string['privacy:metadata'] = 'Moodle MFA plugin does not store any personal data';
-$string['verification_code'] = 'Enter verification code';
-$string['verification_code_help'] = 'Enter verification code for confirmation';
-$string['error:verification_code'] = 'Verification code is wrong';
+if ($hassiteconfig) {
+
+    $externalpage = new admin_externalpage('tool_mfa',
+        get_string('pluginname', 'tool_mfa'),
+        new moodle_url('/admin/tool/mfa/totp.php'));
+
+    $ADMIN->add('tools', $externalpage);
+}

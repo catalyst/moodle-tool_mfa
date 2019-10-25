@@ -13,9 +13,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-//
 /**
- * Strings for component 'tool_mfa', language 'en'.
+ * TOTP authorization page
  *
  * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
@@ -23,11 +22,30 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/../../../config.php');
+require_once($CFG->dirroot . '/admin/tool/mfa/lib.php');
+require_once($CFG->libdir.'/adminlib.php');
 
-$string['pluginname'] = 'Moodle MFA plugin';
-$string['header'] = 'You don\'t have your 2FA configured. Please, scan this QR code and enter the code below for confirmation';
-$string['privacy:metadata'] = 'Moodle MFA plugin does not store any personal data';
-$string['verification_code'] = 'Enter verification code';
-$string['verification_code_help'] = 'Enter verification code for confirmation';
-$string['error:verification_code'] = 'Verification code is wrong';
+use tool_mfa\local\form\login_form;
+
+admin_externalpage_setup('tool_mfa');
+$output = $PAGE->get_renderer('tool_mfa');
+$form = new login_form();
+
+if ($form->is_cancelled()) {
+    // echo $output->heading('CANCELED!!! You have to set up your MFA.');
+    tool_mfa_logout();
+    redirect(new moodle_url('/'));
+}
+
+if ($form->is_submitted()) {
+    if ($data = $form->get_data()) {
+        $_SESSION['USER']->tool_mfa_authenticated = true;
+        redirect(new moodle_url('/my'));
+    }
+}
+
+echo $output->header();
+echo $output->heading(get_string('pluginname', 'tool_mfa'));
+$form->display();
+echo $output->footer();
