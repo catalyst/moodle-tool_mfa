@@ -1,0 +1,4 @@
+[submodule "classes/local/otphp"]
+	path = classes/local/otphp
+	url = git@github.com:Spomky-Labs/otphp.git
+	branch = v9.0
