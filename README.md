@@ -9,6 +9,10 @@
 * [Branches](#branches)
 * [Installation](#installation)
 * [Configuration](#configuration)
+  * [Factors](#factors)
+  * [Scores](#scores)
+  * [Examples](#examples)
+
 * [Support](#support)
 
 ## What is this?
@@ -40,6 +44,37 @@ That other difference is that we intend to support multiple authentication facto
 ## Installation
 
 ## Configuration
+
+The main concept to understand is the concept of factors. You must have some combination of factors which each contribute to you overall score. 
+
+### General settings
+
+* Grace period
+
+
+### Factors
+
+#### IP Range
+
+This is so you can say that if you are on a secure network then that counts for something. This is very useful because you can set it up so that you can login via a secure network, to then configure say TOTP, and then use that for logging in when not on a secure network.
+
+#### TOTP
+
+This is standard TOTP using Google Authenticator or any other app which conforms to the open standard.
+
+#### Auth Type
+
+This is so you can specify that logging in via say SAML via ADFS which may have already done it's own MFA checks has a certain score which might satisfy the criteria completely and effectly make it exempt from additional checks.
+
+#### Email
+
+A simple factor which sends a short lived code to your email which you then need to enter to login. Generally speaking this is a low security factor because typically the same username and password which logs you into moodle is the same which logs you into your email so it doesn't add much value.
+
+
+### Scores and examples
+
+If your score is high enough then you are able to login. Scores can be weighted for different factors.
+
 
 ## Support
 
