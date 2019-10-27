@@ -122,6 +122,17 @@ OR
 * on a secure network AND use TOTP
 ```
 
+#### Example 3
+
+If you still require a score of 100 and change the saml to 100 and the other two to 50 then it would say:
+
+```
+You must be:
+* logged in via saml
+OR
+* on a secure network AND use TOTP
+```
+
 
 ## Support
 
