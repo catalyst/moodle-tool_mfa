@@ -15,8 +15,7 @@
     * [Auth type](#auth-type)
     * [Email](#email)
     * [Other factors](#other-factors)
-* [Scores](#scores)
-  * [Examples](#examples)
+* [Scores and examples](#scores-and-examples)
 * [Support](#support)
 
 ## What is this?
