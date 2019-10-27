@@ -1,2 +1,2 @@
 # moodle-tool_totp
-Moodle MFA plugin
+A 2FA moodle admin tool plugin using TOTP
