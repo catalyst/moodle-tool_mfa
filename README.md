@@ -13,6 +13,7 @@
     * [IP range](#ip-range)
     * [TOTP](#totp)
     * [Auth type](#auth-type)
+    * [Security Questions](#security-questions)
     * [Email](#email)
     * [Other factors](#other-factors)
 * [Scores and examples](#scores-and-examples)
@@ -71,6 +72,12 @@ This is standard TOTP using Google Authenticator or any other app which conforms
 
 This is so you can specify that logging in via say SAML via ADFS which may have already done it's own MFA checks has a certain score which might satisfy the criteria completely and effectly make it exempt from additional checks.
 
+#### Security Questions
+
+If the tool_securityquestions plugin is installed then you can use this as an additional factor. Note that because most people don't have security questions setup until after they have logged in the first time, this could be used more as a backup factor. ie if you have lost your TOTP device then you could fail back to this.
+
+https://github.com/catalyst/moodle-tool_securityquestions
+
 #### Email
 
 A simple factor which sends a short lived code to your email which you then need to enter to login. Generally speaking this is a low security factor because typically the same username and password which logs you into moodle is the same which logs you into your email so it doesn't add much value.
@@ -86,7 +93,9 @@ https://en.wikipedia.org/wiki/Multi-factor_authentication#Authentication_factors
 
 If your score is high enough then you are able to login. Scores can be weighted for different factors. Some factors do not require any input, such as checking the IP Address is within a secure subnet, while other require input such as entering a code. Factors are checked in the priority order until you either have a cumulative score high enough to login, or you run out of factors and you are denied login.
 
-When you configure the scores and priorities it will generate a list of valid factor permuations to make it easy to check it's configured the way you want.
+As a rule of thumb any factors which do not require any input should have a higher priority, and it may help you to reason about the combinations of factors by ordering the largest scoring ones first.
+
+When you configure the scores and priorities it will generate a list of valid factor permutations to make it easy to check it's configured the way you want.
 
 #### Example 1
 
@@ -124,13 +133,27 @@ OR
 
 #### Example 3
 
-If you still require a score of 100 and change the saml to 100 and the other two to 50 then it would say:
+With a requirement of a score of 100 and a configuration of:
+
+```
+auth_saml => 100
+iprange => 100
+totp => 100
+email => 50
+security_quesstions => 50
+```
+
+Then these are valid conditions:
 
 ```
 You must be:
 * logged in via saml
 OR
-* on a secure network AND use TOTP
+* be on a secure network
+OR
+* use TOTP
+OR
+* on validate your email AND answer your security questions
 ```
 
 
