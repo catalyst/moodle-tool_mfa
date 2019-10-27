@@ -118,7 +118,7 @@ OR
 
 #### Example 2
 
-If you change all 3 scores to 50 then it would say:
+If you change all 3 points to 50 then it would say:
 
 ```
 You must be:
