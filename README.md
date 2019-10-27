@@ -58,11 +58,11 @@ That other major difference is that we support multiple authentication factor *t
 
 ### Factors
 
-The main concept to understand is the concept of factors. You must have some combination of factors which each contribute to you overall score in order to login. By configuring multiple factors and weighting them you can easily have quite complex and flexible rules.
+The main concept to understand is the concept of factors. You must have some combination of factors which each contribute to a users cumulative score in order to login. By configuring multiple factors and weighting them you can easily have quite complex and flexible rules.
 
 #### IP Range
 
-Use this factor to say that if you are on a secure network then that counts for something. This is very useful because you can set it up so that you can login fully via a secure network, and once logged in configure other factors like TOTP, and then use those other factors for logging in when not on a secure network.
+Use this factor to say that if you are on a secure network then that counts for something. This is very useful because it requires no setup by the user, so you can set it up so that you can login fully via a secure network, and once logged in they can setup other factors like TOTP, and then use those other factors for logging in when not on a secure network.
 
 #### TOTP
 
@@ -74,7 +74,7 @@ This is so you can specify that logging in via say SAML via ADFS which may have 
 
 #### Security Questions
 
-If the tool_securityquestions plugin is installed then you can use this as an additional factor. Note that because most people don't have security questions setup until after they have logged in the first time, this could be used more as a backup factor. ie if you have lost your TOTP device then you could fail back to this.
+If the tool_securityquestions plugin is installed then you can use this as an additional factor. Note that because most people don't have security questions setup until after they have logged in the first time, this could be used more as a backup factor. ie if you have lost your TOTP device then you could fail back to this in order to login and re-setup your TOTP again.
 
 https://github.com/catalyst/moodle-tool_securityquestions
 
@@ -91,11 +91,11 @@ https://en.wikipedia.org/wiki/Multi-factor_authentication#Authentication_factors
 
 ### Scores and examples
 
-If your score is high enough then you are able to login. Scores can be weighted for different factors. Some factors do not require any input, such as checking the IP Address is within a secure subnet, while other require input such as entering a code. Factors are checked in the priority order until you either have a cumulative score high enough to login, or you run out of factors and you are denied login.
+If a users cumulative score is high enough then they are able to login. Scores can be weighted for different factors. Some factors do not require any input, such as checking their IP Address is inside secure subnet, while other factors require input such as entering a code like TOTP or SMS. Factors are checked in the priority order until you either have a cumulative score high enough to login, or you run out of factors and you are denied login.
 
 As a rule of thumb any factors which do not require any input should have a higher priority, and it may help you to reason about the combinations of factors by ordering the largest scoring ones first.
 
-When you configure the scores and priorities it will generate a list of valid factor permutations to make it easy to check it's configured the way you want.
+When you configure the scores and priorities in the admin settings it will generate a list of valid factor permutations to easily check it's configured the way you want.
 
 #### Example 1
 
@@ -107,7 +107,7 @@ iprange => 100
 totp => 100
 ```
 
-The it will show:
+Then it will show:
 
 ```
 You must be:
