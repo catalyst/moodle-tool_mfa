@@ -16,7 +16,7 @@
     * [Security Questions](#security-questions)
     * [Email](#email)
     * [Other factors](#other-factors)
-* [Scores and examples](#scores-and-examples)
+* [Points and examples](#points-and-examples)
 * [Support](#support)
 
 ## What is this?
@@ -53,12 +53,12 @@ That other major difference is that we support multiple authentication factor *t
 
 ### General settings
 
-* Grace period
+* Grace period - This is important as some configurations of factors won't allow you to login. So you can optionally set a grace period where people can login and setup their other authentication factors
 
 
 ### Factors
 
-The main concept to understand is the concept of factors. You must have some combination of factors which each contribute to a users cumulative score in order to login. By configuring multiple factors and weighting them you can easily have quite complex and flexible rules.
+The main concept to understand is the concept of factors. Each user must satisfy some combination of factors which sum to 100 points in order to login. By configuring multiple factors and weighting them you can easily have quite complex and flexible rules.
 
 #### IP Range
 
@@ -70,7 +70,7 @@ This is standard TOTP using Google Authenticator or any other app which conforms
 
 #### Auth Type
 
-This is so you can specify that logging in via say SAML via ADFS which may have already done it's own MFA checks has a certain score which might satisfy the criteria completely and effectly make it exempt from additional checks.
+This is so you can specify that logging in via say SAML via ADFS which may have already done it's own MFA checks and is worth 100 points effectly make it exempt from additional checks.
 
 #### Security Questions
 
@@ -89,17 +89,15 @@ In theory you could impement almost anything as a factor, such as time of day, r
 https://en.wikipedia.org/wiki/Multi-factor_authentication#Authentication_factors
 
 
-### Scores and examples
+### Points and examples
 
-If a users cumulative score is high enough then they are able to login. Scores can be weighted for different factors. Some factors do not require any input, such as checking their IP Address is inside secure subnet, while other factors require input such as entering a code like TOTP or SMS. Factors are checked in the priority order until you either have a cumulative score high enough to login, or you run out of factors and you are denied login.
+If a users cumulative points is high enough then they are able to login. Points can be weighted for different factors. Some factors do not require any input, such as checking their IP Address is inside secure subnet, while other factors require input such as entering a code like TOTP or SMS. Factors with no input are checked first and then the remaining factors are checked in from the largest points to the smaller until you either have a cumulative points high enough to login, or you run out of factors and you are denied login.
 
-As a rule of thumb any factors which do not require any input should have a higher priority, and it may help you to reason about the combinations of factors by ordering the largest scoring ones first.
-
-When you configure the scores and priorities in the admin settings it will generate a list of valid factor permutations to easily check it's configured the way you want.
+When you configure the points in the admin settings it will generate a list of valid factor permutations to easily check it's configured the way you want.
 
 #### Example 1
 
-You require a score of 100 and you have 3 factors configured:
+If you have 3 factors configured, all factors default to 100 points effectiely making any of then enough to login:
 
 ```
 auth_saml => 100
@@ -120,7 +118,7 @@ OR
 
 #### Example 2
 
-If you still require a score of 100 but change the 3 scores to 50 then it would say:
+If you change all 3 scores to 50 then it would say:
 
 ```
 You must be:
@@ -133,7 +131,7 @@ OR
 
 #### Example 3
 
-With a requirement of a score of 100 and a configuration of:
+With a configuration of:
 
 ```
 auth_saml => 100
