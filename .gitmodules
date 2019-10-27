@@ -1,0 +1,8 @@
+[submodule "classes/local/otphp"]
+	path = classes/local/otphp
+	url = git@github.com:Spomky-Labs/otphp.git
+	branch = v9.0
+[submodule "classes/local/assert"]
+	path = classes/local/assert
+	url = git@github.com:beberlei/assert.git
+	branch = master
