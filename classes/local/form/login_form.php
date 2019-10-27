@@ -27,6 +27,18 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . "/formslib.php");
 require_once($CFG->libdir.'/tcpdf/tcpdf_barcodes_2d.php');
+require_once(__DIR__.'/../otphp/src/OTPInterface.php');
+require_once(__DIR__.'/../otphp/src/TOTPInterface.php');
+require_once(__DIR__.'/../otphp/src/ParameterTrait.php');
+require_once(__DIR__.'/../otphp/src/OTP.php');
+require_once(__DIR__.'/../otphp/src/TOTP.php');
+
+require_once(__DIR__.'/../assert/lib/Assert/Assertion.php');
+require_once(__DIR__.'/../ParagonIE/ConstantTime/EncoderInterface.php');
+require_once(__DIR__.'/../ParagonIE/ConstantTime/Binary.php');
+require_once(__DIR__.'/../ParagonIE/ConstantTime/Base32.php');
+use OTPHP\TOTP;
+
 
 class login_form extends \moodleform
 {
@@ -40,7 +52,9 @@ class login_form extends \moodleform
         $mform = $this->_form;
         $mform->addElement('html', $OUTPUT->heading(get_string('header', 'tool_mfa'), 5));
 
-        $code = 'otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example';
+        $secretcode = 'JBSWY3DPEHPK3PXP';
+
+        $code = 'otpauth://totp/Example:alice@google.com?secret='.$secretcode.'&issuer=Example';
         $barcode = new \TCPDF2DBarcode($code, 'QRCODE');
         $image = $barcode->getBarcodePngData(10, 10);
         $qr = \html_writer::img('data:image/png;base64,' . base64_encode($image),'');
@@ -50,6 +64,10 @@ class login_form extends \moodleform
         $mform->addHelpButton('verification_code', 'verification_code', 'tool_mfa');
         $mform->setType("verification_code", PARAM_ALPHANUM);
 
+        $hotp = TOTP::create($secretcode);
+        $otp = $hotp->now();
+        $mform->addElement('html', $OUTPUT->heading($otp, 5));
+
         $this->add_action_buttons();
     }
 
@@ -57,8 +75,12 @@ class login_form extends \moodleform
         $errors = parent::validation($data, $files);
 
         $code = $data['verification_code'];
+        // TODO: Implement validation for provided code here.
+        $codeiswrong = false;
 
-        $errors['verification_code'] = get_string('error:verification_code', 'tool_mfa');
+        if ($codeiswrong) {
+            $errors['verification_code'] = get_string('error:verification_code', 'tool_mfa');
+        }
 
         return $errors;
     }
