@@ -10,9 +10,13 @@
 * [Installation](#installation)
 * [Configuration](#configuration)
   * [Factors](#factors)
-  * [Scores](#scores)
+    * [IP range](#ip-range)
+    * [TOTP](#totp)
+    * [Auth type](#auth-type)
+    * [Email](#email)
+    * [Other factors](#other-factors)
+* [Scores](#scores)
   * [Examples](#examples)
-
 * [Support](#support)
 
 ## What is this?
@@ -35,7 +39,7 @@ https://tracker.moodle.org/browse/MDL-66173
 
 https://docs.moodle.org/dev/Login_callbacks
 
-That other difference is that we intend to support multiple authentication factor *types* in this plugin, eg TOPT or SMS or whatever else as sub-plugins. Initially we will only supoprt TOPT but the idea is that you can configure it to allow multiple types, or let the use decide which or various options they would prefer, and most of the authenticatin flow augmentation in shared regardless of which type is in use.
+That other major difference is that we support multiple authentication factor *types* in this plugin, eg IP Range, Email, TOPT and in future others such as SMS or hardware tokens or anything else as sub-plugins.
 
 ## Branches
 
@@ -45,7 +49,7 @@ That other difference is that we intend to support multiple authentication facto
 
 ## Configuration
 
-The main concept to understand is the concept of factors. You must have some combination of factors which each contribute to you overall score. 
+
 
 ### General settings
 
@@ -54,9 +58,11 @@ The main concept to understand is the concept of factors. You must have some com
 
 ### Factors
 
+The main concept to understand is the concept of factors. You must have some combination of factors which each contribute to you overall score in order to login. By configuring multiple factors and weighting them you can easily have quite complex and flexible rules.
+
 #### IP Range
 
-This is so you can say that if you are on a secure network then that counts for something. This is very useful because you can set it up so that you can login via a secure network, to then configure say TOTP, and then use that for logging in when not on a secure network.
+Use this factor to say that if you are on a secure network then that counts for something. This is very useful because you can set it up so that you can login fully via a secure network, and once logged in configure other factors like TOTP, and then use those other factors for logging in when not on a secure network.
 
 #### TOTP
 
@@ -70,10 +76,52 @@ This is so you can specify that logging in via say SAML via ADFS which may have 
 
 A simple factor which sends a short lived code to your email which you then need to enter to login. Generally speaking this is a low security factor because typically the same username and password which logs you into moodle is the same which logs you into your email so it doesn't add much value.
 
+#### Other factors
+
+In theory you could impement almost anything as a factor, such as time of day, retina scans, or push notificatons. For a list of potential factor see:
+
+https://en.wikipedia.org/wiki/Multi-factor_authentication#Authentication_factors
+
 
 ### Scores and examples
 
-If your score is high enough then you are able to login. Scores can be weighted for different factors.
+If your score is high enough then you are able to login. Scores can be weighted for different factors. Some factors do not require any input, such as checking the IP Address is within a secure subnet, while other require input such as entering a code. Factors are checked in the priority order until you either have a cumulative score high enough to login, or you run out of factors and you are denied login.
+
+When you configure the scores and priorities it will generate a list of valid factor permuations to make it easy to check it's configured the way you want.
+
+#### Example 1
+
+You require a score of 100 and you have 3 factors configured:
+
+```
+auth_saml => 100
+iprange => 100
+totp => 100
+```
+
+The it will show:
+
+```
+You must be:
+* logged in via saml
+OR
+* on a secure network
+OR
+* use TOTP
+```
+
+#### Example 2
+
+If you still require a score of 100 but change the 3 scores to 50 then it would say:
+
+```
+You must be:
+* logged in via saml AND on a secure network
+OR
+* logged in via saml AND use TOTP
+OR
+* on a secure network AND use TOTP
+```
 
 
 ## Support
