@@ -25,8 +25,8 @@ defined('MOODLE_INTERNAL') || die();
 
 function tool_mfa_after_require_login() {
     if (true !== $_SESSION['USER']->tool_mfa_authenticated) {
-        if ($GLOBALS['ME'] != '/admin/tool/mfa/totp.php') {
-            redirect(new moodle_url('/admin/tool/mfa/totp.php'));
+        if ($GLOBALS['ME'] != '/admin/tool/mfa/auth.php') {
+            redirect(new moodle_url('/admin/tool/mfa/auth.php'));
         }
     }
 }

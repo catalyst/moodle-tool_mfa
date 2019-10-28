@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * TOTP authorization page
+ * MFA page
  *
  * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
@@ -28,12 +28,18 @@ require_once($CFG->libdir.'/adminlib.php');
 
 use tool_mfa\local\form\login_form;
 
-admin_externalpage_setup('tool_mfa');
-$output = $PAGE->get_renderer('tool_mfa');
+$context = context_user::instance($USER->id);
+$PAGE->set_context($context);
+$PAGE->set_url('/admin/tool/mfa/auth.php');
+$PAGE->set_pagelayout('popup');
+$pagetitle = $SITE->shortname.': '.get_string('mfa', 'tool_mfa');
+$PAGE->set_title($pagetitle);
+
+
+$OUTPUT = $PAGE->get_renderer('tool_mfa');
 $form = new login_form();
 
 if ($form->is_cancelled()) {
-    // echo $output->heading('CANCELED!!! You have to set up your MFA.');
     tool_mfa_logout();
     redirect(new moodle_url('/'));
 }
@@ -45,7 +51,7 @@ if ($form->is_submitted()) {
     }
 }
 
-echo $output->header();
-echo $output->heading(get_string('pluginname', 'tool_mfa'));
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('pluginname', 'tool_mfa'));
 $form->display();
-echo $output->footer();
+echo $OUTPUT->footer();

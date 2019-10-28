@@ -29,7 +29,7 @@ if ($hassiteconfig) {
 
     $externalpage = new admin_externalpage('tool_mfa',
         get_string('pluginname', 'tool_mfa'),
-        new moodle_url('/admin/tool/mfa/totp.php'));
+        new moodle_url('/admin/tool/mfa/auth.php'));
 
     $ADMIN->add('tools', $externalpage);
 }

@@ -27,16 +27,16 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . "/formslib.php");
 require_once($CFG->libdir.'/tcpdf/tcpdf_barcodes_2d.php');
-require_once(__DIR__.'/../otphp/src/OTPInterface.php');
-require_once(__DIR__.'/../otphp/src/TOTPInterface.php');
-require_once(__DIR__.'/../otphp/src/ParameterTrait.php');
-require_once(__DIR__.'/../otphp/src/OTP.php');
-require_once(__DIR__.'/../otphp/src/TOTP.php');
+require_once(__DIR__.'/../../../factors/totp/extlib/OTPHP/OTPInterface.php');
+require_once(__DIR__.'/../../../factors/totp/extlib/OTPHP/TOTPInterface.php');
+require_once(__DIR__.'/../../../factors/totp/extlib/OTPHP/ParameterTrait.php');
+require_once(__DIR__.'/../../../factors/totp/extlib/OTPHP/OTP.php');
+require_once(__DIR__.'/../../../factors/totp/extlib/OTPHP/TOTP.php');
 
-require_once(__DIR__.'/../assert/lib/Assert/Assertion.php');
-require_once(__DIR__.'/../ParagonIE/ConstantTime/EncoderInterface.php');
-require_once(__DIR__.'/../ParagonIE/ConstantTime/Binary.php');
-require_once(__DIR__.'/../ParagonIE/ConstantTime/Base32.php');
+require_once(__DIR__.'/../../../factors/totp/extlib/Assert/Assertion.php');
+require_once(__DIR__.'/../../../factors/totp/extlib/ParagonIE/ConstantTime/EncoderInterface.php');
+require_once(__DIR__.'/../../../factors/totp/extlib/ParagonIE/ConstantTime/Binary.php');
+require_once(__DIR__.'/../../../factors/totp/extlib/ParagonIE/ConstantTime/Base32.php');
 use OTPHP\TOTP;
 
 
@@ -50,36 +50,37 @@ class login_form extends \moodleform
     {
         global $OUTPUT;
         $mform = $this->_form;
-        $mform->addElement('html', $OUTPUT->heading(get_string('header', 'tool_mfa'), 5));
 
-        $secretcode = 'JBSWY3DPEHPK3PXP';
+//        $secretcode = 'JBSWY3DPEHPK3PXP';
+//        $code = 'otpauth://totp/Example:alice@google.com?secret='.$secretcode.'&issuer=Example';
+//        $barcode = new \TCPDF2DBarcode($code, 'QRCODE');
+//        $image = $barcode->getBarcodePngData(10, 10);
+//        $qr = \html_writer::img('data:image/png;base64,' . base64_encode($image),'');
+//        $mform->addElement('html', $qr);
 
-        $code = 'otpauth://totp/Example:alice@google.com?secret='.$secretcode.'&issuer=Example';
-        $barcode = new \TCPDF2DBarcode($code, 'QRCODE');
-        $image = $barcode->getBarcodePngData(10, 10);
-        $qr = \html_writer::img('data:image/png;base64,' . base64_encode($image),'');
-        $mform->addElement('html', $qr);
+        // TODO: Get the list of active factors.
 
-        $mform->addElement('text', 'verification_code', get_string('verification_code', 'tool_mfa'));
-        $mform->addHelpButton('verification_code', 'verification_code', 'tool_mfa');
-        $mform->setType("verification_code", PARAM_ALPHANUM);
-
-        $hotp = TOTP::create($secretcode);
-        $otp = $hotp->now();
-        $mform->addElement('html', $OUTPUT->heading($otp, 5));
+        // TOTP Factor.
+        $mform->addElement('html', $OUTPUT->heading(get_string('totp:header', 'tool_mfa'), 5));
+        $mform->addElement('text', 'totp_verification_code', get_string('totp:verification_code', 'tool_mfa'));
+        $mform->addHelpButton('totp_verification_code', 'totp:verification_code', 'tool_mfa');
+        $mform->setType("totp_verification_code", PARAM_ALPHANUM);
 
         $this->add_action_buttons();
     }
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
+        $code = $data['totp_verification_code'];
 
-        $code = $data['verification_code'];
-        // TODO: Implement validation for provided code here.
-        $codeiswrong = false;
+        // TODO: Get the secret from db for given user.
+        $secretcode = 'JBSWY3DPEHPK3PXP';
 
-        if ($codeiswrong) {
-            $errors['verification_code'] = get_string('error:verification_code', 'tool_mfa');
+        $hotp = TOTP::create($secretcode);
+        $otp = $hotp->now();
+
+        if ($code !== $otp) {
+            $errors['totp_verification_code'] = get_string('totp:error:verification_code', 'tool_mfa');
         }
 
         return $errors;
