@@ -13,9 +13,9 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-//
+
 /**
- * Strings for component 'tool_mfa', language 'en'.
+ * Subplugin info class.
  *
  * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
@@ -23,18 +23,31 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace tool_mfa\plugininfo;
+
 defined('MOODLE_INTERNAL') || die();
 
-$string['mfa'] = 'MFA';
-$string['pluginname'] = 'Moodle MFA plugin';
-//$string['header'] = 'You don\'t have your 2FA configured. Please, scan this QR code and enter the code below for confirmation';
+class factor extends \core\plugininfo\base {
 
-$string['totp:header'] = 'TOTP Check';
-$string['totp:verification_code'] = 'Enter verification code';
-$string['totp:verification_code_help'] = 'Enter verification code for confirmation';
-$string['totp:error:verification_code'] = 'Verification code is wrong';
+    /**
+     * Get enabled plugins, sorted by sortorder
+     *
+     * @return array Enabled plugins, sorted by sortorder
+     */
+    static public function get_plugins_by_sortorder() {
 
-//$string['mfafactors_totp'] = 'TOTP MFA Factor';
-//$string['mfafactors_totp_plural'] = 'TOTP MFA Factors';
+        $fileinfo = \core_plugin_manager::instance()->get_present_plugins('factor');
+        $plugins = \core_plugin_manager::instance()->get_plugins_of_type('factor');
 
-$string['privacy:metadata'] = 'Moodle MFA plugin does not store any personal data';
+        foreach ($plugins as $name => $plugin) {
+            if (isset($fileinfo[$name])) {
+                $plugin->sortorder = $fileinfo[$name]->sortorder;
+            }
+        }
+        usort($plugins, function($a, $b) {
+            return $a->sortorder - $b->sortorder;
+        });
+
+        return $plugins;
+    }
+}

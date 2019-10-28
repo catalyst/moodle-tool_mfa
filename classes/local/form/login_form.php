@@ -26,19 +26,6 @@ namespace tool_mfa\local\form;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . "/formslib.php");
-require_once($CFG->libdir.'/tcpdf/tcpdf_barcodes_2d.php');
-require_once(__DIR__.'/../../../factors/totp/extlib/OTPHP/OTPInterface.php');
-require_once(__DIR__.'/../../../factors/totp/extlib/OTPHP/TOTPInterface.php');
-require_once(__DIR__.'/../../../factors/totp/extlib/OTPHP/ParameterTrait.php');
-require_once(__DIR__.'/../../../factors/totp/extlib/OTPHP/OTP.php');
-require_once(__DIR__.'/../../../factors/totp/extlib/OTPHP/TOTP.php');
-
-require_once(__DIR__.'/../../../factors/totp/extlib/Assert/Assertion.php');
-require_once(__DIR__.'/../../../factors/totp/extlib/ParagonIE/ConstantTime/EncoderInterface.php');
-require_once(__DIR__.'/../../../factors/totp/extlib/ParagonIE/ConstantTime/Binary.php');
-require_once(__DIR__.'/../../../factors/totp/extlib/ParagonIE/ConstantTime/Base32.php');
-use OTPHP\TOTP;
-
 
 class login_form extends \moodleform
 {
@@ -50,13 +37,6 @@ class login_form extends \moodleform
     {
         global $OUTPUT;
         $mform = $this->_form;
-
-//        $secretcode = 'JBSWY3DPEHPK3PXP';
-//        $code = 'otpauth://totp/Example:alice@google.com?secret='.$secretcode.'&issuer=Example';
-//        $barcode = new \TCPDF2DBarcode($code, 'QRCODE');
-//        $image = $barcode->getBarcodePngData(10, 10);
-//        $qr = \html_writer::img('data:image/png;base64,' . base64_encode($image),'');
-//        $mform->addElement('html', $qr);
 
         // TODO: Get the list of active factors.
 
@@ -73,15 +53,26 @@ class login_form extends \moodleform
         $errors = parent::validation($data, $files);
         $code = $data['totp_verification_code'];
 
-        // TODO: Get the secret from db for given user.
-        $secretcode = 'JBSWY3DPEHPK3PXP';
+//        $plugins = \tool_mfa\plugininfo\factor::get_plugins_by_sortorder();
+//
+//        foreach ($plugins as $plugin) {
+//
+//            $new = $plugin;
+//
+//            if ($new->is_installed_and_upgraded()) {
+//
+//                $path = "tool_mfa\\factor\\factor_$plugin->name";
+//
+//                $aaa = new $path;
+//                // $dir = str_replace("/siteroot/admin/tool/mfa", )
+//                // $factor = new \tool_mfa\factor\totp\totp_factor();
+//                if (!$aaa->validate($code)) {
+//                    $errors['totp_verification_code'] = get_string('totp:error:verification_code', 'tool_mfa');
+//                }
+//            }
+//
+//        }
 
-        $hotp = TOTP::create($secretcode);
-        $otp = $hotp->now();
-
-        if ($code !== $otp) {
-            $errors['totp_verification_code'] = get_string('totp:error:verification_code', 'tool_mfa');
-        }
 
         return $errors;
     }

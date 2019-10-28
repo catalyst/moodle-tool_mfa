@@ -13,9 +13,9 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-//
+
 /**
- * Strings for component 'tool_mfa', language 'en'.
+ * Email factor class.
  *
  * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
@@ -23,18 +23,18 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace tool_mfa\factor\email;
+
 defined('MOODLE_INTERNAL') || die();
 
-$string['mfa'] = 'MFA';
-$string['pluginname'] = 'Moodle MFA plugin';
-//$string['header'] = 'You don\'t have your 2FA configured. Please, scan this QR code and enter the code below for confirmation';
+use tool_mfa\local\factor\object_factor_base;
 
-$string['totp:header'] = 'TOTP Check';
-$string['totp:verification_code'] = 'Enter verification code';
-$string['totp:verification_code_help'] = 'Enter verification code for confirmation';
-$string['totp:error:verification_code'] = 'Verification code is wrong';
+class factor_email extends object_factor_base
+{
 
-//$string['mfafactors_totp'] = 'TOTP MFA Factor';
-//$string['mfafactors_totp_plural'] = 'TOTP MFA Factors';
+    public function is_enabled()
+    {
+        return false;
+    }
 
-$string['privacy:metadata'] = 'Moodle MFA plugin does not store any personal data';
+}
