@@ -38,7 +38,7 @@ class login_form extends \moodleform
         global $OUTPUT;
         $mform = $this->_form;
 
-        // TODO: Get the list of active factors.
+        // TODO: Get the list of enabled and configured factors.
 
         // TOTP Factor.
         $mform->addElement('html', $OUTPUT->heading(get_string('totp:header', 'tool_mfa'), 5));
@@ -53,44 +53,7 @@ class login_form extends \moodleform
         $errors = parent::validation($data, $files);
         $code = $data['totp_verification_code'];
 
-
-        // require_once(__DIR__.'/../../../factor/totp/class/factor_totp.php');
-
-
-        // $test = new \tool_mfa\factor\totp\factor_totp;
-        $test = new \factor_totp\factor;
-
-        //        $plugins = \tool_mfa\plugininfo\factor::get_plugins_by_sortorder();
-//        foreach ($plugins as $plugin) {
-//            $plugintypeclass = \core_plugin_manager::instance()->resolve_plugininfo_class($plugin->type);
-//
-//            $classname = $plugintypeclass.'\\'.$plugin->name;
-//
-//            if (class_exists($classname)) {
-//                $instance = new $classname;
-//                $test = $instance->is_enabled();
-//            }
-//        }
-
-//
-//        foreach ($plugins as $plugin) {
-//
-//            $new = $plugin;
-//
-//            if ($new->is_installed_and_upgraded()) {
-//
-//                $path = "tool_mfa\\factor\\factor_$plugin->name";
-//
-//                $aaa = new $path;
-//                // $dir = str_replace("/siteroot/admin/tool/mfa", )
-//                // $factor = new \tool_mfa\factor\totp\totp_factor();
-//                if (!$aaa->validate($code)) {
-//                    $errors['totp_verification_code'] = get_string('totp:error:verification_code', 'tool_mfa');
-//                }
-//            }
-//
-//        }
-
+        // TODO: Implement MFA validation for given user here
 
         return $errors;
     }

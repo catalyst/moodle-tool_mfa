@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version      = 2019102400;      // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version      = 2019102500;      // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires     = 2019101800;      // Requires MDL-66173 improvement.
 $plugin->component    = 'factor_totp';
 $plugin->release      = 'v0.1';

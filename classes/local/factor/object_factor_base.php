@@ -28,9 +28,5 @@ namespace tool_mfa\local\factor;
 defined('MOODLE_INTERNAL') || die();
 
 abstract class object_factor_base implements object_factor {
-
-    public function __construct() {
-        // return new \stdClass();
-    }
     // TODO: Implement factor base class here.
 }

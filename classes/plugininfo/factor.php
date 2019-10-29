@@ -29,25 +29,4 @@ defined('MOODLE_INTERNAL') || die();
 
 class factor extends \core\plugininfo\base {
 
-    /**
-     * Get enabled plugins, sorted by sortorder
-     *
-     * @return array Enabled plugins, sorted by sortorder
-     */
-    static public function get_plugins_by_sortorder() {
-
-        $fileinfo = \core_plugin_manager::instance()->get_present_plugins('factor');
-        $plugins = \core_plugin_manager::instance()->get_plugins_of_type('factor');
-
-        foreach ($plugins as $name => $plugin) {
-            if (isset($fileinfo[$name])) {
-                $plugin->sortorder = $fileinfo[$name]->sortorder;
-            }
-        }
-        usort($plugins, function($a, $b) {
-            return $a->sortorder - $b->sortorder;
-        });
-
-        return $plugins;
-    }
 }
