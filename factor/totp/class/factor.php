@@ -23,26 +23,26 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_mfa\factor\totp;
+namespace factor_totp;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/tcpdf/tcpdf_barcodes_2d.php');
-require_once(__DIR__.'/../../../factors/totp/extlib/OTPHP/OTPInterface.php');
-require_once(__DIR__.'/../../../factors/totp/extlib/OTPHP/TOTPInterface.php');
-require_once(__DIR__.'/../../../factors/totp/extlib/OTPHP/ParameterTrait.php');
-require_once(__DIR__.'/../../../factors/totp/extlib/OTPHP/OTP.php');
-require_once(__DIR__.'/../../../factors/totp/extlib/OTPHP/TOTP.php');
+require_once(__DIR__.'/../extlib/OTPHP/OTPInterface.php');
+require_once(__DIR__.'/../extlib/OTPHP/TOTPInterface.php');
+require_once(__DIR__.'/../extlib/OTPHP/ParameterTrait.php');
+require_once(__DIR__.'/../extlib/OTPHP/OTP.php');
+require_once(__DIR__.'/../extlib/OTPHP/TOTP.php');
 
-require_once(__DIR__.'/../../../factors/totp/extlib/Assert/Assertion.php');
-require_once(__DIR__.'/../../../factors/totp/extlib/ParagonIE/ConstantTime/EncoderInterface.php');
-require_once(__DIR__.'/../../../factors/totp/extlib/ParagonIE/ConstantTime/Binary.php');
-require_once(__DIR__.'/../../../factors/totp/extlib/ParagonIE/ConstantTime/Base32.php');
+require_once(__DIR__.'/../extlib/Assert/Assertion.php');
+require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/EncoderInterface.php');
+require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Binary.php');
+require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Base32.php');
 
 use tool_mfa\local\factor\object_factor_base;
 use OTPHP\TOTP;
 
-class factor_totp extends object_factor_base {
+class factor extends object_factor_base {
 
     public function is_enabled() {
         return true;

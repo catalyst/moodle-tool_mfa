@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * IP Range factor class.
+ * Auth factor class.
  *
  * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
@@ -23,13 +23,13 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_mfa\factor\iprange;
+namespace factor_auth;
 
 defined('MOODLE_INTERNAL') || die();
 
 use tool_mfa\local\factor\object_factor_base;
 
-class factor_range extends object_factor_base
+class factor extends object_factor_base
 {
 
     public function is_enabled()
