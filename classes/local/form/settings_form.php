@@ -13,29 +13,41 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
- * Settings
+ * MFA settings form
  *
  * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace tool_mfa\local\form;
 
 defined('MOODLE_INTERNAL') || die();
 
-if ($hassiteconfig) {
+require_once($CFG->libdir . "/formslib.php");
 
-    $externalpage = new admin_externalpage('tool_mfa_auth',
-        get_string('totp:testpage', 'tool_mfa'),
-        new moodle_url('/admin/tool/mfa/auth.php'));
+class settings_form extends \moodleform
+{
+    /**
+     * {@inheritDoc}
+     * @see moodleform::definition()
+     */
+    public function definition()
+    {
+        global $OUTPUT;
+        $mform = $this->_form;
 
-    $ADMIN->add('tools', $externalpage);
+        $plugins = \tool_mfa\plugininfo\factor::get_enabled_plugins();
 
-    $externalpage = new admin_externalpage('tool_mfa_settings',
-        get_string('settings', 'tool_mfa'),
-        new moodle_url('/admin/tool/mfa/index.php'));
 
-    $ADMIN->add('tools', $externalpage);
+        $this->add_action_buttons();
+    }
+
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+
+        return $errors;
+    }
 }

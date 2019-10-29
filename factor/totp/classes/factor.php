@@ -63,11 +63,11 @@ class factor extends object_factor_base {
     }
 
     public function draw_qrcode() {
-//        $secretcode = 'JBSWY3DPEHPK3PXP';
-//        $code = 'otpauth://totp/Example:alice@google.com?secret='.$secretcode.'&issuer=Example';
-//        $barcode = new \TCPDF2DBarcode($code, 'QRCODE');
-//        $image = $barcode->getBarcodePngData(10, 10);
-//        $qr = \html_writer::img('data:image/png;base64,' . base64_encode($image),'');
-//        $mform->addElement('html', $qr);
+        $secretcode = 'JBSWY3DPEHPK3PXP';
+        $code = 'otpauth://totp/Example:alice@google.com?secret='.$secretcode.'&issuer=Example';
+        $barcode = new \TCPDF2DBarcode($code, 'QRCODE');
+        $image = $barcode->getBarcodePngData(10, 10);
+        $qr = \html_writer::img('data:image/png;base64,' . base64_encode($image),'');
+        return $qr;
     }
 }

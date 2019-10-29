@@ -13,9 +13,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
- * Settings
+ * MFA configuration page.
  *
  * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
@@ -23,19 +22,29 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/../../../config.php');
+require_once(__DIR__ . '/lib.php');
+require_once($CFG->libdir.'/adminlib.php');
 
-if ($hassiteconfig) {
+use tool_mfa\local\form\settings_form;
 
-    $externalpage = new admin_externalpage('tool_mfa_auth',
-        get_string('totp:testpage', 'tool_mfa'),
-        new moodle_url('/admin/tool/mfa/auth.php'));
+admin_externalpage_setup('tool_mfa_settings');
 
-    $ADMIN->add('tools', $externalpage);
+$output = $PAGE->get_renderer('tool_mfa');
 
-    $externalpage = new admin_externalpage('tool_mfa_settings',
-        get_string('settings', 'tool_mfa'),
-        new moodle_url('/admin/tool/mfa/index.php'));
+// $config = get_mfa_config();
 
-    $ADMIN->add('tools', $externalpage);
-}
+// $form = new settings_form(null, array('config' => $config));
+$form = new settings_form();
+
+//if ($data = $form->get_data()) {
+//    redirect(new moodle_url('/admin/tool/mfa/index.php'));
+//}
+
+echo $output->header();
+echo $output->heading(get_string('pluginname', 'tool_mfa'));
+$form->display();
+echo $output->footer();
+
+
+

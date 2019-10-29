@@ -29,4 +29,24 @@ defined('MOODLE_INTERNAL') || die();
 
 class factor extends \core\plugininfo\base {
 
+    /**
+     * Finds all enabled plugins, the result may include missing plugins.
+     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
+     */
+    public static function get_enabled_plugins() {
+        $return = array();
+        $plugins = \core_plugin_manager::instance()->get_plugins_of_type('factor');
+
+        foreach ($plugins as $plugin) {
+            $classname = '\\factor_'.$plugin->name.'\\factor';
+            if (class_exists($classname)) {
+                $instance = new $classname;
+                if ($instance->is_enabled()) {
+                    $return[] = $instance;
+                }
+            }
+        }
+
+        return $return;
+    }
 }
