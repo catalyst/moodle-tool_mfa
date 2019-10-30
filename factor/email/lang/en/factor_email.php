@@ -24,6 +24,7 @@
  */
 
 $string['pluginname'] = 'MFA: E-Mail Factor';
+$string['factorname'] = 'E-Mail Factor';
 
 $string['settings:header'] = 'E-Mail Factor settings';
 $string['settings:enable'] = 'Enable E-Mail Factor';

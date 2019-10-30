@@ -27,7 +27,14 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['mfa'] = 'MFA';
 $string['pluginname'] = 'Moodle MFA plugin';
-$string['settings'] = 'MFA settings';
+$string['mfasettings'] = 'Manage MFA';
+$string['name'] = 'Factor name';
+$string['enable'] = 'Enable';
+$string['weight'] = 'Weight';
+$string['settings'] = 'Settings';
+
+$string['factornotfound'] = 'MFA Factor \'{$a}\' not found';
+
 $string['settings:error:weight'] = 'Factor weight should be between 0 and 100';
 $string['settings:error:totalweight'] = 'Weight sum of all enabled factors should be more than 100';
 //$string['header'] = 'You don\'t have your 2FA configured. Please, scan this QR code and enter the code below for confirmation';

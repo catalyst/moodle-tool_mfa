@@ -22,29 +22,83 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
 require_once(__DIR__ . '/../../../config.php');
 require_once(__DIR__ . '/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir.'/tablelib.php');
 
-use tool_mfa\local\form\settings_form;
+require_admin();
 
-admin_externalpage_setup('tool_mfa_settings');
+$returnurl = new moodle_url('/admin/settings.php', array('section'=>'managemfa'));
 
-$output = $PAGE->get_renderer('tool_mfa');
+$PAGE->set_url($returnurl);
 
-$config = tool_mfa_get_config();
-$form = new settings_form(null, array('config' => $config));
+$action = optional_param('action', '', PARAM_ALPHANUMEXT);
+$factor = optional_param('factor', '', PARAM_ALPHANUMEXT);
 
-if ($form->is_submitted()) {
-    if ($data = $form->get_data()) {
-        tool_mfa_set_config($data);
-    }
+if (empty($factor) || !tool_mfa_factor_exists($factor)) {
+    print_error('factornotfound', 'tool_mfa', $returnurl, $factor);
 }
 
-echo $output->header();
-echo $output->heading(get_string('pluginname', 'tool_mfa'));
-$form->display();
-echo $output->footer();
+if (!confirm_sesskey()) {
+    redirect($returnurl);
+}
+
+$enabledfactors = array();
+foreach (tool_mfa_get_enabled_factors() as $enabledfactor) {
+    $enabledfactors[] = $enabledfactor->name;
+}
+
+
+switch ($action) {
+    case 'disable':
+        if (in_array($factor, $enabledfactors)) {
+            tool_mfa_set_config(array($factor.'enable'=>0));
+        }
+
+        \core\session\manager::gc(); // Remove stale sessions.
+        core_plugin_manager::reset_caches();
+        break;
+
+    case 'enable':
+        if (!in_array($factor, $enabledfactors)) {
+            tool_mfa_set_config(array($factor.'enable'=>1));
+        }
+
+        \core\session\manager::gc(); // Remove stale sessions.
+        core_plugin_manager::reset_caches();
+        break;
+
+    default:
+        break;
+}
+
+redirect($returnurl);
+
+//require_once(__DIR__ . '/../../../config.php');
+//require_once(__DIR__ . '/lib.php');
+//require_once($CFG->libdir.'/adminlib.php');
+//
+//use tool_mfa\local\form\settings_form;
+//
+////admin_externalpage_setup('tool_mfa_settings');
+//
+//$output = $PAGE->get_renderer('tool_mfa');
+//
+//$config = tool_mfa_get_config();
+//$form = new settings_form(null, array('config' => $config));
+//
+//if ($form->is_submitted()) {
+//    if ($data = $form->get_data()) {
+//        tool_mfa_set_config($data);
+//    }
+//}
+//
+//echo $output->header();
+//echo $output->heading(get_string('pluginname', 'tool_mfa'));
+//$form->display();
+//echo $output->footer();
 
 
 

@@ -35,14 +35,65 @@ class factor extends \core\plugininfo\base {
      */
     public static function get_factors() {
         $return = array();
-        $plugins = \core_plugin_manager::instance()->get_plugins_of_type('factor');
+        $factors = \core_plugin_manager::instance()->get_plugins_of_type('factor');
 
-        foreach ($plugins as $plugin) {
-            $classname = '\\factor_'.$plugin->name.'\\factor';
+        foreach ($factors as $factor) {
+            $classname = '\\factor_'.$factor->name.'\\factor';
             if (class_exists($classname)) {
-                $return[] = new $classname($plugin->name);
+                $return[] = new $classname($factor->name);
             }
         }
         return $return;
+    }
+
+    /**
+     * Finds enabled factors.
+     * @return array of factor subplugins
+     */
+    public static function get_enabled_factors() {
+        $return = array();
+        $factors = self::get_factors();
+
+        foreach ($factors as $factor) {
+            if ($factor->is_enabled()) {
+                $return[] = $factor;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Loads factor settings to the settings tree
+     *
+     * This function usually includes settings.php file in plugins folder.
+     * Alternatively it can create a link to some settings page (instance of admin_externalpage)
+     *
+     * @param \part_of_admin_tree $adminroot
+     * @param string $parentnodename
+     * @param bool $hassiteconfig whether the current user has moodle/site:config capability
+     */
+    public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+//        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
+//        $ADMIN = $adminroot; // May be used in settings.php.
+//        $plugininfo = $this; // Also can be used inside settings.php.
+
+        if (!$this->is_installed_and_upgraded()) {
+            return;
+        }
+
+        if (!$hassiteconfig or !file_exists($this->full_path('settings.php'))) {
+            return;
+        }
+
+        $section = $this->get_settings_section_name();
+
+        $settings = new \admin_settingpage($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
+
+        if ($adminroot->fulltree) {
+            include($this->full_path('settings.php'));
+        }
+
+        $adminroot->add('tools', $settings);
     }
 }

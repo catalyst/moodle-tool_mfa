@@ -51,4 +51,9 @@ abstract class object_factor_base implements object_factor {
         $weight = get_config('tool_mfa', $this->name.'weight');
         return $weight;
     }
+
+    public function get_display_name() {
+        $weight = get_string('factorname', 'factor_'.$this->name);
+        return $weight;
+    }
 }

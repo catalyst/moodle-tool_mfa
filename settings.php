@@ -30,12 +30,13 @@ if ($hassiteconfig) {
     $externalpage = new admin_externalpage('tool_mfa_auth',
         get_string('totp:testpage', 'tool_mfa'),
         new moodle_url('/admin/tool/mfa/auth.php'));
-
     $ADMIN->add('tools', $externalpage);
 
-    $externalpage = new admin_externalpage('tool_mfa_settings',
-        get_string('settings', 'tool_mfa'),
-        new moodle_url('/admin/tool/mfa/index.php'));
+    $managemfa = new admin_settingpage('managemfa', new lang_string('mfasettings', 'tool_mfa'));
+    $managemfa->add(new \tool_mfa\local\admin_setting_managemfa());
+    $ADMIN->add('tools', $managemfa);
 
-    $ADMIN->add('tools', $externalpage);
+    foreach (core_plugin_manager::instance()->get_plugins_of_type('factor') as $plugin) {
+        $plugin->load_settings($ADMIN, 'tool_mfa', $hassiteconfig);
+    }
 }

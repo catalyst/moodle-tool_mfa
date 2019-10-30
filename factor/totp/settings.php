@@ -15,21 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Language strings.
+ * Settings
  *
- * @package     factor_auth
+ * @package     factor_totp
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'MFA: Auth Factor';
-$string['factorname'] = 'Auth Factor';
+defined('MOODLE_INTERNAL') || die();
 
-$string['settings:header'] = 'Auth Factor settings';
-$string['settings:enable'] = 'Enable Auth Factor';
-$string['settings:enable_help'] = 'Auth Factor will be available for users to setup';
-$string['settings:weight'] = 'Auth Factor weight';
-$string['settings:weight_help'] = 'Factor weight determines the result factor combinations';
-
-$string['privacy:metadata'] = 'The Auth Factor plugin does not store any personal data';

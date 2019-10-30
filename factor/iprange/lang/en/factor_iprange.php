@@ -24,6 +24,7 @@
  */
 
 $string['pluginname'] = 'MFA: IP Range Factor';
+$string['factorname'] = 'IP Range Factor';
 
 $string['settings:header'] = 'IP Range Factor settings';
 $string['settings:enable'] = 'Enable IP Range Factor';

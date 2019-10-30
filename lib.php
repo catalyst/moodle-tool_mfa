@@ -58,6 +58,20 @@ function tool_mfa_get_config() {
     return $config;
 }
 
+function tool_mfa_factor_exists($factorname) {
+    $factors = \tool_mfa\plugininfo\factor::get_factors();
+    foreach ($factors as $factor) {
+        if ($factorname == $factor->name) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function tool_mfa_get_enabled_factors() {
+    return \tool_mfa\plugininfo\factor::get_enabled_factors();
+}
+
 function tool_mfa_extend_navigation_user_settings($navigation, $user, $usercontext, $course, $coursecontext) {
     global $PAGE;
 

@@ -24,6 +24,7 @@
  */
 
 $string['pluginname'] = 'MFA: TOTP Factor';
+$string['factorname'] = 'TOTP Factor';
 
 $string['settings:header'] = 'TOTP Factor settings';
 $string['settings:enable'] = 'Enable TOTP Factor';
