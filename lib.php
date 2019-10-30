@@ -57,3 +57,19 @@ function tool_mfa_get_config() {
 
     return $config;
 }
+
+function tool_mfa_extend_navigation_user_settings($navigation, $user, $usercontext, $course, $coursecontext) {
+    global $PAGE;
+
+    // Only inject if user is on the preferences page
+    $onpreferencepage = $PAGE->url->compare(new moodle_url('/user/preferences.php'), URL_MATCH_BASE);
+    if (!$onpreferencepage) {
+        return null;
+    }
+
+    $url = new moodle_url('/admin/tool/mfa/auth.php');
+    $node = navigation_node::create(get_string('pluginname', 'tool_mfa'), $url,
+        navigation_node::TYPE_SETTING);
+    $usernode = $navigation->find('useraccount', navigation_node::TYPE_CONTAINER);
+    $usernode->add_node($node);
+}
