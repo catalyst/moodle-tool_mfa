@@ -64,8 +64,29 @@ class settings_form extends \moodleform
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
+        $totalweight = 0;
+        $weightfields = array();
 
-        // TODO: validate all weight fields to be > 0 and <= 100.
+        foreach ($data as $field=>$value) {
+            $pos = strpos($field, 'weight');
+            if ($pos) {
+                if ($value < 0 || $value > 100) {
+                    $errors[$field] = get_string('settings:error:weight', 'tool_mfa');
+                }
+
+                $enablefield = substr($field, 0, $pos).'enable';
+                if ($data[$enablefield] == 1) {
+                    $weightfields[] = $field;
+                    $totalweight += $value;
+                }
+            }
+        }
+
+        if (empty($errors) && $totalweight < 100) {
+            foreach ($weightfields as $field) {
+                $errors[$field] = get_string('settings:error:totalweight', 'tool_mfa');
+            }
+        }
 
         return $errors;
     }

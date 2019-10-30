@@ -28,6 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 $string['mfa'] = 'MFA';
 $string['pluginname'] = 'Moodle MFA plugin';
 $string['settings'] = 'MFA settings';
+$string['settings:error:weight'] = 'Factor weight should be between 0 and 100';
+$string['settings:error:totalweight'] = 'Weight sum of all enabled factors should be more than 100';
 //$string['header'] = 'You don\'t have your 2FA configured. Please, scan this QR code and enter the code below for confirmation';
 
 $string['totp:testpage'] = 'TOTP Test page';
@@ -36,7 +38,5 @@ $string['totp:verification_code'] = 'Enter verification code';
 $string['totp:verification_code_help'] = 'Enter verification code for confirmation';
 $string['totp:error:verification_code'] = 'Verification code is wrong';
 
-//$string['mfafactors_totp'] = 'TOTP MFA Factor';
-//$string['mfafactors_totp_plural'] = 'TOTP MFA Factors';
 
 $string['privacy:metadata'] = 'Moodle MFA plugin does not store any personal data';

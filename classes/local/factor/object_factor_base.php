@@ -28,5 +28,27 @@ namespace tool_mfa\local\factor;
 defined('MOODLE_INTERNAL') || die();
 
 abstract class object_factor_base implements object_factor {
-    // TODO: Implement factor base class here.
+    /**
+     * Factor name.
+     *
+     * @var name
+     */
+    public $name;
+
+    public function __construct($name) {
+        $this->name = $name;
+    }
+
+    public function is_enabled() {
+        $status = get_config('tool_mfa', $this->name.'enable');
+        if ($status == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    public function get_weight() {
+        $weight = get_config('tool_mfa', $this->name.'weight');
+        return $weight;
+    }
 }

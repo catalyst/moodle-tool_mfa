@@ -40,7 +40,7 @@ class factor extends \core\plugininfo\base {
         foreach ($plugins as $plugin) {
             $classname = '\\factor_'.$plugin->name.'\\factor';
             if (class_exists($classname)) {
-                $return[] = new $classname;
+                $return[] = new $classname($plugin->name);
             }
         }
         return $return;

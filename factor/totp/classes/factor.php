@@ -44,10 +44,6 @@ use OTPHP\TOTP;
 
 class factor extends object_factor_base {
 
-    public function is_enabled() {
-        return true;
-    }
-
     public function define_factor_settings($mform) {
 
         $mform->addElement('header', 'totpheader', get_string('settings:header', 'factor_totp'));

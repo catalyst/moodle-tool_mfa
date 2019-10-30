@@ -29,12 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use tool_mfa\local\factor\object_factor_base;
 
-class factor extends object_factor_base
-{
-
-    public function is_enabled() {
-        return false;
-    }
+class factor extends object_factor_base {
 
     public function define_factor_settings($mform) {
 
