@@ -24,4 +24,11 @@
  */
 
 $string['pluginname'] = 'MFA: IP Range Factor';
+
+$string['settings:header'] = 'IP Range Factor settings';
+$string['settings:enable'] = 'Enable IP Range Factor';
+$string['settings:enable_help'] = 'IP Range Factor will be available for users to setup';
+$string['settings:weight'] = 'IP Range Factor weight';
+$string['settings:weight_help'] = 'Factor weight determines the result factor combinations';
+
 $string['privacy:metadata'] = 'The IP Range Factor plugin does not store any personal data';

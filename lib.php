@@ -39,3 +39,21 @@ function tool_mfa_logout() {
     }
     require_logout();
 }
+
+function tool_mfa_set_config($data) {
+    foreach ($data as $key => $value) {
+        set_config($key, $value, 'tool_mfa');
+    }
+}
+
+
+function tool_mfa_get_config() {
+    $config = new stdClass;
+    $storedconfig = get_config('tool_mfa');
+
+    foreach ($storedconfig as $key => $value) {
+        $config->$key = $value;
+    }
+
+    return $config;
+}

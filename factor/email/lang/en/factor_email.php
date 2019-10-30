@@ -24,4 +24,11 @@
  */
 
 $string['pluginname'] = 'MFA: E-Mail Factor';
+
+$string['settings:header'] = 'E-Mail Factor settings';
+$string['settings:enable'] = 'Enable E-Mail Factor';
+$string['settings:enable_help'] = 'E-Mail Factor will be available for users to setup';
+$string['settings:weight'] = 'E-Mail Factor weight';
+$string['settings:weight_help'] = 'Factor weight determines the result factor combinations';
+
 $string['privacy:metadata'] = 'The E-Mail Factor plugin does not store any personal data';

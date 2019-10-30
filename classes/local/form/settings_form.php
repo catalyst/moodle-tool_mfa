@@ -37,16 +37,35 @@ class settings_form extends \moodleform
     {
         global $OUTPUT;
         $mform = $this->_form;
+        $config = $this->_customdata['config'];
 
-        $plugins = \tool_mfa\plugininfo\factor::get_enabled_plugins();
+        $mform = $this->define_general_section($mform);
+        $mform = $this->define_factor_sections($mform);
 
+        foreach ($config as $key => $value) {
+            $mform->setDefault($key, $value);
+        }
 
         $this->add_action_buttons();
+    }
+
+    public function define_general_section($mform) {
+        // TODO: Define grace period.
+        return $mform;
+    }
+
+    public function define_factor_sections($mform) {
+        $factors = \tool_mfa\plugininfo\factor::get_factors();
+        foreach ($factors as $factor) {
+            $mform = $factor->define_factor_settings($mform);
+        }
+        return $mform;
     }
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
+        // TODO: validate all weight fields to be > 0 and <= 100.
 
         return $errors;
     }

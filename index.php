@@ -32,14 +32,14 @@ admin_externalpage_setup('tool_mfa_settings');
 
 $output = $PAGE->get_renderer('tool_mfa');
 
-// $config = get_mfa_config();
+$config = tool_mfa_get_config();
+$form = new settings_form(null, array('config' => $config));
 
-// $form = new settings_form(null, array('config' => $config));
-$form = new settings_form();
-
-//if ($data = $form->get_data()) {
-//    redirect(new moodle_url('/admin/tool/mfa/index.php'));
-//}
+if ($form->is_submitted()) {
+    if ($data = $form->get_data()) {
+        tool_mfa_set_config($data);
+    }
+}
 
 echo $output->header();
 echo $output->heading(get_string('pluginname', 'tool_mfa'));

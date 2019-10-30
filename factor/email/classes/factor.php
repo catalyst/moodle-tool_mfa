@@ -32,9 +32,23 @@ use tool_mfa\local\factor\object_factor_base;
 class factor extends object_factor_base
 {
 
-    public function is_enabled()
-    {
+    public function is_enabled() {
         return false;
     }
 
+    public function define_factor_settings($mform) {
+
+        $mform->addElement('header', 'emailheader', get_string('settings:header', 'factor_email'));
+        $mform->setExpanded('emailheader');
+
+        $mform->addElement('text', 'emailweight', get_string('settings:weight', 'factor_email'));
+        $mform->addHelpButton('emailweight', 'settings:weight', 'factor_email');
+        $mform->setType("emailweight", PARAM_INT);
+
+        $mform->addElement('advcheckbox', 'emailenable', get_string('settings:enable', 'factor_email'));
+        $mform->addHelpButton('emailenable', 'settings:enable', 'factor_email');
+        $mform->setType("emailenable", PARAM_INT);
+        
+        return $mform;
+    }
 }

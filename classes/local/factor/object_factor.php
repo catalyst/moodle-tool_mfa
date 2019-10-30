@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 interface object_factor {
     public function is_enabled();
-    // TODO: Implement factor interface here.
+    public function define_factor_settings($mform);
 }
 
 
