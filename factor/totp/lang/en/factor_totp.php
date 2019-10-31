@@ -29,5 +29,7 @@ $string['settings:enable'] = 'Enable TOTP Factor';
 $string['settings:enable_help'] = 'TOTP Factor will be available for users to setup';
 $string['settings:weight'] = 'TOTP Factor weight';
 $string['settings:weight_help'] = 'Factor weight determines the result factor combinations';
+$string['settings:secretlength'] = 'TOTP secret key length';
+$string['settings:secretlength_help'] = 'Generated TOTP secret key string length';
 
 $string['privacy:metadata'] = 'The TOTP Factor plugin does not store any personal data';

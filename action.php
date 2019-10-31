@@ -53,13 +53,10 @@ $PAGE->set_pagelayout('standard');
 $PAGE->set_title(get_string($action.'factor', 'tool_mfa'));
 $PAGE->set_cacheable(false);
 
-$factorinstance = tool_mfa_get_factor_instance($factor);
-
 echo $OUTPUT->header();
 
 switch ($action) {
     case 'add':
-        echo $OUTPUT->heading(get_string('add').' '.$factorinstance->get_display_name());
         $OUTPUT = $PAGE->get_renderer('tool_mfa');
         $form = new add_factor_form(null, array('factorname' => $factor));
         $form->display();
@@ -67,15 +64,15 @@ switch ($action) {
         break;
 
     case 'remove':
-        echo $OUTPUT->heading(get_string('remove').' '.$factorinstance->get_display_name());
+        echo $OUTPUT->heading(get_string('remove'));
         break;
 
     case 'enable':
-        echo $OUTPUT->heading(get_string('enable').' '.$factorinstance->get_display_name());
+        echo $OUTPUT->heading(get_string('enable'));
         break;
 
     case 'disable':
-        echo $OUTPUT->heading(get_string('disable').' '.$factorinstance->get_display_name());
+        echo $OUTPUT->heading(get_string('disable'));
         break;
 
     default:

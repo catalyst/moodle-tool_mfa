@@ -59,4 +59,13 @@ abstract class object_factor_base implements object_factor {
         $weight = get_string('pluginname', 'factor_'.$this->name);
         return $weight;
     }
+
+    public function define_add_factor_form($mform) {
+        $mform->addElement('html', 'TBA');
+        return $mform;
+    }
+
+    public function validation($data) {
+        return array();
+    }
 }

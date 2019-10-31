@@ -61,10 +61,6 @@ function tool_mfa_get_factor_actions() {
     return $actions;
 }
 
-function tool_mfa_get_factor_instance($factorname) {
-    return \tool_mfa\plugininfo\factor::get_factor($factorname);
-}
-
 function tool_mfa_get_enabled_factors() {
     return \tool_mfa\plugininfo\factor::get_enabled_factors();
 }

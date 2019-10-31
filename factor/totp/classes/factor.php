@@ -46,24 +46,58 @@ class factor extends object_factor_base {
 
     public function validate($code) {
         // TODO: Get the secret from db for given user.
-        $secretcode = 'JBSWY3DPEHPK3PXP';
-
-        $hotp = TOTP::create($secretcode);
-        $otp = $hotp->now();
-
-        if ($code !== $otp) {
-            return false;
-        }
+//        $secretcode = 'JBSWY3DPEHPK3PXP';
+//
+//        $hotp = TOTP::create($secretcode);
+//        $otp = $hotp->now();
+//
+//        if ($code !== $otp) {
+//            return false;
+//        }
 
         return true;
     }
 
-    public function draw_qrcode() {
-        $secretcode = 'JBSWY3DPEHPK3PXP';
+    public function draw_qrcode($secretcode) {
         $code = 'otpauth://totp/Example:alice@google.com?secret='.$secretcode.'&issuer=Example';
         $barcode = new \TCPDF2DBarcode($code, 'QRCODE');
         $image = $barcode->getBarcodePngData(10, 10);
         $qr = \html_writer::img('data:image/png;base64,' . base64_encode($image),'');
         return $qr;
+    }
+
+    public function define_add_factor_form($mform) {
+
+        $secret = $this->generate_secret_code();
+        $mform->addElement('html', 'Secret: '.$secret.'<br>');
+
+        $qrcode = $this->draw_qrcode($secret);
+        $mform->addElement('html', $qrcode);
+
+        return $mform;
+    }
+
+    public function get_secret_length() {
+        $length = get_config('factor_totp', 'secret_length');
+        if ($length) {
+            return (int)$length;
+        }
+        return 8;
+    }
+
+    public function generate_secret_code() {
+        $length = $this->get_secret_length();
+        $hotp = TOTP::create();
+        $secret = substr($hotp->getSecret(), 0, $length);
+
+
+        return $secret;
+    }
+
+    public function validation($data) {
+
+        // TODO: Validate TOTP code here.
+
+        return array();
     }
 }

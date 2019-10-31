@@ -38,6 +38,22 @@ class add_factor_form extends \moodleform
         global $OUTPUT;
         $mform = $this->_form;
 
+        $factorname = $this->_customdata['factorname'];
+
+        $factor = $actions = \tool_mfa\plugininfo\factor::get_factor($factorname);
+
+        $mform = $factor->define_add_factor_form($mform);
+    }
+
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        $factorname = $this->_customdata['factorname'];
+        $factor = $actions = \tool_mfa\plugininfo\factor::get_factor($factorname);
+
+        $errors .=  $factor->validation($data);
+
+        return $errors;
     }
 
 }

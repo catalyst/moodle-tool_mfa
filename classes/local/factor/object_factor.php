@@ -31,4 +31,6 @@ interface object_factor {
     public function is_enabled();
     public function get_weight();
     public function get_display_name();
+    public function define_add_factor_form($mform);
+    public function validation($data);
 }
