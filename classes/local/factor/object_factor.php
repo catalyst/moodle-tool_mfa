@@ -29,7 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 
 interface object_factor {
     public function is_enabled();
-    public function define_factor_settings($mform);
+    public function get_weight();
+    public function get_display_name();
 }
-
-

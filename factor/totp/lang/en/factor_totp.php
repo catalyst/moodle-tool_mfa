@@ -25,7 +25,6 @@
 
 $string['pluginname'] = 'TOTP Factor';
 
-$string['settings:header'] = 'TOTP Factor settings';
 $string['settings:enable'] = 'Enable TOTP Factor';
 $string['settings:enable_help'] = 'TOTP Factor will be available for users to setup';
 $string['settings:weight'] = 'TOTP Factor weight';

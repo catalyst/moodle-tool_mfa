@@ -31,19 +31,4 @@ use tool_mfa\local\factor\object_factor_base;
 
 class factor extends object_factor_base {
 
-    public function define_factor_settings($mform) {
-
-        $mform->addElement('header', 'authheader', get_string('settings:header', 'factor_auth'));
-        $mform->setExpanded('authheader');
-
-        $mform->addElement('text', 'authweight', get_string('settings:weight', 'factor_auth'));
-        $mform->addHelpButton('authweight', 'settings:weight', 'factor_auth');
-        $mform->setType("authweight", PARAM_INT);
-
-        $mform->addElement('advcheckbox', 'authenable', get_string('settings:enable', 'factor_auth'));
-        $mform->addHelpButton('authenable', 'settings:enable', 'factor_auth');
-        $mform->setType("authenable", PARAM_INT);
-        
-        return $mform;
-    }
 }

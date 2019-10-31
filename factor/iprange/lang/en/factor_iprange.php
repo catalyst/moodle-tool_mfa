@@ -25,7 +25,6 @@
 
 $string['pluginname'] = 'IP Range Factor';
 
-$string['settings:header'] = 'IP Range Factor settings';
 $string['settings:enable'] = 'Enable IP Range Factor';
 $string['settings:enable_help'] = 'IP Range Factor will be available for users to setup';
 $string['settings:weight'] = 'IP Range Factor weight';

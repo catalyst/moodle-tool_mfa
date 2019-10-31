@@ -25,7 +25,6 @@
 
 $string['pluginname'] = 'E-Mail Factor';
 
-$string['settings:header'] = 'E-Mail Factor settings';
 $string['settings:enable'] = 'Enable E-Mail Factor';
 $string['settings:enable_help'] = 'E-Mail Factor will be available for users to setup';
 $string['settings:weight'] = 'E-Mail Factor weight';

@@ -25,7 +25,6 @@
 
 $string['pluginname'] = 'Auth Factor';
 
-$string['settings:header'] = 'Auth Factor settings';
 $string['settings:enable'] = 'Enable Auth Factor';
 $string['settings:enable_help'] = 'Auth Factor will be available for users to setup';
 $string['settings:weight'] = 'Auth Factor weight';

@@ -31,19 +31,4 @@ use tool_mfa\local\factor\object_factor_base;
 
 class factor extends object_factor_base {
 
-    public function define_factor_settings($mform) {
-
-        $mform->addElement('header', 'iprangeheader', get_string('settings:header', 'factor_iprange'));
-        $mform->setExpanded('iprangeheader');
-
-        $mform->addElement('text', 'iprangeweight', get_string('settings:weight', 'factor_iprange'));
-        $mform->addHelpButton('iprangeweight', 'settings:weight', 'factor_iprange');
-        $mform->setType("iprangeweight", PARAM_INT);
-
-        $mform->addElement('advcheckbox', 'iprangeenable', get_string('settings:enable', 'factor_iprange'));
-        $mform->addHelpButton('iprangeenable', 'settings:enable', 'factor_iprange');
-        $mform->setType("iprangeenable", PARAM_INT);
-
-        return $mform;
-    }
 }

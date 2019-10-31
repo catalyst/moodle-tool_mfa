@@ -44,22 +44,6 @@ use OTPHP\TOTP;
 
 class factor extends object_factor_base {
 
-    public function define_factor_settings($mform) {
-
-        $mform->addElement('header', 'totpheader', get_string('settings:header', 'factor_totp'));
-        $mform->setExpanded('totpheader');
-
-        $mform->addElement('text', 'totpweight', get_string('settings:weight', 'factor_totp'));
-        $mform->addHelpButton('totpweight', 'settings:weight', 'factor_totp');
-        $mform->setType("totpweight", PARAM_INT);
-
-        $mform->addElement('advcheckbox', 'totpenable', get_string('settings:enable', 'factor_totp'));
-        $mform->addHelpButton('totpenable', 'settings:enable', 'factor_totp');
-        $mform->setType("totpenable", PARAM_INT);
-
-        return $mform;
-    }
-
     public function validate($code) {
         // TODO: Get the secret from db for given user.
         $secretcode = 'JBSWY3DPEHPK3PXP';

@@ -37,15 +37,9 @@ $string['graceperiod'] = 'Grace period';
 $string['graceperiod_help'] = 'Period of time when users can access Moodle without configured and enabled factors';
 
 $string['factornotfound'] = 'MFA Factor \'{$a}\' not found';
-$string['settings:error:weight'] = 'Factor weight should be between 0 and 100';
-$string['settings:error:totalweight'] = 'Weight sum of all enabled factors should be more than 100';
 
-
-$string['totp:testpage'] = 'TOTP Test page';
 $string['totp:header'] = 'TOTP Check';
 $string['totp:verification_code'] = 'Enter verification code';
 $string['totp:verification_code_help'] = 'Enter verification code for confirmation';
-$string['totp:error:verification_code'] = 'Verification code is wrong';
-
 
 $string['privacy:metadata'] = 'Moodle MFA plugin does not store any personal data';
