@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * MFA configuration page.
+ * Configure user factor page
  *
  * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
@@ -22,17 +22,14 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 require_once(__DIR__ . '/../../../config.php');
-require_once(__DIR__ . '/lib.php');
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/tablelib.php');
 
-require_admin();
+use tool_mfa\local\form\add_factor_form;
 
-$returnurl = new moodle_url('/admin/settings.php', array('section'=>'managemfa'));
-
-$PAGE->set_url($returnurl);
+require_login(null, false);
+if (isguestuser()) {
+    throw new require_login_exception('Guests are not allowed here.');
+}
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $factor = optional_param('factor', '', PARAM_ALPHANUMEXT);
@@ -49,33 +46,40 @@ if (!confirm_sesskey()) {
     redirect($returnurl);
 }
 
-$enabledfactors = array();
-foreach (tool_mfa_get_enabled_factors() as $enabledfactor) {
-    $enabledfactors[] = $enabledfactor->name;
-}
+$context = context_user::instance($USER->id);
+$PAGE->set_context($context);
+$PAGE->set_url('/admin/tool/mfa/action.php');
+$PAGE->set_pagelayout('standard');
+$PAGE->set_title(get_string($action.'factor', 'tool_mfa'));
+$PAGE->set_cacheable(false);
 
+$factorinstance = tool_mfa_get_factor_instance($factor);
+
+echo $OUTPUT->header();
 
 switch ($action) {
-    case 'disable':
-        if (in_array($factor, $enabledfactors)) {
-            tool_mfa_set_factor_config(array('enabled'=>0), 'factor_'.$factor);
-        }
+    case 'add':
+        echo $OUTPUT->heading(get_string('add').' '.$factorinstance->get_display_name());
+        $OUTPUT = $PAGE->get_renderer('tool_mfa');
+        $form = new add_factor_form(null, array('factorname' => $factor));
+        $form->display();
 
-        \core\session\manager::gc(); // Remove stale sessions.
-        core_plugin_manager::reset_caches();
+        break;
+
+    case 'remove':
+        echo $OUTPUT->heading(get_string('remove').' '.$factorinstance->get_display_name());
         break;
 
     case 'enable':
-        if (!in_array($factor, $enabledfactors)) {
-            tool_mfa_set_factor_config(array('enabled'=>1), 'factor_'.$factor);
-        }
+        echo $OUTPUT->heading(get_string('enable').' '.$factorinstance->get_display_name());
+        break;
 
-        \core\session\manager::gc(); // Remove stale sessions.
-        core_plugin_manager::reset_caches();
+    case 'disable':
+        echo $OUTPUT->heading(get_string('disable').' '.$factorinstance->get_display_name());
         break;
 
     default:
         break;
 }
 
-redirect($returnurl);
+echo $OUTPUT->footer();

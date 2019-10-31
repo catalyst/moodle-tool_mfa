@@ -82,6 +82,16 @@ class factor extends \core\plugininfo\base {
         return $return;
     }
 
+    public static function get_factor_actions() {
+        $actions = array();
+        $actions[] = 'add';
+        $actions[] = 'remove';
+        $actions[] = 'enable';
+        $actions[] = 'disable';
+
+        return $actions;
+    }
+
     /**
      * Returns the information about plugin availability
      *

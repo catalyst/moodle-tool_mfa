@@ -56,6 +56,15 @@ function tool_mfa_factor_exists($factorname) {
     return false;
 }
 
+function tool_mfa_get_factor_actions() {
+    $actions = \tool_mfa\plugininfo\factor::get_factor_actions();
+    return $actions;
+}
+
+function tool_mfa_get_factor_instance($factorname) {
+    return \tool_mfa\plugininfo\factor::get_factor($factorname);
+}
+
 function tool_mfa_get_enabled_factors() {
     return \tool_mfa\plugininfo\factor::get_enabled_factors();
 }
@@ -69,8 +78,8 @@ function tool_mfa_extend_navigation_user_settings($navigation, $user, $userconte
         return null;
     }
 
-    $url = new moodle_url('/admin/tool/mfa/auth.php');
-    $node = navigation_node::create(get_string('pluginname', 'tool_mfa'), $url,
+    $url = new moodle_url('/admin/tool/mfa/user_preferences.php');
+    $node = navigation_node::create(get_string('preferences:header', 'tool_mfa'), $url,
         navigation_node::TYPE_SETTING);
     $usernode = $navigation->find('useraccount', navigation_node::TYPE_CONTAINER);
     $usernode->add_node($node);

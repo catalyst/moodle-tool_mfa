@@ -32,11 +32,21 @@ $string['name'] = 'Factor name';
 $string['enable'] = 'Enable';
 $string['weight'] = 'Weight';
 $string['settings'] = 'Settings';
+$string['action'] = 'Action';
+$string['addfactor'] = 'Add factor';
+$string['removefactor'] = 'Remove factor';
+$string['enablefactor'] = 'Enable factor';
+$string['disablefactor'] = 'Disable factor';
+
+$string['preferences:header'] = 'MFA preferences';
+$string['preferences:availablefactors'] = 'Available factors';
+$string['preferences:configuredfactors'] = 'Configured factors';
 
 $string['graceperiod'] = 'Grace period';
 $string['graceperiod_help'] = 'Period of time when users can access Moodle without configured and enabled factors';
 
 $string['factornotfound'] = 'MFA Factor \'{$a}\' not found';
+$string['actionnotfound'] = 'Action \'{$a}\' not supported';
 
 $string['totp:header'] = 'TOTP Check';
 $string['totp:verification_code'] = 'Enter verification code';
