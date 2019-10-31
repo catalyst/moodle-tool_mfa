@@ -33,11 +33,13 @@ $string['enable'] = 'Enable';
 $string['weight'] = 'Weight';
 $string['settings'] = 'Settings';
 
-$string['factornotfound'] = 'MFA Factor \'{$a}\' not found';
+$string['graceperiod'] = 'Grace period';
+$string['graceperiod_help'] = 'Period of time when users can access Moodle without configured and enabled factors';
 
+$string['factornotfound'] = 'MFA Factor \'{$a}\' not found';
 $string['settings:error:weight'] = 'Factor weight should be between 0 and 100';
 $string['settings:error:totalweight'] = 'Weight sum of all enabled factors should be more than 100';
-//$string['header'] = 'You don\'t have your 2FA configured. Please, scan this QR code and enter the code below for confirmation';
+
 
 $string['totp:testpage'] = 'TOTP Test page';
 $string['totp:header'] = 'TOTP Check';

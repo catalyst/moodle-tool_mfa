@@ -40,7 +40,7 @@ abstract class object_factor_base implements object_factor {
     }
 
     public function is_enabled() {
-        $status = get_config('tool_mfa', $this->name.'enable');
+        $status = get_config('factor_'.$this->name, 'enabled');
         if ($status == 1) {
             return true;
         }
@@ -48,12 +48,15 @@ abstract class object_factor_base implements object_factor {
     }
 
     public function get_weight() {
-        $weight = get_config('tool_mfa', $this->name.'weight');
-        return $weight;
+        $weight = get_config('factor_'.$this->name, 'weight');
+        if ($weight) {
+            return $weight;
+        }
+        return 0;
     }
 
     public function get_display_name() {
-        $weight = get_string('factorname', 'factor_'.$this->name);
+        $weight = get_string('pluginname', 'factor_'.$this->name);
         return $weight;
     }
 }

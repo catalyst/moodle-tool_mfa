@@ -23,8 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'MFA: TOTP Factor';
-$string['factorname'] = 'TOTP Factor';
+$string['pluginname'] = 'TOTP Factor';
 
 $string['settings:header'] = 'TOTP Factor settings';
 $string['settings:enable'] = 'Enable TOTP Factor';

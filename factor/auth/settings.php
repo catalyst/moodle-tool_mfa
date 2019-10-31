@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Language strings.
+ * Settings
  *
  * @package     factor_auth
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
@@ -23,12 +23,12 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Auth Factor';
+defined('MOODLE_INTERNAL') || die();
 
-$string['settings:header'] = 'Auth Factor settings';
-$string['settings:enable'] = 'Enable Auth Factor';
-$string['settings:enable_help'] = 'Auth Factor will be available for users to setup';
-$string['settings:weight'] = 'Auth Factor weight';
-$string['settings:weight_help'] = 'Factor weight determines the result factor combinations';
+$settings->add(new admin_setting_configcheckbox('factor_auth/enabled',
+    new lang_string('settings:enable', 'factor_auth'),
+    new lang_string('settings:enable_help', 'factor_auth'), 0));
 
-$string['privacy:metadata'] = 'The Auth Factor plugin does not store any personal data';
+$settings->add(new admin_setting_configtext('factor_auth/weight',
+    new lang_string('settings:weight', 'factor_auth'),
+    new lang_string('settings:weight_help', 'factor_auth'), 0, PARAM_INT));

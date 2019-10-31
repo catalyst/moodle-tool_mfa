@@ -54,7 +54,7 @@ foreach (tool_mfa_get_enabled_factors() as $enabledfactor) {
 switch ($action) {
     case 'disable':
         if (in_array($factor, $enabledfactors)) {
-            tool_mfa_set_config(array($factor.'enable'=>0));
+            tool_mfa_set_factor_config(array('enabled'=>0), 'factor_'.$factor);
         }
 
         \core\session\manager::gc(); // Remove stale sessions.
@@ -63,7 +63,7 @@ switch ($action) {
 
     case 'enable':
         if (!in_array($factor, $enabledfactors)) {
-            tool_mfa_set_config(array($factor.'enable'=>1));
+            tool_mfa_set_factor_config(array('enabled'=>1), 'factor_'.$factor);
         }
 
         \core\session\manager::gc(); // Remove stale sessions.
@@ -75,30 +75,3 @@ switch ($action) {
 }
 
 redirect($returnurl);
-
-//require_once(__DIR__ . '/../../../config.php');
-//require_once(__DIR__ . '/lib.php');
-//require_once($CFG->libdir.'/adminlib.php');
-//
-//use tool_mfa\local\form\settings_form;
-//
-////admin_externalpage_setup('tool_mfa_settings');
-//
-//$output = $PAGE->get_renderer('tool_mfa');
-//
-//$config = tool_mfa_get_config();
-//$form = new settings_form(null, array('config' => $config));
-//
-//if ($form->is_submitted()) {
-//    if ($data = $form->get_data()) {
-//        tool_mfa_set_config($data);
-//    }
-//}
-//
-//echo $output->header();
-//echo $output->heading(get_string('pluginname', 'tool_mfa'));
-//$form->display();
-//echo $output->footer();
-
-
-

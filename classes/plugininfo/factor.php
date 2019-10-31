@@ -31,7 +31,7 @@ class factor extends \core\plugininfo\base {
 
     /**
      * Finds all factors.
-     * @return array of factor subplugins
+     * @return array of factor subplugins.
      */
     public static function get_factors() {
         $return = array();
@@ -44,6 +44,25 @@ class factor extends \core\plugininfo\base {
             }
         }
         return $return;
+    }
+
+    /**
+     * Finds factor by its name.
+     * @return factor object or false if factor not found.
+     */
+    public static function get_factor($name) {
+        $factors = \core_plugin_manager::instance()->get_plugins_of_type('factor');
+
+        foreach ($factors as $factor) {
+            if ($name == $factor->name) {
+                $classname = '\\factor_'.$factor->name.'\\factor';
+                if (class_exists($classname)) {
+                    return new $classname($factor->name);
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -64,6 +83,35 @@ class factor extends \core\plugininfo\base {
     }
 
     /**
+     * Returns the information about plugin availability
+     *
+     * True means that the plugin is enabled. False means that the plugin is
+     * disabled. Null means that the information is not available, or the
+     * plugin does not support configurable availability or the availability
+     * can not be changed.
+     *
+     * @return null|bool
+     */
+    public function is_enabled() {
+        if (!$this->rootdir) {
+            // Plugin missing.
+            return false;
+        }
+
+        $factor = $this->get_factor($this->name);
+
+        if ($factor) {
+            return $factor->is_enabled();
+        }
+
+        return false;
+    }
+
+    public function get_settings_section_name() {
+        return $this->type . '_' . $this->name;
+    }
+
+    /**
      * Loads factor settings to the settings tree
      *
      * This function usually includes settings.php file in plugins folder.
@@ -74,9 +122,6 @@ class factor extends \core\plugininfo\base {
      * @param bool $hassiteconfig whether the current user has moodle/site:config capability
      */
     public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
-//        global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
-//        $ADMIN = $adminroot; // May be used in settings.php.
-//        $plugininfo = $this; // Also can be used inside settings.php.
 
         if (!$this->is_installed_and_upgraded()) {
             return;
@@ -94,6 +139,6 @@ class factor extends \core\plugininfo\base {
             include($this->full_path('settings.php'));
         }
 
-        $adminroot->add('tools', $settings);
+        $adminroot->add($parentnodename, $settings);
     }
 }

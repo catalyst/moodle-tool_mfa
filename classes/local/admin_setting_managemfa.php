@@ -82,7 +82,7 @@ class admin_setting_managemfa extends \admin_setting {
         $factors = \tool_mfa\plugininfo\factor::get_factors();
 
         foreach ($factors as $factor) {
-            $settings = "<a href=\"tool/mfa/factor/$factor->name/settings.php\">$txt->settings</a>";
+            $settings = "<a href=\"settings.php?section=factor_$factor->name\">$txt->settings</a>";
             $url = "tool\\mfa\\index.php?sesskey=" . sesskey();
 
             // hide/show link

@@ -23,8 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'MFA: IP Range Factor';
-$string['factorname'] = 'IP Range Factor';
+$string['pluginname'] = 'IP Range Factor';
 
 $string['settings:header'] = 'IP Range Factor settings';
 $string['settings:enable'] = 'Enable IP Range Factor';

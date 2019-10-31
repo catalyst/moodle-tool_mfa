@@ -27,16 +27,18 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
 
-    $externalpage = new admin_externalpage('tool_mfa_auth',
-        get_string('totp:testpage', 'tool_mfa'),
-        new moodle_url('/admin/tool/mfa/auth.php'));
-    $ADMIN->add('tools', $externalpage);
+    $ADMIN->add('tools', new admin_category('toolmfafolder', new lang_string('pluginname', 'tool_mfa'), false));
 
-    $managemfa = new admin_settingpage('managemfa', new lang_string('mfasettings', 'tool_mfa'));
-    $managemfa->add(new \tool_mfa\local\admin_setting_managemfa());
-    $ADMIN->add('tools', $managemfa);
+    $settings = new admin_settingpage('managemfa', new lang_string('mfasettings', 'tool_mfa'));
+    $settings->add(new \tool_mfa\local\admin_setting_managemfa());
+
+    $name = new lang_string('graceperiod', 'tool_mfa');
+    $description = new lang_string('graceperiod_help', 'tool_mfa');
+    $settings->add(new admin_setting_configduration('tool_mfa/graceperiod', $name, $description, '604800'));
+
+    $ADMIN->add('toolmfafolder', $settings);
 
     foreach (core_plugin_manager::instance()->get_plugins_of_type('factor') as $plugin) {
-        $plugin->load_settings($ADMIN, 'tool_mfa', $hassiteconfig);
+        $plugin->load_settings($ADMIN, 'toolmfafolder', $hassiteconfig);
     }
 }

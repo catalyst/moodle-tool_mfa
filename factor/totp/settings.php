@@ -25,3 +25,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$settings->add(new admin_setting_configcheckbox('factor_totp/enabled',
+    new lang_string('settings:enable', 'factor_totp'),
+    new lang_string('settings:enable_help', 'factor_totp'), 0));
+
+$settings->add(new admin_setting_configtext('factor_totp/weight',
+    new lang_string('settings:weight', 'factor_totp'),
+    new lang_string('settings:weight_help', 'factor_totp'), 0, PARAM_INT));

@@ -40,22 +40,10 @@ function tool_mfa_logout() {
     require_logout();
 }
 
-function tool_mfa_set_config($data) {
+function tool_mfa_set_factor_config($data, $factor) {
     foreach ($data as $key => $value) {
-        set_config($key, $value, 'tool_mfa');
+        set_config($key, $value, $factor);
     }
-}
-
-
-function tool_mfa_get_config() {
-    $config = new stdClass;
-    $storedconfig = get_config('tool_mfa');
-
-    foreach ($storedconfig as $key => $value) {
-        $config->$key = $value;
-    }
-
-    return $config;
 }
 
 function tool_mfa_factor_exists($factorname) {
