@@ -33,27 +33,32 @@ class add_factor_form extends \moodleform
      * {@inheritDoc}
      * @see moodleform::definition()
      */
-    public function definition()
-    {
+    public function definition() {
         global $OUTPUT;
         $mform = $this->_form;
 
         $factorname = $this->_customdata['factorname'];
+        $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
+        $mform = $factor->define_add_factor_form_definition($mform);
 
-        $factor = $actions = \tool_mfa\plugininfo\factor::get_factor($factorname);
-
-        $mform = $factor->define_add_factor_form($mform);
+        $this->add_action_buttons();
     }
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
         $factorname = $this->_customdata['factorname'];
-        $factor = $actions = \tool_mfa\plugininfo\factor::get_factor($factorname);
-
-        $errors .=  $factor->validation($data);
+        $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
+        $errors +=  $factor->validation($data);
 
         return $errors;
     }
 
+    function definition_after_data() {
+        $mform = $this->_form;
+
+        $factorname = $this->_customdata['factorname'];
+        $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
+        $mform = $factor->define_add_factor_form_definition_after_data($mform);
+    }
 }

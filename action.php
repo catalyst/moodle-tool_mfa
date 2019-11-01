@@ -33,16 +33,26 @@ if (isguestuser()) {
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $factor = optional_param('factor', '', PARAM_ALPHANUMEXT);
+$sesskey = optional_param('sesskey', '', PARAM_ALPHANUMEXT);
 
-if (empty($factor) || !tool_mfa_factor_exists($factor)) {
-    print_error('factornotfound', 'tool_mfa', $returnurl, $factor);
+$params = array('sesskey'=>$sesskey, 'action'=>$action, 'factor'=>$factor);
+$currenturl = new moodle_url('/admin/tool/mfa/action.php', $params);
+
+$returnurl = new moodle_url('/admin/tool/mfa/user_preferences.php');
+
+if (empty($factor) || empty($action)) {
+    print_error('error:directaccess', 'tool_mfa', $returnurl);
 }
 
-if (empty($action) || !in_array($action, tool_mfa_get_factor_actions())) {
-    print_error('actionnotfound', 'tool_mfa', $returnurl, $action);
+if (!tool_mfa_factor_exists($factor)) {
+    print_error('error:factornotfound', 'tool_mfa', $returnurl, $factor);
 }
 
-if (!confirm_sesskey()) {
+if (!in_array($action, tool_mfa_get_factor_actions())) {
+    print_error('error:actionnotfound', 'tool_mfa', $returnurl, $action);
+}
+
+if (!confirm_sesskey($sesskey)) {
     redirect($returnurl);
 }
 
@@ -53,25 +63,42 @@ $PAGE->set_pagelayout('standard');
 $PAGE->set_title(get_string($action.'factor', 'tool_mfa'));
 $PAGE->set_cacheable(false);
 
-echo $OUTPUT->header();
-
 switch ($action) {
     case 'add':
         $OUTPUT = $PAGE->get_renderer('tool_mfa');
-        $form = new add_factor_form(null, array('factorname' => $factor));
+        $form = new add_factor_form($currenturl, array('factorname' => $factor));
+
+        if ($form->is_cancelled()) {
+            redirect($returnurl);
+        }
+
+        if ($form->is_submitted()) {
+            if ($data = $form->get_data()) {
+                $factor = \tool_mfa\plugininfo\factor::get_factor($factor);
+                if ($factor->add_user_factor($data)) {
+                    redirect($returnurl);
+                } else {
+                    print_error('error:addfactor', 'tool_mfa', $returnurl, $action);
+                }
+            }
+        }
+        echo $OUTPUT->header();
         $form->display();
 
         break;
 
     case 'remove':
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('remove'));
         break;
 
     case 'enable':
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('enable'));
         break;
 
     case 'disable':
+        echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('disable'));
         break;
 

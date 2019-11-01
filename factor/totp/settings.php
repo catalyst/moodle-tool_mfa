@@ -35,5 +35,5 @@ $settings->add(new admin_setting_configtext('factor_totp/weight',
 
 $settings->add(new admin_setting_configtext('factor_totp/secret_length',
     new lang_string('settings:secretlength', 'factor_totp'),
-    new lang_string('settings:secretlength_help', 'factor_totp'), 8, PARAM_INT));
-// TODO: Add validation for secret_length to be < 64
+    new lang_string('settings:secretlength_help', 'factor_totp'), 16, PARAM_INT));
+// TODO: Add validation for secret_length to be between 4 and 64.

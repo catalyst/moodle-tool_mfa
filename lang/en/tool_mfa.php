@@ -45,11 +45,9 @@ $string['preferences:configuredfactors'] = 'Configured factors';
 $string['graceperiod'] = 'Grace period';
 $string['graceperiod_help'] = 'Period of time when users can access Moodle without configured and enabled factors';
 
-$string['factornotfound'] = 'MFA Factor \'{$a}\' not found';
-$string['actionnotfound'] = 'Action \'{$a}\' not supported';
-
-$string['totp:header'] = 'TOTP Check';
-$string['totp:verification_code'] = 'Enter verification code';
-$string['totp:verification_code_help'] = 'Enter verification code for confirmation';
+$string['error:directaccess'] = 'This page shouldn\'t be accessed directly';
+$string['error:factornotfound'] = 'MFA Factor \'{$a}\' not found';
+$string['error:actionnotfound'] = 'Action \'{$a}\' not supported';
+$string['error:addfactor'] = 'Can not add factor';
 
 $string['privacy:metadata'] = 'Moodle MFA plugin does not store any personal data';

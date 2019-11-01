@@ -60,12 +60,20 @@ abstract class object_factor_base implements object_factor {
         return $weight;
     }
 
-    public function define_add_factor_form($mform) {
+    public function define_add_factor_form_definition($mform) {
         $mform->addElement('html', 'TBA');
+        return $mform;
+    }
+
+    public function define_add_factor_form_definition_after_data($mform) {
         return $mform;
     }
 
     public function validation($data) {
         return array();
+    }
+
+    public function add_user_factor($data) {
+        return false;
     }
 }

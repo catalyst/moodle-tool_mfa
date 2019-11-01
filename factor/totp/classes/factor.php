@@ -59,20 +59,29 @@ class factor extends object_factor_base {
     }
 
     public function draw_qrcode($secretcode) {
-        $code = 'otpauth://totp/Example:alice@google.com?secret='.$secretcode.'&issuer=Example';
+        $code = 'otpauth://totp/Example:alice@google.com?secret='.$secretcode.'&issuer=Example&algorithm=SHA1&&period=30';
         $barcode = new \TCPDF2DBarcode($code, 'QRCODE');
         $image = $barcode->getBarcodePngData(10, 10);
         $qr = \html_writer::img('data:image/png;base64,' . base64_encode($image),'');
         return $qr;
     }
 
-    public function define_add_factor_form($mform) {
+    public function define_add_factor_form_definition($mform) {
+        global $OUTPUT;
+
+        $mform->addElement('html', $OUTPUT->heading('Adding TOTP Factor', 3));
+        //$mform->addElement('html', $OUTPUT->box(''));
 
         $secret = $this->generate_secret_code();
-        $mform->addElement('html', 'Secret: '.$secret.'<br>');
+        $mform->addElement('hidden', 'secret', $secret);
+        $mform->setType('secret', PARAM_ALPHANUM);
 
-        $qrcode = $this->draw_qrcode($secret);
-        $mform->addElement('html', $qrcode);
+        $mform->addElement('text', 'verificationcode', get_string('addfactor:verificationcode', 'factor_totp'));
+        $mform->addHelpButton('verificationcode', 'addfactor:verificationcode', 'factor_totp');
+        $mform->setType("verificationcode", PARAM_INT);
+        $mform->addRule('verificationcode', get_string('required'), 'required', null, 'client');
+
+
 
         return $mform;
     }
@@ -95,9 +104,45 @@ class factor extends object_factor_base {
     }
 
     public function validation($data) {
+        $errors = array();
 
-        // TODO: Validate TOTP code here.
+        if (empty($data['verificationcode'])) {
+            $errors['verificationcode'] = get_string('error:wrongverification', 'factor_totp');
+            return $errors;
+        }
 
-        return array();
+        $totp = TOTP::create($data['secret']);
+        if ($data['verificationcode'] != $totp->now()) {
+            $errors['verificationcode'] = get_string('error:wrongverification', 'factor_totp');
+        }
+
+        return $errors;
+    }
+
+    public function add_user_factor($data) {
+
+        // TODO: add factor data to db here and return true.
+        return true;
+    }
+
+    public function define_add_factor_form_definition_after_data($mform) {
+        global $OUTPUT;
+        $secretfield = $mform->getElement('secret');
+
+        if (!empty($secretfield)) {
+            $secret = $secretfield->getValue();
+            $qrcode = $this->draw_qrcode($secret);
+
+            $mform->addElement('html', $OUTPUT->heading('Scan QR-Code or enter a key to your Google Authenticator:', 5));
+            $mform->addElement('html', $OUTPUT->heading($this->get_secret_length().'-digit key: '.$secret, 5));
+            $mform->addElement('html', $qrcode);
+            $mform->addElement('html', $OUTPUT->box(''));
+
+            $hotp = TOTP::create($secret);
+            $otp = $hotp->now();
+            $mform->addElement('html', $OUTPUT->heading('HINT! Verification code: '.$otp, 5));
+        }
+
+        return $mform;
     }
 }
