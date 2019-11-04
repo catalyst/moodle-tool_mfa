@@ -80,4 +80,12 @@ abstract class object_factor_base implements object_factor {
     public function get_user_factors($user) {
         return false;
     }
+
+    public function verify($data) {
+        return true;
+    }
+
+    public function define_login_form($mform) {
+        return $mform;
+    }
 }

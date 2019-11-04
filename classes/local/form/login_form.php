@@ -38,13 +38,10 @@ class login_form extends \moodleform
         global $OUTPUT;
         $mform = $this->_form;
 
-        // TODO: Get the list of enabled and configured factors.
-
-        // TOTP Factor.
-        $mform->addElement('html', $OUTPUT->heading(get_string('totp:header', 'tool_mfa'), 5));
-        $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'tool_mfa'));
-        $mform->addHelpButton('verificationcode', 'verificationcode', 'tool_mfa');
-        $mform->setType("verificationcode", PARAM_ALPHANUM);
+        $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+        foreach ($factors as $factor) {
+            $mform = $factor->define_login_form($mform);
+        }
 
         $this->add_action_buttons();
     }
@@ -54,7 +51,7 @@ class login_form extends \moodleform
 
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
         foreach ($factors as $factor) {
-            $errors += $factor->validate($data);
+            $errors += $factor->verify($data);
         }
 
         return $errors;

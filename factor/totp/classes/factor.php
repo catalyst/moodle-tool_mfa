@@ -46,24 +46,19 @@ use OTPHP\TOTP;
 
 class factor extends object_factor_base {
 
-    public function validate($data) {
+    public function verify($data) {
         global $USER;
-
-
         $factors = $this->get_user_factors($USER->id);
 
         foreach ($factors as $factor) {
             if ($factor->disabled == 0) {
-
                 $secret = $factor->secret;
-
                 $hotp = TOTP::create($secret);
                 $otp = $hotp->now();
 
                 if ($data['verificationcode'] !== $otp) {
-                    return array('verificationcode' => 'Her tebe');
+                    return array('verificationcode' => 'Wrong verification code');
                 }
-
             }
         }
         return array();
@@ -82,7 +77,6 @@ class factor extends object_factor_base {
         global $OUTPUT;
 
         $mform->addElement('html', $OUTPUT->heading('Adding TOTP Factor', 3));
-        //$mform->addElement('html', $OUTPUT->box(''));
 
         $secret = $this->generate_secret_code();
         $mform->addElement('hidden', 'secret', $secret);
@@ -93,7 +87,20 @@ class factor extends object_factor_base {
         $mform->setType("verificationcode", PARAM_INT);
         $mform->addRule('verificationcode', get_string('required'), 'required', null, 'client');
 
+        return $mform;
+    }
 
+    public function define_login_form($mform) {
+        global $OUTPUT, $USER;
+        $userfactors = $this->get_user_factors($USER->id);
+
+        foreach ($userfactors as $userfactor) {
+            if ($userfactor->disabled != 1) {
+                $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'));
+                $mform->addRule('verificationcode', get_string('required'), 'required', null, 'client');
+                $mform->setType("verificationcode", PARAM_ALPHANUM);
+            }
+        }
 
         return $mform;
     }
@@ -107,12 +114,9 @@ class factor extends object_factor_base {
     }
 
     public function generate_secret_code() {
-        $length = $this->get_secret_length();
         $hotp = TOTP::create();
-        $secret = substr($hotp->getSecret(), 0, $length);
-
-
-        return $secret;
+        $length = $this->get_secret_length();
+        return substr($hotp->getSecret(), 0, $length);
     }
 
     public function validation($data) {
