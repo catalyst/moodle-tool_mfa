@@ -85,9 +85,10 @@ class factor extends \core\plugininfo\base {
     public static function get_factor_actions() {
         $actions = array();
         $actions[] = 'add';
-        $actions[] = 'remove';
+        $actions[] = 'delete';
         $actions[] = 'enable';
         $actions[] = 'disable';
+        $actions[] = 'edit';
 
         return $actions;
     }

@@ -42,18 +42,20 @@ class login_form extends \moodleform
 
         // TOTP Factor.
         $mform->addElement('html', $OUTPUT->heading(get_string('totp:header', 'tool_mfa'), 5));
-        $mform->addElement('text', 'totp_verification_code', get_string('totp:verification_code', 'tool_mfa'));
-        $mform->addHelpButton('totp_verification_code', 'totp:verification_code', 'tool_mfa');
-        $mform->setType("totp_verification_code", PARAM_ALPHANUM);
+        $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'tool_mfa'));
+        $mform->addHelpButton('verificationcode', 'verificationcode', 'tool_mfa');
+        $mform->setType("verificationcode", PARAM_ALPHANUM);
 
         $this->add_action_buttons();
     }
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        $code = $data['totp_verification_code'];
 
-        // TODO: Implement MFA validation for given user here
+        $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+        foreach ($factors as $factor) {
+            $errors += $factor->validate($data);
+        }
 
         return $errors;
     }

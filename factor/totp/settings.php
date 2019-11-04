@@ -18,6 +18,7 @@
  * Settings
  *
  * @package     factor_totp
+ * @subpackage  tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

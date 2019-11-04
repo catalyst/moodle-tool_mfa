@@ -53,6 +53,5 @@ $OUTPUT = $PAGE->get_renderer('tool_mfa');
 $form = new preferences_form();
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('preferences:header', 'tool_mfa'));
 $form->display();
 echo $OUTPUT->footer();

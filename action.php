@@ -74,8 +74,8 @@ switch ($action) {
 
         if ($form->is_submitted()) {
             if ($data = $form->get_data()) {
-                $factor = \tool_mfa\plugininfo\factor::get_factor($factor);
-                if ($factor->add_user_factor($data)) {
+                $factorobject = \tool_mfa\plugininfo\factor::get_factor($factor);
+                if ($factorobject && $factorobject->add_user_factor($data)) {
                     redirect($returnurl);
                 } else {
                     print_error('error:addfactor', 'tool_mfa', $returnurl, $action);
@@ -87,19 +87,28 @@ switch ($action) {
 
         break;
 
-    case 'remove':
+    case 'delete':
         echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string('remove'));
+        echo $OUTPUT->heading(get_string('delete'));
+        echo $OUTPUT->heading('TBA');
+        break;
+
+    case 'edit':
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('edit'));
+        echo $OUTPUT->heading('TBA');
         break;
 
     case 'enable':
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('enable'));
+        echo $OUTPUT->heading('TBA');
         break;
 
     case 'disable':
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('disable'));
+        echo $OUTPUT->heading('TBA');
         break;
 
     default:

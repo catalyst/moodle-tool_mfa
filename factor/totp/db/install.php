@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Language strings.
+ * TOTP factor install script.
  *
  * @package     factor_totp
  * @subpackage  tool_mfa
@@ -24,17 +24,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'TOTP Factor';
+defined('MOODLE_INTERNAL') || die;
 
-$string['settings:enable'] = 'Enable TOTP Factor';
-$string['settings:enable_help'] = 'TOTP Factor will be available for users to setup';
-$string['settings:weight'] = 'TOTP Factor weight';
-$string['settings:weight_help'] = 'Factor weight determines the result factor combinations';
-$string['settings:secretlength'] = 'TOTP secret key length';
-$string['settings:secretlength_help'] = 'Generated TOTP secret key string length';
-$string['verificationcode'] = 'Enter 6-digit verification code for confirmation';
-$string['verificationcode_help'] = 'Code validation is necessary to confirm you stored your secret key with GA app';
-
-$string['error:wrongverification'] = 'Incorrect verification code';
-
-$string['privacy:metadata'] = 'The TOTP Factor plugin does not store any personal data';
+function xmldb_factor_totp_install() {
+    return true;
+}

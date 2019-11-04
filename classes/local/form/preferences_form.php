@@ -43,10 +43,55 @@ class preferences_form extends \moodleform
     }
 
     public function define_configured_factors($mform) {
-        global $OUTPUT;
+        global $OUTPUT, $USER;
 
         $mform->addElement('html', $OUTPUT->heading(get_string('preferences:configuredfactors', 'tool_mfa'), 4));
-        $mform->addElement('html', $OUTPUT->heading('TBA', 5));
+
+
+        $headers = get_strings(array('name', 'weight', 'created', 'modified', 'enable','edit', 'delete'), 'tool_mfa');
+
+        $table = new \html_table();
+        $table->id = 'configured_factors';
+        $table->attributes['class'] = 'generaltable';
+        $table->head  = array($headers->name, $headers->weight, $headers->created, $headers->modified, $headers->enable, $headers->edit, $headers->delete);
+        $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
+        $table->data  = array();
+
+        $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+
+        foreach ($factors as $factor) {
+
+            $userfactors = $factor->get_user_factors($USER->id);
+
+            foreach ($userfactors as $userfactor) {
+                $url = "action.php?sesskey=" . sesskey();
+                $edit = "<a href=\"action.php?sesskey=".sesskey()."&amp;action=edit&amp;factor=$factor->name&amp;factorid=$userfactor->id\">$headers->edit</a>";
+                $delete = "<a href=\"action.php?sesskey=".sesskey()."&amp;action=delete&amp;factor=$factor->name&amp;factorid=$userfactor->id\">$headers->delete</a>";
+
+                if ($userfactor->disabled == 1) {
+                    $hideshow = "<a href=\"$url&amp;action=enable&amp;factor=$factor->name&amp;factorid=$userfactor->id\">";
+                    $hideshow .= $OUTPUT->pix_icon('t/show', get_string('enable')) . '</a>';
+                    $class = 'dimmed_text';
+                } else {
+                    $hideshow = "<a href=\"$url&amp;action=disable&amp;factor=$factor->name&amp;factorid=$userfactor->id\">";
+                    $hideshow .= $OUTPUT->pix_icon('t/hide', get_string('disable')) . '</a>';
+                    $class = '';
+                }
+
+                $timecreated = userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
+                $timemodified = userdate($userfactor->timemodified, '%l:%M %p %d/%m/%Y');
+
+                $row = new \html_table_row(array($factor->get_display_name(), $factor->get_weight(), $timecreated, $timemodified, $hideshow, $edit, $delete));
+                $row->attributes['class'] = $class;
+                $table->data[] = $row;
+            }
+        }
+
+        $return = $OUTPUT->box_start('generalbox');
+        $return .= \html_writer::table($table);
+        $return .= $OUTPUT->box_end();
+
+        $mform->addElement('html', $return);
 
         return $mform;
     }

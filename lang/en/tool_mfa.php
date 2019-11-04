@@ -33,8 +33,13 @@ $string['enable'] = 'Enable';
 $string['weight'] = 'Weight';
 $string['settings'] = 'Settings';
 $string['action'] = 'Action';
+$string['edit'] = 'Edit';
+$string['delete'] = 'Delete';
+$string['created'] = 'Created';
+$string['modified'] = 'Modified';
 $string['addfactor'] = 'Add factor';
-$string['removefactor'] = 'Remove factor';
+$string['deletefactor'] = 'Delete factor';
+$string['editfactor'] = 'Edit factor';
 $string['enablefactor'] = 'Enable factor';
 $string['disablefactor'] = 'Disable factor';
 
