@@ -61,7 +61,7 @@ class preferences_form extends \moodleform
 
         foreach ($factors as $factor) {
 
-            $userfactors = $factor->get_user_factors($USER->id);
+            $userfactors = $factor->get_all_user_factors($USER->id);
 
             foreach ($userfactors as $userfactor) {
                 $url = "action.php?sesskey=" . sesskey();

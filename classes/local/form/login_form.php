@@ -35,15 +35,34 @@ class login_form extends \moodleform
      */
     public function definition()
     {
-        global $OUTPUT;
+        global $USER;
         $mform = $this->_form;
 
-        $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
-        foreach ($factors as $factor) {
-            $mform = $factor->define_login_form($mform);
-        }
+        $userfactors = \tool_mfa\plugininfo\factor::get_enabled_user_factors($USER->id);
 
-        $this->add_action_buttons();
+        if (count($userfactors) == 0) {
+            $mform = $this->define_grace_period_page($mform);
+        } else {
+            $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+            foreach ($factors as $factor) {
+                $mform = $factor->define_login_form($mform);
+            }
+
+            $this->add_action_buttons();
+        }
+    }
+
+    public function define_grace_period_page($mform) {
+        global $OUTPUT;
+
+        $mform->addElement('html', $OUTPUT->heading(get_string('graceperiod:notconfigured', 'tool_mfa'), 3));
+        $mform->addElement('html', $OUTPUT->heading(get_string('graceperiod:canaccess', 'tool_mfa'), 5));
+
+        // TODO: get grace period expiration date
+        $mform->addElement('html', $OUTPUT->heading(get_string('graceperiod:expires', 'tool_mfa', time()), 5));
+        $this->add_action_buttons(false, get_string('ok'));
+
+        return $mform;
     }
 
     public function validation($data, $files) {

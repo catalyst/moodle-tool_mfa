@@ -82,6 +82,26 @@ class factor extends \core\plugininfo\base {
         return $return;
     }
 
+    /**
+     * Finds enabled factors for user by userid.
+     *
+     * @param string $parentnodename
+     * @return array of factor subplugins
+     */
+    public static function get_enabled_user_factors($userid) {
+        $return = array();
+        $factors = self::get_enabled_factors();
+
+        foreach ($factors as $factor) {
+            $userfactors = $factor->get_enabled_user_factors($userid);
+            if ($userfactors) {
+                $return[$factor->name] = $userfactors;
+            }
+        }
+
+        return $return;
+    }
+
     public static function get_factor_actions() {
         $actions = array();
         $actions[] = 'add';

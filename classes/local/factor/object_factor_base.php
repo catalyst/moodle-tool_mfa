@@ -77,8 +77,12 @@ abstract class object_factor_base implements object_factor {
         return false;
     }
 
-    public function get_user_factors($user) {
-        return false;
+    public function get_all_user_factors($user) {
+        return array();
+    }
+
+    public function get_enabled_user_factors($user) {
+        return array();
     }
 
     public function verify($data) {

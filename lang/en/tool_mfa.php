@@ -49,6 +49,9 @@ $string['preferences:configuredfactors'] = 'Configured factors';
 
 $string['graceperiod'] = 'Grace period';
 $string['graceperiod_help'] = 'Period of time when users can access Moodle without configured and enabled factors';
+$string['graceperiod:notconfigured'] = 'You haven\'t configured your MFA plugin factors';
+$string['graceperiod:canaccess'] = 'You still can access Moodle until your grace period is expired';
+$string['graceperiod:expires'] = 'Grace period expires \'{$a}\'';
 
 $string['error:directaccess'] = 'This page shouldn\'t be accessed directly';
 $string['error:factornotfound'] = 'MFA Factor \'{$a}\' not found';

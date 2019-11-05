@@ -48,7 +48,7 @@ class factor extends object_factor_base {
 
     public function verify($data) {
         global $USER;
-        $factors = $this->get_user_factors($USER->id);
+        $factors = $this->get_all_user_factors($USER->id);
 
         foreach ($factors as $factor) {
             if ($factor->disabled == 0) {
@@ -92,7 +92,7 @@ class factor extends object_factor_base {
 
     public function define_login_form($mform) {
         global $OUTPUT, $USER;
-        $userfactors = $this->get_user_factors($USER->id);
+        $userfactors = $this->get_all_user_factors($USER->id);
 
         foreach ($userfactors as $userfactor) {
             if ($userfactor->disabled != 1) {
@@ -153,7 +153,7 @@ class factor extends object_factor_base {
         return false;
     }
 
-    public function get_user_factors($user) {
+    public function get_all_user_factors($user) {
         global $DB;
         $sql = "SELECT id, secret, timecreated, timemodified, disabled
                   FROM {tool_mfa_factor_totp}
@@ -161,6 +161,17 @@ class factor extends object_factor_base {
               ORDER BY disabled, timemodified";
 
         return $DB->get_records_sql($sql, array($user));
+    }
+
+    public function get_enabled_user_factors($user) {
+        $return = array();
+        $factors = $this->get_all_user_factors($user);
+        foreach ($factors as $factor) {
+            if ($factor->disabled == 0) {
+                $return[] = $factor;
+            }
+        }
+        return $return;
     }
 
     public function define_add_factor_form_definition_after_data($mform) {
