@@ -48,17 +48,15 @@ class factor extends object_factor_base {
 
     public function verify($data) {
         global $USER;
-        $factors = $this->get_all_user_factors($USER->id);
+        $factors = $this->get_enabled_user_factors($USER->id);
 
         foreach ($factors as $factor) {
-            if ($factor->disabled == 0) {
-                $secret = $factor->secret;
-                $hotp = TOTP::create($secret);
-                $otp = $hotp->now();
+            $secret = $factor->secret;
+            $hotp = TOTP::create($secret);
+            $otp = $hotp->now();
 
-                if ($data['verificationcode'] !== $otp) {
-                    return array('verificationcode' => 'Wrong verification code');
-                }
+            if ($data['verificationcode'] !== $otp) {
+                return array('verificationcode' => 'Wrong verification code');
             }
         }
         return array();
@@ -92,14 +90,12 @@ class factor extends object_factor_base {
 
     public function define_login_form($mform) {
         global $OUTPUT, $USER;
-        $userfactors = $this->get_all_user_factors($USER->id);
+        $userfactors = $this->get_enabled_user_factors($USER->id);
 
         foreach ($userfactors as $userfactor) {
-            if ($userfactor->disabled != 1) {
-                $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'));
-                $mform->addRule('verificationcode', get_string('required'), 'required', null, 'client');
-                $mform->setType("verificationcode", PARAM_ALPHANUM);
-            }
+            $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'));
+            $mform->addRule('verificationcode', get_string('required'), 'required', null, 'client');
+            $mform->setType("verificationcode", PARAM_ALPHANUM);
         }
 
         return $mform;
@@ -160,7 +156,8 @@ class factor extends object_factor_base {
                  WHERE userid = ?
               ORDER BY disabled, timemodified";
 
-        return $DB->get_records_sql($sql, array($user));
+        $return = $DB->get_records_sql($sql, array($user));
+        return $return;
     }
 
     public function get_enabled_user_factors($user) {
