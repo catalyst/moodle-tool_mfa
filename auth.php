@@ -50,7 +50,8 @@ $currenturl = new moodle_url('/admin/tool/mfa/auth.php', $params);
 $userfactors = \tool_mfa\plugininfo\factor::get_enabled_user_factor_types($USER->id);
 
 if (count($userfactors) > 0) {
-    $factorname = \tool_mfa\plugininfo\factor::get_next_user_factor($USER->id);
+    $nextfactor = \tool_mfa\plugininfo\factor::get_next_user_factor($USER->id);
+    $factorname = $nextfactor->name;
 } else {
     $factorname = 'grace';
 }
@@ -67,9 +68,7 @@ if ($form->is_submitted()) {
         $property = 'factor_'.$factorname.'_authenticated';
         $USER->$property = true;
 
-        $nextfactor = \tool_mfa\plugininfo\factor::get_next_user_factor($USER->id);
-
-        if ($nextfactor) {
+        if (\tool_mfa\plugininfo\factor::get_next_user_factor($USER->id)) {
             redirect($currenturl);
         } else {
             $USER->tool_mfa_authenticated = true;

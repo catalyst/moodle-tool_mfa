@@ -106,7 +106,7 @@ class factor extends \core\plugininfo\base {
      * Gets next factor to authenticate user.
      *
      * @param int $userid user id.
-     * @return string name of the next factor to be authenticated.
+     * @return mixed factor object the next factor to be authenticated or false.
      */
     public static function get_next_user_factor($userid) {
         global $USER;
@@ -117,7 +117,7 @@ class factor extends \core\plugininfo\base {
             foreach ($userfactors as $userfactor) {
                 $property = 'factor_'.$userfactor->name.'_authenticated';
                 if (empty($USER->$property) || true !== $USER->$property) {
-                    return $userfactor->name;
+                    return $userfactor;
                 }
             }
         }
