@@ -24,7 +24,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 function tool_mfa_after_require_login() {
-    if (empty($_SESSION['USER']->tool_mfa_authenticated) || true !== $_SESSION['USER']->tool_mfa_authenticated) {
+    global $USER;
+    if (empty($USER->tool_mfa_authenticated) || true !== $USER->tool_mfa_authenticated) {
         if ($GLOBALS['ME'] != '/admin/tool/mfa/auth.php') {
             //$wantsurl = qualified_me();
             $params = array('wantsurl' => $GLOBALS['ME']);

@@ -109,13 +109,14 @@ class factor extends \core\plugininfo\base {
      * @return string name of the next factor to be authenticated.
      */
     public static function get_next_user_factor($userid) {
+        global $USER;
         $factors = self::get_enabled_factors();
 
         foreach ($factors as $factor) {
             $userfactor = $factor->get_enabled_user_factor($userid);
             if ($userfactor) {
                 $property = 'factor_'.$userfactor->name.'_authenticated';
-                if (empty($_SESSION['USER']->$property) || true !== $_SESSION['USER']->$property) {
+                if (empty($USER->$property) || true !== $USER->$property) {
                     return $userfactor->name;
                 }
             }

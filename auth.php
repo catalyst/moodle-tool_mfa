@@ -65,14 +65,14 @@ if ($form->is_cancelled()) {
 if ($form->is_submitted()) {
     if ($data = $form->get_data()) {
         $property = 'factor_'.$factorname.'_authenticated';
-        $_SESSION['USER']->$property = true;
+        $USER->$property = true;
 
         $nextfactor = \tool_mfa\plugininfo\factor::get_next_user_factor($USER->id);
 
         if ($nextfactor) {
             redirect($currenturl);
         } else {
-            $_SESSION['USER']->tool_mfa_authenticated = true;
+            $USER->tool_mfa_authenticated = true;
             redirect(new moodle_url($wantsurl));
         }
     }
