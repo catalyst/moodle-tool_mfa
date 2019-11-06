@@ -48,15 +48,17 @@ class factor extends object_factor_base {
 
     public function verify($data) {
         global $USER;
-        $factor = $this->get_enabled_user_factor($USER->id);
+        $factors = $this->get_enabled_user_factors($USER->id);
 
-        if ($factor) {
-            $secret = $factor->secret;
-            $hotp = TOTP::create($secret);
-            $otp = $hotp->now();
+        foreach ($factors as $factor) {
+            if ($factor) {
+                $secret = $factor->secret;
+                $hotp = TOTP::create($secret);
+                $otp = $hotp->now();
 
-            if ($data['verificationcode'] !== $otp) {
-                return array('verificationcode' => 'Wrong verification code');
+                if ($data['verificationcode'] !== $otp) {
+                    return array('verificationcode' => 'Wrong verification code');
+                }
             }
         }
         return array();
@@ -64,7 +66,7 @@ class factor extends object_factor_base {
 
     public function draw_qrcode($secretcode) {
         global $USER;
-        $code = 'otpauth://totp/'.$USER->username.':'.$USER->email.'?secret='.$secretcode.'&issuer=Moodle&algorithm=SHA1&&period=30';
+        $code = 'otpauth://totp/'.$USER->username.'_2:'.$USER->email.'?secret='.$secretcode.'&issuer=Moodle&algorithm=SHA1&&period=30';
         $barcode = new \TCPDF2DBarcode($code, 'QRCODE');
         $image = $barcode->getBarcodePngData(10, 10);
         $qr = \html_writer::img('data:image/png;base64,' . base64_encode($image),'');
@@ -90,9 +92,9 @@ class factor extends object_factor_base {
 
     public function define_login_form($mform) {
         global $USER;
-        $userfactor = $this->get_enabled_user_factor($USER->id);
+        $userfactors = $this->get_enabled_user_factors($USER->id);
 
-        if ($userfactor) {
+        if (count($userfactors) > 0) {
             $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'));
             $mform->addRule('verificationcode', get_string('required'), 'required', null, 'client');
             $mform->setType("verificationcode", PARAM_ALPHANUM);

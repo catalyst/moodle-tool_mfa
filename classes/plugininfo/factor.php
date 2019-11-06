@@ -93,9 +93,9 @@ class factor extends \core\plugininfo\base {
         $factors = self::get_enabled_factors();
 
         foreach ($factors as $factor) {
-            $userfactors = $factor->get_enabled_user_factor($userid);
-            if ($userfactors) {
-                $return[$factor->name] = $userfactors;
+            $userfactors = $factor->get_enabled_user_factors($userid);
+            foreach ($userfactors as $userfactor) {
+                $return[$factor->name] = $userfactor;
             }
         }
 
@@ -113,8 +113,8 @@ class factor extends \core\plugininfo\base {
         $factors = self::get_enabled_factors();
 
         foreach ($factors as $factor) {
-            $userfactor = $factor->get_enabled_user_factor($userid);
-            if ($userfactor) {
+            $userfactors = $factor->get_enabled_user_factors($userid);
+            foreach ($userfactors as $userfactor) {
                 $property = 'factor_'.$userfactor->name.'_authenticated';
                 if (empty($USER->$property) || true !== $USER->$property) {
                     return $userfactor->name;
