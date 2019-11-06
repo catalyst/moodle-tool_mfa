@@ -48,9 +48,9 @@ class factor extends object_factor_base {
 
     public function verify($data) {
         global $USER;
-        $factors = $this->get_enabled_user_factors($USER->id);
+        $factor = $this->get_enabled_user_factor($USER->id);
 
-        foreach ($factors as $factor) {
+        if ($factor) {
             $secret = $factor->secret;
             $hotp = TOTP::create($secret);
             $otp = $hotp->now();
@@ -89,10 +89,10 @@ class factor extends object_factor_base {
     }
 
     public function define_login_form($mform) {
-        global $OUTPUT, $USER;
-        $userfactors = $this->get_enabled_user_factors($USER->id);
+        global $USER;
+        $userfactor = $this->get_enabled_user_factor($USER->id);
 
-        foreach ($userfactors as $userfactor) {
+        if ($userfactor) {
             $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'));
             $mform->addRule('verificationcode', get_string('required'), 'required', null, 'client');
             $mform->setType("verificationcode", PARAM_ALPHANUM);
@@ -151,7 +151,7 @@ class factor extends object_factor_base {
 
     public function get_all_user_factors($user) {
         global $DB;
-        $sql = "SELECT id, secret, timecreated, timemodified, disabled
+        $sql = "SELECT id, 'totp' AS name, secret, timecreated, timemodified, disabled
                   FROM {tool_mfa_factor_totp}
                  WHERE userid = ?
               ORDER BY disabled, timemodified";
@@ -160,15 +160,14 @@ class factor extends object_factor_base {
         return $return;
     }
 
-    public function get_enabled_user_factors($user) {
-        $return = array();
+    public function get_enabled_user_factor($user) {
         $factors = $this->get_all_user_factors($user);
         foreach ($factors as $factor) {
             if ($factor->disabled == 0) {
-                $return[] = $factor;
+                return $factor;
             }
         }
-        return $return;
+        return false;
     }
 
     public function define_add_factor_form_definition_after_data($mform) {

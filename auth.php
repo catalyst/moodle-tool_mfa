@@ -46,7 +46,16 @@ $OUTPUT = $PAGE->get_renderer('tool_mfa');
 
 $params = array('wantsurl' => $wantsurl);
 $currenturl = new moodle_url('/admin/tool/mfa/auth.php', $params);
-$form = new login_form($currenturl);
+
+$userfactors = \tool_mfa\plugininfo\factor::get_enabled_user_factors($USER->id);
+
+if (count($userfactors) > 0) {
+    $factorname = \tool_mfa\plugininfo\factor::get_next_user_factor($USER->id);
+} else {
+    $factorname = 'grace';
+}
+
+$form = new login_form($currenturl, array('factor_name' => $factorname));
 
 if ($form->is_cancelled()) {
     tool_mfa_logout();
@@ -55,8 +64,17 @@ if ($form->is_cancelled()) {
 
 if ($form->is_submitted()) {
     if ($data = $form->get_data()) {
-        $_SESSION['USER']->tool_mfa_authenticated = true;
-        redirect(new moodle_url($wantsurl));
+        $property = 'factor_'.$factorname.'_authenticated';
+        $_SESSION['USER']->$property = true;
+
+        $nextfactor = \tool_mfa\plugininfo\factor::get_next_user_factor($USER->id);
+
+        if ($nextfactor) {
+            redirect($currenturl);
+        } else {
+            $_SESSION['USER']->tool_mfa_authenticated = true;
+            redirect(new moodle_url($wantsurl));
+        }
     }
 }
 

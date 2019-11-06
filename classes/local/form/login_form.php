@@ -33,21 +33,18 @@ class login_form extends \moodleform
      * {@inheritDoc}
      * @see moodleform::definition()
      */
-    public function definition()
-    {
-        global $USER;
+    public function definition() {
         $mform = $this->_form;
+        $factorname = $this->_customdata['factor_name'];
 
-        $userfactors = \tool_mfa\plugininfo\factor::get_enabled_user_factors($USER->id);
+        $mform->addElement('hidden', 'factor_name', $factorname);
+        $mform->setType('factor_name', PARAM_ALPHA);
 
-        if (count($userfactors) == 0) {
+        if ($factorname == 'grace') {
             $mform = $this->define_grace_period_page($mform);
         } else {
-            $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
-            foreach ($factors as $factor) {
-                $mform = $factor->define_login_form($mform);
-            }
-
+            $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
+            $mform = $factor->define_login_form($mform);
             $this->add_action_buttons();
         }
     }
@@ -68,10 +65,8 @@ class login_form extends \moodleform
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
-        foreach ($factors as $factor) {
-            $errors += $factor->verify($data);
-        }
+        $factor = \tool_mfa\plugininfo\factor::get_factor($data['factor_name']);
+        $errors += $factor->verify($data);
 
         return $errors;
     }
