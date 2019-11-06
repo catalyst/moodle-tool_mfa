@@ -82,11 +82,17 @@ abstract class object_factor_base implements object_factor {
     }
 
     public function get_enabled_user_factor($userid) {
-        return array();
+        $factors = $this->get_all_user_factors($userid);
+        foreach ($factors as $factor) {
+            if ($factor->disabled == 0) {
+                return $factor;
+            }
+        }
+        return false;
     }
 
     public function verify($data) {
-        return true;
+        return array();
     }
 
     public function define_login_form($mform) {

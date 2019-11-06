@@ -35,6 +35,7 @@ $string['settings:secretlength_help'] = 'Generated TOTP secret key string length
 $string['verificationcode'] = 'Enter 6-digit verification code for confirmation';
 $string['verificationcode_help'] = 'Code validation is necessary to confirm you stored your secret key with GA app';
 
+$string['addingfactor'] = 'Adding TOTP Factor';
 $string['error:wrongverification'] = 'Incorrect verification code';
 
 $string['privacy:metadata'] = 'The TOTP Factor plugin does not store any personal data';

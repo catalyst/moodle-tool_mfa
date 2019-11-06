@@ -15,23 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Language strings.
+ * E-Mail factor install script.
  *
  * @package     factor_email
+ * @subpackage  tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'E-Mail Factor';
+defined('MOODLE_INTERNAL') || die;
 
-$string['settings:enable'] = 'Enable E-Mail Factor';
-$string['settings:enable_help'] = 'E-Mail Factor will be available for users to setup';
-$string['settings:weight'] = 'E-Mail Factor weight';
-$string['settings:weight_help'] = 'Factor weight determines the result factor combinations';
-$string['useremail'] = 'Specify E-Mail address used for authentication';
-$string['useremail_help'] = 'Verification codes will be sent to this email';
-
-$string['addingfactor'] = 'Adding E-Mail Factor';
-
-$string['privacy:metadata'] = 'The E-Mail Factor plugin does not store any personal data';
+function xmldb_factor_email_install() {
+    return true;
+}

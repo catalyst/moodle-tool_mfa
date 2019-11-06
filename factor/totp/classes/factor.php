@@ -74,7 +74,7 @@ class factor extends object_factor_base {
     public function define_add_factor_form_definition($mform) {
         global $OUTPUT;
 
-        $mform->addElement('html', $OUTPUT->heading('Adding TOTP Factor', 3));
+        $mform->addElement('html', $OUTPUT->heading(get_string('addingfactor', 'factor_totp'), 3));
 
         $secret = $this->generate_secret_code();
         $mform->addElement('hidden', 'secret', $secret);
@@ -118,11 +118,6 @@ class factor extends object_factor_base {
     public function validation($data) {
         $errors = array();
 
-        if (empty($data['verificationcode'])) {
-            $errors['verificationcode'] = get_string('error:wrongverification', 'factor_totp');
-            return $errors;
-        }
-
         $totp = TOTP::create($data['secret']);
         if ($data['verificationcode'] != $totp->now()) {
             $errors['verificationcode'] = get_string('error:wrongverification', 'factor_totp');
@@ -158,16 +153,6 @@ class factor extends object_factor_base {
 
         $return = $DB->get_records_sql($sql, array($user));
         return $return;
-    }
-
-    public function get_enabled_user_factor($user) {
-        $factors = $this->get_all_user_factors($user);
-        foreach ($factors as $factor) {
-            if ($factor->disabled == 0) {
-                return $factor;
-            }
-        }
-        return false;
     }
 
     public function define_add_factor_form_definition_after_data($mform) {

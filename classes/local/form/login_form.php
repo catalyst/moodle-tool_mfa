@@ -66,7 +66,9 @@ class login_form extends \moodleform
         $errors = parent::validation($data, $files);
 
         $factor = \tool_mfa\plugininfo\factor::get_factor($data['factor_name']);
-        $errors += $factor->verify($data);
+        if ($factor) {
+            $errors += $factor->verify($data);
+        }
 
         return $errors;
     }
