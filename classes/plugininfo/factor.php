@@ -88,14 +88,14 @@ class factor extends \core\plugininfo\base {
      * @param int $userid user id.
      * @return array of enabled factors for given user.
      */
-    public static function get_enabled_user_factors($userid) {
+    public static function get_enabled_user_factor_types($userid) {
         $return = array();
         $factors = self::get_enabled_factors();
 
         foreach ($factors as $factor) {
             $userfactors = $factor->get_enabled_user_factors($userid);
-            foreach ($userfactors as $userfactor) {
-                $return[$factor->name] = $userfactor;
+            if (count($userfactors) > 0) {
+                $return[] = $factor;
             }
         }
 

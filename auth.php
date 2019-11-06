@@ -47,7 +47,7 @@ $OUTPUT = $PAGE->get_renderer('tool_mfa');
 $params = array('wantsurl' => $wantsurl);
 $currenturl = new moodle_url('/admin/tool/mfa/auth.php', $params);
 
-$userfactors = \tool_mfa\plugininfo\factor::get_enabled_user_factors($USER->id);
+$userfactors = \tool_mfa\plugininfo\factor::get_enabled_user_factor_types($USER->id);
 
 if (count($userfactors) > 0) {
     $factorname = \tool_mfa\plugininfo\factor::get_next_user_factor($USER->id);
