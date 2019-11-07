@@ -27,8 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . "/formslib.php");
 
-class login_form extends \moodleform
-{
+class login_form extends \moodleform {
     /**
      * {@inheritDoc}
      * @see moodleform::definition()
@@ -36,11 +35,15 @@ class login_form extends \moodleform
     public function definition() {
         $mform = $this->_form;
         $factorname = $this->_customdata['factor_name'];
+        $gracemode = $this->_customdata['grace_mode'];
 
         $mform->addElement('hidden', 'factor_name', $factorname);
         $mform->setType('factor_name', PARAM_ALPHA);
 
-        if ($factorname == 'grace') {
+        $mform->addElement('hidden', 'grace_mode', $gracemode);
+        $mform->setType('grace_mode', PARAM_BOOL);
+
+        if ($gracemode) {
             $mform = $this->define_grace_period_page($mform);
         } else {
             $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
@@ -51,10 +54,11 @@ class login_form extends \moodleform
 
     function definition_after_data() {
         $mform = $this->_form;
-
+        $gracemode = $this->_customdata['grace_mode'];
         $factorname = $this->_customdata['factor_name'];
-        $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
-        if ($factor) {
+
+        if (!$gracemode) {
+            $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
             $mform = $factor->login_form_definition_after_data($mform);
         }
     }
@@ -67,6 +71,8 @@ class login_form extends \moodleform
 
         // TODO: get grace period expiration date
         $mform->addElement('html', $OUTPUT->heading(get_string('graceperiod:expires', 'tool_mfa', time()), 5));
+        $mform->addElement('html', $OUTPUT->heading(get_string('graceperiod:redirect', 'tool_mfa', time()), 5));
+
         $this->add_action_buttons(false, get_string('ok'));
 
         return $mform;
@@ -75,8 +81,8 @@ class login_form extends \moodleform
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        $factor = \tool_mfa\plugininfo\factor::get_factor($data['factor_name']);
-        if ($factor) {
+        if (!$data['grace_mode']) {
+            $factor = \tool_mfa\plugininfo\factor::get_factor($data['factor_name']);
             $errors += $factor->login_form_validation($data);
         }
 

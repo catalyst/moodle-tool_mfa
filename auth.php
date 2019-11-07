@@ -52,11 +52,13 @@ $userfactors = \tool_mfa\plugininfo\factor::get_enabled_user_factor_types();
 if (count($userfactors) > 0) {
     $nextfactor = \tool_mfa\plugininfo\factor::get_next_user_factor();
     $factorname = $nextfactor->name;
+    $gracemode = false;
 } else {
-    $factorname = 'grace';
+    $factorname = null;
+    $gracemode = true;
 }
 
-$form = new login_form($currenturl, array('factor_name' => $factorname));
+$form = new login_form($currenturl, array('factor_name' => $factorname, 'grace_mode' => $gracemode));
 
 if ($form->is_cancelled()) {
     tool_mfa_logout();
@@ -72,14 +74,18 @@ if ($form->is_submitted()) {
             redirect($currenturl);
         } else {
             $USER->tool_mfa_authenticated = true;
-            redirect(new moodle_url($wantsurl));
+            if ($gracemode) {
+                redirect(new moodle_url('/admin/tool/mfa/user_preferences.php'));
+            } else {
+                redirect(new moodle_url($wantsurl));
+            }
         }
     }
 }
 
 echo $OUTPUT->header();
 
-if ($factorname == 'grace') {
+if ($gracemode) {
     echo $OUTPUT->heading(get_string('pluginname', 'tool_mfa'));
 } else {
     echo $OUTPUT->heading(get_string('pluginname', 'factor_'.$factorname));
