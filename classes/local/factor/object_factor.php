@@ -31,11 +31,11 @@ interface object_factor {
     public function is_enabled();
     public function get_weight();
     public function get_display_name();
-    public function define_add_factor_form_definition($mform);
-    public function define_add_factor_form_definition_after_data($mform);
+    public function add_factor_form_definition($mform);
+    public function add_factor_form_definition_after_data($mform);
+    public function add_factor_form_validation($data);
     public function define_login_form_definition($mform);
     public function define_login_form_definition_after_data($mform);
-    public function validation($data);
     public function add_user_factor($data);
     public function get_all_user_factors($user);
     public function get_enabled_user_factors();

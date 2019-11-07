@@ -72,7 +72,7 @@ class factor extends object_factor_base {
         return $qr;
     }
 
-    public function define_add_factor_form_definition($mform) {
+    public function add_factor_form_definition($mform) {
         global $OUTPUT;
 
         $mform->addElement('html', $OUTPUT->heading(get_string('addingfactor', 'factor_totp'), 3));
@@ -115,7 +115,7 @@ class factor extends object_factor_base {
         return substr($hotp->getSecret(), 0, $length);
     }
 
-    public function validation($data) {
+    public function add_factor_form_validation($data) {
         $errors = array();
 
         $totp = TOTP::create($data['secret']);
@@ -155,7 +155,7 @@ class factor extends object_factor_base {
         return $return;
     }
 
-    public function define_add_factor_form_definition_after_data($mform) {
+    public function add_factor_form_definition_after_data($mform) {
         global $OUTPUT;
         $secretfield = $mform->getElement('secret');
 
