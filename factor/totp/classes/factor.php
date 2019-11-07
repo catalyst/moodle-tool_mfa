@@ -47,8 +47,7 @@ use OTPHP\TOTP;
 class factor extends object_factor_base {
 
     public function verify($data) {
-        global $USER;
-        $factors = $this->get_enabled_user_factors($USER->id);
+        $factors = $this->get_enabled_user_factors();
 
         foreach ($factors as $factor) {
             if ($factor) {
@@ -91,8 +90,7 @@ class factor extends object_factor_base {
     }
 
     public function define_login_form_definition($mform) {
-        global $USER;
-        $userfactors = $this->get_enabled_user_factors($USER->id);
+        $userfactors = $this->get_enabled_user_factors();
 
         if (count($userfactors) > 0) {
             $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'));

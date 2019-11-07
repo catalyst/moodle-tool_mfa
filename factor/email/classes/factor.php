@@ -33,8 +33,7 @@ use tool_mfa\local\factor\object_factor_base;
 class factor extends object_factor_base {
 
     public function define_login_form_definition($mform) {
-        global $USER;
-        $userfactors = $this->get_enabled_user_factors($USER->id);
+        $userfactors = $this->get_enabled_user_factors();
 
         if (count($userfactors) > 0) {
             $mform->addElement('hidden', 'secret');

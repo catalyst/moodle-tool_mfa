@@ -85,15 +85,14 @@ class factor extends \core\plugininfo\base {
     /**
      * Finds enabled factors for user by userid.
      *
-     * @param int $userid user id.
      * @return array of enabled factors for given user.
      */
-    public static function get_enabled_user_factor_types($userid) {
+    public static function get_enabled_user_factor_types() {
         $return = array();
         $factors = self::get_enabled_factors();
 
         foreach ($factors as $factor) {
-            $userfactors = $factor->get_enabled_user_factors($userid);
+            $userfactors = $factor->get_enabled_user_factors();
             if (count($userfactors) > 0) {
                 $return[] = $factor;
             }
@@ -105,15 +104,14 @@ class factor extends \core\plugininfo\base {
     /**
      * Gets next factor to authenticate user.
      *
-     * @param int $userid user id.
      * @return mixed factor object the next factor to be authenticated or false.
      */
-    public static function get_next_user_factor($userid) {
+    public static function get_next_user_factor() {
         global $USER;
         $factors = self::get_enabled_factors();
 
         foreach ($factors as $factor) {
-            $userfactors = $factor->get_enabled_user_factors($userid);
+            $userfactors = $factor->get_enabled_user_factors();
             foreach ($userfactors as $userfactor) {
                 $property = 'factor_'.$userfactor->name.'_authenticated';
                 if (empty($USER->$property) || true !== $USER->$property) {

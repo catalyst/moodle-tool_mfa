@@ -38,6 +38,6 @@ interface object_factor {
     public function validation($data);
     public function add_user_factor($data);
     public function get_all_user_factors($user);
-    public function get_enabled_user_factors($user);
+    public function get_enabled_user_factors();
     public function verify($data);
 }
