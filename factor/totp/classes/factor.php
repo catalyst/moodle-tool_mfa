@@ -46,23 +46,6 @@ use OTPHP\TOTP;
 
 class factor extends object_factor_base {
 
-    public function verify($data) {
-        $factors = $this->get_enabled_user_factors();
-
-        foreach ($factors as $factor) {
-            if ($factor) {
-                $secret = $factor->secret;
-                $hotp = TOTP::create($secret);
-                $otp = $hotp->now();
-
-                if ($data['verificationcode'] != $otp) {
-                    return array('verificationcode' => 'Wrong verification code');
-                }
-            }
-        }
-        return array();
-    }
-
     public function draw_qrcode($secretcode) {
         global $USER;
         $code = 'otpauth://totp/'.$USER->username.'_2:'.$USER->email.'?secret='.$secretcode.'&issuer=Moodle&algorithm=SHA1&&period=30';
@@ -89,7 +72,35 @@ class factor extends object_factor_base {
         return $mform;
     }
 
-    public function define_login_form_definition($mform) {
+    public function add_factor_form_definition_after_data($mform) {
+        global $OUTPUT;
+        $secretfield = $mform->getElement('secret');
+
+        //if (!empty($secretfield)) {
+        $secret = $secretfield->getValue();
+        $qrcode = $this->draw_qrcode($secret);
+
+        $mform->addElement('html', $OUTPUT->heading('Scan QR-Code or enter a key to your Google Authenticator:', 5));
+        $mform->addElement('html', $OUTPUT->heading($this->get_secret_length().'-digit key: '.$secret, 5));
+        $mform->addElement('html', $qrcode);
+        $mform->addElement('html', $OUTPUT->box(''));
+        //}
+
+        return $mform;
+    }
+
+    public function add_factor_form_validation($data) {
+        $errors = array();
+
+        $totp = TOTP::create($data['secret']);
+        if ($data['verificationcode'] != $totp->now()) {
+            $errors['verificationcode'] = get_string('error:wrongverification', 'factor_totp');
+        }
+
+        return $errors;
+    }
+
+    public function login_form_definition($mform) {
         $userfactors = $this->get_enabled_user_factors();
 
         if (count($userfactors) > 0) {
@@ -99,6 +110,23 @@ class factor extends object_factor_base {
         }
 
         return $mform;
+    }
+
+    public function login_form_validation($data) {
+        $factors = $this->get_enabled_user_factors();
+
+        foreach ($factors as $factor) {
+            if ($factor) {
+                $secret = $factor->secret;
+                $hotp = TOTP::create($secret);
+                $otp = $hotp->now();
+
+                if ($data['verificationcode'] != $otp) {
+                    return array('verificationcode' => 'Wrong verification code');
+                }
+            }
+        }
+        return array();
     }
 
     public function get_secret_length() {
@@ -113,17 +141,6 @@ class factor extends object_factor_base {
         $hotp = TOTP::create();
         $length = $this->get_secret_length();
         return substr($hotp->getSecret(), 0, $length);
-    }
-
-    public function add_factor_form_validation($data) {
-        $errors = array();
-
-        $totp = TOTP::create($data['secret']);
-        if ($data['verificationcode'] != $totp->now()) {
-            $errors['verificationcode'] = get_string('error:wrongverification', 'factor_totp');
-        }
-
-        return $errors;
     }
 
     public function add_user_factor($data) {
@@ -153,22 +170,5 @@ class factor extends object_factor_base {
 
         $return = $DB->get_records_sql($sql, array($user));
         return $return;
-    }
-
-    public function add_factor_form_definition_after_data($mform) {
-        global $OUTPUT;
-        $secretfield = $mform->getElement('secret');
-
-        //if (!empty($secretfield)) {
-            $secret = $secretfield->getValue();
-            $qrcode = $this->draw_qrcode($secret);
-
-            $mform->addElement('html', $OUTPUT->heading('Scan QR-Code or enter a key to your Google Authenticator:', 5));
-            $mform->addElement('html', $OUTPUT->heading($this->get_secret_length().'-digit key: '.$secret, 5));
-            $mform->addElement('html', $qrcode);
-            $mform->addElement('html', $OUTPUT->box(''));
-        //}
-
-        return $mform;
     }
 }

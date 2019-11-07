@@ -44,7 +44,7 @@ class login_form extends \moodleform
             $mform = $this->define_grace_period_page($mform);
         } else {
             $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
-            $mform = $factor->define_login_form_definition($mform);
+            $mform = $factor->login_form_definition($mform);
             $this->add_action_buttons();
         }
     }
@@ -55,7 +55,7 @@ class login_form extends \moodleform
         $factorname = $this->_customdata['factor_name'];
         $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
         if ($factor) {
-            $mform = $factor->define_login_form_definition_after_data($mform);
+            $mform = $factor->login_form_definition_after_data($mform);
         }
     }
 
@@ -77,7 +77,7 @@ class login_form extends \moodleform
 
         $factor = \tool_mfa\plugininfo\factor::get_factor($data['factor_name']);
         if ($factor) {
-            $errors += $factor->verify($data);
+            $errors += $factor->login_form_validation($data);
         }
 
         return $errors;

@@ -93,15 +93,15 @@ abstract class object_factor_base implements object_factor {
         return $return;
     }
 
-    public function verify($data) {
+    public function login_form_definition($mform) {
+        return $mform;
+    }
+
+    public function login_form_definition_after_data($mform) {
+        return $mform;
+    }
+
+    public function login_form_validation($data) {
         return array();
-    }
-
-    public function define_login_form_definition($mform) {
-        return $mform;
-    }
-
-    public function define_login_form_definition_after_data($mform) {
-        return $mform;
     }
 }

@@ -32,7 +32,7 @@ use tool_mfa\local\factor\object_factor_base;
 
 class factor extends object_factor_base {
 
-    public function define_login_form_definition($mform) {
+    public function login_form_definition($mform) {
         $userfactors = $this->get_enabled_user_factors();
 
         if (count($userfactors) > 0) {
@@ -47,7 +47,7 @@ class factor extends object_factor_base {
         return $mform;
     }
 
-    public function define_login_form_definition_after_data($mform) {
+    public function login_form_definition_after_data($mform) {
         $secretfield = $mform->getElement('secret');
         $secret = $secretfield->getValue();
 
@@ -68,7 +68,7 @@ class factor extends object_factor_base {
         email_to_user($USER, $noreplyuser, $subject, $message, $messagehtml);
     }
 
-    public function verify($data) {
+    public function login_form_validation($data) {
         $return = array();
 
         if ($data['verificationcode'] != $data['secret']) {
