@@ -52,7 +52,7 @@ class factor extends object_factor_base {
         $secret = $secretfield->getValue();
 
         if (empty($secret)) {
-            $secret = random_int(0, 99999);
+            $secret = random_int(10000, 99999);
             $secretfield->setValue($secret);
             $this->email_secret_code($secret);
         }
