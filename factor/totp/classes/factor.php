@@ -56,7 +56,7 @@ class factor extends object_factor_base {
                 $hotp = TOTP::create($secret);
                 $otp = $hotp->now();
 
-                if ($data['verificationcode'] !== $otp) {
+                if ($data['verificationcode'] != $otp) {
                     return array('verificationcode' => 'Wrong verification code');
                 }
             }
@@ -90,7 +90,7 @@ class factor extends object_factor_base {
         return $mform;
     }
 
-    public function define_login_form($mform) {
+    public function define_login_form_definition($mform) {
         global $USER;
         $userfactors = $this->get_enabled_user_factors($USER->id);
 
@@ -161,7 +161,7 @@ class factor extends object_factor_base {
         global $OUTPUT;
         $secretfield = $mform->getElement('secret');
 
-        if (!empty($secretfield)) {
+        //if (!empty($secretfield)) {
             $secret = $secretfield->getValue();
             $qrcode = $this->draw_qrcode($secret);
 
@@ -169,11 +169,7 @@ class factor extends object_factor_base {
             $mform->addElement('html', $OUTPUT->heading($this->get_secret_length().'-digit key: '.$secret, 5));
             $mform->addElement('html', $qrcode);
             $mform->addElement('html', $OUTPUT->box(''));
-
-            $hotp = TOTP::create($secret);
-            $otp = $hotp->now();
-            $mform->addElement('html', $OUTPUT->heading('HINT! Verification code: '.$otp, 5));
-        }
+        //}
 
         return $mform;
     }

@@ -78,6 +78,12 @@ if ($form->is_submitted()) {
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('pluginname', 'tool_mfa'));
+
+if ($factorname == 'grace') {
+    echo $OUTPUT->heading(get_string('pluginname', 'tool_mfa'));
+} else {
+    echo $OUTPUT->heading(get_string('pluginname', 'factor_'.$factorname));
+}
+
 $form->display();
 echo $OUTPUT->footer();

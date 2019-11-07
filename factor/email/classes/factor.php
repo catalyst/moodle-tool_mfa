@@ -32,45 +32,72 @@ use tool_mfa\local\factor\object_factor_base;
 
 class factor extends object_factor_base {
 
-    public function define_add_factor_form_definition($mform) {
-        global $OUTPUT;
+    public function define_login_form_definition($mform) {
+        global $USER;
+        $userfactors = $this->get_enabled_user_factors($USER->id);
 
-        $mform->addElement('html', $OUTPUT->heading(get_string('addingfactor', 'factor_email'), 3));
+        if (count($userfactors) > 0) {
+            $mform->addElement('hidden', 'secret');
+            $mform->setType('secret', PARAM_ALPHANUM);
 
-        $mform->addElement('text', 'useremail', get_string('useremail', 'factor_email'));
-        $mform->addHelpButton('useremail', 'useremail', 'factor_email');
-        $mform->setType("useremail", PARAM_EMAIL);
-        $mform->addRule('useremail', get_string('required'), 'required', null, 'client');
+            $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_email'));
+            $mform->addRule('verificationcode', get_string('required'), 'required', null, 'client');
+            $mform->setType("verificationcode", PARAM_ALPHANUM);
+        }
 
         return $mform;
     }
 
-    public function add_user_factor($data) {
-        global $DB, $USER;
+    public function define_login_form_definition_after_data($mform) {
+        $secretfield = $mform->getElement('secret');
+        $secret = $secretfield->getValue();
 
-        if (!empty($data->useremail)) {
-            $row = new \stdClass();
-            $row->userid = $USER->id;
-            $row->useremail = $data->useremail;
-            $row->timecreated = time();
-            $row->timemodified = time();
-            $row->disabled = 0;
+        if (empty($secret)) {
+            $secret = random_int(0, 99999);
+            $secretfield->setValue($secret);
+            $this->email_secret_code($secret);
+        }
+        return $mform;
+    }
 
-            $DB->insert_record('tool_mfa_factor_email', $row);
-            return true;
+    public function email_secret_code($secret) {
+        global $USER;
+        $noreplyuser = \core_user::get_noreply_user();
+        $subject = get_string('email:subject', 'factor_email');
+        $message = get_string('email:message', 'factor_email', $secret);
+        $messagehtml = text_to_html($message);
+        email_to_user($USER, $noreplyuser, $subject, $message, $messagehtml);
+    }
+
+    public function verify($data) {
+        $return = array();
+
+        if ($data['verificationcode'] != $data['secret']) {
+            $return['verificationcode'] =  'Wrong verification code';
         }
 
-        return false;
+        return $return;
     }
 
     public function get_all_user_factors($user) {
-        global $DB;
-        $sql = "SELECT id, 'email' AS name, useremail, timecreated, timemodified, disabled
-                  FROM {tool_mfa_factor_email}
-                 WHERE userid = ?
-              ORDER BY disabled, timemodified";
+        global $USER;
 
-        $return = $DB->get_records_sql($sql, array($user));
+        $id = 1;
+        $name = $this->name;
+        $useremail = $USER->email;
+        $timemodified = '';
+        $timecreated = '';
+        $disabled = (int)!$this->is_enabled();
+
+        $return = array();
+        $return[1] = new \stdClass();
+        $return[1]->id = $id;
+        $return[1]->name = $name;
+        $return[1]->useremail = $useremail;
+        $return[1]->timemodified = $timemodified;
+        $return[1]->timecreated = $timecreated;
+        $return[1]->disabled = $disabled;
+
         return $return;
     }
 }

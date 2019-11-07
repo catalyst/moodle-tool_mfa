@@ -29,9 +29,13 @@ $string['settings:enable'] = 'Enable E-Mail Factor';
 $string['settings:enable_help'] = 'E-Mail Factor will be available for users to setup';
 $string['settings:weight'] = 'E-Mail Factor weight';
 $string['settings:weight_help'] = 'Factor weight determines the result factor combinations';
-$string['useremail'] = 'Specify E-Mail address used for authentication';
-$string['useremail_help'] = 'Verification codes will be sent to this email';
+$string['verificationcode'] = 'Enter verification code for confirmation';
+$string['verificationcode_help'] = 'Verification code has been sent to your email address';
+
+$string['email:subject'] = 'Your confirmation code';
+$string['email:message'] = 'You are tying to log in to Moodle. Your confirmation code is \'{$a}\'';
 
 $string['addingfactor'] = 'Adding E-Mail Factor';
+$string['error:wrongverification'] = 'Incorrect verification code';
 
 $string['privacy:metadata'] = 'The E-Mail Factor plugin does not store any personal data';
