@@ -4,7 +4,7 @@
        xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
     <TABLES>
-        <TABLE NAME="tool_mfa_factor_totp" COMMENT="TOTP Factor data for MFA plugin">
+        <TABLE NAME="factor_totp" COMMENT="TOTP Factor data for MFA plugin">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
