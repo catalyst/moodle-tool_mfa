@@ -48,7 +48,7 @@ class factor extends object_factor_base {
 
     public function draw_qrcode($secretcode) {
         global $USER;
-        $code = 'otpauth://totp/'.$USER->username.'_2:'.$USER->email.'?secret='.$secretcode.'&issuer=Moodle&algorithm=SHA1&&period=30';
+        $code = 'otpauth://totp/'.$USER->username.':'.$USER->email.'?secret='.$secretcode.'&issuer=Moodle&algorithm=SHA1&&period=30';
         $barcode = new \TCPDF2DBarcode($code, 'QRCODE');
         $image = $barcode->getBarcodePngData(10, 10);
         $qr = \html_writer::img('data:image/png;base64,' . base64_encode($image),'');
@@ -76,15 +76,14 @@ class factor extends object_factor_base {
         global $OUTPUT;
         $secretfield = $mform->getElement('secret');
 
-        //if (!empty($secretfield)) {
         $secret = $secretfield->getValue();
         $qrcode = $this->draw_qrcode($secret);
 
-        $mform->addElement('html', $OUTPUT->heading('Scan QR-Code or enter a key to your Google Authenticator:', 5));
-        $mform->addElement('html', $OUTPUT->heading($this->get_secret_length().'-digit key: '.$secret, 5));
+        $mform->addElement('html', $OUTPUT->heading(get_string('addingfactor:scan', 'factor_totp'), 5));
+        $string = $this->get_secret_length().get_string('addingfactor:key', 'factor_totp').$secret;
+        $mform->addElement('html', $OUTPUT->heading($string, 5));
         $mform->addElement('html', $qrcode);
         $mform->addElement('html', $OUTPUT->box(''));
-        //}
 
         return $mform;
     }
@@ -114,19 +113,18 @@ class factor extends object_factor_base {
 
     public function login_form_validation($data) {
         $factors = $this->get_enabled_user_factors();
+        $result = array('verificationcode' => 'Wrong verification code');
 
         foreach ($factors as $factor) {
-            if ($factor) {
-                $secret = $factor->secret;
-                $hotp = TOTP::create($secret);
-                $otp = $hotp->now();
+            $secret = $factor->secret;
+            $hotp = TOTP::create($secret);
+            $otp = $hotp->now();
 
-                if ($data['verificationcode'] != $otp) {
-                    return array('verificationcode' => 'Wrong verification code');
-                }
+            if ($data['verificationcode'] == $otp) {
+                $result = array();
             }
         }
-        return array();
+        return $result;
     }
 
     public function get_secret_length() {

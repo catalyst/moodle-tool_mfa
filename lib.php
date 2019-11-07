@@ -24,12 +24,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 function tool_mfa_after_require_login() {
-    global $USER;
-    if (empty($USER->tool_mfa_authenticated) || true !== $USER->tool_mfa_authenticated) {
-        if ($GLOBALS['ME'] != '/admin/tool/mfa/auth.php') {
-            //$wantsurl = qualified_me();
-            $params = array('wantsurl' => $GLOBALS['ME']);
-            redirect(new moodle_url('/admin/tool/mfa/auth.php', $params));
+    global $USER, $ME;
+    if (empty($USER->tool_mfa_authenticated) || !$USER->tool_mfa_authenticated) {
+        if ($ME != '/admin/tool/mfa/auth.php') {
+            redirect(new moodle_url('/admin/tool/mfa/auth.php', array('wantsurl' => $ME)));
         }
     }
 }
