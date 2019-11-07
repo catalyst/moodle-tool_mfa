@@ -161,14 +161,14 @@ class factor extends object_factor_base {
         return false;
     }
 
-    public function get_all_user_factors($user) {
-        global $DB;
+    public function get_all_user_factors() {
+        global $DB, $USER;
         $sql = "SELECT id, 'totp' AS name, secret, timecreated, timemodified, disabled
                   FROM {tool_mfa_factor_totp}
                  WHERE userid = ?
               ORDER BY disabled, timemodified";
 
-        $return = $DB->get_records_sql($sql, array($user));
+        $return = $DB->get_records_sql($sql, array($USER->id));
         return $return;
     }
 }

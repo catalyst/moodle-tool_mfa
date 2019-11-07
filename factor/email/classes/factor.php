@@ -78,7 +78,7 @@ class factor extends object_factor_base {
         return $return;
     }
 
-    public function get_all_user_factors($user) {
+    public function get_all_user_factors() {
         global $USER;
 
         $id = 1;

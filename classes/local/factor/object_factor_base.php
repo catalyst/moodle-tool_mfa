@@ -77,14 +77,13 @@ abstract class object_factor_base implements object_factor {
         return false;
     }
 
-    public function get_all_user_factors($user) {
+    public function get_all_user_factors() {
         return array();
     }
 
     public function get_enabled_user_factors() {
-        global $USER;
         $return = array();
-        $factors = $this->get_all_user_factors($USER->id);
+        $factors = $this->get_all_user_factors();
         foreach ($factors as $factor) {
             if ($factor->disabled == 0) {
                 $return[] = $factor;
