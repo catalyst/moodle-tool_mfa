@@ -36,6 +36,10 @@ if ($hassiteconfig) {
     $description = new lang_string('graceperiod_help', 'tool_mfa');
     $settings->add(new admin_setting_configduration('tool_mfa/graceperiod', $name, $description, '604800'));
 
+    $name = new lang_string('settings:enabled', 'tool_mfa');
+    $description = new lang_string('settings:enabled_help', 'tool_mfa');
+    $settings->add(new admin_setting_configcheckbox('tool_mfa/enabled', $name, '', false));
+
     $ADMIN->add('toolmfafolder', $settings);
 
     foreach (core_plugin_manager::instance()->get_plugins_of_type('factor') as $plugin) {

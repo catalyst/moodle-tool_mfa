@@ -43,6 +43,8 @@ $string['editfactor'] = 'Edit factor';
 $string['enablefactor'] = 'Enable factor';
 $string['disablefactor'] = 'Disable factor';
 
+$string['settings:enabled'] = 'MFA plugin enabled';
+
 $string['preferences:header'] = 'MFA preferences';
 $string['preferences:availablefactors'] = 'Available factors';
 $string['preferences:configuredfactors'] = 'Configured factors';

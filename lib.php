@@ -25,11 +25,27 @@ defined('MOODLE_INTERNAL') || die();
 
 function tool_mfa_after_require_login() {
     global $USER, $ME;
+
+    if (!tool_mfa_ready()) {
+        return;
+    }
+
     if (empty($USER->tool_mfa_authenticated) || !$USER->tool_mfa_authenticated) {
         if ($ME != '/admin/tool/mfa/auth.php') {
             redirect(new moodle_url('/admin/tool/mfa/auth.php', array('wantsurl' => $ME)));
         }
     }
+}
+
+function tool_mfa_ready() {
+    $pluginenabled = get_config('tool_mfa', 'enabled');
+    $enabledfactors = tool_mfa_get_enabled_factors();
+
+    if (empty($pluginenabled) || count($enabledfactors) == 0) {
+        return false;
+    }
+
+    return true;
 }
 
 function tool_mfa_logout() {
