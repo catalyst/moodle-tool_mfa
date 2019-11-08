@@ -36,23 +36,30 @@ require_once(__DIR__.'/../extlib/OTPHP/OTP.php');
 require_once(__DIR__.'/../extlib/OTPHP/TOTP.php');
 
 require_once(__DIR__.'/../extlib/Assert/Assertion.php');
+require_once(__DIR__.'/../extlib/Assert/AssertionFailedException.php');
+require_once(__DIR__.'/../extlib/Assert/InvalidArgumentException.php');
 require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/EncoderInterface.php');
 require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Binary.php');
 require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Base32.php');
 
-use gradereport_singleview\local\ui\empty_element;
 use tool_mfa\local\factor\object_factor_base;
 use OTPHP\TOTP;
 
 class factor extends object_factor_base {
 
-    public function draw_qrcode($secretcode) {
+    public function generate_totp_uri($secret) {
         global $USER;
-        $code = 'otpauth://totp/'.$USER->username.':'.$USER->email.'?secret='.$secretcode.'&issuer=Moodle&algorithm=SHA1&&period=30';
-        $barcode = new \TCPDF2DBarcode($code, 'QRCODE');
-        $image = $barcode->getBarcodePngData(10, 10);
-        $qr = \html_writer::img('data:image/png;base64,' . base64_encode($image),'');
-        return $qr;
+        $totp = TOTP::create($secret);
+        $totp->setLabel($USER->username.'; '.$USER->email);
+        $totp->setIssuer('Moodle');
+        return $totp->getProvisioningUri();
+    }
+
+    public function generate_qrcode($secret) {
+        $uri = $this->generate_totp_uri($secret);
+        $qrcode = new \TCPDF2DBarcode($uri, 'QRCODE');
+        $image = $qrcode->getBarcodePngData(10, 10);
+        return \html_writer::img('data:image/png;base64,' . base64_encode($image),'');
     }
 
     public function add_factor_form_definition($mform) {
@@ -77,7 +84,7 @@ class factor extends object_factor_base {
         $secretfield = $mform->getElement('secret');
 
         $secret = $secretfield->getValue();
-        $qrcode = $this->draw_qrcode($secret);
+        $qrcode = $this->generate_qrcode($secret);
 
         $mform->addElement('html', $OUTPUT->heading(get_string('addingfactor:scan', 'factor_totp'), 5));
         $string = $this->get_secret_length().get_string('addingfactor:key', 'factor_totp').$secret;
@@ -117,8 +124,8 @@ class factor extends object_factor_base {
 
         foreach ($factors as $factor) {
             $secret = $factor->secret;
-            $hotp = TOTP::create($secret);
-            $otp = $hotp->now();
+            $totp = TOTP::create($secret);
+            $otp = $totp->now();
 
             if ($data['verificationcode'] == $otp) {
                 $result = array();
@@ -136,9 +143,9 @@ class factor extends object_factor_base {
     }
 
     public function generate_secret_code() {
-        $hotp = TOTP::create();
+        $totp = TOTP::create();
         $length = $this->get_secret_length();
-        return substr($hotp->getSecret(), 0, $length);
+        return substr($totp->getSecret(), 0, $length);
     }
 
     public function add_user_factor($data) {
@@ -152,7 +159,7 @@ class factor extends object_factor_base {
             $row->timemodified = time();
             $row->disabled = 0;
 
-            $DB->insert_record('tool_mfa_factor_totp', $row);
+            $DB->insert_record('factor_totp', $row);
             return true;
         }
 
@@ -162,7 +169,7 @@ class factor extends object_factor_base {
     public function get_all_user_factors() {
         global $DB, $USER;
         $sql = "SELECT id, 'totp' AS name, secret, timecreated, timemodified, disabled
-                  FROM {tool_mfa_factor_totp}
+                  FROM {factor_totp}
                  WHERE userid = ?
               ORDER BY disabled, timemodified";
 
