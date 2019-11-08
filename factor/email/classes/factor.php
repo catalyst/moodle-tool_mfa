@@ -80,22 +80,15 @@ class factor extends object_factor_base {
 
     public function get_all_user_factors() {
         global $USER;
-
-        $id = 1;
-        $name = $this->name;
-        $useremail = $USER->email;
-        $timemodified = '';
-        $timecreated = '';
-        $disabled = (int)!$this->is_enabled();
-
         $return = array();
+
         $return[1] = new \stdClass();
-        $return[1]->id = $id;
-        $return[1]->name = $name;
-        $return[1]->useremail = $useremail;
-        $return[1]->timemodified = $timemodified;
-        $return[1]->timecreated = $timecreated;
-        $return[1]->disabled = $disabled;
+        $return[1]->id = 1;
+        $return[1]->name = $this->name;
+        $return[1]->useremail = $USER->email;
+        $return[1]->timemodified = '';
+        $return[1]->timecreated = '';
+        $return[1]->disabled = (int)!$this->is_enabled();
 
         return $return;
     }
