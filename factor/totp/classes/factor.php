@@ -59,7 +59,8 @@ class factor extends object_factor_base {
         $uri = $this->generate_totp_uri($secret);
         $qrcode = new \TCPDF2DBarcode($uri, 'QRCODE');
         $image = $qrcode->getBarcodePngData(10, 10);
-        return \html_writer::img('data:image/png;base64,' . base64_encode($image),'');
+        $html = '<br>'.\html_writer::img('data:image/png;base64,' . base64_encode($image),'');
+        return $html;
     }
 
     public function add_factor_form_definition($mform) {
@@ -87,10 +88,8 @@ class factor extends object_factor_base {
         $qrcode = $this->generate_qrcode($secret);
 
         $mform->addElement('html', $OUTPUT->heading(get_string('addingfactor:scan', 'factor_totp'), 5));
-        $string = $this->get_secret_length().get_string('addingfactor:key', 'factor_totp').$secret;
-        $mform->addElement('html', $OUTPUT->heading($string, 5));
         $mform->addElement('html', $qrcode);
-        $mform->addElement('html', $OUTPUT->box(''));
+        $mform->addElement('html', $OUTPUT->heading(get_string('addingfactor:key', 'factor_totp').$secret, 5));
 
         return $mform;
     }
@@ -134,18 +133,9 @@ class factor extends object_factor_base {
         return $result;
     }
 
-    public function get_secret_length() {
-        $length = get_config('factor_totp', 'secret_length');
-        if ($length) {
-            return (int)$length;
-        }
-        return 8;
-    }
-
     public function generate_secret_code() {
         $totp = TOTP::create();
-        $length = $this->get_secret_length();
-        return substr($totp->getSecret(), 0, $length);
+        return substr($totp->getSecret(), 0, 16);
     }
 
     public function add_user_factor($data) {
