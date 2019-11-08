@@ -48,10 +48,12 @@ use OTPHP\TOTP;
 class factor extends object_factor_base {
 
     public function generate_totp_uri($secret) {
-        global $USER;
+        global $USER, $SITE, $CFG;
+        $domain = str_replace('http://', '', str_replace('https://', '', $CFG->wwwroot));
+        $issuer = $SITE->shortname.' '.$domain;
         $totp = TOTP::create($secret);
-        $totp->setLabel($USER->username.'; '.$USER->email);
-        $totp->setIssuer('Moodle');
+        $totp->setLabel($USER->username);
+        $totp->setIssuer($issuer);
         return $totp->getProvisioningUri();
     }
 
