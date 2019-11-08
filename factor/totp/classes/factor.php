@@ -124,11 +124,8 @@ class factor extends object_factor_base {
         $result = array('verificationcode' => 'Wrong verification code');
 
         foreach ($factors as $factor) {
-            $secret = $factor->secret;
-            $totp = TOTP::create($secret);
-            $otp = $totp->now();
-
-            if ($data['verificationcode'] == $otp) {
+            $totp = TOTP::create($factor->secret);
+            if ($totp->verify($data['verificationcode'], time(), 2)) {
                 $result = array();
             }
         }
