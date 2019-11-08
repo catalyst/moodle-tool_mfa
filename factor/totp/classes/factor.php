@@ -46,24 +46,6 @@ use OTPHP\TOTP;
 
 class factor extends object_factor_base {
 
-    public function verify($data) {
-        global $USER;
-        $factors = $this->get_user_factors($USER->id);
-
-        foreach ($factors as $factor) {
-            if ($factor->disabled == 0) {
-                $secret = $factor->secret;
-                $hotp = TOTP::create($secret);
-                $otp = $hotp->now();
-
-                if ($data['verificationcode'] !== $otp) {
-                    return array('verificationcode' => 'Wrong verification code');
-                }
-            }
-        }
-        return array();
-    }
-
     public function draw_qrcode($secretcode) {
         global $USER;
         $code = 'otpauth://totp/'.$USER->username.':'.$USER->email.'?secret='.$secretcode.'&issuer=Moodle&algorithm=SHA1&&period=30';
@@ -73,10 +55,10 @@ class factor extends object_factor_base {
         return $qr;
     }
 
-    public function define_add_factor_form_definition($mform) {
+    public function add_factor_form_definition($mform) {
         global $OUTPUT;
 
-        $mform->addElement('html', $OUTPUT->heading('Adding TOTP Factor', 3));
+        $mform->addElement('html', $OUTPUT->heading(get_string('addingfactor', 'factor_totp'), 3));
 
         $secret = $this->generate_secret_code();
         $mform->addElement('hidden', 'secret', $secret);
@@ -90,19 +72,59 @@ class factor extends object_factor_base {
         return $mform;
     }
 
-    public function define_login_form($mform) {
-        global $OUTPUT, $USER;
-        $userfactors = $this->get_user_factors($USER->id);
+    public function add_factor_form_definition_after_data($mform) {
+        global $OUTPUT;
+        $secretfield = $mform->getElement('secret');
 
-        foreach ($userfactors as $userfactor) {
-            if ($userfactor->disabled != 1) {
-                $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'));
-                $mform->addRule('verificationcode', get_string('required'), 'required', null, 'client');
-                $mform->setType("verificationcode", PARAM_ALPHANUM);
-            }
+        $secret = $secretfield->getValue();
+        $qrcode = $this->draw_qrcode($secret);
+
+        $mform->addElement('html', $OUTPUT->heading(get_string('addingfactor:scan', 'factor_totp'), 5));
+        $string = $this->get_secret_length().get_string('addingfactor:key', 'factor_totp').$secret;
+        $mform->addElement('html', $OUTPUT->heading($string, 5));
+        $mform->addElement('html', $qrcode);
+        $mform->addElement('html', $OUTPUT->box(''));
+
+        return $mform;
+    }
+
+    public function add_factor_form_validation($data) {
+        $errors = array();
+
+        $totp = TOTP::create($data['secret']);
+        if ($data['verificationcode'] != $totp->now()) {
+            $errors['verificationcode'] = get_string('error:wrongverification', 'factor_totp');
+        }
+
+        return $errors;
+    }
+
+    public function login_form_definition($mform) {
+        $userfactors = $this->get_enabled_user_factors();
+
+        if (count($userfactors) > 0) {
+            $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'));
+            $mform->addRule('verificationcode', get_string('required'), 'required', null, 'client');
+            $mform->setType("verificationcode", PARAM_ALPHANUM);
         }
 
         return $mform;
+    }
+
+    public function login_form_validation($data) {
+        $factors = $this->get_enabled_user_factors();
+        $result = array('verificationcode' => 'Wrong verification code');
+
+        foreach ($factors as $factor) {
+            $secret = $factor->secret;
+            $hotp = TOTP::create($secret);
+            $otp = $hotp->now();
+
+            if ($data['verificationcode'] == $otp) {
+                $result = array();
+            }
+        }
+        return $result;
     }
 
     public function get_secret_length() {
@@ -117,22 +139,6 @@ class factor extends object_factor_base {
         $hotp = TOTP::create();
         $length = $this->get_secret_length();
         return substr($hotp->getSecret(), 0, $length);
-    }
-
-    public function validation($data) {
-        $errors = array();
-
-        if (empty($data['verificationcode'])) {
-            $errors['verificationcode'] = get_string('error:wrongverification', 'factor_totp');
-            return $errors;
-        }
-
-        $totp = TOTP::create($data['secret']);
-        if ($data['verificationcode'] != $totp->now()) {
-            $errors['verificationcode'] = get_string('error:wrongverification', 'factor_totp');
-        }
-
-        return $errors;
     }
 
     public function add_user_factor($data) {
@@ -153,34 +159,14 @@ class factor extends object_factor_base {
         return false;
     }
 
-    public function get_user_factors($user) {
-        global $DB;
-        $sql = "SELECT id, secret, timecreated, timemodified, disabled
+    public function get_all_user_factors() {
+        global $DB, $USER;
+        $sql = "SELECT id, 'totp' AS name, secret, timecreated, timemodified, disabled
                   FROM {tool_mfa_factor_totp}
                  WHERE userid = ?
               ORDER BY disabled, timemodified";
 
-        return $DB->get_records_sql($sql, array($user));
-    }
-
-    public function define_add_factor_form_definition_after_data($mform) {
-        global $OUTPUT;
-        $secretfield = $mform->getElement('secret');
-
-        if (!empty($secretfield)) {
-            $secret = $secretfield->getValue();
-            $qrcode = $this->draw_qrcode($secret);
-
-            $mform->addElement('html', $OUTPUT->heading('Scan QR-Code or enter a key to your Google Authenticator:', 5));
-            $mform->addElement('html', $OUTPUT->heading($this->get_secret_length().'-digit key: '.$secret, 5));
-            $mform->addElement('html', $qrcode);
-            $mform->addElement('html', $OUTPUT->box(''));
-
-            $hotp = TOTP::create($secret);
-            $otp = $hotp->now();
-            $mform->addElement('html', $OUTPUT->heading('HINT! Verification code: '.$otp, 5));
-        }
-
-        return $mform;
+        $return = $DB->get_records_sql($sql, array($USER->id));
+        return $return;
     }
 }

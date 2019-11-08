@@ -82,6 +82,47 @@ class factor extends \core\plugininfo\base {
         return $return;
     }
 
+    /**
+     * Finds enabled factors for user by userid.
+     *
+     * @return array of enabled factors for given user.
+     */
+    public static function get_enabled_user_factor_types() {
+        $return = array();
+        $factors = self::get_enabled_factors();
+
+        foreach ($factors as $factor) {
+            $userfactors = $factor->get_enabled_user_factors();
+            if (count($userfactors) > 0) {
+                $return[] = $factor;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Gets next factor to authenticate user.
+     *
+     * @return mixed factor object the next factor to be authenticated or false.
+     */
+    public static function get_next_user_factor() {
+        global $USER;
+        $factors = self::get_enabled_factors();
+
+        foreach ($factors as $factor) {
+            $userfactors = $factor->get_enabled_user_factors();
+            foreach ($userfactors as $userfactor) {
+                $property = 'factor_'.$userfactor->name.'_authenticated';
+                if (empty($USER->$property) || true !== $USER->$property) {
+                    return $userfactor;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public static function get_factor_actions() {
         $actions = array();
         $actions[] = 'add';

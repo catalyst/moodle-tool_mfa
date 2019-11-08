@@ -27,31 +27,63 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . "/formslib.php");
 
-class login_form extends \moodleform
-{
+class login_form extends \moodleform {
     /**
      * {@inheritDoc}
      * @see moodleform::definition()
      */
-    public function definition()
-    {
-        global $OUTPUT;
+    public function definition() {
         $mform = $this->_form;
+        $factorname = $this->_customdata['factor_name'];
+        $gracemode = $this->_customdata['grace_mode'];
 
-        $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
-        foreach ($factors as $factor) {
-            $mform = $factor->define_login_form($mform);
+        $mform->addElement('hidden', 'factor_name', $factorname);
+        $mform->setType('factor_name', PARAM_ALPHA);
+
+        $mform->addElement('hidden', 'grace_mode', $gracemode);
+        $mform->setType('grace_mode', PARAM_BOOL);
+
+        if ($gracemode) {
+            $mform = $this->define_grace_period_page($mform);
+        } else {
+            $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
+            $mform = $factor->login_form_definition($mform);
+            $this->add_action_buttons();
         }
+    }
 
-        $this->add_action_buttons();
+    function definition_after_data() {
+        $mform = $this->_form;
+        $gracemode = $this->_customdata['grace_mode'];
+        $factorname = $this->_customdata['factor_name'];
+
+        if (!$gracemode) {
+            $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
+            $mform = $factor->login_form_definition_after_data($mform);
+        }
+    }
+
+    public function define_grace_period_page($mform) {
+        global $OUTPUT;
+
+        $mform->addElement('html', $OUTPUT->heading(get_string('graceperiod:notconfigured', 'tool_mfa'), 3));
+        $mform->addElement('html', $OUTPUT->heading(get_string('graceperiod:canaccess', 'tool_mfa'), 5));
+
+        // TODO: get grace period expiration date
+        $mform->addElement('html', $OUTPUT->heading(get_string('graceperiod:expires', 'tool_mfa', time()), 5));
+        $mform->addElement('html', $OUTPUT->heading(get_string('graceperiod:redirect', 'tool_mfa', time()), 5));
+
+        $this->add_action_buttons(false, get_string('ok'));
+
+        return $mform;
     }
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
-        foreach ($factors as $factor) {
-            $errors += $factor->verify($data);
+        if (!$data['grace_mode']) {
+            $factor = \tool_mfa\plugininfo\factor::get_factor($data['factor_name']);
+            $errors += $factor->login_form_validation($data);
         }
 
         return $errors;

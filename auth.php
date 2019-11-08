@@ -46,7 +46,19 @@ $OUTPUT = $PAGE->get_renderer('tool_mfa');
 
 $params = array('wantsurl' => $wantsurl);
 $currenturl = new moodle_url('/admin/tool/mfa/auth.php', $params);
-$form = new login_form($currenturl);
+
+$userfactors = \tool_mfa\plugininfo\factor::get_enabled_user_factor_types();
+
+if (count($userfactors) > 0) {
+    $nextfactor = \tool_mfa\plugininfo\factor::get_next_user_factor();
+    $factorname = $nextfactor->name;
+    $gracemode = false;
+} else {
+    $factorname = null;
+    $gracemode = true;
+}
+
+$form = new login_form($currenturl, array('factor_name' => $factorname, 'grace_mode' => $gracemode));
 
 if ($form->is_cancelled()) {
     tool_mfa_logout();
@@ -55,12 +67,29 @@ if ($form->is_cancelled()) {
 
 if ($form->is_submitted()) {
     if ($data = $form->get_data()) {
-        $_SESSION['USER']->tool_mfa_authenticated = true;
-        redirect(new moodle_url($wantsurl));
+        $property = 'factor_'.$factorname.'_authenticated';
+        $USER->$property = true;
+
+        if (\tool_mfa\plugininfo\factor::get_next_user_factor()) {
+            redirect($currenturl);
+        } else {
+            $USER->tool_mfa_authenticated = true;
+            if ($gracemode) {
+                redirect(new moodle_url('/admin/tool/mfa/user_preferences.php'));
+            } else {
+                redirect(new moodle_url($wantsurl));
+            }
+        }
     }
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('pluginname', 'tool_mfa'));
+
+if ($gracemode) {
+    echo $OUTPUT->heading(get_string('pluginname', 'tool_mfa'));
+} else {
+    echo $OUTPUT->heading(get_string('pluginname', 'factor_'.$factorname));
+}
+
 $form->display();
 echo $OUTPUT->footer();

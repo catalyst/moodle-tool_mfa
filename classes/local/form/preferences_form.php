@@ -43,7 +43,7 @@ class preferences_form extends \moodleform
     }
 
     public function define_configured_factors($mform) {
-        global $OUTPUT, $USER;
+        global $OUTPUT;
 
         $mform->addElement('html', $OUTPUT->heading(get_string('preferences:configuredfactors', 'tool_mfa'), 4));
 
@@ -61,7 +61,7 @@ class preferences_form extends \moodleform
 
         foreach ($factors as $factor) {
 
-            $userfactors = $factor->get_user_factors($USER->id);
+            $userfactors = $factor->get_all_user_factors();
 
             foreach ($userfactors as $userfactor) {
                 $url = "action.php?sesskey=" . sesskey();

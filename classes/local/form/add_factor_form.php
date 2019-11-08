@@ -39,7 +39,7 @@ class add_factor_form extends \moodleform
 
         $factorname = $this->_customdata['factorname'];
         $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
-        $mform = $factor->define_add_factor_form_definition($mform);
+        $mform = $factor->add_factor_form_definition($mform);
 
         $this->add_action_buttons();
     }
@@ -49,7 +49,7 @@ class add_factor_form extends \moodleform
 
         $factorname = $this->_customdata['factorname'];
         $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
-        $errors +=  $factor->validation($data);
+        $errors +=  $factor->add_factor_form_validation($data);
 
         return $errors;
     }
@@ -59,6 +59,6 @@ class add_factor_form extends \moodleform
 
         $factorname = $this->_customdata['factorname'];
         $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
-        $mform = $factor->define_add_factor_form_definition_after_data($mform);
+        $mform = $factor->add_factor_form_definition_after_data($mform);
     }
 }

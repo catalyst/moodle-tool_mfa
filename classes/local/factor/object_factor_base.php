@@ -60,16 +60,16 @@ abstract class object_factor_base implements object_factor {
         return $weight;
     }
 
-    public function define_add_factor_form_definition($mform) {
+    public function add_factor_form_definition($mform) {
         $mform->addElement('html', 'TBA');
         return $mform;
     }
 
-    public function define_add_factor_form_definition_after_data($mform) {
+    public function add_factor_form_definition_after_data($mform) {
         return $mform;
     }
 
-    public function validation($data) {
+    public function add_factor_form_validation($data) {
         return array();
     }
 
@@ -77,15 +77,30 @@ abstract class object_factor_base implements object_factor {
         return false;
     }
 
-    public function get_user_factors($user) {
-        return false;
+    public function get_all_user_factors() {
+        return array();
     }
 
-    public function verify($data) {
-        return true;
+    public function get_enabled_user_factors() {
+        $return = array();
+        $factors = $this->get_all_user_factors();
+        foreach ($factors as $factor) {
+            if ($factor->disabled == 0) {
+                $return[] = $factor;
+            }
+        }
+        return $return;
     }
 
-    public function define_login_form($mform) {
+    public function login_form_definition($mform) {
         return $mform;
+    }
+
+    public function login_form_definition_after_data($mform) {
+        return $mform;
+    }
+
+    public function login_form_validation($data) {
+        return array();
     }
 }
