@@ -28,7 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 $string['mfa'] = 'MFA';
 $string['pluginname'] = 'Moodle MFA plugin';
 $string['mfasettings'] = 'Manage MFA';
-$string['name'] = 'Factor name';
+$string['factor'] = 'Factor';
+$string['preferredname'] = 'Preferred name';
 $string['enable'] = 'Enable';
 $string['weight'] = 'Weight';
 $string['settings'] = 'Settings';
@@ -44,6 +45,7 @@ $string['enablefactor'] = 'Enable factor';
 $string['disablefactor'] = 'Disable factor';
 
 $string['settings:enabled'] = 'MFA plugin enabled';
+$string['settings:enabled_help'] = '';
 
 $string['preferences:header'] = 'MFA preferences';
 $string['preferences:availablefactors'] = 'Available factors';

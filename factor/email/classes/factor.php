@@ -86,6 +86,7 @@ class factor extends object_factor_base {
         $return[1]->id = 1;
         $return[1]->name = $this->name;
         $return[1]->useremail = $USER->email;
+        $return[1]->preferredname = 'Main';
         $return[1]->timemodified = '';
         $return[1]->timecreated = '';
         $return[1]->disabled = (int)!$this->is_enabled();

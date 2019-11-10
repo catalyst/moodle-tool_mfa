@@ -70,12 +70,12 @@ class admin_setting_managemfa extends \admin_setting {
         global $OUTPUT;
 
         // display strings
-        $txt = get_strings(array('name', 'enable', 'weight', 'settings'), 'tool_mfa');
+        $txt = get_strings(array('factor', 'enable', 'weight', 'settings'), 'tool_mfa');
 
         $table = new \html_table();
         $table->id = 'managemfatable';
         $table->attributes['class'] = 'admintable generaltable';
-        $table->head  = array($txt->name, $txt->enable, $txt->weight, $txt->settings);
+        $table->head  = array($txt->factor, $txt->enable, $txt->weight, $txt->settings);
         $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign');
         $table->data  = array();
 

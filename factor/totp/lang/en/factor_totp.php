@@ -34,6 +34,8 @@ $string['settings:secretlength'] = 'TOTP secret key length';
 $string['settings:secretlength_help'] = 'Generated TOTP secret key string length';
 $string['verificationcode'] = 'Enter 6-digit verification code for confirmation';
 $string['verificationcode_help'] = 'Code validation is necessary to confirm you stored your secret key with GA app';
+$string['preferredname'] = 'Preferred TOTP factor name';
+$string['preferredname_help'] = 'This name is designed to facilitate remembering created factors';
 
 $string['addingfactor'] = 'Adding TOTP Factor';
 $string['addingfactor:scan'] = 'Scan QR-Code or enter a secret key to your Google Authenticator';
