@@ -73,7 +73,7 @@ class factor extends object_factor_base {
     public function generate_qrcode($secret) {
         $uri = $this->generate_totp_uri($secret);
         $qrcode = new \TCPDF2DBarcode($uri, 'QRCODE');
-        $image = $qrcode->getBarcodePngData(10, 10);
+        $image = $qrcode->getBarcodePngData(7, 7);
         $html = '<br>'.\html_writer::img('data:image/png;base64,' . base64_encode($image),'');
         return $html;
     }
