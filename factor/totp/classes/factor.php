@@ -92,7 +92,7 @@ class factor extends object_factor_base {
         $mform->addElement('hidden', 'secret', $secret);
         $mform->setType('secret', PARAM_ALPHANUM);
 
-        $mform->addElement('text', 'preferredname', get_string('preferredname', 'factor_totp'));
+        $mform->addElement('text', 'preferredname', get_string('preferredname', 'factor_totp'), array('placeholder' => get_string('preferrednameexample', 'factor_totp')));
         $mform->addHelpButton('preferredname', 'preferredname', 'factor_totp');
         $mform->setType("preferredname", PARAM_TEXT);
         $mform->addRule('preferredname', get_string('required'), 'required', null, 'client');
