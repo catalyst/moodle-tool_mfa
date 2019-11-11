@@ -47,7 +47,7 @@ $string['disablefactor'] = 'Disable factor';
 $string['settings:enabled'] = 'MFA plugin enabled';
 $string['settings:enabled_help'] = '';
 
-$string['preferences:header'] = 'MFA preferences';
+$string['preferences:header'] = 'Multi-factor authentication preferences';
 $string['preferences:availablefactors'] = 'Available factors';
 $string['preferences:configuredfactors'] = 'Configured factors';
 
