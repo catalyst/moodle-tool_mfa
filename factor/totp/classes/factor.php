@@ -117,9 +117,12 @@ class factor extends object_factor_base {
         $secret = $secretfield->getValue();
         $qrcode = $this->generate_qrcode($secret);
 
+        $secret = wordwrap($secret, 4, ' ', true) . '</code>';
+        $secret = \html_writer::tag('code', $secret);
+
         $mform->addElement('html', $OUTPUT->heading(get_string('addingfactor:scan', 'factor_totp'), 5));
-        $mform->addElement('html', $qrcode);
         $mform->addElement('html', $OUTPUT->heading(get_string('addingfactor:key', 'factor_totp').$secret, 5));
+        $mform->addElement('html', $qrcode);
 
         return $mform;
     }
