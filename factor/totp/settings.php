@@ -32,4 +32,4 @@ $settings->add(new admin_setting_configcheckbox('factor_totp/enabled',
 
 $settings->add(new admin_setting_configtext('factor_totp/weight',
     new lang_string('settings:weight', 'factor_totp'),
-    new lang_string('settings:weight_help', 'factor_totp'), 0, PARAM_INT));
+    new lang_string('settings:weight_help', 'factor_totp'), 100, PARAM_INT));
