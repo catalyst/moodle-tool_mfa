@@ -31,4 +31,4 @@ $settings->add(new admin_setting_configcheckbox('factor_iprange/enabled',
 
 $settings->add(new admin_setting_configtext('factor_iprange/weight',
     new lang_string('settings:weight', 'factor_iprange'),
-    new lang_string('settings:weight_help', 'factor_iprange'), 0, PARAM_INT));
+    new lang_string('settings:weight_help', 'factor_iprange'), 100, PARAM_INT));

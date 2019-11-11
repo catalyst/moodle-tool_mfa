@@ -31,7 +31,11 @@ defined('MOODLE_INTERNAL') || die();
 use tool_mfa\local\factor\object_factor_base;
 
 class factor extends object_factor_base {
-
+    /**
+     * E-Mail Factor implementation.
+     *
+     * {@inheritDoc}
+     */
     public function login_form_definition($mform) {
         $userfactors = $this->get_enabled_user_factors();
 
@@ -47,6 +51,11 @@ class factor extends object_factor_base {
         return $mform;
     }
 
+    /**
+     * E-Mail Factor implementation.
+     *
+     * {@inheritDoc}
+     */
     public function login_form_definition_after_data($mform) {
         $secretfield = $mform->getElement('secret');
         $secret = $secretfield->getValue();
@@ -54,12 +63,16 @@ class factor extends object_factor_base {
         if (empty($secret)) {
             $secret = random_int(100000, 999999);
             $secretfield->setValue($secret);
-            $this->email_secret_code($secret);
+            $this->email_verification_code($secret);
         }
         return $mform;
     }
 
-    public function email_secret_code($secret) {
+    /**
+     * Sends and e-mail to user with given verification code.
+     *
+     */
+    public function email_verification_code($secret) {
         global $USER;
         $noreplyuser = \core_user::get_noreply_user();
         $subject = get_string('email:subject', 'factor_email');
@@ -68,6 +81,11 @@ class factor extends object_factor_base {
         email_to_user($USER, $noreplyuser, $subject, $message, $messagehtml);
     }
 
+    /**
+     * E-Mail Factor implementation.
+     *
+     * {@inheritDoc}
+     */
     public function login_form_validation($data) {
         $return = array();
 
@@ -78,24 +96,24 @@ class factor extends object_factor_base {
         return $return;
     }
 
+    /**
+     * E-Mail Factor implementation.
+     * As E-Mail Factor has nothing to configure from user side we store nothing in db.
+     *
+     * {@inheritDoc}
+     */
     public function get_all_user_factors() {
         global $USER;
 
-        $id = 1;
-        $name = $this->name;
-        $useremail = $USER->email;
-        $timemodified = '';
-        $timecreated = '';
-        $disabled = (int)!$this->is_enabled();
-
-        $return = array();
-        $return[1] = new \stdClass();
-        $return[1]->id = $id;
-        $return[1]->name = $name;
-        $return[1]->useremail = $useremail;
-        $return[1]->timemodified = $timemodified;
-        $return[1]->timecreated = $timecreated;
-        $return[1]->disabled = $disabled;
+        $return = array((object) [
+            'id' => 1,
+            'name' => $this->name,
+            'useremail' => $USER->email,
+            'devicename' => 'Main',
+            'timemodified' => '',
+            'timecreated' => '',
+            'disabled' => (int)!$this->is_enabled(),
+        ]);
 
         return $return;
     }

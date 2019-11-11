@@ -23,8 +23,21 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Main hook.
+ * If MFA Plugin is ready check tool_mfa_authenticated USER property and
+ * start MFA authentication if it's not set or false.
+ *
+ * @return void
+ * @throws \moodle_exception
+ */
 function tool_mfa_after_require_login() {
     global $USER, $ME;
+
+    if (!tool_mfa_ready()) {
+        return;
+    }
+
     if (empty($USER->tool_mfa_authenticated) || !$USER->tool_mfa_authenticated) {
         if ($ME != '/admin/tool/mfa/auth.php') {
             redirect(new moodle_url('/admin/tool/mfa/auth.php', array('wantsurl' => $ME)));
@@ -32,6 +45,31 @@ function tool_mfa_after_require_login() {
     }
 }
 
+/**
+ * Checks if MFA Plugin is enabled and has enabled factor.
+ * If plugin is disabled or there is no enabled factors,
+ * it means there is nothing to do from user side.
+ * Thus, login flow shouldn't be extended with MFA.
+ *
+ * @return bool
+ * @throws \dml_exception
+ */
+function tool_mfa_ready() {
+    $pluginenabled = get_config('tool_mfa', 'enabled');
+    $enabledfactors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+
+    if (empty($pluginenabled) || count($enabledfactors) == 0) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Logout user.
+ *
+ * @return void
+ */
 function tool_mfa_logout() {
     $authsequence = get_enabled_auth_plugins();
     foreach($authsequence as $authname) {
@@ -41,12 +79,28 @@ function tool_mfa_logout() {
     require_logout();
 }
 
+/**
+ * Sets config variable for given factor.
+ *
+ * @param array $data
+ * @param string $factor
+ *
+ * @return bool true or exception
+ */
 function tool_mfa_set_factor_config($data, $factor) {
     foreach ($data as $key => $value) {
         set_config($key, $value, $factor);
     }
+    return true;
 }
 
+/**
+ * Checks that given factor exists.
+ *
+ * @param string $factorname
+ *
+ * @return bool
+ */
 function tool_mfa_factor_exists($factorname) {
     $factors = \tool_mfa\plugininfo\factor::get_factors();
     foreach ($factors as $factor) {
@@ -57,15 +111,18 @@ function tool_mfa_factor_exists($factorname) {
     return false;
 }
 
-function tool_mfa_get_factor_actions() {
-    $actions = \tool_mfa\plugininfo\factor::get_factor_actions();
-    return $actions;
-}
-
-function tool_mfa_get_enabled_factors() {
-    return \tool_mfa\plugininfo\factor::get_enabled_factors();
-}
-
+/**
+ * Extends navigation bar and injects MFA Preferences menu to user preferences.
+ *
+ * @param navigation_node $navigation
+ * @param stdClass $user
+ * @param context_user $usercontext
+ * @param stdClass $course
+ * @param context_course $coursecontext
+ *
+ * @return void or null
+ * @throws \moodle_exception
+ */
 function tool_mfa_extend_navigation_user_settings($navigation, $user, $usercontext, $course, $coursecontext) {
     global $PAGE;
 

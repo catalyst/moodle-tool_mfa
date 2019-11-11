@@ -26,9 +26,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['mfa'] = 'MFA';
-$string['pluginname'] = 'Moodle MFA plugin';
+$string['pluginname'] = 'Multi-factor authentication';
 $string['mfasettings'] = 'Manage MFA';
-$string['name'] = 'Factor name';
+$string['factor'] = 'Factor';
+$string['devicename'] = 'Device';
 $string['enable'] = 'Enable';
 $string['weight'] = 'Weight';
 $string['settings'] = 'Settings';
@@ -43,7 +44,10 @@ $string['editfactor'] = 'Edit factor';
 $string['enablefactor'] = 'Enable factor';
 $string['disablefactor'] = 'Disable factor';
 
-$string['preferences:header'] = 'MFA preferences';
+$string['settings:enabled'] = 'MFA plugin enabled';
+$string['settings:enabled_help'] = '';
+
+$string['preferences:header'] = 'Multi-factor authentication preferences';
 $string['preferences:availablefactors'] = 'Available factors';
 $string['preferences:configuredfactors'] = 'Configured factors';
 
@@ -58,5 +62,8 @@ $string['error:directaccess'] = 'This page shouldn\'t be accessed directly';
 $string['error:factornotfound'] = 'MFA Factor \'{$a}\' not found';
 $string['error:actionnotfound'] = 'Action \'{$a}\' not supported';
 $string['error:addfactor'] = 'Can not add factor';
+
+$string['event:userpassedmfa'] = 'Verification passed';
+$string['event:useraddedfactor'] = 'Factor added';
 
 $string['privacy:metadata'] = 'Moodle MFA plugin does not store any personal data';
