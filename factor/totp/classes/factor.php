@@ -74,7 +74,7 @@ class factor extends object_factor_base {
         $uri = $this->generate_totp_uri($secret);
         $qrcode = new \TCPDF2DBarcode($uri, 'QRCODE');
         $image = $qrcode->getBarcodePngData(7, 7);
-        $html = \html_writer::img('data:image/png;base64,' . base64_encode($image),'');
+        $html = \html_writer::img('data:image/png;base64,' . base64_encode($image), '');
         return $html;
     }
 
@@ -103,11 +103,11 @@ class factor extends object_factor_base {
 
         $mform->addElement('html', $OUTPUT->heading(get_string('addingfactor', 'factor_totp'), 3));
 
-        $mform->addElement('text', 'devicename', get_string('devicename', 'factor_totp'), array('placeholder' => get_string('devicenameexample', 'factor_totp')));
+        $mform->addElement('text', 'devicename', get_string('devicename', 'factor_totp'),
+            array('placeholder' => get_string('devicenameexample', 'factor_totp')));
         $mform->addHelpButton('devicename', 'devicename', 'factor_totp');
         $mform->setType("devicename", PARAM_TEXT);
         $mform->addRule('devicename', get_string('required'), 'required', null, 'client');
-
 
         $secretfield = $mform->getElement('secret');
         $secret = $secretfield->getValue();
@@ -126,7 +126,6 @@ class factor extends object_factor_base {
         $mform->addHelpButton('verificationcode', 'verificationcode', 'factor_totp');
         $mform->setType("verificationcode", PARAM_INT);
         $mform->addRule('verificationcode', get_string('required'), 'required', null, 'client');
-
 
         return $mform;
     }

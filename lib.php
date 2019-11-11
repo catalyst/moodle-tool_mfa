@@ -72,7 +72,7 @@ function tool_mfa_ready() {
  */
 function tool_mfa_logout() {
     $authsequence = get_enabled_auth_plugins();
-    foreach($authsequence as $authname) {
+    foreach ($authsequence as $authname) {
         $authplugin = get_auth_plugin($authname);
         $authplugin->logoutpage_hook();
     }
@@ -126,7 +126,7 @@ function tool_mfa_factor_exists($factorname) {
 function tool_mfa_extend_navigation_user_settings($navigation, $user, $usercontext, $course, $coursecontext) {
     global $PAGE;
 
-    // Only inject if user is on the preferences page
+    // Only inject if user is on the preferences page.
     $onpreferencepage = $PAGE->url->compare(new moodle_url('/user/preferences.php'), URL_MATCH_BASE);
     if (!$onpreferencepage) {
         return null;

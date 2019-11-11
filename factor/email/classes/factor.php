@@ -90,7 +90,7 @@ class factor extends object_factor_base {
         $return = array();
 
         if ($data['verificationcode'] != $data['secret']) {
-            $return['verificationcode'] =  'Wrong verification code';
+            $return['verificationcode'] = 'Wrong verification code';
         }
 
         return $return;

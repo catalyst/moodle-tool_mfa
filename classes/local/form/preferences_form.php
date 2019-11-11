@@ -52,14 +52,40 @@ class preferences_form extends \moodleform
 
         $mform->addElement('html', $OUTPUT->heading(get_string('preferences:configuredfactors', 'tool_mfa'), 4));
 
-
-        $headers = get_strings(array('factor', 'devicename', 'weight', 'created', 'modified', 'enable','edit', 'delete'), 'tool_mfa');
+        $headers = get_strings(array(
+            'factor',
+            'devicename',
+            'weight',
+            'created',
+            'modified',
+            'enable',
+            'edit',
+            'delete',
+        ), 'tool_mfa');
 
         $table = new \html_table();
         $table->id = 'configured_factors';
         $table->attributes['class'] = 'generaltable';
-        $table->head  = array($headers->factor, $headers->devicename, $headers->weight, $headers->created, $headers->modified, $headers->enable, $headers->edit, $headers->delete);
-        $table->colclasses = array('leftalign', 'leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
+        $table->head  = array(
+            $headers->factor,
+            $headers->devicename,
+            $headers->weight,
+            $headers->created,
+            $headers->modified,
+            $headers->enable,
+            $headers->edit,
+            $headers->delete,
+        );
+        $table->colclasses = array(
+            'leftalign',
+            'leftalign',
+            'centeralign',
+            'centeralign',
+            'centeralign',
+            'centeralign',
+            'centeralign',
+            'centeralign',
+        );
         $table->data  = array();
 
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
@@ -70,8 +96,10 @@ class preferences_form extends \moodleform
 
             foreach ($userfactors as $userfactor) {
                 $url = "action.php?sesskey=" . sesskey();
-                $edit = "<a href=\"action.php?sesskey=".sesskey()."&amp;action=edit&amp;factor=$factor->name&amp;factorid=$userfactor->id\">$headers->edit</a>";
-                $delete = "<a href=\"action.php?sesskey=".sesskey()."&amp;action=delete&amp;factor=$factor->name&amp;factorid=$userfactor->id\">$headers->delete</a>";
+                $edit = "<a href=\"action.php?sesskey=".sesskey()
+                    ."&amp;action=edit&amp;factor=$factor->name&amp;factorid=$userfactor->id\">$headers->edit</a>";
+                $delete = "<a href=\"action.php?sesskey=".sesskey()
+                    ."&amp;action=delete&amp;factor=$factor->name&amp;factorid=$userfactor->id\">$headers->delete</a>";
 
                 if ($userfactor->disabled == 1) {
                     $hideshow = "<a href=\"$url&amp;action=enable&amp;factor=$factor->name&amp;factorid=$userfactor->id\">";
@@ -86,7 +114,16 @@ class preferences_form extends \moodleform
                 $timecreated = empty($userfactor->timecreated) ? '' : userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
                 $timemodified = empty($userfactor->timemodified) ? '' : userdate($userfactor->timemodified, '%l:%M %p %d/%m/%Y');
 
-                $row = new \html_table_row(array($factor->get_display_name(), $userfactor->devicename, $factor->get_weight(), $timecreated, $timemodified, $hideshow, $edit, $delete));
+                $row = new \html_table_row(array(
+                    $factor->get_display_name(),
+                    $userfactor->devicename,
+                    $factor->get_weight(),
+                    $timecreated,
+                    $timemodified,
+                    $hideshow,
+                    $edit,
+                    $delete,
+                ));
                 $row->attributes['class'] = $class;
                 $table->data[] = $row;
             }

@@ -35,7 +35,7 @@ $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $factor = optional_param('factor', '', PARAM_ALPHANUMEXT);
 $sesskey = optional_param('sesskey', '', PARAM_ALPHANUMEXT);
 
-$params = array('sesskey'=>$sesskey, 'action'=>$action, 'factor'=>$factor);
+$params = array('sesskey' => $sesskey, 'action' => $action, 'factor' => $factor);
 $currenturl = new moodle_url('/admin/tool/mfa/action.php', $params);
 
 $returnurl = new moodle_url('/admin/tool/mfa/user_preferences.php');

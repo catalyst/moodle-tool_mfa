@@ -30,7 +30,7 @@ require_once($CFG->libdir.'/tablelib.php');
 
 require_admin();
 
-$returnurl = new moodle_url('/admin/settings.php', array('section'=>'managemfa'));
+$returnurl = new moodle_url('/admin/settings.php', array('section' => 'managemfa'));
 
 $PAGE->set_url($returnurl);
 
@@ -58,7 +58,7 @@ foreach (\tool_mfa\plugininfo\factor::get_enabled_factors() as $enabledfactor) {
 switch ($action) {
     case 'disable':
         if (in_array($factor, $enabledfactors)) {
-            tool_mfa_set_factor_config(array('enabled'=>0), 'factor_'.$factor);
+            tool_mfa_set_factor_config(array('enabled' => 0), 'factor_' . $factor);
         }
 
         \core\session\manager::gc(); // Remove stale sessions.
@@ -67,7 +67,7 @@ switch ($action) {
 
     case 'enable':
         if (!in_array($factor, $enabledfactors)) {
-            tool_mfa_set_factor_config(array('enabled'=>1), 'factor_'.$factor);
+            tool_mfa_set_factor_config(array('enabled' => 1), 'factor_' . $factor);
         }
 
         \core\session\manager::gc(); // Remove stale sessions.

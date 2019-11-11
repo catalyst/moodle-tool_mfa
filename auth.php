@@ -28,6 +28,7 @@ require_once($CFG->libdir.'/adminlib.php');
 
 use tool_mfa\local\form\login_form;
 
+require_login(null, false);
 $wantsurl  = optional_param('wantsurl', '', PARAM_LOCALURL);
 
 if (empty($wantsurl)) {

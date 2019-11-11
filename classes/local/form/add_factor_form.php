@@ -53,7 +53,7 @@ class add_factor_form extends \moodleform {
 
         $factorname = $this->_customdata['factorname'];
         $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
-        $errors +=  $factor->add_factor_form_validation($data);
+        $errors += $factor->add_factor_form_validation($data);
 
         return $errors;
     }
@@ -62,7 +62,7 @@ class add_factor_form extends \moodleform {
      * Invokes factor add_factor_form_definition_after_data() method after form data has been set.
      *
      */
-    function definition_after_data() {
+    public function definition_after_data() {
         $mform = $this->_form;
 
         $factorname = $this->_customdata['factorname'];

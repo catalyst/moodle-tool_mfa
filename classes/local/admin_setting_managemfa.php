@@ -26,7 +26,6 @@ namespace tool_mfa\local;
 
 defined('MOODLE_INTERNAL') || die();
 
-/// Add libraries
 require_once($CFG->libdir.'/ddllib.php');
 require_once($CFG->libdir.'/xmlize.php');
 require_once($CFG->libdir.'/messagelib.php');
@@ -55,7 +54,6 @@ class admin_setting_managemfa extends \admin_setting {
      * @return string Always returns ''
      */
     public function write_setting($data) {
-        // do not write any setting
         return '';
     }
 
@@ -69,7 +67,6 @@ class admin_setting_managemfa extends \admin_setting {
     public function output_html($data, $query='') {
         global $OUTPUT;
 
-        // display strings
         $txt = get_strings(array('factor', 'enable', 'weight', 'settings'), 'tool_mfa');
 
         $table = new \html_table();
@@ -85,13 +82,12 @@ class admin_setting_managemfa extends \admin_setting {
             $settings = "<a href=\"settings.php?section=factor_$factor->name\">$txt->settings</a>";
             $url = "tool\\mfa\\index.php?sesskey=" . sesskey();
 
-            // hide/show link
+            // Hide/show link.
             if ($factor->is_enabled()) {
                 $hideshow = "<a href=\"$url&amp;action=disable&amp;factor=$factor->name\">";
                 $hideshow .= $OUTPUT->pix_icon('t/hide', get_string('disable')) . '</a>';
                 $class = '';
-            }
-            else {
+            } else {
                 $hideshow = "<a href=\"$url&amp;action=enable&amp;factor=$factor->name\">";
                 $hideshow .= $OUTPUT->pix_icon('t/show', get_string('enable')) . '</a>';
                 $class = 'dimmed_text';

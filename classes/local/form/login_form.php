@@ -55,7 +55,7 @@ class login_form extends \moodleform {
      * Invokes factor login_form_definition_after_data() method after form data has been set.
      *
      */
-    function definition_after_data() {
+    public function definition_after_data() {
         $mform = $this->_form;
         $gracemode = $this->_customdata['grace_mode'];
         $factorname = $this->_customdata['factor_name'];
@@ -80,7 +80,7 @@ class login_form extends \moodleform {
         $mform->addElement('html', $OUTPUT->heading(get_string('graceperiod:notconfigured', 'tool_mfa'), 3));
         $mform->addElement('html', $OUTPUT->heading(get_string('graceperiod:canaccess', 'tool_mfa'), 5));
 
-        // TODO: get grace period expiration date
+        // TODO: get grace period expiration date.
         $mform->addElement('html', $OUTPUT->heading(get_string('graceperiod:expires', 'tool_mfa', time()), 5));
         $mform->addElement('html', $OUTPUT->heading(get_string('graceperiod:redirect', 'tool_mfa', time()), 5));
 
