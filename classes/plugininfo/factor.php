@@ -169,6 +169,11 @@ class factor extends \core\plugininfo\base {
         return false;
     }
 
+    /**
+     * Returns section name for settings.
+     *
+     * @return string
+     */
     public function get_settings_section_name() {
         return $this->type . '_' . $this->name;
     }

@@ -48,7 +48,7 @@ if (!tool_mfa_factor_exists($factor)) {
     print_error('error:factornotfound', 'tool_mfa', $returnurl, $factor);
 }
 
-if (!in_array($action, tool_mfa_get_factor_actions())) {
+if (!in_array($action, \tool_mfa\plugininfo\factor::get_factor_actions())) {
     print_error('error:actionnotfound', 'tool_mfa', $returnurl, $action);
 }
 

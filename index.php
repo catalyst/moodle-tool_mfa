@@ -41,7 +41,7 @@ if (empty($factor) || !tool_mfa_factor_exists($factor)) {
     print_error('factornotfound', 'tool_mfa', $returnurl, $factor);
 }
 
-if (empty($action) || !in_array($action, tool_mfa_get_factor_actions())) {
+if (empty($action) || !in_array($action, \tool_mfa\plugininfo\factor::get_factor_actions())) {
     print_error('actionnotfound', 'tool_mfa', $returnurl, $action);
 }
 
@@ -50,7 +50,7 @@ if (!confirm_sesskey()) {
 }
 
 $enabledfactors = array();
-foreach (tool_mfa_get_enabled_factors() as $enabledfactor) {
+foreach (\tool_mfa\plugininfo\factor::get_enabled_factors() as $enabledfactor) {
     $enabledfactors[] = $enabledfactor->name;
 }
 
