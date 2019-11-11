@@ -140,7 +140,7 @@ class factor extends object_factor_base {
         $errors = array();
 
         $totp = TOTP::create($data['secret']);
-        if (!$totp->verify($data['verificationcode'], time(), 2)) {
+        if (!$totp->verify($data['verificationcode'], time(), 15)) {
             $errors['verificationcode'] = get_string('error:wrongverification', 'factor_totp');
         }
 
@@ -171,11 +171,11 @@ class factor extends object_factor_base {
      */
     public function login_form_validation($data) {
         $factors = $this->get_enabled_user_factors();
-        $result = array('verificationcode' => 'Wrong verification code');
+        $result = array('verificationcode' => get_string('error:wrongverification', 'factor_totp'));
 
         foreach ($factors as $factor) {
             $totp = TOTP::create($factor->secret);
-            if ($totp->verify($data['verificationcode'], time(), 2)) {
+            if ($totp->verify($data['verificationcode'], time(), 15)) {
                 $result = array();
             }
         }
