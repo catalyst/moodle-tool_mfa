@@ -34,8 +34,8 @@ $string['settings:secretlength'] = 'TOTP secret key length';
 $string['settings:secretlength_help'] = 'Generated TOTP secret key string length';
 $string['verificationcode'] = 'Enter 6-digit verification code for confirmation';
 $string['verificationcode_help'] = 'Code validation is necessary to confirm you stored your secret key with GA app';
-$string['preferredname'] = 'Preferred TOTP factor name';
-$string['preferredname_help'] = 'This name is designed to facilitate remembering created factors';
+$string['preferredname'] = 'Device label eg "Work iPhone"';
+$string['preferredname_help'] = 'This is the device you have an authenticator app installed on. You can setup multiple devices so this label helps track which ones are being used. You should setup each device with it\'s own codes so they are easier to revoke.';
 
 $string['addingfactor'] = 'Adding TOTP Factor';
 $string['addingfactor:scan'] = 'Scan QR-Code or enter a secret key to your Google Authenticator';
@@ -43,3 +43,4 @@ $string['addingfactor:key'] = 'Secret key: ';
 $string['error:wrongverification'] = 'Incorrect verification code';
 
 $string['privacy:metadata'] = 'The TOTP Factor plugin does not store any personal data';
+
