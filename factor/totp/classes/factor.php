@@ -46,7 +46,14 @@ use tool_mfa\local\factor\object_factor_base;
 use OTPHP\TOTP;
 
 class factor extends object_factor_base {
-
+    /**
+     * Generates TOTP URI for given secret key.
+     * Uses site name, domain and user name to make GA account look like:
+     * "Sitename domain (username)"
+     *
+     * @param string $secret
+     * @return string
+     */
     public function generate_totp_uri($secret) {
         global $USER, $SITE, $CFG;
         $domain = str_replace('http://', '', str_replace('https://', '', $CFG->wwwroot));
@@ -57,6 +64,12 @@ class factor extends object_factor_base {
         return $totp->getProvisioningUri();
     }
 
+    /**
+     * Generates HTML sting with QR code for given secret key.
+     *
+     * @param string $secret
+     * @return string
+     */
     public function generate_qrcode($secret) {
         $uri = $this->generate_totp_uri($secret);
         $qrcode = new \TCPDF2DBarcode($uri, 'QRCODE');
@@ -65,6 +78,11 @@ class factor extends object_factor_base {
         return $html;
     }
 
+    /**
+     * TOTP Factor implementation.
+     *
+     * {@inheritDoc}
+     */
     public function add_factor_form_definition($mform) {
         global $OUTPUT;
 
@@ -87,6 +105,11 @@ class factor extends object_factor_base {
         return $mform;
     }
 
+    /**
+     * TOTP Factor implementation.
+     *
+     * {@inheritDoc}
+     */
     public function add_factor_form_definition_after_data($mform) {
         global $OUTPUT;
         $secretfield = $mform->getElement('secret');
@@ -101,6 +124,11 @@ class factor extends object_factor_base {
         return $mform;
     }
 
+    /**
+     * TOTP Factor implementation.
+     *
+     * {@inheritDoc}
+     */
     public function add_factor_form_validation($data) {
         $errors = array();
 
@@ -112,6 +140,11 @@ class factor extends object_factor_base {
         return $errors;
     }
 
+    /**
+     * TOTP Factor implementation.
+     *
+     * {@inheritDoc}
+     */
     public function login_form_definition($mform) {
         $userfactors = $this->get_enabled_user_factors();
 
@@ -124,6 +157,11 @@ class factor extends object_factor_base {
         return $mform;
     }
 
+    /**
+     * TOTP Factor implementation.
+     *
+     * {@inheritDoc}
+     */
     public function login_form_validation($data) {
         $factors = $this->get_enabled_user_factors();
         $result = array('verificationcode' => 'Wrong verification code');
@@ -137,11 +175,21 @@ class factor extends object_factor_base {
         return $result;
     }
 
+    /**
+     * Generates cryptographically secure pseudo-random 16-digit secret code.
+     *
+     * @return string
+     */
     public function generate_secret_code() {
         $totp = TOTP::create();
         return substr($totp->getSecret(), 0, 16);
     }
 
+    /**
+     * TOTP Factor implementation.
+     *
+     * {@inheritDoc}
+     */
     public function add_user_factor($data) {
         global $DB, $USER;
 
@@ -161,6 +209,11 @@ class factor extends object_factor_base {
         return false;
     }
 
+    /**
+     * TOTP Factor implementation.
+     *
+     * {@inheritDoc}
+     */
     public function get_all_user_factors() {
         global $DB, $USER;
         $sql = "SELECT id, 'totp' AS name, preferredname, secret, timecreated, timemodified, disabled

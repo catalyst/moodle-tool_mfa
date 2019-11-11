@@ -31,7 +31,11 @@ defined('MOODLE_INTERNAL') || die();
 use tool_mfa\local\factor\object_factor_base;
 
 class factor extends object_factor_base {
-
+    /**
+     * E-Mail Factor implementation.
+     *
+     * {@inheritDoc}
+     */
     public function login_form_definition($mform) {
         $userfactors = $this->get_enabled_user_factors();
 
@@ -47,6 +51,11 @@ class factor extends object_factor_base {
         return $mform;
     }
 
+    /**
+     * E-Mail Factor implementation.
+     *
+     * {@inheritDoc}
+     */
     public function login_form_definition_after_data($mform) {
         $secretfield = $mform->getElement('secret');
         $secret = $secretfield->getValue();
@@ -59,6 +68,10 @@ class factor extends object_factor_base {
         return $mform;
     }
 
+    /**
+     * Sends and e-mail to user with given verification code.
+     *
+     */
     public function email_secret_code($secret) {
         global $USER;
         $noreplyuser = \core_user::get_noreply_user();
@@ -68,6 +81,11 @@ class factor extends object_factor_base {
         email_to_user($USER, $noreplyuser, $subject, $message, $messagehtml);
     }
 
+    /**
+     * E-Mail Factor implementation.
+     *
+     * {@inheritDoc}
+     */
     public function login_form_validation($data) {
         $return = array();
 
@@ -78,6 +96,12 @@ class factor extends object_factor_base {
         return $return;
     }
 
+    /**
+     * E-Mail Factor implementation.
+     * As E-Mail Factor has nothing to configure from user side we store nothing in db.
+     *
+     * {@inheritDoc}
+     */
     public function get_all_user_factors() {
         global $USER;
         $return = array();

@@ -40,6 +40,13 @@ class preferences_form extends \moodleform
 
     }
 
+    /**
+     * Defines section with configured user's factors.
+     *
+     * @param $mform
+     * @return object $mform
+     * @throws \coding_exception
+     */
     public function define_configured_factors($mform) {
         global $OUTPUT;
 
@@ -94,6 +101,13 @@ class preferences_form extends \moodleform
         return $mform;
     }
 
+    /**
+     * Defines section with available factors.
+     *
+     * @param $mform
+     * @return object $mform
+     * @throws \coding_exception
+     */
     public function define_available_factors($mform) {
         global $OUTPUT;
 

@@ -30,8 +30,9 @@ defined('MOODLE_INTERNAL') || die();
 class factor extends \core\plugininfo\base {
 
     /**
-     * Finds all factors.
-     * @return array of factor subplugins.
+     * Finds all MFA factors.
+     *
+     * @return array of factor objects.
      */
     public static function get_factors() {
         $return = array();
@@ -48,7 +49,10 @@ class factor extends \core\plugininfo\base {
 
     /**
      * Finds factor by its name.
-     * @return factor object or false if factor not found.
+     *
+     * @param string $name
+     *
+     * @return mixed factor object or false if factor not found.
      */
     public static function get_factor($name) {
         $factors = \core_plugin_manager::instance()->get_plugins_of_type('factor');
@@ -66,8 +70,9 @@ class factor extends \core\plugininfo\base {
     }
 
     /**
-     * Finds enabled factors.
-     * @return array of factor subplugins
+     * Finds all enabled factors.
+     *
+     * @return array of factor objects
      */
     public static function get_enabled_factors() {
         $return = array();
@@ -83,9 +88,9 @@ class factor extends \core\plugininfo\base {
     }
 
     /**
-     * Finds enabled factors for user by userid.
+     * Finds enabled factors for current user.
      *
-     * @return array of enabled factors for given user.
+     * @return array of factor objects.
      */
     public static function get_enabled_user_factor_types() {
         $return = array();
@@ -102,7 +107,7 @@ class factor extends \core\plugininfo\base {
     }
 
     /**
-     * Gets next factor to authenticate user.
+     * Returns next factor to authenticate user.
      *
      * @return mixed factor object the next factor to be authenticated or false.
      */
@@ -123,6 +128,11 @@ class factor extends \core\plugininfo\base {
         return false;
     }
 
+    /**
+     * Returns the list of available actions with factor.
+     *
+     * @return array
+     */
     public static function get_factor_actions() {
         $actions = array();
         $actions[] = 'add';
