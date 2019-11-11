@@ -48,7 +48,7 @@ if (!tool_mfa_factor_exists($factor)) {
     print_error('error:factornotfound', 'tool_mfa', $returnurl, $factor);
 }
 
-if (!in_array($action, tool_mfa_get_factor_actions())) {
+if (!in_array($action, \tool_mfa\plugininfo\factor::get_factor_actions())) {
     print_error('error:actionnotfound', 'tool_mfa', $returnurl, $action);
 }
 
@@ -76,6 +76,9 @@ switch ($action) {
             if ($data = $form->get_data()) {
                 $factorobject = \tool_mfa\plugininfo\factor::get_factor($factor);
                 if ($factorobject && $factorobject->add_user_factor($data)) {
+                    $event = \tool_mfa\event\user_added_factor::user_added_factor_event($USER, $factorobject->get_display_name());
+                    $event->trigger();
+
                     redirect($returnurl);
                 } else {
                     print_error('error:addfactor', 'tool_mfa', $returnurl, $action);
@@ -90,25 +93,21 @@ switch ($action) {
     case 'delete':
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('delete'));
-        echo $OUTPUT->heading('TBA');
         break;
 
     case 'edit':
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('edit'));
-        echo $OUTPUT->heading('TBA');
         break;
 
     case 'enable':
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('enable'));
-        echo $OUTPUT->heading('TBA');
         break;
 
     case 'disable':
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('disable'));
-        echo $OUTPUT->heading('TBA');
         break;
 
     default:

@@ -33,28 +33,33 @@ class preferences_form extends \moodleform
      * {@inheritDoc}
      * @see moodleform::definition()
      */
-    public function definition()
-    {
-        global $OUTPUT;
+    public function definition() {
         $mform = $this->_form;
         $mform = $this->define_configured_factors($mform);
         $mform = $this->define_available_factors($mform);
 
     }
 
+    /**
+     * Defines section with configured user's factors.
+     *
+     * @param $mform
+     * @return object $mform
+     * @throws \coding_exception
+     */
     public function define_configured_factors($mform) {
         global $OUTPUT;
 
         $mform->addElement('html', $OUTPUT->heading(get_string('preferences:configuredfactors', 'tool_mfa'), 4));
 
 
-        $headers = get_strings(array('name', 'weight', 'created', 'modified', 'enable','edit', 'delete'), 'tool_mfa');
+        $headers = get_strings(array('factor', 'devicename', 'weight', 'created', 'modified', 'enable','edit', 'delete'), 'tool_mfa');
 
         $table = new \html_table();
         $table->id = 'configured_factors';
         $table->attributes['class'] = 'generaltable';
-        $table->head  = array($headers->name, $headers->weight, $headers->created, $headers->modified, $headers->enable, $headers->edit, $headers->delete);
-        $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
+        $table->head  = array($headers->factor, $headers->devicename, $headers->weight, $headers->created, $headers->modified, $headers->enable, $headers->edit, $headers->delete);
+        $table->colclasses = array('leftalign', 'leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
         $table->data  = array();
 
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
@@ -78,10 +83,10 @@ class preferences_form extends \moodleform
                     $class = '';
                 }
 
-                $timecreated = userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
-                $timemodified = userdate($userfactor->timemodified, '%l:%M %p %d/%m/%Y');
+                $timecreated = empty($userfactor->timecreated) ? '' : userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
+                $timemodified = empty($userfactor->timemodified) ? '' : userdate($userfactor->timemodified, '%l:%M %p %d/%m/%Y');
 
-                $row = new \html_table_row(array($factor->get_display_name(), $factor->get_weight(), $timecreated, $timemodified, $hideshow, $edit, $delete));
+                $row = new \html_table_row(array($factor->get_display_name(), $userfactor->devicename, $factor->get_weight(), $timecreated, $timemodified, $hideshow, $edit, $delete));
                 $row->attributes['class'] = $class;
                 $table->data[] = $row;
             }
@@ -96,17 +101,24 @@ class preferences_form extends \moodleform
         return $mform;
     }
 
+    /**
+     * Defines section with available factors.
+     *
+     * @param $mform
+     * @return object $mform
+     * @throws \coding_exception
+     */
     public function define_available_factors($mform) {
         global $OUTPUT;
 
         $mform->addElement('html', $OUTPUT->heading(get_string('preferences:availablefactors', 'tool_mfa'), 4));
 
-        $headers = get_strings(array('name', 'weight', 'action'), 'tool_mfa');
+        $headers = get_strings(array('factor', 'weight', 'action'), 'tool_mfa');
 
         $table = new \html_table();
         $table->id = 'available_factors';
         $table->attributes['class'] = 'generaltable';
-        $table->head  = array($headers->name, $headers->weight, $headers->action);
+        $table->head  = array($headers->factor, $headers->weight, $headers->action);
         $table->colclasses = array('leftalign', 'centeralign', 'centeralign');
         $table->data  = array();
 

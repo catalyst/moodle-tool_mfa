@@ -98,7 +98,7 @@ abstract class OTP implements OTPInterface
         Assertion::false($this->hasColon($label), 'Label must not contain a colon.');
         $options = array_merge($options, $this->getParameters());
         $this->filterOptions($options);
-        $params = str_replace(['+', '%7E'], ['%20', '~'], http_build_query($options));
+        $params = str_replace(['+', '%7E'], ['%20', '~'], http_build_query($options, '', '&'));
 
         return sprintf('otpauth://%s/%s?%s', $type, rawurlencode((null !== $this->getIssuer() ? $this->getIssuer().':' : '').$label), $params);
     }

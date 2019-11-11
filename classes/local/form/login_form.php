@@ -48,10 +48,13 @@ class login_form extends \moodleform {
         } else {
             $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
             $mform = $factor->login_form_definition($mform);
-            $this->add_action_buttons();
         }
     }
 
+    /**
+     * Invokes factor login_form_definition_after_data() method after form data has been set.
+     *
+     */
     function definition_after_data() {
         $mform = $this->_form;
         $gracemode = $this->_customdata['grace_mode'];
@@ -60,9 +63,17 @@ class login_form extends \moodleform {
         if (!$gracemode) {
             $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
             $mform = $factor->login_form_definition_after_data($mform);
+            $this->add_action_buttons();
         }
     }
 
+    /**
+     * Defines grace period login page.
+     *
+     * @param $mform
+     * @return object $mform
+     * @throws \coding_exception
+     */
     public function define_grace_period_page($mform) {
         global $OUTPUT;
 
@@ -78,6 +89,13 @@ class login_form extends \moodleform {
         return $mform;
     }
 
+    /**
+     * Validates the login form with given factor validation method.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 

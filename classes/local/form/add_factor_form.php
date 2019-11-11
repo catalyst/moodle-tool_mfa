@@ -27,23 +27,27 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . "/formslib.php");
 
-class add_factor_form extends \moodleform
-{
+class add_factor_form extends \moodleform {
     /**
      * {@inheritDoc}
      * @see moodleform::definition()
      */
     public function definition() {
-        global $OUTPUT;
         $mform = $this->_form;
 
         $factorname = $this->_customdata['factorname'];
         $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
         $mform = $factor->add_factor_form_definition($mform);
 
-        $this->add_action_buttons();
     }
 
+    /**
+     * Validates add_factor form with given factor validation method.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
@@ -54,11 +58,16 @@ class add_factor_form extends \moodleform
         return $errors;
     }
 
+    /**
+     * Invokes factor add_factor_form_definition_after_data() method after form data has been set.
+     *
+     */
     function definition_after_data() {
         $mform = $this->_form;
 
         $factorname = $this->_customdata['factorname'];
         $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
         $mform = $factor->add_factor_form_definition_after_data($mform);
+        $this->add_action_buttons();
     }
 }

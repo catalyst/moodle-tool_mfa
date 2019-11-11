@@ -47,6 +47,10 @@ $OUTPUT = $PAGE->get_renderer('tool_mfa');
 $params = array('wantsurl' => $wantsurl);
 $currenturl = new moodle_url('/admin/tool/mfa/auth.php', $params);
 
+if (isset($USER->tool_mfa_authenticated) && $USER->tool_mfa_authenticated) {
+    redirect(new moodle_url($wantsurl));
+}
+
 $userfactors = \tool_mfa\plugininfo\factor::get_enabled_user_factor_types();
 
 if (count($userfactors) > 0) {
@@ -74,6 +78,10 @@ if ($form->is_submitted()) {
             redirect($currenturl);
         } else {
             $USER->tool_mfa_authenticated = true;
+
+            $event = \tool_mfa\event\user_passed_mfa::user_passed_mfa_event($USER);
+            $event->trigger();
+
             if ($gracemode) {
                 redirect(new moodle_url('/admin/tool/mfa/user_preferences.php'));
             } else {
