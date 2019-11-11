@@ -57,7 +57,7 @@ class factor extends object_factor_base {
     public function generate_totp_uri($secret) {
         global $USER, $SITE, $CFG;
         $domain = str_replace('http://', '', str_replace('https://', '', $CFG->wwwroot));
-        $issuer = $SITE->shortname.' '.$domain;
+        $issuer = $SITE->fullname.' '.$domain;
         $totp = TOTP::create($secret);
         $totp->setLabel($USER->username);
         $totp->setIssuer($issuer);
