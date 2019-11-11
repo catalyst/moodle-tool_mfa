@@ -74,7 +74,7 @@ class factor extends object_factor_base {
         $uri = $this->generate_totp_uri($secret);
         $qrcode = new \TCPDF2DBarcode($uri, 'QRCODE');
         $image = $qrcode->getBarcodePngData(7, 7);
-        $html = '<br>'.\html_writer::img('data:image/png;base64,' . base64_encode($image),'');
+        $html = \html_writer::img('data:image/png;base64,' . base64_encode($image),'');
         return $html;
     }
 
@@ -120,9 +120,11 @@ class factor extends object_factor_base {
         $secret = wordwrap($secret, 4, ' ', true) . '</code>';
         $secret = \html_writer::tag('code', $secret);
 
-        $mform->addElement('html', $OUTPUT->heading(get_string('addingfactor:scan', 'factor_totp'), 5));
-        $mform->addElement('html', $OUTPUT->heading(get_string('addingfactor:key', 'factor_totp').$secret, 5));
-        $mform->addElement('html', $qrcode);
+        $html = '';
+        $html .= \html_writer::tag('p', get_string('addingfactor:key', 'factor_totp').$secret);
+        $html .= $qrcode;
+
+        $mform->addElement('static', 'description', get_string('addingfactor:scan', 'factor_totp'), $html);
 
         return $mform;
     }
