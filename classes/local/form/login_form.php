@@ -48,7 +48,6 @@ class login_form extends \moodleform {
         } else {
             $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
             $mform = $factor->login_form_definition($mform);
-            $this->add_action_buttons();
         }
     }
 
@@ -64,6 +63,7 @@ class login_form extends \moodleform {
         if (!$gracemode) {
             $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
             $mform = $factor->login_form_definition_after_data($mform);
+            $this->add_action_buttons();
         }
     }
 

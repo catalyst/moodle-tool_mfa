@@ -86,21 +86,9 @@ class factor extends object_factor_base {
     public function add_factor_form_definition($mform) {
         global $OUTPUT;
 
-        $mform->addElement('html', $OUTPUT->heading(get_string('addingfactor', 'factor_totp'), 3));
-
         $secret = $this->generate_secret_code();
         $mform->addElement('hidden', 'secret', $secret);
         $mform->setType('secret', PARAM_ALPHANUM);
-
-        $mform->addElement('text', 'devicename', get_string('devicename', 'factor_totp'), array('placeholder' => get_string('devicenameexample', 'factor_totp')));
-        $mform->addHelpButton('devicename', 'devicename', 'factor_totp');
-        $mform->setType("devicename", PARAM_TEXT);
-        $mform->addRule('devicename', get_string('required'), 'required', null, 'client');
-
-        $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'));
-        $mform->addHelpButton('verificationcode', 'verificationcode', 'factor_totp');
-        $mform->setType("verificationcode", PARAM_INT);
-        $mform->addRule('verificationcode', get_string('required'), 'required', null, 'client');
 
         return $mform;
     }
@@ -112,8 +100,16 @@ class factor extends object_factor_base {
      */
     public function add_factor_form_definition_after_data($mform) {
         global $OUTPUT;
-        $secretfield = $mform->getElement('secret');
 
+        $mform->addElement('html', $OUTPUT->heading(get_string('addingfactor', 'factor_totp'), 3));
+
+        $mform->addElement('text', 'devicename', get_string('devicename', 'factor_totp'), array('placeholder' => get_string('devicenameexample', 'factor_totp')));
+        $mform->addHelpButton('devicename', 'devicename', 'factor_totp');
+        $mform->setType("devicename", PARAM_TEXT);
+        $mform->addRule('devicename', get_string('required'), 'required', null, 'client');
+
+
+        $secretfield = $mform->getElement('secret');
         $secret = $secretfield->getValue();
         $qrcode = $this->generate_qrcode($secret);
 
@@ -125,6 +121,12 @@ class factor extends object_factor_base {
         $html .= $qrcode;
 
         $mform->addElement('static', 'description', get_string('addingfactor:scan', 'factor_totp'), $html);
+
+        $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'));
+        $mform->addHelpButton('verificationcode', 'verificationcode', 'factor_totp');
+        $mform->setType("verificationcode", PARAM_INT);
+        $mform->addRule('verificationcode', get_string('required'), 'required', null, 'client');
+
 
         return $mform;
     }
