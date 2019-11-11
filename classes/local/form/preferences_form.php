@@ -83,8 +83,8 @@ class preferences_form extends \moodleform
                     $class = '';
                 }
 
-                $timecreated = userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
-                $timemodified = userdate($userfactor->timemodified, '%l:%M %p %d/%m/%Y');
+                $timecreated = empty($userfactor->timecreated) ? '' : userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
+                $timemodified = empty($userfactor->timemodified) ? '' : userdate($userfactor->timemodified, '%l:%M %p %d/%m/%Y');
 
                 $row = new \html_table_row(array($factor->get_display_name(), $userfactor->preferredname, $factor->get_weight(), $timecreated, $timemodified, $hideshow, $edit, $delete));
                 $row->attributes['class'] = $class;

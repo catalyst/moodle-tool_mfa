@@ -33,7 +33,6 @@ class add_factor_form extends \moodleform {
      * @see moodleform::definition()
      */
     public function definition() {
-        global $OUTPUT;
         $mform = $this->_form;
 
         $factorname = $this->_customdata['factorname'];

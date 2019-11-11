@@ -63,7 +63,7 @@ class factor extends object_factor_base {
         if (empty($secret)) {
             $secret = random_int(100000, 999999);
             $secretfield->setValue($secret);
-            $this->email_secret_code($secret);
+            $this->email_verification_code($secret);
         }
         return $mform;
     }
@@ -72,7 +72,7 @@ class factor extends object_factor_base {
      * Sends and e-mail to user with given verification code.
      *
      */
-    public function email_secret_code($secret) {
+    public function email_verification_code($secret) {
         global $USER;
         $noreplyuser = \core_user::get_noreply_user();
         $subject = get_string('email:subject', 'factor_email');
@@ -104,16 +104,16 @@ class factor extends object_factor_base {
      */
     public function get_all_user_factors() {
         global $USER;
-        $return = array();
 
-        $return[1] = new \stdClass();
-        $return[1]->id = 1;
-        $return[1]->name = $this->name;
-        $return[1]->useremail = $USER->email;
-        $return[1]->preferredname = 'Main';
-        $return[1]->timemodified = '';
-        $return[1]->timecreated = '';
-        $return[1]->disabled = (int)!$this->is_enabled();
+        $return = array((object) [
+            'id' => 1,
+            'name' => $this->name,
+            'useremail' => $USER->email,
+            'preferredname' => 'Main',
+            'timemodified' => '',
+            'timecreated' => '',
+            'disabled' => (int)!$this->is_enabled(),
+        ]);
 
         return $return;
     }

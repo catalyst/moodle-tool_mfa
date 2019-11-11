@@ -37,7 +37,7 @@ class admin_setting_managemfa extends \admin_setting {
      */
     public function __construct() {
         $this->nosave = true;
-        parent::__construct('authsui', get_string('authsettings', 'admin'), '', '');
+        parent::__construct('mfaui', get_string('mfasettings', 'tool_mfa'), '', '');
     }
 
     /**

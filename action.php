@@ -93,25 +93,21 @@ switch ($action) {
     case 'delete':
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('delete'));
-        echo $OUTPUT->heading('TBA');
         break;
 
     case 'edit':
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('edit'));
-        echo $OUTPUT->heading('TBA');
         break;
 
     case 'enable':
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('enable'));
-        echo $OUTPUT->heading('TBA');
         break;
 
     case 'disable':
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('disable'));
-        echo $OUTPUT->heading('TBA');
         break;
 
     default:

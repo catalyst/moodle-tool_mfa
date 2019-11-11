@@ -133,7 +133,7 @@ class factor extends object_factor_base {
         $errors = array();
 
         $totp = TOTP::create($data['secret']);
-        if ($data['verificationcode'] != $totp->now()) {
+        if (!$totp->verify($data['verificationcode'], time(), 2)) {
             $errors['verificationcode'] = get_string('error:wrongverification', 'factor_totp');
         }
 

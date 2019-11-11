@@ -72,7 +72,7 @@ abstract class object_factor_base implements object_factor {
     public function get_weight() {
         $weight = get_config('factor_'.$this->name, 'weight');
         if ($weight) {
-            return $weight;
+            return (int)$weight;
         }
         return 0;
     }
@@ -86,8 +86,7 @@ abstract class object_factor_base implements object_factor {
      * @throws \coding_exception
      */
     public function get_display_name() {
-        $weight = get_string('pluginname', 'factor_'.$this->name);
-        return $weight;
+        return get_string('pluginname', 'factor_'.$this->name);
     }
 
     /**
@@ -99,7 +98,6 @@ abstract class object_factor_base implements object_factor {
      * @return object $mform
      */
     public function add_factor_form_definition($mform) {
-        $mform->addElement('html', 'TBA');
         return $mform;
     }
 
