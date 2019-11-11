@@ -24,8 +24,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'TOTP Factor';
-
+$string['pluginname'] = 'Authenticator app';
+$string['info'] = '<p>Use any TOTP Authenticator app to get verification code on your phone even when it is offline.</p>
+<p>eg Google Authenticator for <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8" target="_blank">iPhone</a> or <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</a></p>';
 $string['settings:enable'] = 'Enable TOTP Factor';
 $string['settings:enable_help'] = 'TOTP Factor will be available for users to setup';
 $string['settings:weight'] = 'TOTP Factor weight';

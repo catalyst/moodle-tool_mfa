@@ -90,6 +90,18 @@ abstract class object_factor_base implements object_factor {
     }
 
     /**
+     * Returns factor help from language string.
+     *
+     * Base class implementation.
+     *
+     * @return string
+     * @throws \coding_exception
+     */
+    public function get_info() {
+        return get_string('info', 'factor_'.$this->name);
+    }
+
+    /**
      * Defines add_factor form definition page for particular factor.
      *
      * Dummy implementation. Should be overridden in child class.

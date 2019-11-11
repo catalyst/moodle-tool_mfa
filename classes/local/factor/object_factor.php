@@ -53,6 +53,14 @@ interface object_factor {
     public function get_display_name();
 
     /**
+     * Returns factor info from language string.
+     *
+     * @return string
+     * @throws \coding_exception
+     */
+    public function get_info();
+
+    /**
      * Defines add_factor form definition page for particular factor.
      *
      * @param $mform

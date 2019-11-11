@@ -55,7 +55,6 @@ class preferences_form extends \moodleform
         $headers = get_strings(array(
             'factor',
             'devicename',
-            'weight',
             'created',
             'modified',
             'enable',
@@ -69,7 +68,6 @@ class preferences_form extends \moodleform
         $table->head  = array(
             $headers->factor,
             $headers->devicename,
-            $headers->weight,
             $headers->created,
             $headers->modified,
             $headers->enable,
@@ -117,7 +115,6 @@ class preferences_form extends \moodleform
                 $row = new \html_table_row(array(
                     $factor->get_display_name(),
                     $userfactor->devicename,
-                    $factor->get_weight(),
                     $timecreated,
                     $timemodified,
                     $hideshow,
@@ -150,13 +147,16 @@ class preferences_form extends \moodleform
 
         $mform->addElement('html', $OUTPUT->heading(get_string('preferences:availablefactors', 'tool_mfa'), 4));
 
-        $headers = get_strings(array('factor', 'weight', 'action'), 'tool_mfa');
+        $headers = get_strings(array('factor', 'action'), 'tool_mfa');
 
         $table = new \html_table();
         $table->id = 'available_factors';
         $table->attributes['class'] = 'generaltable';
-        $table->head  = array($headers->factor, $headers->weight, $headers->action);
-        $table->colclasses = array('leftalign', 'centeralign', 'centeralign');
+        $table->head  = array(
+            $headers->factor,
+            $headers->action,
+        );
+        $table->colclasses = array('leftalign', 'centeralign');
         $table->data  = array();
 
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
@@ -167,7 +167,10 @@ class preferences_form extends \moodleform
             $action = "<a href=\"$url&amp;action=add&amp;factor=$factor->name\">";
             $action .= get_string('addfactor', 'tool_mfa') . '</a>';
 
-            $row = new \html_table_row(array($factor->get_display_name(), $factor->get_weight(), $action));
+            $row = new \html_table_row(array(
+                $OUTPUT->heading($factor->get_display_name(), 4) . $factor->get_info(),
+                $action,
+            ));
             $table->data[] = $row;
         }
 
