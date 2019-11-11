@@ -64,5 +64,6 @@ $string['error:actionnotfound'] = 'Action \'{$a}\' not supported';
 $string['error:addfactor'] = 'Can not add factor';
 
 $string['event:userpassedmfa'] = 'Verification passed';
+$string['event:useraddedfactor'] = 'Factor added';
 
 $string['privacy:metadata'] = 'Moodle MFA plugin does not store any personal data';

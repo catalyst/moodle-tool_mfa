@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event for successful MFA authorization.
+ * Event for successfully added MFA Factor to user preferences.
  *
  * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
@@ -28,7 +28,7 @@ namespace tool_mfa\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when user successfully passed all MFA factor checks.
+ * Event for when user successfully added new MFA Factor.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -40,23 +40,25 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class user_passed_mfa extends \core\event\base {
+class user_added_factor extends \core\event\base {
     /**
      * Create instance of event.
      *
-     * @param int $user the User object of the User who passed all MFA factor checks.
+     * @param int $user the User object of the User who passed all MFA factor checks
+     * @param string $factorname the added factor
      *
      * @return user_passed_mfa the user_passed_mfa event
      *
      * @throws \coding_exception
      */
-    public static function user_passed_mfa_event($user) {
+    public static function user_added_factor_event($user, $factorname) {
 
         $data = array(
             'relateduserid' => null,
             'context' => \context_user::instance($user->id),
             'other' => array (
-                'userid' => $user->id
+                'userid' => $user->id,
+                'factorname' => $factorname
             )
         );
 
@@ -69,7 +71,7 @@ class user_passed_mfa extends \core\event\base {
      * @return void
      */
     protected function init() {
-        $this->data['crud'] = 'r';
+        $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
@@ -79,7 +81,7 @@ class user_passed_mfa extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '{$this->other['userid']}' successfully passed all MFA Factors";
+        return "The user with id '{$this->other['userid']}' successfully added {$this->other['factorname']}";
     }
 
     /**
@@ -89,6 +91,6 @@ class user_passed_mfa extends \core\event\base {
      * @throws \coding_exception
      */
     public static function get_name() {
-        return get_string('event:userpassedmfa', 'tool_mfa');
+        return get_string('event:useraddedfactor', 'tool_mfa');
     }
 }
