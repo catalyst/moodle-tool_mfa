@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['mfa'] = 'MFA';
-$string['pluginname'] = 'Moodle MFA plugin';
+$string['pluginname'] = 'Multi-factor authentication';
 $string['mfasettings'] = 'Manage MFA';
 $string['factor'] = 'Factor';
 $string['preferredname'] = 'Preferred name';

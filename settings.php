@@ -46,3 +46,4 @@ if ($hassiteconfig) {
         $plugin->load_settings($ADMIN, 'toolmfafolder', $hassiteconfig);
     }
 }
+
