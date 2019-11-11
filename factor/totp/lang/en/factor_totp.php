@@ -35,7 +35,7 @@ $string['settings:secretlength_help'] = 'Generated TOTP secret key string length
 $string['verificationcode'] = 'Enter 6-digit verification code for confirmation';
 $string['verificationcode_help'] = 'Code validation is necessary to confirm you stored your secret key with GA app';
 $string['devicename'] = 'Device label';
-$string['devicenameexample'] = 'eg "Work iPhone"';
+$string['devicenameexample'] = 'eg "Work iPhone 11"';
 $string['devicename_help'] = 'This is the device you have an authenticator app installed on. You can setup multiple devices so this label helps track which ones are being used. You should setup each device with it\'s own codes so they are easier to revoke.';
 
 $string['addingfactor'] = 'Adding TOTP Factor';
