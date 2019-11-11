@@ -49,6 +49,7 @@ if ($node = $PAGE->settingsnav->find('usercurrentsettings', null)) {
 }
 $PAGE->navbar->add(get_string('preferences:header', 'tool_mfa'));
 
+
 $OUTPUT = $PAGE->get_renderer('tool_mfa');
 $form = new preferences_form();
 

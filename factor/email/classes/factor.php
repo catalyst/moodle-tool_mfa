@@ -109,7 +109,7 @@ class factor extends object_factor_base {
             'id' => 1,
             'name' => $this->name,
             'useremail' => $USER->email,
-            'preferredname' => 'Main',
+            'devicename' => 'Main',
             'timemodified' => '',
             'timecreated' => '',
             'disabled' => (int)!$this->is_enabled(),

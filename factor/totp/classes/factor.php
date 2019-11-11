@@ -92,10 +92,10 @@ class factor extends object_factor_base {
         $mform->addElement('hidden', 'secret', $secret);
         $mform->setType('secret', PARAM_ALPHANUM);
 
-        $mform->addElement('text', 'preferredname', get_string('preferredname', 'factor_totp'), array('placeholder' => get_string('preferrednameexample', 'factor_totp')));
-        $mform->addHelpButton('preferredname', 'preferredname', 'factor_totp');
-        $mform->setType("preferredname", PARAM_TEXT);
-        $mform->addRule('preferredname', get_string('required'), 'required', null, 'client');
+        $mform->addElement('text', 'devicename', get_string('devicename', 'factor_totp'), array('placeholder' => get_string('devicenameexample', 'factor_totp')));
+        $mform->addHelpButton('devicename', 'devicename', 'factor_totp');
+        $mform->setType("devicename", PARAM_TEXT);
+        $mform->addRule('devicename', get_string('required'), 'required', null, 'client');
 
         $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'));
         $mform->addHelpButton('verificationcode', 'verificationcode', 'factor_totp');
@@ -200,7 +200,7 @@ class factor extends object_factor_base {
             $row = new \stdClass();
             $row->userid = $USER->id;
             $row->secret = $data->secret;
-            $row->preferredname = $data->preferredname;
+            $row->devicename = $data->devicename;
             $row->timecreated = time();
             $row->timemodified = time();
             $row->disabled = 0;
@@ -219,7 +219,7 @@ class factor extends object_factor_base {
      */
     public function get_all_user_factors() {
         global $DB, $USER;
-        $sql = "SELECT id, 'totp' AS name, preferredname, secret, timecreated, timemodified, disabled
+        $sql = "SELECT id, 'totp' AS name, devicename, secret, timecreated, timemodified, disabled
                   FROM {factor_totp}
                  WHERE userid = ?
               ORDER BY disabled, timemodified";
