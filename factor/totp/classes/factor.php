@@ -156,7 +156,7 @@ class factor extends object_factor_base {
 
         if (count($userfactors) > 0) {
             $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'),
-                array('autofocus' => 'autofocus'));
+                array('autofocus' => 'autofocus', 'pattern' => '[0-9]*'));
             $mform->addRule('verificationcode', get_string('required'), 'required', null, 'client');
             $mform->setType("verificationcode", PARAM_ALPHANUM);
         }
