@@ -23,11 +23,11 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Auth Factor';
+$string['pluginname'] = 'Authentication type';
 
-$string['settings:enable'] = 'Enable Auth Factor';
-$string['settings:enable_help'] = 'Auth Factor will be available for users to setup';
+$string['settings:enable'] = 'Enable Auth type Factor';
+$string['settings:enable_help'] = 'The auth type factor allows an easily bypass MFA if the user auth type is say saml2 or oidc and where they may have already passed through an MFA process at the IdP level.';
 $string['settings:weight'] = 'Auth Factor weight';
-$string['settings:weight_help'] = 'Factor weight determines the result factor combinations';
+$string['settings:weight_help'] = 'If set to 100 then this is effectively a bypass of MFA';
 
 $string['privacy:metadata'] = 'The Auth Factor plugin does not store any personal data';
