@@ -90,9 +90,9 @@ switch ($action) {
 
         break;
 
-    case 'delete':
+    case 'revoke':
         echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string('delete'));
+        echo $OUTPUT->heading(get_string('revoke'));
         break;
 
     case 'edit':

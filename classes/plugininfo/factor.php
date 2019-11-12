@@ -136,7 +136,7 @@ class factor extends \core\plugininfo\base {
     public static function get_factor_actions() {
         $actions = array();
         $actions[] = 'add';
-        $actions[] = 'delete';
+        $actions[] = 'revoke';
         $actions[] = 'enable';
         $actions[] = 'disable';
         $actions[] = 'edit';

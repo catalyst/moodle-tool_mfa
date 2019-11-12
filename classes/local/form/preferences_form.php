@@ -59,7 +59,7 @@ class preferences_form extends \moodleform
             'modified',
             'enable',
             'edit',
-            'delete',
+            'revoke',
         ), 'tool_mfa');
 
         $table = new \html_table();
@@ -71,7 +71,7 @@ class preferences_form extends \moodleform
             $headers->created,
             $headers->modified,
             $headers->edit,
-            $headers->delete,
+            $headers->revoke,
         );
         $table->colclasses = array(
             'leftalign',
@@ -94,8 +94,8 @@ class preferences_form extends \moodleform
                 $url = "action.php?sesskey=" . sesskey();
                 $edit = "<a href=\"action.php?sesskey=".sesskey()
                     ."&amp;action=edit&amp;factor=$factor->name&amp;factorid=$userfactor->id\">$headers->edit</a>";
-                $delete = "<a href=\"action.php?sesskey=".sesskey()
-                    ."&amp;action=delete&amp;factor=$factor->name&amp;factorid=$userfactor->id\">$headers->delete</a>";
+                $revoke = "<a href=\"action.php?sesskey=".sesskey()
+                    ."&amp;action=revoke&amp;factor=$factor->name&amp;factorid=$userfactor->id\">$headers->revoke</a>";
 
                 $timecreated = empty($userfactor->timecreated) ? '' : userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
                 $timemodified = empty($userfactor->timemodified) ? '' : userdate($userfactor->timemodified, '%l:%M %p %d/%m/%Y');
@@ -106,7 +106,7 @@ class preferences_form extends \moodleform
                     $timecreated,
                     $timemodified,
                     $edit,
-                    $delete,
+                    $revoke,
                 ));
                 $row->attributes['class'] = $class;
                 $table->data[] = $row;
