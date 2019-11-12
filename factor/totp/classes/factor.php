@@ -84,8 +84,6 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function add_factor_form_definition($mform) {
-        global $OUTPUT;
-
         $secret = $this->generate_secret_code();
         $mform->addElement('hidden', 'secret', $secret);
         $mform->setType('secret', PARAM_ALPHANUM);
@@ -139,7 +137,7 @@ class factor extends object_factor_base {
         $errors = array();
 
         $totp = TOTP::create($data['secret']);
-        if (!$totp->verify($data['verificationcode'], time(), 15)) {
+        if (!$totp->verify($data['verificationcode'], time(), 1)) {
             $errors['verificationcode'] = get_string('error:wrongverification', 'factor_totp');
         }
 
@@ -175,7 +173,7 @@ class factor extends object_factor_base {
 
         foreach ($factors as $factor) {
             $totp = TOTP::create($factor->secret);
-            if ($totp->verify($data['verificationcode'], time(), 15)) {
+            if ($totp->verify($data['verificationcode'], time(), 1)) {
                 $result = array();
             }
         }

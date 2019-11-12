@@ -90,7 +90,7 @@ class factor extends object_factor_base {
         $return = array();
 
         if ($data['verificationcode'] != $data['secret']) {
-            $return['verificationcode'] = 'Wrong verification code';
+            $return['verificationcode'] = get_string('error:wrongverification', 'factor_email');
         }
 
         return $return;
@@ -109,7 +109,7 @@ class factor extends object_factor_base {
             'id' => 1,
             'name' => $this->name,
             'useremail' => $USER->email,
-            'devicename' => 'Main',
+            'devicename' => get_string('default'),
             'timemodified' => '',
             'timecreated' => '',
             'disabled' => (int)!$this->is_enabled(),
