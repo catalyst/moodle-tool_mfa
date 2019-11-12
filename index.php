@@ -30,9 +30,10 @@ require_once($CFG->libdir.'/tablelib.php');
 
 require_admin();
 
-$returnurl = new moodle_url('/admin/settings.php', array('section' => 'managemfa'));
+global $_SERVER;
+$returnurl = $_SERVER['HTTP_REFERER'];
 
-$PAGE->set_url($returnurl);
+$PAGE->set_url('/admin/tool/mfa/index.php');
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $factor = optional_param('factor', '', PARAM_ALPHANUMEXT);
