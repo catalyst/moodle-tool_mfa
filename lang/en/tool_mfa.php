@@ -39,7 +39,6 @@ $string['delete'] = 'Delete';
 $string['created'] = 'Created';
 $string['modified'] = 'Modified';
 $string['addfactor'] = 'Add factor';
-$string['deletefactor'] = 'Delete factor';
 $string['editfactor'] = 'Edit factor';
 $string['enablefactor'] = 'Enable factor';
 $string['disablefactor'] = 'Disable factor';
