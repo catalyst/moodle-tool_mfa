@@ -100,16 +100,6 @@ switch ($action) {
         echo $OUTPUT->heading(get_string('edit'));
         break;
 
-    case 'enable':
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string('enable'));
-        break;
-
-    case 'disable':
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string('disable'));
-        break;
-
     default:
         break;
 }

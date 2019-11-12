@@ -70,14 +70,12 @@ class preferences_form extends \moodleform
             $headers->devicename,
             $headers->created,
             $headers->modified,
-            $headers->enable,
             $headers->edit,
             $headers->delete,
         );
         $table->colclasses = array(
             'leftalign',
             'leftalign',
-            'centeralign',
             'centeralign',
             'centeralign',
             'centeralign',
@@ -99,16 +97,6 @@ class preferences_form extends \moodleform
                 $delete = "<a href=\"action.php?sesskey=".sesskey()
                     ."&amp;action=delete&amp;factor=$factor->name&amp;factorid=$userfactor->id\">$headers->delete</a>";
 
-                if ($userfactor->disabled == 1) {
-                    $hideshow = "<a href=\"$url&amp;action=enable&amp;factor=$factor->name&amp;factorid=$userfactor->id\">";
-                    $hideshow .= $OUTPUT->pix_icon('t/show', get_string('enable')) . '</a>';
-                    $class = 'dimmed_text';
-                } else {
-                    $hideshow = "<a href=\"$url&amp;action=disable&amp;factor=$factor->name&amp;factorid=$userfactor->id\">";
-                    $hideshow .= $OUTPUT->pix_icon('t/hide', get_string('disable')) . '</a>';
-                    $class = '';
-                }
-
                 $timecreated = empty($userfactor->timecreated) ? '' : userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
                 $timemodified = empty($userfactor->timemodified) ? '' : userdate($userfactor->timemodified, '%l:%M %p %d/%m/%Y');
 
@@ -117,7 +105,6 @@ class preferences_form extends \moodleform
                     $userfactor->devicename,
                     $timecreated,
                     $timemodified,
-                    $hideshow,
                     $edit,
                     $delete,
                 ));
