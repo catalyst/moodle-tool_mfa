@@ -24,6 +24,7 @@
  */
 
 $string['pluginname'] = 'E-Mail Factor';
+$string['info'] = '<p>Built-in factor. Uses e-mail address mentioned in user profile for sending verification codes</p>';
 
 $string['settings:enable'] = 'Enable E-Mail Factor';
 $string['settings:enable_help'] = 'E-Mail Factor will be available for users to setup';
