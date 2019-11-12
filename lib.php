@@ -39,7 +39,7 @@ function tool_mfa_after_require_login() {
     }
 
     if (empty($USER->tool_mfa_authenticated) || !$USER->tool_mfa_authenticated) {
-        if ($ME != '/admin/tool/mfa/auth.php') {
+        if (strpos($ME, '/admin/tool/mfa/') === false) {
             redirect(new moodle_url('/admin/tool/mfa/auth.php', array('wantsurl' => $ME)));
         }
     }
@@ -55,6 +55,11 @@ function tool_mfa_after_require_login() {
  * @throws \dml_exception
  */
 function tool_mfa_ready() {
+
+    if (!empty($CFG->upgraderunning)) {
+        return;
+    }
+
     $pluginenabled = get_config('tool_mfa', 'enabled');
     $enabledfactors = \tool_mfa\plugininfo\factor::get_enabled_factors();
 
