@@ -28,7 +28,8 @@ require_once(__DIR__ . '/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
 
-require_admin();
+require_login(null, false);
+require_capability('moodle/site:config', context_system::instance());
 
 global $_SERVER;
 $returnurl = $_SERVER['HTTP_REFERER'];

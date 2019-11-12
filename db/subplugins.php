@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Definition of MFA sub-plugins (factors).
  *
- * @package     factor_range
- * @subpackage  tool_mfa
+ * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,9 +25,4 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version      = 2019102400;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires     = 2019041800.00;   // Requires MDL-60470 improvement.
-$plugin->component    = 'factor_iprange';
-$plugin->release      = 'v0.1';
-$plugin->maturity     = MATURITY_STABLE;
-$plugin->dependencies = array('tool_mfa' => 2019102400);
+$subplugins = (array) json_decode(file_get_contents($CFG->dirroot."/admin/tool/mfa/db/subplugins.json"))->plugintypes;
