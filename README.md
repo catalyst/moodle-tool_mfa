@@ -47,6 +47,43 @@ That other major difference is that we support multiple authentication factor *t
 
 ## Installation
 
+Step 1: Install the local module
+--------------------------------
+
+Using git submodule:
+
+```
+git submodule add git@github.com:catalyst/moodle-tool_mfa.git admin/tool/mfa
+```
+
+OR you can download as a zip from github
+
+https://github.com/catalyst/moodle-tool_mfa/archive/master.zip
+
+Extract this into /var/www/yourmoodle/admin/tool/mfa/
+
+Then run the moodle upgrade as normal.
+
+
+Step 2: Apply core patches
+-------------------------------
+
+This plugin uses MDL-60470 improvement which was only added 3.7.
+
+You can apply it in one line for 3.5 and 3.6:
+
+For Moodle 3.5:
+
+```
+git apply admin/tool/mfa/core35.patch
+```
+
+For Moodle 3.6:
+
+```
+git apply admin/tool/mfa/core36.patch
+```
+
 ## Configuration
 
 
