@@ -1,0 +1,51 @@
+From a2fce8934932249bc0499e5b365ba0b8fc80a910 Mon Sep 17 00:00:00 2001
+From: Mikhail Golenkov <mikhailgolenkov@catalyst-au.net>
+Date: Wed, 13 Nov 2019 11:19:58 +1100
+Subject: [PATCH] MDL-60470 core: New hook 'after_require_login'
+
+---
+ lib/moodlelib.php | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/lib/moodlelib.php b/lib/moodlelib.php
+index 3ac3d8be1b7..a7b6b8b0215 100644
+--- a/lib/moodlelib.php
++++ b/lib/moodlelib.php
+@@ -2705,6 +2705,8 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
+         $CFG->forceclean = true;
+     }
+ 
++    $afterlogins = get_plugins_with_function('after_require_login', 'lib.php');
++
+     // Do not bother admins with any formalities, except for activities pending deletion.
+     if (is_siteadmin() && !($cm && $cm->deletioninprogress)) {
+         // Set the global $COURSE.
+@@ -2716,6 +2718,12 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
+         }
+         // Set accesstime or the user will appear offline which messes up messaging.
+         user_accesstime_log($course->id);
++
++        foreach ($afterlogins as $plugintype => $plugins) {
++            foreach ($plugins as $pluginfunction) {
++                $pluginfunction($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
++            }
++        }
+         return;
+     }
+ 
+@@ -2923,6 +2931,12 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
+         $PAGE->set_course($course);
+     }
+ 
++    foreach ($afterlogins as $plugintype => $plugins) {
++        foreach ($plugins as $pluginfunction) {
++            $pluginfunction($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
++        }
++    }
++
+     // Finally access granted, update lastaccess times.
+     user_accesstime_log($course->id);
+ }
+-- 
+2.17.1
+
