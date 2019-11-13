@@ -137,9 +137,11 @@ function tool_mfa_extend_navigation_user_settings($navigation, $user, $userconte
         return null;
     }
 
-    $url = new moodle_url('/admin/tool/mfa/user_preferences.php');
-    $node = navigation_node::create(get_string('preferences:header', 'tool_mfa'), $url,
-        navigation_node::TYPE_SETTING);
-    $usernode = $navigation->find('useraccount', navigation_node::TYPE_CONTAINER);
-    $usernode->add_node($node);
+    if (tool_mfa_ready()) {
+        $url = new moodle_url('/admin/tool/mfa/user_preferences.php');
+        $node = navigation_node::create(get_string('preferences:header', 'tool_mfa'), $url,
+            navigation_node::TYPE_SETTING);
+        $usernode = $navigation->find('useraccount', navigation_node::TYPE_CONTAINER);
+        $usernode->add_node($node);
+    }
 }
