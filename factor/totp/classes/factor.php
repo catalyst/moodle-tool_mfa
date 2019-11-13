@@ -204,6 +204,7 @@ class factor extends object_factor_base {
             $row->secret = $data->secret;
             $row->devicename = $data->devicename;
             $row->timecreated = time();
+            $row->createdfromip = $USER->lastip;
             $row->timemodified = time();
             $row->disabled = 0;
 
@@ -221,7 +222,7 @@ class factor extends object_factor_base {
      */
     public function get_all_user_factors() {
         global $DB, $USER;
-        $sql = "SELECT id, 'totp' AS name, devicename, secret, timecreated, timemodified, disabled
+        $sql = "SELECT id, 'totp' AS name, devicename, secret, timecreated, createdfromip, timemodified, disabled
                   FROM {factor_totp}
                  WHERE userid = ?
               ORDER BY disabled, timemodified";

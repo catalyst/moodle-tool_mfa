@@ -110,8 +110,9 @@ class factor extends object_factor_base {
             'name' => $this->name,
             'useremail' => $USER->email,
             'devicename' => get_string('default'),
-            'timemodified' => '',
-            'timecreated' => '',
+            'timemodified' => '-',
+            'timecreated' => '-',
+            'createdfromip' => '-',
             'disabled' => (int)!$this->is_enabled(),
         ]);
 

@@ -37,6 +37,7 @@ $string['action'] = 'Action';
 $string['edit'] = 'Edit';
 $string['revoke'] = 'Revoke';
 $string['created'] = 'Created';
+$string['createdfromip'] = 'Created from IP';
 $string['modified'] = 'Modified';
 $string['addfactor'] = 'Add factor';
 $string['editfactor'] = 'Edit factor';

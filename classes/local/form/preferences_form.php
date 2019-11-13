@@ -56,6 +56,7 @@ class preferences_form extends \moodleform
             'factor',
             'devicename',
             'created',
+            'createdfromip',
             'modified',
             'enable',
             'edit',
@@ -69,6 +70,7 @@ class preferences_form extends \moodleform
             $headers->factor,
             $headers->devicename,
             $headers->created,
+            $headers->createdfromip,
             $headers->modified,
             $headers->edit,
             $headers->revoke,
@@ -76,6 +78,7 @@ class preferences_form extends \moodleform
         $table->colclasses = array(
             'leftalign',
             'leftalign',
+            'centeralign',
             'centeralign',
             'centeralign',
             'centeralign',
@@ -97,13 +100,14 @@ class preferences_form extends \moodleform
                 $revoke = "<a href=\"action.php?sesskey=".sesskey()
                     ."&amp;action=revoke&amp;factor=$factor->name&amp;factorid=$userfactor->id\">$headers->revoke</a>";
 
-                $timecreated = empty($userfactor->timecreated) ? '' : userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
-                $timemodified = empty($userfactor->timemodified) ? '' : userdate($userfactor->timemodified, '%l:%M %p %d/%m/%Y');
+                $timecreated = $userfactor->timecreated == '-' ? '-' : userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
+                $timemodified = $userfactor->timemodified == '-' ? '-' : userdate($userfactor->timemodified, '%l:%M %p %d/%m/%Y');
 
                 $row = new \html_table_row(array(
                     $factor->get_display_name(),
                     $userfactor->devicename,
                     $timecreated,
+                    $userfactor->createdfromip,
                     $timemodified,
                     $edit,
                     $revoke,
