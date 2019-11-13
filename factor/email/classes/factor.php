@@ -113,7 +113,7 @@ class factor extends object_factor_base {
             'timemodified' => '-',
             'timecreated' => '-',
             'createdfromip' => '-',
-            'lastlogon' => '-',
+            'lastverified' => '-',
             'disabled' => (int)!$this->is_enabled(),
         ]);
 

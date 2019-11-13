@@ -246,4 +246,30 @@ abstract class object_factor_base implements object_factor {
 
         return false;
     }
+
+    /**
+     * Returns true if factor has a property when this factor was verified last time.
+     *
+     * Override in child class if necessary.
+     *
+     * @return bool
+     */
+    public function has_lastverified() {
+        return false;
+    }
+
+    /**
+     * When validation code is correct - update lastverified field for given factor.
+     *
+     * @param int $factorid
+     * @return bool
+     * @throws \dml_exception
+     */
+    public function update_lastverified($factorid) {
+        global $DB;
+        if ($this->has_lastverified()) {
+            return $DB->set_field('factor_'.$this->name, 'lastverified', time(), array('id' => $factorid));
+        }
+        return false;
+    }
 }

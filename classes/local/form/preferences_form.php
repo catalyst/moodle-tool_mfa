@@ -58,7 +58,7 @@ class preferences_form extends \moodleform
             'created',
             'createdfromip',
             'modified',
-            'lastlogon',
+            'lastverified',
             'enable',
             'edit',
             'revoke',
@@ -73,7 +73,7 @@ class preferences_form extends \moodleform
             $headers->created,
             $headers->createdfromip,
             $headers->modified,
-            $headers->lastlogon,
+            $headers->lastverified,
             $headers->edit,
             $headers->revoke,
         );
@@ -109,7 +109,7 @@ class preferences_form extends \moodleform
 
                 $timecreated = $userfactor->timecreated == '-' ? '-' : userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
                 $timemodified = $userfactor->timemodified == '-' ? '-' : userdate($userfactor->timemodified, '%l:%M %p %d/%m/%Y');
-                $lastlogon = $userfactor->lastlogon == '' ? '' : userdate($userfactor->lastlogon, '%l:%M %p %d/%m/%Y');
+                $lastverified = $userfactor->lastverified == '-' ? '-' : userdate($userfactor->lastverified, '%l:%M %p %d/%m/%Y');
 
                 $row = new \html_table_row(array(
                     $factor->get_display_name(),
@@ -117,7 +117,7 @@ class preferences_form extends \moodleform
                     $timecreated,
                     $userfactor->createdfromip,
                     $timemodified,
-                    $lastlogon,
+                    $lastverified,
                     $edit,
                     $revokelink,
                 ));

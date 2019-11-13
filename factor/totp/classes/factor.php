@@ -175,23 +175,10 @@ class factor extends object_factor_base {
             $totp = TOTP::create($factor->secret);
             if ($totp->verify($data['verificationcode'], time(), 1)) {
                 $result = array();
-                $this->update_lastlogon($factor);
+                $this->update_lastverified($factor->id);
             }
         }
         return $result;
-    }
-
-    /**
-     * When validation code is correct - update last logon field for given factor.
-     *
-     * @param factor
-     * @return void
-     * @throws \dml_exception
-     */
-    public function update_lastlogon($factor) {
-        global $DB;
-        $record = (object)array('id' => $factor->id, 'lastlogon' => time());
-        $DB->update_record('factor_totp', $record);
     }
 
     /**
@@ -236,7 +223,7 @@ class factor extends object_factor_base {
      */
     public function get_all_user_factors() {
         global $DB, $USER;
-        $sql = "SELECT id, 'totp' AS name, devicename, secret, timecreated, createdfromip, timemodified, lastlogon, disabled
+        $sql = "SELECT id, 'totp' AS name, devicename, secret, timecreated, createdfromip, timemodified, lastverified, disabled
                   FROM {factor_totp}
                  WHERE userid = ?
               ORDER BY disabled, timemodified";
@@ -251,6 +238,15 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function has_delete() {
+        return true;
+    }
+
+    /**
+     * TOTP Factor implementation.
+     *
+     * {@inheritDoc}
+     */
+    public function has_lastverified() {
         return true;
     }
 }

@@ -145,4 +145,11 @@ interface object_factor {
      * @return bool
      */
     public function has_delete();
+
+    /**
+     * Returns true if factor has a property when this factor was verified last time.
+     *
+     * @return bool
+     */
+    public function has_lastverified();
 }
