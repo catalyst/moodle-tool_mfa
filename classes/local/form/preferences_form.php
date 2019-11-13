@@ -58,6 +58,7 @@ class preferences_form extends \moodleform
             'created',
             'createdfromip',
             'modified',
+            'lastlogon',
             'enable',
             'edit',
             'revoke',
@@ -72,12 +73,14 @@ class preferences_form extends \moodleform
             $headers->created,
             $headers->createdfromip,
             $headers->modified,
+            $headers->lastlogon,
             $headers->edit,
             $headers->revoke,
         );
         $table->colclasses = array(
             'leftalign',
             'leftalign',
+            'centeralign',
             'centeralign',
             'centeralign',
             'centeralign',
@@ -109,6 +112,7 @@ class preferences_form extends \moodleform
                     $timecreated,
                     $userfactor->createdfromip,
                     $timemodified,
+                    $userfactor->lastlogon,
                     $edit,
                     $revoke,
                 ));

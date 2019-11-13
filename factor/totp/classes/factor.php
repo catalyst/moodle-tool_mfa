@@ -222,7 +222,7 @@ class factor extends object_factor_base {
      */
     public function get_all_user_factors() {
         global $DB, $USER;
-        $sql = "SELECT id, 'totp' AS name, devicename, secret, timecreated, createdfromip, timemodified, disabled
+        $sql = "SELECT id, 'totp' AS name, devicename, secret, timecreated, createdfromip, timemodified, lastlogon, disabled
                   FROM {factor_totp}
                  WHERE userid = ?
               ORDER BY disabled, timemodified";
