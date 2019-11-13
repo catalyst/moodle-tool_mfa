@@ -175,9 +175,23 @@ class factor extends object_factor_base {
             $totp = TOTP::create($factor->secret);
             if ($totp->verify($data['verificationcode'], time(), 1)) {
                 $result = array();
+                $this->update_lastlogon($factor);
             }
         }
         return $result;
+    }
+
+    /**
+     * When validation code is correct - update last logon field for given factor.
+     *
+     * @param factor
+     * @return void
+     * @throws \dml_exception
+     */
+    public function update_lastlogon($factor) {
+        global $DB;
+        $record = (object)array('id' => $factor->id, 'lastlogon' => time());
+        $DB->update_record('factor_totp', $record);
     }
 
     /**

@@ -105,6 +105,7 @@ class preferences_form extends \moodleform
 
                 $timecreated = $userfactor->timecreated == '-' ? '-' : userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
                 $timemodified = $userfactor->timemodified == '-' ? '-' : userdate($userfactor->timemodified, '%l:%M %p %d/%m/%Y');
+                $lastlogon = $userfactor->lastlogon == '' ? '' : userdate($userfactor->lastlogon, '%l:%M %p %d/%m/%Y');
 
                 $row = new \html_table_row(array(
                     $factor->get_display_name(),
@@ -112,7 +113,7 @@ class preferences_form extends \moodleform
                     $timecreated,
                     $userfactor->createdfromip,
                     $timemodified,
-                    $userfactor->lastlogon,
+                    $lastlogon,
                     $edit,
                     $revoke,
                 ));
