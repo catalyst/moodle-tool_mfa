@@ -137,4 +137,12 @@ interface object_factor {
      * @return array
      */
     public function get_enabled_user_factors();
+
+    /**
+     * Returns true if factor class has factor records that might be deleted.
+     * It means that user can delete factor record from their profile.
+     *
+     * @return bool
+     */
+    public function has_delete();
 }

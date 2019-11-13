@@ -33,9 +33,9 @@ if (isguestuser()) {
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $factor = optional_param('factor', '', PARAM_ALPHANUMEXT);
-$sesskey = optional_param('sesskey', '', PARAM_ALPHANUMEXT);
+$factorid = optional_param('factorid', '', PARAM_INT);
 
-$params = array('sesskey' => $sesskey, 'action' => $action, 'factor' => $factor);
+$params = array('action' => $action, 'factor' => $factor);
 $currenturl = new moodle_url('/admin/tool/mfa/action.php', $params);
 
 $returnurl = new moodle_url('/admin/tool/mfa/user_preferences.php');
@@ -50,10 +50,6 @@ if (!tool_mfa_factor_exists($factor)) {
 
 if (!in_array($action, \tool_mfa\plugininfo\factor::get_factor_actions())) {
     print_error('error:actionnotfound', 'tool_mfa', $returnurl, $action);
-}
-
-if (!confirm_sesskey($sesskey)) {
-    redirect($returnurl);
 }
 
 $context = context_user::instance($USER->id);
@@ -81,7 +77,7 @@ switch ($action) {
 
                     redirect($returnurl);
                 } else {
-                    print_error('error:addfactor', 'tool_mfa', $returnurl, $action);
+                    print_error('error:addfactor', 'tool_mfa', $returnurl);
                 }
             }
         }
@@ -91,8 +87,14 @@ switch ($action) {
         break;
 
     case 'revoke':
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string('revoke'));
+        $factorobject = \tool_mfa\plugininfo\factor::get_factor($factor);
+        if ($factorobject && $factorobject->has_delete()) {
+            if (!$factorobject->delete_user_factor($factorid)) {
+                print_error('error:revokefactor', 'tool_mfa', $returnurl);
+            }
+        }
+
+        redirect($returnurl);
         break;
 
     case 'edit':

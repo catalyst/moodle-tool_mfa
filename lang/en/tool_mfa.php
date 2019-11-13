@@ -41,6 +41,7 @@ $string['createdfromip'] = 'Created from IP';
 $string['modified'] = 'Modified';
 $string['lastlogon'] = 'Last logon';
 $string['addfactor'] = 'Add factor';
+$string['revokefactor'] = 'Revoke factor';
 $string['editfactor'] = 'Edit factor';
 $string['enablefactor'] = 'Enable factor';
 $string['disablefactor'] = 'Disable factor';
@@ -63,6 +64,7 @@ $string['error:directaccess'] = 'This page shouldn\'t be accessed directly';
 $string['error:factornotfound'] = 'MFA Factor \'{$a}\' not found';
 $string['error:actionnotfound'] = 'Action \'{$a}\' not supported';
 $string['error:addfactor'] = 'Can not add factor';
+$string['error:revokefactor'] = 'Can not revoke factor';
 
 $string['event:userpassedmfa'] = 'Verification passed';
 $string['event:useraddedfactor'] = 'Factor added';

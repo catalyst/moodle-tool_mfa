@@ -94,14 +94,18 @@ class preferences_form extends \moodleform
 
         foreach ($factors as $factor) {
 
-            $userfactors = $factor->get_all_user_factors();
+            $userfactors = $factor->get_enabled_user_factors();
 
             foreach ($userfactors as $userfactor) {
                 $url = "action.php?sesskey=" . sesskey();
                 $edit = "<a href=\"action.php?sesskey=".sesskey()
                     ."&amp;action=edit&amp;factor=$factor->name&amp;factorid=$userfactor->id\">$headers->edit</a>";
-                $revoke = "<a href=\"action.php?sesskey=".sesskey()
-                    ."&amp;action=revoke&amp;factor=$factor->name&amp;factorid=$userfactor->id\">$headers->revoke</a>";
+                if ($factor->has_delete()) {
+                    $revokeparams = "action=revoke&amp;factor=$factor->name&amp;factorid=$userfactor->id";
+                    $revokelink = "<a href=\"action.php?$revokeparams\">$headers->revoke</a>";
+                } else {
+                    $revokelink = "";
+                }
 
                 $timecreated = $userfactor->timecreated == '-' ? '-' : userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
                 $timemodified = $userfactor->timemodified == '-' ? '-' : userdate($userfactor->timemodified, '%l:%M %p %d/%m/%Y');
@@ -115,9 +119,8 @@ class preferences_form extends \moodleform
                     $timemodified,
                     $lastlogon,
                     $edit,
-                    $revoke,
+                    $revokelink,
                 ));
-                $row->attributes['class'] = $class;
                 $table->data[] = $row;
             }
         }

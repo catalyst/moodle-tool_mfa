@@ -244,4 +244,13 @@ class factor extends object_factor_base {
         $return = $DB->get_records_sql($sql, array($USER->id));
         return $return;
     }
+
+    /**
+     * TOTP Factor implementation.
+     *
+     * {@inheritDoc}
+     */
+    public function has_delete() {
+        return true;
+    }
 }

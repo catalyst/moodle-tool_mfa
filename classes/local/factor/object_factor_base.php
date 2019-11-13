@@ -215,4 +215,35 @@ abstract class object_factor_base implements object_factor {
     public function login_form_validation($data) {
         return array();
     }
+
+    /**
+     * Returns true if factor class has factor records that might be deleted.
+     * It means that user can delete factor record from their profile.
+     *
+     * Override in child class if necessary.
+     *
+     * @return bool
+     */
+    public function has_delete() {
+        return false;
+    }
+
+    /**
+     * Marks factor record as disabled.
+     *
+     * @param int $factorid
+     * @return bool
+     * @throws \dml_exception
+     */
+    public function delete_user_factor($factorid) {
+        global $DB, $USER;
+
+        $recordowner = $DB->get_field('factor_'.$this->name, 'userid', array('id' => $factorid));
+
+        if (!empty($recordowner) && $recordowner == $USER->id) {
+            return $DB->set_field('factor_'.$this->name, 'disabled', 1, array('id' => $factorid));
+        }
+
+        return false;
+    }
 }
