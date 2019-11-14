@@ -57,7 +57,6 @@ class preferences_form extends \moodleform
             'devicename',
             'created',
             'createdfromip',
-            'modified',
             'lastverified',
             'revoke',
         ), 'tool_mfa');
@@ -70,7 +69,6 @@ class preferences_form extends \moodleform
             $headers->devicename,
             $headers->created,
             $headers->createdfromip,
-            $headers->modified,
             $headers->lastverified,
             $headers->revoke,
         );
@@ -101,7 +99,6 @@ class preferences_form extends \moodleform
                 }
 
                 $timecreated = $userfactor->timecreated == '-' ? '-' : userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
-                $timemodified = $userfactor->timemodified == '-' ? '-' : userdate($userfactor->timemodified, '%l:%M %p %d/%m/%Y');
                 $lastverified = $userfactor->lastverified == '-' ? '-' : userdate($userfactor->lastverified, '%l:%M %p %d/%m/%Y');
 
                 $row = new \html_table_row(array(
@@ -109,7 +106,6 @@ class preferences_form extends \moodleform
                     $userfactor->devicename,
                     $timecreated,
                     $userfactor->createdfromip,
-                    $timemodified,
                     $lastverified,
                     $revokelink,
                 ));
