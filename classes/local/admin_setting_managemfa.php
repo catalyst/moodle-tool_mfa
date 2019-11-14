@@ -79,25 +79,25 @@ class admin_setting_managemfa extends \admin_setting {
         $factors = \tool_mfa\plugininfo\factor::get_factors();
 
         foreach ($factors as $factor) {
-            $settings = "<a href=\"settings.php?section=factor_$factor->name\">$txt->settings</a>";
-            $url = "tool\\mfa\\index.php?sesskey=" . sesskey();
+            $settingsparams = array('section' => 'factor_'.$factor->name);
+            $settingsurl = new \moodle_url('settings.php', $settingsparams);
+            $settingslink = \html_writer::link($settingsurl, $txt->settings);
 
-            // Hide/show link.
             if ($factor->is_enabled()) {
-                $hideshow = "<a href=\"$url&amp;action=disable&amp;factor=$factor->name\">";
-                $hideshow .= $OUTPUT->pix_icon('t/hide', get_string('disable')) . '</a>';
+                $hideshowparams = array('action' => 'disable', 'factor' => $factor->name);
+                $hideshowurl = new \moodle_url('tool/mfa/index.php', $hideshowparams);
+                $hideshowlink = \html_writer::link($hideshowurl, $OUTPUT->pix_icon('t/hide', get_string('disable')));
                 $class = '';
             } else {
-                $hideshow = "<a href=\"$url&amp;action=enable&amp;factor=$factor->name\">";
-                $hideshow .= $OUTPUT->pix_icon('t/show', get_string('enable')) . '</a>';
+                $hideshowparams = array('action' => 'enable', 'factor' => $factor->name);
+                $hideshowurl = new \moodle_url('tool/mfa/index.php', $hideshowparams);
+                $hideshowlink = \html_writer::link($hideshowurl, $OUTPUT->pix_icon('t/show', get_string('disable')));
                 $class = 'dimmed_text';
             }
 
-            // Add a row to the table.
-            $row = new \html_table_row(array($factor->get_display_name(), $hideshow, $factor->get_weight(), $settings));
-            if ($class) {
-                $row->attributes['class'] = $class;
-            }
+            $row = new \html_table_row(array($factor->get_display_name(), $hideshowlink, $factor->get_weight(), $settingslink));
+            $row->attributes['class'] = $class;
+
             $table->data[] = $row;
         }
 

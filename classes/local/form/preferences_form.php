@@ -92,8 +92,9 @@ class preferences_form extends \moodleform
 
             foreach ($userfactors as $userfactor) {
                 if ($factor->has_revoke()) {
-                    $revokeparams = "action=revoke&amp;factor=$factor->name&amp;factorid=$userfactor->id";
-                    $revokelink = "<a href=\"action.php?$revokeparams\">$headers->revoke</a>";
+                    $revokeparams = array('action' => 'revoke', 'factor' => $factor->name, 'factorid' => $userfactor->id);
+                    $revokeurl = new \moodle_url('action.php', $revokeparams);
+                    $revokelink = \html_writer::link($revokeurl, $headers->revoke);
                 } else {
                     $revokelink = "";
                 }
@@ -128,6 +129,7 @@ class preferences_form extends \moodleform
      * @param $mform
      * @return object $mform
      * @throws \coding_exception
+     * @throws \moodle_exception
      */
     public function define_available_factors($mform) {
         global $OUTPUT;
@@ -149,14 +151,13 @@ class preferences_form extends \moodleform
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
 
         foreach ($factors as $factor) {
-            $url = "action.php?sesskey=" . sesskey();
-
-            $action = "<a href=\"$url&amp;action=add&amp;factor=$factor->name\">";
-            $action .= get_string('addfactor', 'tool_mfa') . '</a>';
+            $actionparams = array('action' => 'add', 'factor' => $factor->name);
+            $actionurl = new \moodle_url('action.php', $actionparams);
+            $actionlink = \html_writer::link($actionurl, get_string('addfactor', 'tool_mfa'));
 
             $row = new \html_table_row(array(
                 $OUTPUT->heading($factor->get_display_name(), 4) . $factor->get_info(),
-                $action,
+                $actionlink,
             ));
             $table->data[] = $row;
         }

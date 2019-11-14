@@ -47,10 +47,6 @@ if (empty($action) || !in_array($action, \tool_mfa\plugininfo\factor::get_factor
     print_error('actionnotfound', 'tool_mfa', $returnurl, $action);
 }
 
-if (!confirm_sesskey()) {
-    redirect($returnurl);
-}
-
 $enabledfactors = array();
 foreach (\tool_mfa\plugininfo\factor::get_enabled_factors() as $enabledfactor) {
     $enabledfactors[] = $enabledfactor->name;
