@@ -140,7 +140,6 @@ class factor extends \core\plugininfo\base {
         $actions[] = 'enable';
         $actions[] = 'revoke';
         $actions[] = 'disable';
-        $actions[] = 'edit';
 
         return $actions;
     }

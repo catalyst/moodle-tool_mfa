@@ -97,11 +97,6 @@ switch ($action) {
         redirect($returnurl);
         break;
 
-    case 'edit':
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string('edit'));
-        break;
-
     default:
         break;
 }

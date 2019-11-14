@@ -59,7 +59,6 @@ class preferences_form extends \moodleform
             'createdfromip',
             'modified',
             'lastverified',
-            'edit',
             'revoke',
         ), 'tool_mfa');
 
@@ -73,13 +72,11 @@ class preferences_form extends \moodleform
             $headers->createdfromip,
             $headers->modified,
             $headers->lastverified,
-            $headers->edit,
             $headers->revoke,
         );
         $table->colclasses = array(
             'leftalign',
             'leftalign',
-            'centeralign',
             'centeralign',
             'centeralign',
             'centeralign',
@@ -96,9 +93,6 @@ class preferences_form extends \moodleform
             $userfactors = $factor->get_active_user_factors();
 
             foreach ($userfactors as $userfactor) {
-                $url = "action.php?sesskey=" . sesskey();
-                $edit = "<a href=\"action.php?sesskey=".sesskey()
-                    ."&amp;action=edit&amp;factor=$factor->name&amp;factorid=$userfactor->id\">$headers->edit</a>";
                 if ($factor->has_revoke()) {
                     $revokeparams = "action=revoke&amp;factor=$factor->name&amp;factorid=$userfactor->id";
                     $revokelink = "<a href=\"action.php?$revokeparams\">$headers->revoke</a>";
@@ -117,7 +111,6 @@ class preferences_form extends \moodleform
                     $userfactor->createdfromip,
                     $timemodified,
                     $lastverified,
-                    $edit,
                     $revokelink,
                 ));
                 $table->data[] = $row;

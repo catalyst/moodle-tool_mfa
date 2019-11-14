@@ -34,7 +34,6 @@ $string['enable'] = 'Enable';
 $string['weight'] = 'Weight';
 $string['settings'] = 'Settings';
 $string['action'] = 'Action';
-$string['edit'] = 'Edit';
 $string['revoke'] = 'Revoke';
 $string['created'] = 'Created';
 $string['createdfromip'] = 'Created from IP';
@@ -42,7 +41,6 @@ $string['modified'] = 'Modified';
 $string['lastverified'] = 'Last verified';
 $string['addfactor'] = 'Add factor';
 $string['revokefactor'] = 'Revoke factor';
-$string['editfactor'] = 'Edit factor';
 $string['enablefactor'] = 'Enable factor';
 $string['revokefactor'] = 'Revoke factor';
 
