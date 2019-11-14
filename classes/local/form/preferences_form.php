@@ -35,47 +35,47 @@ class preferences_form extends \moodleform
      */
     public function definition() {
         $mform = $this->_form;
-        $mform = $this->define_configured_factors($mform);
+        $mform = $this->define_active_factors($mform);
         $mform = $this->define_available_factors($mform);
 
     }
 
     /**
-     * Defines section with configured user's factors.
+     * Defines section with active user's factors.
      *
      * @param $mform
      * @return object $mform
      * @throws \coding_exception
      */
-    public function define_configured_factors($mform) {
+    public function define_active_factors($mform) {
         global $OUTPUT;
 
-        $mform->addElement('html', $OUTPUT->heading(get_string('preferences:configuredfactors', 'tool_mfa'), 4));
+        $mform->addElement('html', $OUTPUT->heading(get_string('preferences:activefactors', 'tool_mfa'), 4));
 
         $headers = get_strings(array(
             'factor',
             'devicename',
             'created',
-            'modified',
-            'enable',
-            'edit',
+            'createdfromip',
+            'lastverified',
             'revoke',
         ), 'tool_mfa');
 
         $table = new \html_table();
-        $table->id = 'configured_factors';
+        $table->id = 'active_factors';
         $table->attributes['class'] = 'generaltable';
         $table->head  = array(
             $headers->factor,
             $headers->devicename,
             $headers->created,
-            $headers->modified,
-            $headers->edit,
+            $headers->createdfromip,
+            $headers->lastverified,
             $headers->revoke,
         );
         $table->colclasses = array(
             'leftalign',
             'leftalign',
+            'centeralign',
             'centeralign',
             'centeralign',
             'centeralign',
@@ -88,27 +88,28 @@ class preferences_form extends \moodleform
 
         foreach ($factors as $factor) {
 
-            $userfactors = $factor->get_all_user_factors();
+            $userfactors = $factor->get_active_user_factors();
 
             foreach ($userfactors as $userfactor) {
-                $url = "action.php?sesskey=" . sesskey();
-                $edit = "<a href=\"action.php?sesskey=".sesskey()
-                    ."&amp;action=edit&amp;factor=$factor->name&amp;factorid=$userfactor->id\">$headers->edit</a>";
-                $revoke = "<a href=\"action.php?sesskey=".sesskey()
-                    ."&amp;action=revoke&amp;factor=$factor->name&amp;factorid=$userfactor->id\">$headers->revoke</a>";
+                if ($factor->has_revoke()) {
+                    $revokeparams = array('action' => 'revoke', 'factor' => $factor->name, 'factorid' => $userfactor->id);
+                    $revokeurl = new \moodle_url('action.php', $revokeparams);
+                    $revokelink = \html_writer::link($revokeurl, $headers->revoke);
+                } else {
+                    $revokelink = "";
+                }
 
-                $timecreated = empty($userfactor->timecreated) ? '' : userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
-                $timemodified = empty($userfactor->timemodified) ? '' : userdate($userfactor->timemodified, '%l:%M %p %d/%m/%Y');
+                $timecreated = $userfactor->timecreated == '-' ? '-' : userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
+                $lastverified = $userfactor->lastverified == '-' ? '-' : userdate($userfactor->lastverified, '%l:%M %p %d/%m/%Y');
 
                 $row = new \html_table_row(array(
                     $factor->get_display_name(),
                     $userfactor->devicename,
                     $timecreated,
-                    $timemodified,
-                    $edit,
-                    $revoke,
+                    $userfactor->createdfromip,
+                    $lastverified,
+                    $revokelink,
                 ));
-                $row->attributes['class'] = $class;
                 $table->data[] = $row;
             }
         }
@@ -128,6 +129,7 @@ class preferences_form extends \moodleform
      * @param $mform
      * @return object $mform
      * @throws \coding_exception
+     * @throws \moodle_exception
      */
     public function define_available_factors($mform) {
         global $OUTPUT;
@@ -149,14 +151,13 @@ class preferences_form extends \moodleform
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
 
         foreach ($factors as $factor) {
-            $url = "action.php?sesskey=" . sesskey();
-
-            $action = "<a href=\"$url&amp;action=add&amp;factor=$factor->name\">";
-            $action .= get_string('addfactor', 'tool_mfa') . '</a>';
+            $actionparams = array('action' => 'add', 'factor' => $factor->name);
+            $actionurl = new \moodle_url('action.php', $actionparams);
+            $actionlink = \html_writer::link($actionurl, get_string('addfactor', 'tool_mfa'));
 
             $row = new \html_table_row(array(
                 $OUTPUT->heading($factor->get_display_name(), 4) . $factor->get_info(),
-                $action,
+                $actionlink,
             ));
             $table->data[] = $row;
         }

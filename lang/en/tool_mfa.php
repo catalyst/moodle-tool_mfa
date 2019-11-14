@@ -34,21 +34,21 @@ $string['enable'] = 'Enable';
 $string['weight'] = 'Weight';
 $string['settings'] = 'Settings';
 $string['action'] = 'Action';
-$string['edit'] = 'Edit';
 $string['revoke'] = 'Revoke';
 $string['created'] = 'Created';
-$string['modified'] = 'Modified';
+$string['createdfromip'] = 'Created from IP';
+$string['lastverified'] = 'Last verified';
 $string['addfactor'] = 'Add factor';
-$string['editfactor'] = 'Edit factor';
+$string['revokefactor'] = 'Revoke factor';
 $string['enablefactor'] = 'Enable factor';
-$string['disablefactor'] = 'Disable factor';
+$string['revokefactor'] = 'Revoke factor';
 
 $string['settings:enabled'] = 'MFA plugin enabled';
 $string['settings:enabled_help'] = '';
 
 $string['preferences:header'] = 'Multi-factor authentication preferences';
 $string['preferences:availablefactors'] = 'Available factors';
-$string['preferences:configuredfactors'] = 'Configured factors';
+$string['preferences:activefactors'] = 'Active factors';
 
 $string['graceperiod'] = 'Grace period';
 $string['graceperiod_help'] = 'Period of time when users can access Moodle without configured and enabled factors';
@@ -61,6 +61,7 @@ $string['error:directaccess'] = 'This page shouldn\'t be accessed directly';
 $string['error:factornotfound'] = 'MFA Factor \'{$a}\' not found';
 $string['error:actionnotfound'] = 'Action \'{$a}\' not supported';
 $string['error:addfactor'] = 'Can not add factor';
+$string['error:revokefactor'] = 'Can not revoke factor';
 
 $string['event:userpassedmfa'] = 'Verification passed';
 $string['event:useraddedfactor'] = 'Factor added';

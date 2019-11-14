@@ -88,16 +88,16 @@ class factor extends \core\plugininfo\base {
     }
 
     /**
-     * Finds enabled factors for current user.
+     * Finds active factors for current user.
      *
      * @return array of factor objects.
      */
-    public static function get_enabled_user_factor_types() {
+    public static function get_active_user_factor_types() {
         $return = array();
         $factors = self::get_enabled_factors();
 
         foreach ($factors as $factor) {
-            $userfactors = $factor->get_enabled_user_factors();
+            $userfactors = $factor->get_active_user_factors();
             if (count($userfactors) > 0) {
                 $return[] = $factor;
             }
@@ -116,7 +116,7 @@ class factor extends \core\plugininfo\base {
         $factors = self::get_enabled_factors();
 
         foreach ($factors as $factor) {
-            $userfactors = $factor->get_enabled_user_factors();
+            $userfactors = $factor->get_active_user_factors();
             foreach ($userfactors as $userfactor) {
                 $property = 'factor_'.$userfactor->name.'_authenticated';
                 if (empty($USER->$property) || true !== $USER->$property) {
@@ -138,8 +138,8 @@ class factor extends \core\plugininfo\base {
         $actions[] = 'add';
         $actions[] = 'revoke';
         $actions[] = 'enable';
+        $actions[] = 'revoke';
         $actions[] = 'disable';
-        $actions[] = 'edit';
 
         return $actions;
     }

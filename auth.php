@@ -52,7 +52,7 @@ if (isset($USER->tool_mfa_authenticated) && $USER->tool_mfa_authenticated) {
     redirect(new moodle_url($wantsurl));
 }
 
-$userfactors = \tool_mfa\plugininfo\factor::get_enabled_user_factor_types();
+$userfactors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
 
 if (count($userfactors) > 0) {
     $nextfactor = \tool_mfa\plugininfo\factor::get_next_user_factor();

@@ -37,7 +37,7 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function login_form_definition($mform) {
-        $userfactors = $this->get_enabled_user_factors();
+        $userfactors = $this->get_active_user_factors();
 
         if (count($userfactors) > 0) {
             $mform->addElement('hidden', 'secret');
@@ -110,9 +110,10 @@ class factor extends object_factor_base {
             'name' => $this->name,
             'useremail' => $USER->email,
             'devicename' => get_string('default'),
-            'timemodified' => '',
-            'timecreated' => '',
-            'disabled' => (int)!$this->is_enabled(),
+            'timecreated' => '-',
+            'createdfromip' => '-',
+            'lastverified' => '-',
+            'revoked' => (int)!$this->is_enabled(),
         ]);
 
         return $return;
