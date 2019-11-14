@@ -35,22 +35,22 @@ class preferences_form extends \moodleform
      */
     public function definition() {
         $mform = $this->_form;
-        $mform = $this->define_configured_factors($mform);
+        $mform = $this->define_active_factors($mform);
         $mform = $this->define_available_factors($mform);
 
     }
 
     /**
-     * Defines section with configured user's factors.
+     * Defines section with active user's factors.
      *
      * @param $mform
      * @return object $mform
      * @throws \coding_exception
      */
-    public function define_configured_factors($mform) {
+    public function define_active_factors($mform) {
         global $OUTPUT;
 
-        $mform->addElement('html', $OUTPUT->heading(get_string('preferences:configuredfactors', 'tool_mfa'), 4));
+        $mform->addElement('html', $OUTPUT->heading(get_string('preferences:activefactors', 'tool_mfa'), 4));
 
         $headers = get_strings(array(
             'factor',
@@ -59,13 +59,12 @@ class preferences_form extends \moodleform
             'createdfromip',
             'modified',
             'lastverified',
-            'enable',
             'edit',
             'revoke',
         ), 'tool_mfa');
 
         $table = new \html_table();
-        $table->id = 'configured_factors';
+        $table->id = 'active_factors';
         $table->attributes['class'] = 'generaltable';
         $table->head  = array(
             $headers->factor,
@@ -94,13 +93,13 @@ class preferences_form extends \moodleform
 
         foreach ($factors as $factor) {
 
-            $userfactors = $factor->get_enabled_user_factors();
+            $userfactors = $factor->get_active_user_factors();
 
             foreach ($userfactors as $userfactor) {
                 $url = "action.php?sesskey=" . sesskey();
                 $edit = "<a href=\"action.php?sesskey=".sesskey()
                     ."&amp;action=edit&amp;factor=$factor->name&amp;factorid=$userfactor->id\">$headers->edit</a>";
-                if ($factor->has_delete()) {
+                if ($factor->has_revoke()) {
                     $revokeparams = "action=revoke&amp;factor=$factor->name&amp;factorid=$userfactor->id";
                     $revokelink = "<a href=\"action.php?$revokeparams\">$headers->revoke</a>";
                 } else {

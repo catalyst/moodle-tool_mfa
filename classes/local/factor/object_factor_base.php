@@ -139,7 +139,7 @@ abstract class object_factor_base implements object_factor {
     }
 
     /**
-     * Adds given factor to user's configured factors list.
+     * Adds given factor to user's active factors list.
      * Returns true if factor has been successfully added, otherwise false.
      *
      * Dummy implementation. Should be overridden in child class.
@@ -152,7 +152,7 @@ abstract class object_factor_base implements object_factor {
     }
 
     /**
-     * Returns an array of all user factors of given type (both enabled and disabled).
+     * Returns an array of all user factors of given type (both active and revoked).
      *
      * Dummy implementation. Should be overridden in child class.
      *
@@ -163,16 +163,16 @@ abstract class object_factor_base implements object_factor {
     }
 
     /**
-     * Returns an array of enabled user factors of given type.
+     * Returns an array of active user factor records.
      * Filters get_all_user_factors() output.
      *
      * @return array
      */
-    public function get_enabled_user_factors() {
+    public function get_active_user_factors() {
         $return = array();
         $factors = $this->get_all_user_factors();
         foreach ($factors as $factor) {
-            if ($factor->disabled == 0) {
+            if ($factor->revoked == 0) {
                 $return[] = $factor;
             }
         }
@@ -217,31 +217,31 @@ abstract class object_factor_base implements object_factor {
     }
 
     /**
-     * Returns true if factor class has factor records that might be deleted.
-     * It means that user can delete factor record from their profile.
+     * Returns true if factor class has factor records that might be revoked.
+     * It means that user can revoke factor record from their profile.
      *
      * Override in child class if necessary.
      *
      * @return bool
      */
-    public function has_delete() {
+    public function has_revoke() {
         return false;
     }
 
     /**
-     * Marks factor record as disabled.
+     * Marks factor record as revoked.
      *
      * @param int $factorid
      * @return bool
      * @throws \dml_exception
      */
-    public function delete_user_factor($factorid) {
+    public function revoke_user_factor($factorid) {
         global $DB, $USER;
 
         $recordowner = $DB->get_field('factor_'.$this->name, 'userid', array('id' => $factorid));
 
         if (!empty($recordowner) && $recordowner == $USER->id) {
-            return $DB->set_field('factor_'.$this->name, 'disabled', 1, array('id' => $factorid));
+            return $DB->set_field('factor_'.$this->name, 'revoked', 1, array('id' => $factorid));
         }
 
         return false;

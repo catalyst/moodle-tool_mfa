@@ -44,14 +44,14 @@ $string['addfactor'] = 'Add factor';
 $string['revokefactor'] = 'Revoke factor';
 $string['editfactor'] = 'Edit factor';
 $string['enablefactor'] = 'Enable factor';
-$string['disablefactor'] = 'Disable factor';
+$string['revokefactor'] = 'Revoke factor';
 
 $string['settings:enabled'] = 'MFA plugin enabled';
 $string['settings:enabled_help'] = '';
 
 $string['preferences:header'] = 'Multi-factor authentication preferences';
 $string['preferences:availablefactors'] = 'Available factors';
-$string['preferences:configuredfactors'] = 'Configured factors';
+$string['preferences:activefactors'] = 'Active factors';
 
 $string['graceperiod'] = 'Grace period';
 $string['graceperiod_help'] = 'Period of time when users can access Moodle without configured and enabled factors';

@@ -88,8 +88,8 @@ switch ($action) {
 
     case 'revoke':
         $factorobject = \tool_mfa\plugininfo\factor::get_factor($factor);
-        if ($factorobject && $factorobject->has_delete()) {
-            if (!$factorobject->delete_user_factor($factorid)) {
+        if ($factorobject && $factorobject->has_revoke()) {
+            if (!$factorobject->revoke_user_factor($factorid)) {
                 print_error('error:revokefactor', 'tool_mfa', $returnurl);
             }
         }

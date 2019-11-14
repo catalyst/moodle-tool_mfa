@@ -115,7 +115,7 @@ interface object_factor {
     public function login_form_validation($data);
 
     /**
-     * Adds given factor to user's configured factors list.
+     * Adds given factor to user's active factors list.
      * Returns true if factor has been successfully added, otherwise false.
      *
      * @param array $data
@@ -124,27 +124,27 @@ interface object_factor {
     public function add_user_factor($data);
 
     /**
-     * Returns an array of all user factors of given type (both enabled and disabled).
+     * Returns an array of all user factors of given type (both active and revoked).
      *
      * @return array
      */
     public function get_all_user_factors();
 
     /**
-     * Returns an array of enabled user factors of given type.
+     * Returns an array of active user factor records.
      * Filters get_all_user_factors() output.
      *
      * @return array
      */
-    public function get_enabled_user_factors();
+    public function get_active_user_factors();
 
     /**
-     * Returns true if factor class has factor records that might be deleted.
-     * It means that user can delete factor record from their profile.
+     * Returns true if factor class has factor records that might be revoked.
+     * It means that user can revoke factor record from their profile.
      *
      * @return bool
      */
-    public function has_delete();
+    public function has_revoke();
 
     /**
      * Returns true if factor has a property when this factor was verified last time.

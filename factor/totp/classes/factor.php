@@ -150,7 +150,7 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function login_form_definition($mform) {
-        $userfactors = $this->get_enabled_user_factors();
+        $userfactors = $this->get_active_user_factors();
 
         if (count($userfactors) > 0) {
             $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'),
@@ -168,7 +168,7 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function login_form_validation($data) {
-        $factors = $this->get_enabled_user_factors();
+        $factors = $this->get_active_user_factors();
         $result = array('verificationcode' => get_string('error:wrongverification', 'factor_totp'));
 
         foreach ($factors as $factor) {
@@ -207,7 +207,7 @@ class factor extends object_factor_base {
             $row->timecreated = time();
             $row->createdfromip = $USER->lastip;
             $row->timemodified = time();
-            $row->disabled = 0;
+            $row->revoked = 0;
 
             $DB->insert_record('factor_totp', $row);
             return true;
@@ -223,10 +223,10 @@ class factor extends object_factor_base {
      */
     public function get_all_user_factors() {
         global $DB, $USER;
-        $sql = "SELECT id, 'totp' AS name, devicename, secret, timecreated, createdfromip, timemodified, lastverified, disabled
+        $sql = "SELECT id, 'totp' AS name, devicename, secret, timecreated, createdfromip, timemodified, lastverified, revoked
                   FROM {factor_totp}
                  WHERE userid = ?
-              ORDER BY disabled, timemodified";
+              ORDER BY revoked, timemodified";
 
         $return = $DB->get_records_sql($sql, array($USER->id));
         return $return;
@@ -237,7 +237,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function has_delete() {
+    public function has_revoke() {
         return true;
     }
 
