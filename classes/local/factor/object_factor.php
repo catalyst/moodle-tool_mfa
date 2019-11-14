@@ -152,4 +152,11 @@ interface object_factor {
      * @return bool
      */
     public function has_lastverified();
+
+    /**
+     * Returns true if factor needs to be setup by user and has setup_form.
+     *
+     * @return bool
+     */
+    public function has_setup();
 }

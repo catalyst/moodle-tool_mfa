@@ -272,4 +272,15 @@ abstract class object_factor_base implements object_factor {
         }
         return false;
     }
+
+    /**
+     * Returns true if factor needs to be setup by user and has setup_form.
+     *
+     * Override in child class if necessary.
+     *
+     * @return bool
+     */
+    public function has_setup() {
+        return false;
+    }
 }

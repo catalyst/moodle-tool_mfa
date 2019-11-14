@@ -249,4 +249,13 @@ class factor extends object_factor_base {
     public function has_lastverified() {
         return true;
     }
+
+    /**
+     * TOTP Factor implementation.
+     *
+     * {@inheritDoc}
+     */
+    public function has_setup() {
+        return true;
+    }
 }

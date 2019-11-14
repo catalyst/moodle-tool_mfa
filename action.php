@@ -52,6 +52,8 @@ if (!in_array($action, \tool_mfa\plugininfo\factor::get_factor_actions())) {
     print_error('error:actionnotfound', 'tool_mfa', $returnurl, $action);
 }
 
+$factorobject = \tool_mfa\plugininfo\factor::get_factor($factor);
+
 $context = context_user::instance($USER->id);
 $PAGE->set_context($context);
 $PAGE->set_url('/admin/tool/mfa/action.php');
@@ -61,6 +63,10 @@ $PAGE->set_cacheable(false);
 
 switch ($action) {
     case 'setup':
+        if (!$factorobject->has_setup()) {
+            redirect($returnurl);
+        }
+
         $OUTPUT = $PAGE->get_renderer('tool_mfa');
         $form = new setup_factor_form($currenturl, array('factorname' => $factor));
 
@@ -70,7 +76,6 @@ switch ($action) {
 
         if ($form->is_submitted()) {
             if ($data = $form->get_data()) {
-                $factorobject = \tool_mfa\plugininfo\factor::get_factor($factor);
                 if ($factorobject && $factorobject->setup_user_factor($data)) {
                     $event = \tool_mfa\event\user_setup_factor::user_setup_factor_event($USER, $factorobject->get_display_name());
                     $event->trigger();
@@ -87,7 +92,6 @@ switch ($action) {
         break;
 
     case 'revoke':
-        $factorobject = \tool_mfa\plugininfo\factor::get_factor($factor);
         if ($factorobject && $factorobject->has_revoke()) {
             if (!$factorobject->revoke_user_factor($factorid)) {
                 print_error('error:revokefactor', 'tool_mfa', $returnurl);

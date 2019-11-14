@@ -151,13 +151,18 @@ class preferences_form extends \moodleform
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
 
         foreach ($factors as $factor) {
-            $actionparams = array('action' => 'setup', 'factor' => $factor->name);
-            $actionurl = new \moodle_url('action.php', $actionparams);
-            $actionlink = \html_writer::link($actionurl, get_string('setupfactor', 'tool_mfa'));
+
+            if ($factor->has_setup()) {
+                $setupparams = array('action' => 'setup', 'factor' => $factor->name);
+                $setupurl = new \moodle_url('action.php', $setupparams);
+                $setuplink = \html_writer::link($setupurl, get_string('setupfactor', 'tool_mfa'));
+            } else {
+                $setuplink = '';
+            }
 
             $row = new \html_table_row(array(
                 $OUTPUT->heading($factor->get_display_name(), 4) . $factor->get_info(),
-                $actionlink,
+                $setuplink,
             ));
             $table->data[] = $row;
         }
