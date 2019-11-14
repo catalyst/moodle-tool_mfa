@@ -45,9 +45,11 @@ class login_form extends \moodleform {
 
         if ($gracemode) {
             $mform = $this->define_grace_period_page($mform);
-        } else {
+        } else if (!empty($factorname)) {
             $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
             $mform = $factor->login_form_definition($mform);
+            // Move buttons to definition() until Issue 37 is fixed.
+            $this->add_action_buttons();
         }
     }
 
@@ -60,10 +62,11 @@ class login_form extends \moodleform {
         $gracemode = $this->_customdata['grace_mode'];
         $factorname = $this->_customdata['factor_name'];
 
-        if (!$gracemode) {
+        if (!$gracemode && !empty($factorname)) {
             $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
             $mform = $factor->login_form_definition_after_data($mform);
-            $this->add_action_buttons();
+            // Move buttons to definition() until Issue 37 is fixed.
+            // $this->add_action_buttons();
         }
     }
 

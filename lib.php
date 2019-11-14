@@ -145,3 +145,27 @@ function tool_mfa_extend_navigation_user_settings($navigation, $user, $userconte
         $usernode->add_node($node);
     }
 }
+
+/**
+ * Checks that user passed enough factors to be authenticated.
+ *
+ * @return bool
+ */
+function tool_mfa_user_passed_enough_factors() {
+    global $USER;
+    $totalweight = 0;
+    $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+
+    foreach ($factors as $factor) {
+        $property = 'factor_'.$factor->name;
+        if ($USER->$property == 'good') {
+            $totalweight += $factor->get_weight();
+        }
+    }
+
+    if ($totalweight >= 100) {
+        return true;
+    }
+
+    return false;
+}
