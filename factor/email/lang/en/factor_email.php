@@ -36,7 +36,7 @@ $string['verificationcode_help'] = 'Verification code has been sent to your emai
 $string['email:subject'] = 'Your confirmation code';
 $string['email:message'] = 'You are tying to log in to Moodle. Your confirmation code is \'{$a}\'';
 
-$string['addingfactor'] = 'Adding E-Mail Factor';
+$string['setupfactor'] = 'E-Mail Factor setup';
 $string['error:wrongverification'] = 'Incorrect verification code';
 
 $string['privacy:metadata'] = 'The E-Mail Factor plugin does not store any personal data';

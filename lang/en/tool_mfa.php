@@ -38,7 +38,7 @@ $string['revoke'] = 'Revoke';
 $string['created'] = 'Created';
 $string['createdfromip'] = 'Created from IP';
 $string['lastverified'] = 'Last verified';
-$string['addfactor'] = 'Add factor';
+$string['setupfactor'] = 'Setup factor';
 $string['revokefactor'] = 'Revoke factor';
 $string['enablefactor'] = 'Enable factor';
 $string['revokefactor'] = 'Revoke factor';
@@ -60,10 +60,10 @@ $string['graceperiod:redirect'] = 'You will be redirected now to user preference
 $string['error:directaccess'] = 'This page shouldn\'t be accessed directly';
 $string['error:factornotfound'] = 'MFA Factor \'{$a}\' not found';
 $string['error:actionnotfound'] = 'Action \'{$a}\' not supported';
-$string['error:addfactor'] = 'Can not add factor';
+$string['error:setupfactor'] = 'Can not setup factor';
 $string['error:revokefactor'] = 'Can not revoke factor';
 
 $string['event:userpassedmfa'] = 'Verification passed';
-$string['event:useraddedfactor'] = 'Factor added';
+$string['event:usersetupfactor'] = 'Factor setup';
 
 $string['privacy:metadata'] = 'Moodle MFA plugin does not store any personal data';

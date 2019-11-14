@@ -83,7 +83,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function add_factor_form_definition($mform) {
+    public function setup_factor_form_definition($mform) {
         $secret = $this->generate_secret_code();
         $mform->addElement('hidden', 'secret', $secret);
         $mform->setType('secret', PARAM_ALPHANUM);
@@ -96,10 +96,10 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function add_factor_form_definition_after_data($mform) {
+    public function setup_factor_form_definition_after_data($mform) {
         global $OUTPUT;
 
-        $mform->addElement('html', $OUTPUT->heading(get_string('addingfactor', 'factor_totp'), 3));
+        $mform->addElement('html', $OUTPUT->heading(get_string('setupfactor', 'factor_totp'), 3));
 
         $mform->addElement('text', 'devicename', get_string('devicename', 'factor_totp'),
             array('placeholder' => get_string('devicenameexample', 'factor_totp')));
@@ -115,10 +115,10 @@ class factor extends object_factor_base {
         $secret = \html_writer::tag('code', $secret);
 
         $html = '';
-        $html .= \html_writer::tag('p', get_string('addingfactor:key', 'factor_totp').$secret);
+        $html .= \html_writer::tag('p', get_string('setupfactor:key', 'factor_totp').$secret);
         $html .= $qrcode;
 
-        $mform->addElement('static', 'description', get_string('addingfactor:scan', 'factor_totp'), $html);
+        $mform->addElement('static', 'description', get_string('setupfactor:scan', 'factor_totp'), $html);
 
         $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'));
         $mform->addHelpButton('verificationcode', 'verificationcode', 'factor_totp');
@@ -133,7 +133,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function add_factor_form_validation($data) {
+    public function setup_factor_form_validation($data) {
         $errors = array();
 
         $totp = TOTP::create($data['secret']);
@@ -196,7 +196,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function add_user_factor($data) {
+    public function setup_user_factor($data) {
         global $DB, $USER;
 
         if (!empty($data->secret)) {

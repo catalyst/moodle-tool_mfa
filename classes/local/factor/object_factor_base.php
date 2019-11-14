@@ -102,31 +102,31 @@ abstract class object_factor_base implements object_factor {
     }
 
     /**
-     * Defines add_factor form definition page for particular factor.
+     * Defines setup_factor form definition page for particular factor.
      *
      * Dummy implementation. Should be overridden in child class.
      *
      * @param $mform
      * @return object $mform
      */
-    public function add_factor_form_definition($mform) {
+    public function setup_factor_form_definition($mform) {
         return $mform;
     }
 
     /**
-     * Defines add_factor form definition page after form data has been set.
+     * Defines setup_factor form definition page after form data has been set.
      *
      * Dummy implementation. Should be overridden in child class.
      *
      * @param $mform
      * @return object $mform
      */
-    public function add_factor_form_definition_after_data($mform) {
+    public function setup_factor_form_definition_after_data($mform) {
         return $mform;
     }
 
     /**
-     * Implements add_factor form validation for particular factor.
+     * Implements setup_factor form validation for particular factor.
      * Returns an array of errors, where array key = field id and array value = error text.
      *
      * Dummy implementation. Should be overridden in child class.
@@ -134,12 +134,12 @@ abstract class object_factor_base implements object_factor {
      * @param array $data
      * @return array
      */
-    public function add_factor_form_validation($data) {
+    public function setup_factor_form_validation($data) {
         return array();
     }
 
     /**
-     * Adds given factor to user's active factors list.
+     * Setups given factor and adds it to user's active factors list.
      * Returns true if factor has been successfully added, otherwise false.
      *
      * Dummy implementation. Should be overridden in child class.
@@ -147,7 +147,7 @@ abstract class object_factor_base implements object_factor {
      * @param array $data
      * @return bool
      */
-    public function add_user_factor($data) {
+    public function setup_user_factor($data) {
         return false;
     }
 
