@@ -44,7 +44,32 @@ class factor extends \core\plugininfo\base {
                 $return[] = new $classname($factor->name);
             }
         }
-        return $return;
+        return self::sort_factors_by_order($return);
+    }
+
+    /**
+     * Sorts factors by configured order.
+     *
+     * @param array of factor objects
+     *
+     * @return array of factor objects
+     * @throws \dml_exception
+     */
+    public static function sort_factors_by_order($unsorted) {
+        $sorted = array();
+        $orderarray = explode(',', get_config('tool_mfa', 'factor_order'));
+
+        foreach ($orderarray as $order => $factorname) {
+            foreach ($unsorted as $key => $factor) {
+                if ($factor->name == $factorname) {
+                    $sorted[] = $factor;
+                    unset($unsorted[$key]);
+                }
+            }
+        }
+
+        $sorted = array_merge($sorted, $unsorted);
+        return $sorted;
     }
 
     /**
@@ -141,6 +166,8 @@ class factor extends \core\plugininfo\base {
         $actions[] = 'enable';
         $actions[] = 'revoke';
         $actions[] = 'disable';
+        $actions[] = 'up';
+        $actions[] = 'down';
 
         return $actions;
     }

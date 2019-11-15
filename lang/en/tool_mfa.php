@@ -31,6 +31,7 @@ $string['mfasettings'] = 'Manage MFA';
 $string['factor'] = 'Factor';
 $string['devicename'] = 'Device';
 $string['enable'] = 'Enable';
+$string['order'] = 'Order';
 $string['weight'] = 'Weight';
 $string['settings'] = 'Settings';
 $string['action'] = 'Action';
@@ -63,6 +64,7 @@ $string['error:actionnotfound'] = 'Action \'{$a}\' not supported';
 $string['error:setupfactor'] = 'Can not setup factor';
 $string['error:revokefactor'] = 'Can not revoke factor';
 $string['error:notenoughfactors'] = 'Not enough factors to authenticate';
+$string['error:factornotenabled'] = 'MFA Factor \'{$a}\' not enabled';
 
 $string['event:userpassedmfa'] = 'Verification passed';
 $string['event:usersetupfactor'] = 'Factor setup';

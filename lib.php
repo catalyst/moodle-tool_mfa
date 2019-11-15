@@ -169,3 +169,54 @@ function tool_mfa_user_passed_enough_factors() {
 
     return false;
 }
+
+/**
+ * Changes the order for given factor.
+ *
+ * @param string $factorname
+ * @param string $action
+ *
+ * @return void
+ * @throws dml_exception
+ */
+function tool_mfa_change_factor_order($factorname, $action) {
+    $order = explode(',', get_config('tool_mfa', 'factor_order'));
+    $key = array_search($factorname, $order);
+
+    switch ($action) {
+        case 'up':
+            if ($key >= 1) {
+                $fsave = $order[$key];
+                $order[$key] = $order[$key - 1];
+                $order[$key - 1] = $fsave;
+                set_config('factor_order', implode(',', $order), 'tool_mfa');
+            }
+            break;
+
+        case 'down':
+            if ($key < (count($order) - 1)) {
+                $fsave = $order[$key];
+                $order[$key] = $order[$key + 1];
+                $order[$key + 1] = $fsave;
+                set_config('factor_order', implode(',', $order), 'tool_mfa');
+            }
+            break;
+
+        case 'enable':
+            if (!$key) {
+                $order[] = $factorname;
+                set_config('factor_order', implode(',', $order), 'tool_mfa');
+            }
+            break;
+
+        case 'disable':
+            if ($key) {
+                unset($order[$key]);
+                set_config('factor_order', implode(',', $order), 'tool_mfa');
+            }
+            break;
+
+        default:
+            break;
+    }
+}
