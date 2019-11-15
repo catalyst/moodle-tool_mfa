@@ -91,10 +91,13 @@ function tool_mfa_logout() {
  * @param string $factor
  *
  * @return bool true or exception
+ * @throws dml_exception
  */
 function tool_mfa_set_factor_config($data, $factor) {
-    foreach ($data as $key => $value) {
-        set_config($key, $value, $factor);
+    foreach ($data as $key => $newvalue) {
+        $oldvalue = get_config($factor, $key);
+        set_config($key, $newvalue, $factor);
+        add_to_config_log($key, $oldvalue, $newvalue, $factor);
     }
     return true;
 }
@@ -189,7 +192,7 @@ function tool_mfa_change_factor_order($factorname, $action) {
                 $fsave = $order[$key];
                 $order[$key] = $order[$key - 1];
                 $order[$key - 1] = $fsave;
-                set_config('factor_order', implode(',', $order), 'tool_mfa');
+                tool_mfa_set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
             }
             break;
 
@@ -198,21 +201,21 @@ function tool_mfa_change_factor_order($factorname, $action) {
                 $fsave = $order[$key];
                 $order[$key] = $order[$key + 1];
                 $order[$key + 1] = $fsave;
-                set_config('factor_order', implode(',', $order), 'tool_mfa');
+                tool_mfa_set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
             }
             break;
 
         case 'enable':
             if (!$key) {
                 $order[] = $factorname;
-                set_config('factor_order', implode(',', $order), 'tool_mfa');
+                tool_mfa_set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
             }
             break;
 
         case 'disable':
             if ($key) {
                 unset($order[$key]);
-                set_config('factor_order', implode(',', $order), 'tool_mfa');
+                tool_mfa_set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
             }
             break;
 
