@@ -38,6 +38,7 @@ $PAGE->set_url('/admin/tool/mfa/index.php');
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $factor = optional_param('factor', '', PARAM_ALPHANUMEXT);
+$sesskey = optional_param('sesskey', '', PARAM_RAW);
 
 if (empty($factor) || !tool_mfa_factor_exists($factor)) {
     print_error('factornotfound', 'tool_mfa', $returnurl, $factor);
@@ -46,6 +47,8 @@ if (empty($factor) || !tool_mfa_factor_exists($factor)) {
 if (empty($action) || !in_array($action, \tool_mfa\plugininfo\factor::get_factor_actions())) {
     print_error('actionnotfound', 'tool_mfa', $returnurl, $action);
 }
+
+require_sesskey();
 
 $enabledfactors = array();
 foreach (\tool_mfa\plugininfo\factor::get_enabled_factors() as $enabledfactor) {
