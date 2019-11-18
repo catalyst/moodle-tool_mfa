@@ -82,23 +82,23 @@ if ($form->is_submitted()) {
 if ($form->is_submitted() && $SESSION->$userproperty != 'bad') {
     if (\tool_mfa\plugininfo\factor::get_next_user_factor()) {
         redirect($currenturl);
-    } else {
-        if (tool_mfa_user_passed_enough_factors() || $gracemode) {
-            $SESSION->tool_mfa_authenticated = true;
-
-            $event = \tool_mfa\event\user_passed_mfa::user_passed_mfa_event($USER);
-            $event->trigger();
-
-            if ($gracemode) {
-                redirect(new moodle_url('/admin/tool/mfa/user_preferences.php'));
-            } else {
-                redirect(new moodle_url($wantsurl));
-            }
-        } else {
-            tool_mfa_logout();
-            print_error('error:notenoughfactors', 'tool_mfa', new moodle_url('/'));
-        }
     }
+
+    if (tool_mfa_user_passed_enough_factors() || $gracemode) {
+        $SESSION->tool_mfa_authenticated = true;
+
+        $event = \tool_mfa\event\user_passed_mfa::user_passed_mfa_event($USER);
+        $event->trigger();
+
+        if ($gracemode) {
+            redirect(new moodle_url('/admin/tool/mfa/user_preferences.php'));
+        }
+
+        redirect(new moodle_url($wantsurl));
+    }
+
+    tool_mfa_logout();
+    print_error('error:notenoughfactors', 'tool_mfa', new moodle_url('/'));
 }
 
 echo $OUTPUT->header();
