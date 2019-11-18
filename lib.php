@@ -32,13 +32,13 @@ defined('MOODLE_INTERNAL') || die();
  * @throws \moodle_exception
  */
 function tool_mfa_after_require_login() {
-    global $USER, $ME;
+    global $SESSION, $ME;
 
     if (!tool_mfa_ready()) {
         return;
     }
 
-    if (empty($USER->tool_mfa_authenticated) || !$USER->tool_mfa_authenticated) {
+    if (empty($SESSION->tool_mfa_authenticated) || !$SESSION->tool_mfa_authenticated) {
         if (strpos($ME, '/admin/tool/mfa/') === false) {
             redirect(new moodle_url('/admin/tool/mfa/auth.php', array('wantsurl' => $ME)));
         }
@@ -157,13 +157,13 @@ function tool_mfa_extend_navigation_user_settings($navigation, $user, $userconte
  * @return bool
  */
 function tool_mfa_user_passed_enough_factors() {
-    global $USER;
+    global $SESSION;
     $totalweight = 0;
     $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
 
     foreach ($factors as $factor) {
         $property = 'factor_'.$factor->name;
-        if ($USER->$property == 'good') {
+        if ($SESSION->$property == 'good') {
             $totalweight += $factor->get_weight();
         }
     }

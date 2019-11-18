@@ -47,7 +47,7 @@ $OUTPUT = $PAGE->get_renderer('tool_mfa');
 $params = array('wantsurl' => $wantsurl);
 $currenturl = new moodle_url('/admin/tool/mfa/auth.php', $params);
 
-if (isset($USER->tool_mfa_authenticated) && $USER->tool_mfa_authenticated) {
+if (isset($SESSION->tool_mfa_authenticated) && $USER->tool_mfa_authenticated) {
     redirect(new moodle_url($wantsurl));
 }
 
@@ -66,13 +66,13 @@ $form = new login_form($currenturl, array('factor_name' => $factorname, 'grace_m
 $userproperty = 'factor_'.$factorname;
 
 if ($form->is_cancelled()) {
-    $USER->$userproperty = 'neutral';
+    $SESSION->$userproperty = 'neutral';
 } else {
     if ($form->is_submitted()) {
         if ($data = $form->get_data()) {
-            $USER->$userproperty = 'good';
+            $SESSION->$userproperty = 'good';
         } else {
-            $USER->$userproperty = 'bad';
+            $SESSION->$userproperty = 'bad';
         }
     }
 }
@@ -82,7 +82,7 @@ if ($form->is_submitted()) {
         redirect($currenturl);
     } else {
         if (tool_mfa_user_passed_enough_factors() || $gracemode) {
-            $USER->tool_mfa_authenticated = true;
+            $SESSION->tool_mfa_authenticated = true;
 
             $event = \tool_mfa\event\user_passed_mfa::user_passed_mfa_event($USER);
             $event->trigger();
