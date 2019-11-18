@@ -47,7 +47,7 @@ $PAGE->set_cacheable(false);
 if ($node = $PAGE->settingsnav->find('usercurrentsettings', null)) {
     $PAGE->navbar->add($node->get_content(), $node->action());
 }
-$PAGE->navbar->add(get_string('preferences:header', 'tool_mfa'));
+$PAGE->navbar->add(get_string('preferences:header', 'tool_mfa'), new \moodle_url('/admin/tool/mfa/user_preferences.php'));
 
 
 $OUTPUT = $PAGE->get_renderer('tool_mfa');

@@ -61,12 +61,18 @@ $PAGE->set_pagelayout('standard');
 $PAGE->set_title(get_string($action.'factor', 'tool_mfa'));
 $PAGE->set_cacheable(false);
 
+if ($node = $PAGE->settingsnav->find('usercurrentsettings', null)) {
+    $PAGE->navbar->add($node->get_content(), $node->action());
+}
+$PAGE->navbar->add(get_string('preferences:header', 'tool_mfa'), new \moodle_url('/admin/tool/mfa/user_preferences.php'));
+
 switch ($action) {
     case 'setup':
         if (!$factorobject->has_setup()) {
             redirect($returnurl);
         }
 
+        $PAGE->navbar->add(get_string('setupfactor', 'factor_'.$factor));
         $OUTPUT = $PAGE->get_renderer('tool_mfa');
         $form = new setup_factor_form($currenturl, array('factorname' => $factor));
 
