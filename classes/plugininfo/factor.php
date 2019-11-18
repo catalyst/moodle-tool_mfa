@@ -29,6 +29,11 @@ defined('MOODLE_INTERNAL') || die();
 
 class factor extends \core\plugininfo\base {
 
+    const STATE_UNKNOWN = 'unknown';
+    const STATE_PASS = 'pass';
+    const STATE_FAIL = 'fail';
+    const STATE_NEUTRAL = 'neutral';
+
     /**
      * Finds all MFA factors.
      *
@@ -144,7 +149,7 @@ class factor extends \core\plugininfo\base {
             $userfactors = $factor->get_active_user_factors();
             foreach ($userfactors as $userfactor) {
                 $property = 'factor_'.$userfactor->name;
-                if (empty($SESSION->$property) || 'bad' == $SESSION->$property) {
+                if (empty($SESSION->$property) || self::STATE_FAIL == $SESSION->$property) {
                     return $userfactor;
                 }
             }
