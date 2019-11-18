@@ -136,14 +136,12 @@ class preferences_form extends \moodleform
 
         $mform->addElement('html', $OUTPUT->heading(get_string('preferences:availablefactors', 'tool_mfa'), 4));
 
-        $headers = get_strings(array('factor', 'action'), 'tool_mfa');
-
         $table = new \html_table();
         $table->id = 'available_factors';
         $table->attributes['class'] = 'generaltable';
         $table->head  = array(
-            $headers->factor,
-            $headers->action,
+            get_string('factor', 'tool_mfa'),
+            get_string('action'),
         );
         $table->colclasses = array('leftalign', 'centeralign');
         $table->data  = array();

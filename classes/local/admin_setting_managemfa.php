@@ -68,7 +68,9 @@ class admin_setting_managemfa extends \admin_setting {
         global $OUTPUT;
         $sesskey = sesskey();
 
-        $txt = get_strings(array('factor', 'enable', 'order', 'weight', 'settings'), 'tool_mfa');
+        $txt = get_strings(array('enable', 'disable', 'moveup', 'movedown', 'order', 'settings'));
+        $txt->factor = get_string('factor', 'tool_mfa');
+        $txt->weight = get_string('weight', 'tool_mfa');
 
         $table = new \html_table();
         $table->id = 'managemfatable';
@@ -89,13 +91,13 @@ class admin_setting_managemfa extends \admin_setting {
             if ($factor->is_enabled()) {
                 $hideshowparams = array('action' => 'disable', 'factor' => $factor->name, 'sesskey' => $sesskey);
                 $hideshowurl = new \moodle_url('tool/mfa/index.php', $hideshowparams);
-                $hideshowlink = \html_writer::link($hideshowurl, $OUTPUT->pix_icon('t/hide', get_string('disable')));
+                $hideshowlink = \html_writer::link($hideshowurl, $OUTPUT->pix_icon('t/hide', $txt->disable));
                 $class = '';
 
                 if ($order > 1) {
                     $upparams = array('action' => 'up', 'factor' => $factor->name, 'sesskey' => $sesskey);
                     $upurl = new \moodle_url('tool/mfa/index.php', $upparams);
-                    $uplink = \html_writer::link($upurl, $OUTPUT->pix_icon('t/up', get_string('moveup')));
+                    $uplink = \html_writer::link($upurl, $OUTPUT->pix_icon('t/up', $txt->moveup));
                 } else {
                     $uplink = \html_writer::link('', $uplink = $OUTPUT->spacer(array('style' => 'margin-right: .5rem')));
                 }
@@ -103,7 +105,7 @@ class admin_setting_managemfa extends \admin_setting {
                 if ($order < count($enabledfactors)) {
                     $downparams = array('action' => 'down', 'factor' => $factor->name, 'sesskey' => $sesskey);
                     $downurl = new \moodle_url('tool/mfa/index.php', $downparams);
-                    $downlink = \html_writer::link($downurl, $OUTPUT->pix_icon('t/down', get_string('movedown')));
+                    $downlink = \html_writer::link($downurl, $OUTPUT->pix_icon('t/down', $txt->movedown));
                 } else {
                     $downlink = '';
                 }
@@ -112,7 +114,7 @@ class admin_setting_managemfa extends \admin_setting {
             } else {
                 $hideshowparams = array('action' => 'enable', 'factor' => $factor->name, 'sesskey' => $sesskey);
                 $hideshowurl = new \moodle_url('tool/mfa/index.php', $hideshowparams);
-                $hideshowlink = \html_writer::link($hideshowurl, $OUTPUT->pix_icon('t/show', get_string('disable')));
+                $hideshowlink = \html_writer::link($hideshowurl, $OUTPUT->pix_icon('t/show', $txt->enable));
                 $class = 'dimmed_text';
                 $updownlink = '';
             }
