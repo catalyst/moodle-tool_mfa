@@ -47,7 +47,7 @@ $OUTPUT = $PAGE->get_renderer('tool_mfa');
 $params = array('wantsurl' => $wantsurl);
 $currenturl = new moodle_url('/admin/tool/mfa/auth.php', $params);
 
-if (isset($SESSION->tool_mfa_authenticated) && $USER->tool_mfa_authenticated) {
+if (isset($SESSION->tool_mfa_authenticated) && $SESSION->tool_mfa_authenticated) {
     redirect(new moodle_url($wantsurl));
 }
 
