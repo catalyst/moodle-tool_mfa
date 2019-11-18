@@ -96,8 +96,10 @@ function tool_mfa_logout() {
 function tool_mfa_set_factor_config($data, $factor) {
     foreach ($data as $key => $newvalue) {
         $oldvalue = get_config($factor, $key);
-        set_config($key, $newvalue, $factor);
-        add_to_config_log($key, $oldvalue, $newvalue, $factor);
+        if ($oldvalue != $newvalue) {
+            set_config($key, $newvalue, $factor);
+            add_to_config_log($key, $oldvalue, $newvalue, $factor);
+        }
     }
     return true;
 }
