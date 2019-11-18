@@ -77,7 +77,7 @@ if ($form->is_cancelled()) {
     }
 }
 
-if ($form->is_submitted()) {
+if ($form->is_submitted() && $SESSION->$userproperty != 'bad') {
     if (\tool_mfa\plugininfo\factor::get_next_user_factor()) {
         redirect($currenturl);
     } else {
