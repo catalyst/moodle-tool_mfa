@@ -63,23 +63,32 @@ if (count($userfactors) > 0) {
 }
 
 $form = new login_form($currenturl, array('factor_name' => $factorname, 'grace_mode' => $gracemode));
-$userproperty = 'factor_'.$factorname;
+if (isset($nextfactor)) {
+    $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
+}
 
 if ($form->is_submitted()) {
     $form->is_validated();
 
     if ($form->is_cancelled()) {
-        $SESSION->$userproperty = 'neutral';
+        if (isset($factor)) {
+            // Only set vars if from a factor.
+            $factor->set_state(\tool_mfa\plugininfo\factor::STATE_NEUTRAL);
+        }
     } else {
         if ($data = $form->get_data()) {
-            $SESSION->$userproperty = 'good';
+            if (isset($factor)) {
+                $factor->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
+            }
         } else {
-            $SESSION->$userproperty = 'bad';
+            if (isset($factor)) {
+                $factor->set_state(\tool_mfa\plugininfo\factor::STATE_FAIL);
+            }
         }
     }
 }
 
-if ($form->is_submitted() && $SESSION->$userproperty != 'bad') {
+if ($form->is_submitted() && (isset($factor) && $factor->get_state() != \tool_mfa\plugininfo\factor::STATE_FAIL) || !isset($factor)) {
     if (\tool_mfa\plugininfo\factor::get_next_user_factor()) {
         redirect($currenturl);
     }

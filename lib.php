@@ -157,13 +157,11 @@ function tool_mfa_extend_navigation_user_settings($navigation, $user, $userconte
  * @return bool
  */
 function tool_mfa_user_passed_enough_factors() {
-    global $SESSION;
     $totalweight = 0;
     $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
 
     foreach ($factors as $factor) {
-        $property = 'factor_'.$factor->name;
-        if ($SESSION->$property == 'good') {
+        if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
             $totalweight += $factor->get_weight();
         }
     }

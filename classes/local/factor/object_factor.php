@@ -159,4 +159,27 @@ interface object_factor {
      * @return bool
      */
     public function has_setup();
+
+    /**
+     * Returns true if factor requires user input for success or failure during login.
+     *
+     * @return bool
+     */
+    public function has_input();
+
+    /**
+     * Returns the state of the factor check
+     *
+     * @return mixed
+     */
+    public function get_state();
+
+    /**
+     * Sets the state of the factor check into the session.
+     * Returns whether storing the var was successful.
+     *
+     * @param mixed $state
+     * @return bool
+     */
+    public function set_state($state);
 }
