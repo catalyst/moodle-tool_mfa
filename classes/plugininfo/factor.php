@@ -140,13 +140,12 @@ class factor extends \core\plugininfo\base {
         global $USER;
         $factors = self::get_enabled_factors();
 
-            foreach ($factors as $factor) {
-                $userfactors = $factor->get_active_user_factors();
-                foreach ($userfactors as $userfactor) {
-                    $property = 'factor_'.$userfactor->name;
-                    if (empty($USER->$property) || 'bad' == $USER->$property) {
-                        return $userfactor;
-                    }
+        foreach ($factors as $factor) {
+            $userfactors = $factor->get_active_user_factors();
+            foreach ($userfactors as $userfactor) {
+                $property = 'factor_'.$userfactor->name;
+                if (empty($USER->$property) || 'bad' == $USER->$property) {
+                    return $userfactor;
                 }
             }
         }
