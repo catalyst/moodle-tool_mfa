@@ -39,9 +39,9 @@ $string['devicename'] = 'Device label';
 $string['devicenameexample'] = 'eg "Work iPhone 11"';
 $string['devicename_help'] = 'This is the device you have an authenticator app installed on. You can setup multiple devices so this label helps track which ones are being used. You should setup each device with their own unique code so they can be revoked separately.';
 
-$string['addingfactor'] = 'Adding TOTP Factor';
-$string['addingfactor:scan'] = 'Enter secret or scan QR code';
-$string['addingfactor:key'] = 'Secret key: ';
+$string['setupfactor'] = 'TOTP Factor Setup';
+$string['setupfactor:scan'] = 'Enter secret or scan QR code';
+$string['setupfactor:key'] = 'Secret key: ';
 $string['error:wrongverification'] = 'Incorrect verification code';
 
 $string['privacy:metadata'] = 'The TOTP Factor plugin does not store any personal data';

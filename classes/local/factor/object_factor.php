@@ -61,31 +61,31 @@ interface object_factor {
     public function get_info();
 
     /**
-     * Defines add_factor form definition page for particular factor.
+     * Defines setup_factor form definition page for particular factor.
      *
      * @param $mform
      * @return object $mform
      * @throws \coding_exception
      */
-    public function add_factor_form_definition($mform);
+    public function setup_factor_form_definition($mform);
 
     /**
-     * Defines add_factor form definition page after form data has been set.
+     * Defines setup_factor form definition page after form data has been set.
      *
      * @param $mform
      * @return object $mform
      * @throws \coding_exception
      */
-    public function add_factor_form_definition_after_data($mform);
+    public function setup_factor_form_definition_after_data($mform);
 
     /**
-     * Implements add_factor form validation for particular factor.
+     * Implements setup_factor form validation for particular factor.
      * Returns an array of errors, where array key = field id and array value = error text.
      *
      * @param array $data
      * @return array
      */
-    public function add_factor_form_validation($data);
+    public function setup_factor_form_validation($data);
 
     /**
      * Defines login form definition page for particular factor.
@@ -115,13 +115,13 @@ interface object_factor {
     public function login_form_validation($data);
 
     /**
-     * Adds given factor to user's active factors list.
+     * Setups given factor and adds it to user's active factors list.
      * Returns true if factor has been successfully added, otherwise false.
      *
      * @param array $data
      * @return bool
      */
-    public function add_user_factor($data);
+    public function setup_user_factor($data);
 
     /**
      * Returns an array of all user factors of given type (both active and revoked).
@@ -152,4 +152,11 @@ interface object_factor {
      * @return bool
      */
     public function has_lastverified();
+
+    /**
+     * Returns true if factor needs to be setup by user and has setup_form.
+     *
+     * @return bool
+     */
+    public function has_setup();
 }

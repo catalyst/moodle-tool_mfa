@@ -66,17 +66,20 @@ class admin_setting_managemfa extends \admin_setting {
      */
     public function output_html($data, $query='') {
         global $OUTPUT;
+        $sesskey = sesskey();
 
-        $txt = get_strings(array('factor', 'enable', 'weight', 'settings'), 'tool_mfa');
+        $txt = get_strings(array('factor', 'enable', 'order', 'weight', 'settings'), 'tool_mfa');
 
         $table = new \html_table();
         $table->id = 'managemfatable';
         $table->attributes['class'] = 'admintable generaltable';
-        $table->head  = array($txt->factor, $txt->enable, $txt->weight, $txt->settings);
-        $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign');
+        $table->head  = array($txt->factor, $txt->enable, $txt->order, $txt->weight, $txt->settings);
+        $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
         $table->data  = array();
 
         $factors = \tool_mfa\plugininfo\factor::get_factors();
+        $enabledfactors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+        $order = 1;
 
         foreach ($factors as $factor) {
             $settingsparams = array('section' => 'factor_'.$factor->name);
@@ -84,18 +87,38 @@ class admin_setting_managemfa extends \admin_setting {
             $settingslink = \html_writer::link($settingsurl, $txt->settings);
 
             if ($factor->is_enabled()) {
-                $hideshowparams = array('action' => 'disable', 'factor' => $factor->name);
+                $hideshowparams = array('action' => 'disable', 'factor' => $factor->name, 'sesskey' => $sesskey);
                 $hideshowurl = new \moodle_url('tool/mfa/index.php', $hideshowparams);
                 $hideshowlink = \html_writer::link($hideshowurl, $OUTPUT->pix_icon('t/hide', get_string('disable')));
                 $class = '';
+
+                if ($order > 1) {
+                    $upparams = array('action' => 'up', 'factor' => $factor->name, 'sesskey' => $sesskey);
+                    $upurl = new \moodle_url('tool/mfa/index.php', $upparams);
+                    $uplink = \html_writer::link($upurl, $OUTPUT->pix_icon('t/up', get_string('moveup')));
+                } else {
+                    $uplink = \html_writer::link('', $uplink = $OUTPUT->spacer(array('style' => 'margin-right: .5rem')));
+                }
+
+                if ($order < count($enabledfactors)) {
+                    $downparams = array('action' => 'down', 'factor' => $factor->name, 'sesskey' => $sesskey);
+                    $downurl = new \moodle_url('tool/mfa/index.php', $downparams);
+                    $downlink = \html_writer::link($downurl, $OUTPUT->pix_icon('t/down', get_string('movedown')));
+                } else {
+                    $downlink = '';
+                }
+                $updownlink = $uplink.$downlink;
+                $order++;
             } else {
-                $hideshowparams = array('action' => 'enable', 'factor' => $factor->name);
+                $hideshowparams = array('action' => 'enable', 'factor' => $factor->name, 'sesskey' => $sesskey);
                 $hideshowurl = new \moodle_url('tool/mfa/index.php', $hideshowparams);
                 $hideshowlink = \html_writer::link($hideshowurl, $OUTPUT->pix_icon('t/show', get_string('disable')));
                 $class = 'dimmed_text';
+                $updownlink = '';
             }
 
-            $row = new \html_table_row(array($factor->get_display_name(), $hideshowlink, $factor->get_weight(), $settingslink));
+            $rowarray = array($factor->get_display_name(), $hideshowlink, $updownlink, $factor->get_weight(), $settingslink);
+            $row = new \html_table_row($rowarray);
             $row->attributes['class'] = $class;
 
             $table->data[] = $row;

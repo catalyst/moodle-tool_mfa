@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Add factor form
+ * Setup factor form
  *
  * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . "/formslib.php");
 
-class add_factor_form extends \moodleform {
+class setup_factor_form extends \moodleform {
     /**
      * {@inheritDoc}
      * @see moodleform::definition()
@@ -37,12 +37,12 @@ class add_factor_form extends \moodleform {
 
         $factorname = $this->_customdata['factorname'];
         $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
-        $mform = $factor->add_factor_form_definition($mform);
+        $mform = $factor->setup_factor_form_definition($mform);
 
     }
 
     /**
-     * Validates add_factor form with given factor validation method.
+     * Validates setup_factor form with given factor validation method.
      *
      * @param array $data
      * @param array $files
@@ -53,13 +53,13 @@ class add_factor_form extends \moodleform {
 
         $factorname = $this->_customdata['factorname'];
         $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
-        $errors += $factor->add_factor_form_validation($data);
+        $errors += $factor->setup_factor_form_validation($data);
 
         return $errors;
     }
 
     /**
-     * Invokes factor add_factor_form_definition_after_data() method after form data has been set.
+     * Invokes factor setup_factor_form_definition_after_data() method after form data has been set.
      *
      */
     public function definition_after_data() {
@@ -67,7 +67,7 @@ class add_factor_form extends \moodleform {
 
         $factorname = $this->_customdata['factorname'];
         $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
-        $mform = $factor->add_factor_form_definition_after_data($mform);
+        $mform = $factor->setup_factor_form_definition_after_data($mform);
         $this->add_action_buttons();
     }
 }

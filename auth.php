@@ -42,13 +42,12 @@ $PAGE->set_pagelayout('popup');
 $pagetitle = $SITE->shortname.': '.get_string('mfa', 'tool_mfa');
 $PAGE->set_title($pagetitle);
 
-
 $OUTPUT = $PAGE->get_renderer('tool_mfa');
 
 $params = array('wantsurl' => $wantsurl);
 $currenturl = new moodle_url('/admin/tool/mfa/auth.php', $params);
 
-if (isset($USER->tool_mfa_authenticated) && $USER->tool_mfa_authenticated) {
+if (isset($SESSION->tool_mfa_authenticated) && $SESSION->tool_mfa_authenticated) {
     redirect(new moodle_url($wantsurl));
 }
 
@@ -56,29 +55,34 @@ $userfactors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
 
 if (count($userfactors) > 0) {
     $nextfactor = \tool_mfa\plugininfo\factor::get_next_user_factor();
-    $factorname = $nextfactor->name;
     $gracemode = false;
+    $factorname = $nextfactor ? $nextfactor->name : null;
 } else {
     $factorname = null;
     $gracemode = true;
 }
 
 $form = new login_form($currenturl, array('factor_name' => $factorname, 'grace_mode' => $gracemode));
+$userproperty = 'factor_'.$factorname;
 
 if ($form->is_cancelled()) {
-    tool_mfa_logout();
-    redirect(new moodle_url('/'));
+    $SESSION->$userproperty = 'neutral';
+} else {
+    if ($form->is_submitted()) {
+        if ($data = $form->get_data()) {
+            $SESSION->$userproperty = 'good';
+        } else {
+            $SESSION->$userproperty = 'bad';
+        }
+    }
 }
 
 if ($form->is_submitted()) {
-    if ($data = $form->get_data()) {
-        $property = 'factor_'.$factorname.'_authenticated';
-        $USER->$property = true;
-
-        if (\tool_mfa\plugininfo\factor::get_next_user_factor()) {
-            redirect($currenturl);
-        } else {
-            $USER->tool_mfa_authenticated = true;
+    if (\tool_mfa\plugininfo\factor::get_next_user_factor()) {
+        redirect($currenturl);
+    } else {
+        if (tool_mfa_user_passed_enough_factors() || $gracemode) {
+            $SESSION->tool_mfa_authenticated = true;
 
             $event = \tool_mfa\event\user_passed_mfa::user_passed_mfa_event($USER);
             $event->trigger();
@@ -88,13 +92,16 @@ if ($form->is_submitted()) {
             } else {
                 redirect(new moodle_url($wantsurl));
             }
+        } else {
+            tool_mfa_logout();
+            print_error('error:notenoughfactors', 'tool_mfa', new moodle_url('/'));
         }
     }
 }
 
 echo $OUTPUT->header();
 
-if ($gracemode) {
+if ($gracemode || empty($factorname)) {
     echo $OUTPUT->heading(get_string('pluginname', 'tool_mfa'));
 } else {
     echo $OUTPUT->heading(get_string('pluginname', 'factor_'.$factorname));

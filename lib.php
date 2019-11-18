@@ -32,13 +32,13 @@ defined('MOODLE_INTERNAL') || die();
  * @throws \moodle_exception
  */
 function tool_mfa_after_require_login() {
-    global $USER, $ME;
+    global $SESSION, $ME;
 
     if (!tool_mfa_ready()) {
         return;
     }
 
-    if (empty($USER->tool_mfa_authenticated) || !$USER->tool_mfa_authenticated) {
+    if (empty($SESSION->tool_mfa_authenticated) || !$SESSION->tool_mfa_authenticated) {
         if (strpos($ME, '/admin/tool/mfa/') === false) {
             redirect(new moodle_url('/admin/tool/mfa/auth.php', array('wantsurl' => $ME)));
         }
@@ -91,10 +91,15 @@ function tool_mfa_logout() {
  * @param string $factor
  *
  * @return bool true or exception
+ * @throws dml_exception
  */
 function tool_mfa_set_factor_config($data, $factor) {
-    foreach ($data as $key => $value) {
-        set_config($key, $value, $factor);
+    foreach ($data as $key => $newvalue) {
+        $oldvalue = get_config($factor, $key);
+        if ($oldvalue != $newvalue) {
+            set_config($key, $newvalue, $factor);
+            add_to_config_log($key, $oldvalue, $newvalue, $factor);
+        }
     }
     return true;
 }
@@ -143,5 +148,80 @@ function tool_mfa_extend_navigation_user_settings($navigation, $user, $userconte
             navigation_node::TYPE_SETTING);
         $usernode = $navigation->find('useraccount', navigation_node::TYPE_CONTAINER);
         $usernode->add_node($node);
+    }
+}
+
+/**
+ * Checks that user passed enough factors to be authenticated.
+ *
+ * @return bool
+ */
+function tool_mfa_user_passed_enough_factors() {
+    global $SESSION;
+    $totalweight = 0;
+    $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+
+    foreach ($factors as $factor) {
+        $property = 'factor_'.$factor->name;
+        if ($SESSION->$property == 'good') {
+            $totalweight += $factor->get_weight();
+        }
+    }
+
+    if ($totalweight >= 100) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Changes the order for given factor.
+ *
+ * @param string $factorname
+ * @param string $action
+ *
+ * @return void
+ * @throws dml_exception
+ */
+function tool_mfa_change_factor_order($factorname, $action) {
+    $order = explode(',', get_config('tool_mfa', 'factor_order'));
+    $key = array_search($factorname, $order);
+
+    switch ($action) {
+        case 'up':
+            if ($key >= 1) {
+                $fsave = $order[$key];
+                $order[$key] = $order[$key - 1];
+                $order[$key - 1] = $fsave;
+                tool_mfa_set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
+            }
+            break;
+
+        case 'down':
+            if ($key < (count($order) - 1)) {
+                $fsave = $order[$key];
+                $order[$key] = $order[$key + 1];
+                $order[$key + 1] = $fsave;
+                tool_mfa_set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
+            }
+            break;
+
+        case 'enable':
+            if (!$key) {
+                $order[] = $factorname;
+                tool_mfa_set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
+            }
+            break;
+
+        case 'disable':
+            if ($key) {
+                unset($order[$key]);
+                tool_mfa_set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
+            }
+            break;
+
+        default:
+            break;
     }
 }

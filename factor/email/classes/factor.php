@@ -44,7 +44,6 @@ class factor extends object_factor_base {
             $mform->setType('secret', PARAM_ALPHANUM);
 
             $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_email'));
-            $mform->addRule('verificationcode', get_string('required'), 'required', null, 'client');
             $mform->setType("verificationcode", PARAM_ALPHANUM);
         }
 
