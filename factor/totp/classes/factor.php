@@ -257,34 +257,4 @@ class factor extends object_factor_base {
     public function has_setup() {
         return true;
     }
-
-    /**
-     * TOTP Factor implementation.
-     *
-     * {@inheritDoc}
-     */
-    public function get_state() {
-        global $SESSION;
-
-        $property = 'factor_'.$this->name;
-
-        if (property_exists($SESSION, $property)) {
-            return $SESSION->$property;
-        } else {
-            return \tool_mfa\plugininfo\factor::STATE_UNKNOWN;
-        }
-    }
-
-    /**
-     * TOTP Factor implementation.
-     *
-     * {@inheritDoc}
-     */
-    public function set_state($state) {
-        global $SESSION;
-
-        $property = 'factor_'.$this->name;
-        $SESSION->$property = $state;
-        return true;
-    }
 }

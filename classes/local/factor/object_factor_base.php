@@ -298,23 +298,37 @@ abstract class object_factor_base implements object_factor {
     /**
      * Returns the state of the factor from session information.
      *
-     * Dummy implementation. Should be overridden in child class.
+     * Implementation for factors that require input.
+     * Should be overridden in child classes with no input.
      *
      * @return mixed
      */
     public function get_state() {
-        return \tool_mfa\plugininfo\factor::STATE_UNKNOWN;
+        global $SESSION;
+
+        $property = 'factor_'.$this->name;
+
+        if (property_exists($SESSION, $property)) {
+            return $SESSION->$property;
+        } else {
+            return \tool_mfa\plugininfo\factor::STATE_UNKNOWN;
+        }
     }
 
     /**
      * Sets the state of the factor into the session.
      *
-     * Dummy implementation. Should be overridden in child class.
+     * Implementation for factors that require input.
+     * Should be overridden in child classes with no input.
      *
      * @param mixed $state the state constant to set
      * @return bool
      */
     public function set_state($state) {
-        return false;
+        global $SESSION;
+
+        $property = 'factor_'.$this->name;
+        $SESSION->$property = $state;
+        return true;
     }
 }
