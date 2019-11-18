@@ -146,6 +146,11 @@ class factor extends \core\plugininfo\base {
         $factors = self::get_enabled_factors();
 
         foreach ($factors as $factor) {
+            // If factor doesn't have input, move on.
+            if (!$factor->has_input()) {
+                continue;
+            }
+
             $userfactors = $factor->get_active_user_factors();
             foreach ($userfactors as $userfactor) {
                 $property = 'factor_'.$userfactor->name;
