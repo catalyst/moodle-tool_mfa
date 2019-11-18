@@ -48,8 +48,6 @@ class login_form extends \moodleform {
         } else if (!empty($factorname)) {
             $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
             $mform = $factor->login_form_definition($mform);
-            // Move buttons to definition() until Issue 37 is fixed.
-            $this->add_action_buttons();
         }
     }
 
@@ -65,8 +63,7 @@ class login_form extends \moodleform {
         if (!$gracemode && !empty($factorname)) {
             $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
             $mform = $factor->login_form_definition_after_data($mform);
-            // Move buttons to definition() until Issue 37 is fixed.
-            // $this->add_action_buttons();
+            $this->add_action_buttons();
         }
     }
 

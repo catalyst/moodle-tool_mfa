@@ -65,10 +65,12 @@ if (count($userfactors) > 0) {
 $form = new login_form($currenturl, array('factor_name' => $factorname, 'grace_mode' => $gracemode));
 $userproperty = 'factor_'.$factorname;
 
-if ($form->is_cancelled()) {
-    $SESSION->$userproperty = 'neutral';
-} else {
-    if ($form->is_submitted()) {
+if ($form->is_submitted()) {
+    $form->is_validated();
+
+    if ($form->is_cancelled()) {
+        $SESSION->$userproperty = 'neutral';
+    } else {
         if ($data = $form->get_data()) {
             $SESSION->$userproperty = 'good';
         } else {
@@ -77,7 +79,7 @@ if ($form->is_cancelled()) {
     }
 }
 
-if ($form->is_submitted()) {
+if ($form->is_submitted() && $SESSION->$userproperty != 'bad') {
     if (\tool_mfa\plugininfo\factor::get_next_user_factor()) {
         redirect($currenturl);
     } else {

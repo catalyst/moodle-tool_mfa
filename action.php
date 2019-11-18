@@ -70,22 +70,25 @@ switch ($action) {
         $OUTPUT = $PAGE->get_renderer('tool_mfa');
         $form = new setup_factor_form($currenturl, array('factorname' => $factor));
 
-        if ($form->is_cancelled()) {
-            redirect($returnurl);
-        }
-
         if ($form->is_submitted()) {
-            if ($data = $form->get_data()) {
-                if ($factorobject && $factorobject->setup_user_factor($data)) {
-                    $event = \tool_mfa\event\user_setup_factor::user_setup_factor_event($USER, $factorobject->get_display_name());
-                    $event->trigger();
+            $form->is_validated();
 
-                    redirect($returnurl);
-                } else {
-                    print_error('error:setupfactor', 'tool_mfa', $returnurl);
+            if ($form->is_cancelled()) {
+                redirect($returnurl);
+            } else {
+                if ($data = $form->get_data()) {
+                    if ($factorobject && $factorobject->setup_user_factor($data)) {
+                        $event = \tool_mfa\event\user_setup_factor::user_setup_factor_event($USER, $factorobject->get_display_name());
+                        $event->trigger();
+
+                        redirect($returnurl);
+                    } else {
+                        print_error('error:setupfactor', 'tool_mfa', $returnurl);
+                    }
                 }
             }
         }
+
         echo $OUTPUT->header();
         $form->display();
 
