@@ -142,21 +142,15 @@ class factor extends \core\plugininfo\base {
      * @return mixed factor object the next factor to be authenticated or false.
      */
     public static function get_next_user_factor() {
-        global $SESSION;
-        $factors = self::get_enabled_factors();
+        $factors = self::get_active_user_factor_types();
 
         foreach ($factors as $factor) {
-            // If factor doesn't have input, move on.
             if (!$factor->has_input()) {
                 continue;
             }
 
-            $userfactors = $factor->get_active_user_factors();
-            foreach ($userfactors as $userfactor) {
-                $property = 'factor_'.$userfactor->name;
-                if (empty($SESSION->$property) || self::STATE_FAIL == $SESSION->$property) {
-                    return $userfactor;
-                }
+            if ($factor->get_state() == self::STATE_UNKNOWN || $factor->get_state() == self::STATE_FAIL) {
+                return $factor;
             }
         }
 
