@@ -89,7 +89,7 @@ class admin_setting_managemfa extends \admin_setting {
      * @throws \coding_exception
      * @throws \moodle_exception
      */
-    protected function define_manage_mfa_table() {
+    public function define_manage_mfa_table() {
         global $OUTPUT;
         $sesskey = sesskey();
 
@@ -159,7 +159,7 @@ class admin_setting_managemfa extends \admin_setting {
      *
      * @return string HTML code
      */
-    protected function define_factor_combinations_table() {
+    public function define_factor_combinations_table() {
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
         $combinations = $this->get_factor_combinations($factors, 0, count($factors) - 1);
 
@@ -197,7 +197,7 @@ class admin_setting_managemfa extends \admin_setting {
      *
      * @return array
      */
-    protected function get_factor_combinations($allfactors, $start = 0, $end = 0,
+    public function get_factor_combinations($allfactors, $start = 0, $end = 0,
         $totalweight = 0, $combination = array(), $result = array()) {
 
         if ($totalweight >= 100) {
