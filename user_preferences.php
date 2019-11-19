@@ -54,5 +54,6 @@ $OUTPUT = $PAGE->get_renderer('tool_mfa');
 $form = new preferences_form();
 
 echo $OUTPUT->header();
+tool_mfa_display_debug_notification();
 $form->display();
 echo $OUTPUT->footer();
