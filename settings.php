@@ -32,6 +32,9 @@ if ($hassiteconfig) {
     $settings = new admin_settingpage('managemfa', new lang_string('mfasettings', 'tool_mfa'));
     $settings->add(new \tool_mfa\local\admin_setting_managemfa());
 
+    $heading = new lang_string('settings:general', 'tool_mfa');
+    $settings->add(new admin_setting_heading('tool_mfa/settings', $heading, ''));
+
     $name = new lang_string('graceperiod', 'tool_mfa');
     $description = new lang_string('graceperiod_help', 'tool_mfa');
     $settings->add(new admin_setting_configduration('tool_mfa/graceperiod', $name, $description, '604800'));
