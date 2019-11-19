@@ -174,7 +174,7 @@ class admin_setting_managemfa extends \admin_setting {
         foreach ($combinations as $combination) {
             $string = '';
             foreach ($combination['combination'] as $factor) {
-                $string .= ' + '.$factor->get_display_name();
+                $string .= ' + ' . $factor->get_display_name() . ' <sup>' . $factor->get_weight() . '</sup>';
             }
 
             $string = substr($string, 3);
