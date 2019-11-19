@@ -58,13 +58,38 @@ class admin_setting_managemfa extends \admin_setting {
     }
 
     /**
-     * Return XHTML to display control
+     * Returns XHTML to display Manage MFA admin page.
      *
      * @param mixed $data Unused
      * @param string $query
+     *
      * @return string highlight
+     * @throws \coding_exception
+     * @throws \moodle_exception
      */
     public function output_html($data, $query='') {
+        global $OUTPUT;
+
+        $return = $OUTPUT->box_start('generalbox');
+        $return .= $this->define_manage_mfa_table();
+        $return .= $OUTPUT->box_end();
+
+        $return .= $OUTPUT->heading(get_string('settings:combinations', 'tool_mfa'), 3);
+        $return .= $OUTPUT->box_start('generalbox');
+        $return .= $this->define_factor_combinations_table();
+        $return .= $OUTPUT->box_end();
+
+        return highlight($query, $return);
+    }
+
+    /**
+     * Defines main table with configurable factors.
+     *
+     * @return string HTML code
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    public function define_manage_mfa_table() {
         global $OUTPUT;
         $sesskey = sesskey();
 
@@ -126,10 +151,81 @@ class admin_setting_managemfa extends \admin_setting {
             $table->data[] = $row;
         }
 
-        $return = $OUTPUT->box_start('generalbox');
-        $return .= \html_writer::table($table);
-        $return .= $OUTPUT->box_end();
+        return \html_writer::table($table);
+    }
 
-        return highlight($query, $return);
+    /**
+     * Defines supplementary table that shows available combinations of factors enough for successful authentication.
+     *
+     * @return string HTML code
+     */
+    public function define_factor_combinations_table() {
+        $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+        $combinations = $this->get_factor_combinations($factors, 0, count($factors) - 1);
+
+        $txt = get_strings(array('combination', 'totalweight'), 'tool_mfa');
+        $table = new \html_table();
+        $table->id = 'managemfatable';
+        $table->attributes['class'] = 'admintable generaltable';
+        $table->head  = array($txt->combination, $txt->totalweight);
+        $table->colclasses = array('leftalign', 'centeralign');
+        $table->data  = array();
+
+        foreach ($combinations as $combination) {
+            $string = '';
+            foreach ($combination['combination'] as $factor) {
+                $string .= ' + '.$factor->get_display_name();
+            }
+
+            $string = substr($string, 3);
+            $table->data[] = new \html_table_row(array($string, $combination['totalweight']));
+        }
+
+        return \html_writer::table($table);
+    }
+
+    /**
+     * Recursive method to get all possible combinations of given factors.
+     * Output is filtered by combination total weight (should be greater than 100).
+     *
+     * @param array $allfactors initial array of factor objects
+     * @param int $start start position in initial array
+     * @param int $end end position in initial array
+     * @param int $totalweight total weight of combination
+     * @param array $combination combination candidate
+     * @param array $result array that includes combination total weight and subarray of factors combination
+     *
+     * @return array
+     */
+    public function get_factor_combinations($allfactors, $start = 0, $end = 0,
+        $totalweight = 0, $combination = array(), $result = array()) {
+
+        if ($totalweight >= 100) {
+            $result[] = array('totalweight' => $totalweight, 'combination' => $combination);
+            return $result;
+        } else if ($start > $end) {
+            return $result;
+        }
+
+        $combinationnext = $combination;
+        $combinationnext[] = $allfactors[$start];
+
+        $result = $this->get_factor_combinations(
+            $allfactors,
+            $start + 1,
+            $end,
+            $totalweight + $allfactors[$start]->get_weight(),
+            $combinationnext,
+            $result);
+
+        $result = $this->get_factor_combinations(
+            $allfactors,
+            $start + 1,
+            $end,
+            $totalweight,
+            $combination,
+            $result);
+
+        return $result;
     }
 }

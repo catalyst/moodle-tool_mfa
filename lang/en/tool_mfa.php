@@ -31,6 +31,8 @@ $string['mfasettings'] = 'Manage MFA';
 $string['factor'] = 'Factor';
 $string['devicename'] = 'Device';
 $string['weight'] = 'Weight';
+$string['totalweight'] = 'Total weight';
+$string['combination'] = 'Combination';
 $string['revoke'] = 'Revoke';
 $string['created'] = 'Created';
 $string['createdfromip'] = 'Created from IP';
@@ -42,6 +44,8 @@ $string['revokefactor'] = 'Revoke factor';
 
 $string['settings:enabled'] = 'MFA plugin enabled';
 $string['settings:enabled_help'] = '';
+$string['settings:combinations'] = 'Summary of good conditions for login';
+$string['settings:general'] = 'General MFA settings';
 
 $string['preferences:header'] = 'Multi-factor authentication preferences';
 $string['preferences:availablefactors'] = 'Available factors';
