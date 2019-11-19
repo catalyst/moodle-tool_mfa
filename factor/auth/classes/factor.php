@@ -31,4 +31,39 @@ use tool_mfa\local\factor\object_factor_base;
 
 class factor extends object_factor_base {
 
+    public function setup_user_factor($data) {
+        return true;
+    }
+
+    public function get_all_user_factors() {
+
+        $factor = array(
+            'id' => 1,
+            'name' => $this->name,
+            'device' => '-',
+            'timecreated' => '-',
+            'createdfromip' => '-',
+            'lastverified' => '-',
+            'revoked' => '-'
+        );
+
+        return (object) $factor;
+    }
+
+    public function get_active_user_factors() {
+        return $this->get_all_user_factors();
+    }
+
+    public function has_input() {
+        return false;
+    }
+
+    public function get_state() {
+        //MEATY STUFF HERE
+        
+    }
+
+    public function set_state() {
+        return true;
+    }
 }
