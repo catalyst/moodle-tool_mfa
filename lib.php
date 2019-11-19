@@ -158,7 +158,7 @@ function tool_mfa_extend_navigation_user_settings($navigation, $user, $userconte
  */
 function tool_mfa_user_passed_enough_factors() {
 
-    $totalweight = tool_mfa_get_total_weight();
+    $totalweight = \tool_mfa\manager::get_total_weight();
     if ($totalweight >= 100) {
         return true;
     }
@@ -215,48 +215,4 @@ function tool_mfa_change_factor_order($factorname, $action) {
         default:
             break;
     }
-}
-
-function tool_mfa_display_debug_notification() {
-    global $OUTPUT;
-
-    if (!get_config('tool_mfa', 'debugmode')) {
-        return;
-    }
-
-    $output = $OUTPUT->heading(get_string('debugmode:heading', 'tool_mfa'), 3);
-
-    $table = new html_table();
-    $table->head = array(
-        get_string('factor', 'tool_mfa'),
-        get_string('status'),
-        get_string('weight', 'tool_mfa'),
-        get_string('achievedweight', 'tool_mfa'),
-    );
-
-    $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
-    foreach ($factors as $factor) {
-        if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
-            $achieved = $factor->get_weight();
-        } else {
-            $achieved = 0;
-        }
-        $table->data[] = array($factor->name, $factor->get_state(), $factor->get_weight(), $achieved);
-    }
-
-    $output .= html_writer::table($table);
-    $output .= get_string('debugmode:currentweight', 'tool_mfa', tool_mfa_get_total_weight());
-    echo $output;
-}
-
-function tool_mfa_get_total_weight() {
-    $totalweight = 0;
-    $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
-
-    foreach ($factors as $factor) {
-        if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
-            $totalweight += $factor->get_weight();
-        }
-    }
-    return $totalweight;
 }

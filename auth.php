@@ -118,6 +118,6 @@ if ($gracemode || empty($factorname)) {
     echo $OUTPUT->heading(get_string('pluginname', 'factor_'.$factorname));
 }
 
-tool_mfa_display_debug_notification();
+\tool_mfa\manager::display_debug_notification();
 $form->display();
 echo $OUTPUT->footer();
