@@ -197,7 +197,8 @@ class admin_setting_managemfa extends \admin_setting {
      *
      * @return array
      */
-    protected function get_factor_combinations($allfactors, $start = 0, $end = 0, $totalweight = 0, $combination = array(), $result = array()) {
+    protected function get_factor_combinations($allfactors, $start = 0, $end = 0,
+        $totalweight = 0, $combination = array(), $result = array()) {
 
         if ($start > $end) {
             if ($totalweight >= 100) {
@@ -208,8 +209,22 @@ class admin_setting_managemfa extends \admin_setting {
 
         $combinationnext = $combination;
         $combinationnext[] = $allfactors[$start];
-        $result = $this->get_factor_combinations($allfactors, $start + 1, $end,$totalweight + $allfactors[$start]->get_weight(), $combinationnext, $result);
-        $result = $this->get_factor_combinations($allfactors, $start + 1, $end, $totalweight, $combination, $result);
+
+        $result = $this->get_factor_combinations(
+            $allfactors,
+            $start + 1,
+            $end,
+            $totalweight + $allfactors[$start]->get_weight(),
+            $combinationnext,
+            $result);
+
+        $result = $this->get_factor_combinations(
+            $allfactors,
+            $start + 1,
+            $end,
+            $totalweight,
+            $combination,
+            $result);
 
         return $result;
     }
