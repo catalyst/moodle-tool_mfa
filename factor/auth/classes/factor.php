@@ -60,10 +60,10 @@ class factor extends object_factor_base {
 
     public function get_state() {
         //MEATY STUFF HERE
-        
+
     }
 
-    public function set_state() {
+    public function set_state($state) {
         return true;
     }
 }
