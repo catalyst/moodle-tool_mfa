@@ -44,8 +44,14 @@ $string['revokefactor'] = 'Revoke factor';
 
 $string['settings:enabled'] = 'MFA plugin enabled';
 $string['settings:enabled_help'] = '';
+<<<<<<< HEAD
 $string['settings:combinations'] = 'Summary of good conditions for login';
 $string['settings:general'] = 'General MFA settings';
+=======
+$string['settings:debugmode'] = 'Enable debug mode';
+$string['settings:debugmode_help'] = 'Debug mode will display a small notification banner on MFA admin pages, as well as the user preferences page 
+        with information on the currently enabled factors.';
+>>>>>>> 60a26e1... Added boolean admin setting for debug mode
 
 $string['preferences:header'] = 'Multi-factor authentication preferences';
 $string['preferences:availablefactors'] = 'Available factors';
