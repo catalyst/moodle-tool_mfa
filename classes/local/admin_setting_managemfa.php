@@ -200,10 +200,10 @@ class admin_setting_managemfa extends \admin_setting {
     protected function get_factor_combinations($allfactors, $start = 0, $end = 0,
         $totalweight = 0, $combination = array(), $result = array()) {
 
-        if ($start > $end) {
-            if ($totalweight >= 100) {
-                $result[] = array('totalweight' => $totalweight, 'combination' => $combination);
-            }
+        if ($totalweight >= 100) {
+            $result[] = array('totalweight' => $totalweight, 'combination' => $combination);
+            return $result;
+        } else if ($start > $end) {
             return $result;
         }
 
