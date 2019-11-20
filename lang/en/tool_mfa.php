@@ -41,11 +41,23 @@ $string['setupfactor'] = 'Setup factor';
 $string['revokefactor'] = 'Revoke factor';
 $string['enablefactor'] = 'Enable factor';
 $string['revokefactor'] = 'Revoke factor';
+$string['achievedweight'] = 'Achieved weight';
+$string['setup'] = 'Setup';
+$string['overall'] = 'Overall';
+$string['na'] = 'n/a';
+
+$string['state:pass'] = 'Pass';
+$string['state:fail'] = 'Fail';
+$string['state:unknown'] = 'Unknown';
+$string['state:neutral'] = 'Neutral';
 
 $string['settings:enabled'] = 'MFA plugin enabled';
 $string['settings:enabled_help'] = '';
 $string['settings:combinations'] = 'Summary of good conditions for login';
 $string['settings:general'] = 'General MFA settings';
+$string['settings:debugmode'] = 'Enable debug mode';
+$string['settings:debugmode_help'] = 'Debug mode will display a small notification banner on MFA admin pages, as well as the user preferences page
+         with information on the currently enabled factors.';
 
 $string['preferences:header'] = 'Multi-factor authentication preferences';
 $string['preferences:availablefactors'] = 'Available factors';
@@ -65,6 +77,9 @@ $string['error:setupfactor'] = 'Can not setup factor';
 $string['error:revokefactor'] = 'Can not revoke factor';
 $string['error:notenoughfactors'] = 'Not enough factors to authenticate';
 $string['error:factornotenabled'] = 'MFA Factor \'{$a}\' not enabled';
+
+$string['debugmode:heading'] = 'Debug mode';
+$string['debugmode:currentweight'] = 'Current weight: {$a}';
 
 $string['event:userpassedmfa'] = 'Verification passed';
 $string['event:usersetupfactor'] = 'Factor setup';
