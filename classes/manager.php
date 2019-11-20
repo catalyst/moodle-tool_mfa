@@ -42,24 +42,61 @@ class manager {
         $table = new \html_table();
         $table->head = array(
             get_string('factor', 'tool_mfa'),
+            get_string('setup', 'tool_mfa'),
             get_string('status'),
             get_string('weight', 'tool_mfa'),
             get_string('achievedweight', 'tool_mfa'),
         );
 
-        $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+        $userfactors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        $totalpossible = 0;
+
         foreach ($factors as $factor) {
-            if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
-                $achieved = $factor->get_weight();
+
+            $namespace = 'factor_'.$factor->name;
+            $name = get_string('pluginname', $namespace);
+
+            $achieved = $factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS ? $factor->get_weight() : 0;
+            $achieved = '+'.$achieved;
+
+            // Setup.
+            if ($factor->has_setup()) {
+                $found = false;
+                foreach ($userfactors as $userfactor) {
+                    if ($userfactor->name == $factor->name) {
+                        $found = true;
+                    }
+                }
+                $setup = $found ? get_string('yes') : get_string('no');
             } else {
-                $achieved = 0;
+                $setup = get_string('na', 'tool_mfa');
             }
-            $table->data[] = array($factor->name, $factor->get_state(), $factor->get_weight(), $achieved);
+
+            // Status.
+            switch ($factor->get_state()) {
+                case \tool_mfa\plugininfo\factor::STATE_PASS:
+                    $state = get_string('state:pass', 'tool_mfa');
+                    break;
+                case \tool_mfa\plugininfo\factor::STATE_FAIL:
+                    $state = get_string('state:fail', 'tool_mfa');
+                    break;
+                case \tool_mfa\plugininfo\factor::STATE_UNKNOWN:
+                    $state = get_string('state:unknown', 'tool_mfa');
+                    break;
+                case \tool_mfa\plugininfo\factor::STATE_NEUTRAL:
+                    $state = get_string('state:neutral', 'tool_mfa');
+                    break;
+            }
+
+            $table->data[] = array($name, $setup, $state, $factor->get_weight(), $achieved);
+            $totalpossible += $factor->get_weight();
         }
 
-        $output .= \html_writer::table($table);
-        $output .= get_string('debugmode:currentweight', 'tool_mfa', self::get_total_weight());
-        echo $output;
+        $finalstate = tool_mfa_user_passed_enough_factors() ? get_string('state:pass', 'tool_mfa') : get_string('state:fail', 'tool_mfa');
+        $table->data[] = array(get_string('overall', 'tool_mfa'), '-', $finalstate, $totalpossible, self::get_total_weight());
+
+        echo \html_writer::table($table);
     }
 
     /**

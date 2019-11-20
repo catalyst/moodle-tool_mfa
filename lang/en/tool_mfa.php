@@ -42,6 +42,14 @@ $string['revokefactor'] = 'Revoke factor';
 $string['enablefactor'] = 'Enable factor';
 $string['revokefactor'] = 'Revoke factor';
 $string['achievedweight'] = 'Achieved weight';
+$string['setup'] = 'Setup';
+$string['overall'] = 'Overall';
+$string['na'] = 'n/a';
+
+$string['state:pass'] = 'Pass';
+$string['state:fail'] = 'Fail';
+$string['state:unknown'] = 'Unknown';
+$string['state:neutral'] = 'Neutral';
 
 $string['settings:enabled'] = 'MFA plugin enabled';
 $string['settings:enabled_help'] = '';
