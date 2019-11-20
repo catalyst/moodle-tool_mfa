@@ -24,7 +24,8 @@
  */
 
 $string['pluginname'] = 'Authentication type';
-$string['privacy:metadata'] = 'The Auth Factor plugin does not store any personal data';
+$string['info'] = 'Check the type of authentication used to login as an MFA factor.';
+
 $string['settings:enable'] = 'Enable Auth type Factor';
 $string['settings:enable_help'] = 'The auth type factor allows an easily bypass MFA if the user auth type is say saml2 or oidc and where they may have already passed through an MFA process at the IdP level.';
 $string['settings:weight'] = 'Auth Factor weight';

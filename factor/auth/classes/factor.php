@@ -37,17 +37,17 @@ class factor extends object_factor_base {
 
     public function get_all_user_factors() {
 
-        $factor = array(
+        $factor = (object) array(
             'id' => 1,
             'name' => $this->name,
-            'device' => '-',
+            'devicename' => '-',
             'timecreated' => '-',
             'createdfromip' => '-',
             'lastverified' => '-',
             'revoked' => '-'
         );
 
-        return (object) $factor;
+        return [$factor];
     }
 
     public function get_active_user_factors() {
@@ -59,8 +59,19 @@ class factor extends object_factor_base {
     }
 
     public function get_state() {
-        //MEATY STUFF HERE
+        global $USER;
 
+        $safetypes = get_config('factor_auth', 'goodauth');
+        $safetypes = explode(',', $safetypes);
+        $authtypes = get_enabled_auth_plugins(true);
+        $found = false;
+        foreach ($safetypes as $type) {
+            if ($authtypes[$type] == $USER->auth) {
+                $found = true;
+            }
+        }
+
+        return $found ? \tool_mfa\plugininfo\factor::STATE_PASS : \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
     }
 
     public function set_state($state) {
