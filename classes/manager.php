@@ -41,16 +41,22 @@ class manager {
 
         $table = new \html_table();
         $table->head = array(
+            get_string('weight', 'tool_mfa'),
             get_string('factor', 'tool_mfa'),
             get_string('setup', 'tool_mfa'),
             get_string('status'),
-            get_string('weight', 'tool_mfa'),
             get_string('achievedweight', 'tool_mfa'),
         );
-
+        $table->attributes['class'] = 'admintable generaltable';
+        $table->colclasses = array(
+            'text-right',
+            '',
+            '',
+            'text-right',
+            '',
+        );
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
         $userfactors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
-        $totalpossible = 0;
 
         foreach ($factors as $factor) {
 
@@ -89,12 +95,23 @@ class manager {
                     break;
             }
 
-            $table->data[] = array($name, $setup, $state, $factor->get_weight(), $achieved);
-            $totalpossible += $factor->get_weight();
+            $table->data[] = array(
+                $factor->get_weight(),
+                $name,
+                $setup,
+                $state,
+                $achieved,
+            );
         }
 
         $finalstate = tool_mfa_user_passed_enough_factors() ? get_string('state:pass', 'tool_mfa') : get_string('state:fail', 'tool_mfa');
-        $table->data[] = array(get_string('overall', 'tool_mfa'), '-', $finalstate, $totalpossible, self::get_total_weight());
+        $table->data[] = array(
+            '',
+            '',
+            '<b>' . get_string('overall', 'tool_mfa') . '</b>',
+            $finalstate,
+            self::get_total_weight(),
+        );
 
         echo \html_writer::table($table);
     }
