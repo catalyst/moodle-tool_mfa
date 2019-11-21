@@ -44,8 +44,8 @@ class manager {
             get_string('weight', 'tool_mfa'),
             get_string('factor', 'tool_mfa'),
             get_string('setup', 'tool_mfa'),
-            get_string('status'),
             get_string('achievedweight', 'tool_mfa'),
+            get_string('status'),
         );
         $table->attributes['class'] = 'admintable generaltable';
         $table->colclasses = array(
@@ -53,7 +53,7 @@ class manager {
             '',
             '',
             'text-right',
-            '',
+            'text-center',
         );
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
         $userfactors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
@@ -99,8 +99,8 @@ class manager {
                 $factor->get_weight(),
                 $name,
                 $setup,
-                $state,
                 $achieved,
+                $state,
             );
         }
 
@@ -109,8 +109,8 @@ class manager {
             '',
             '',
             '<b>' . get_string('overall', 'tool_mfa') . '</b>',
-            $finalstate,
             self::get_total_weight(),
+            $finalstate,
         );
 
         echo \html_writer::table($table);
