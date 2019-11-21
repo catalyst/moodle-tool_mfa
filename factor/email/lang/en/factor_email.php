@@ -23,20 +23,16 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'E-Mail Factor';
+$string['email:subject'] = 'Your confirmation code';
+$string['email:message'] = 'You are tying to log in to Moodle. Your confirmation code is \'{$a}\'';
+$string['error:wrongverification'] = 'Incorrect verification code';
 $string['info'] = '<p>Built-in factor. Uses e-mail address mentioned in user profile for sending verification codes</p>';
-
+$string['pluginname'] = 'E-Mail Factor';
+$string['privacy:metadata'] = 'The E-Mail Factor plugin does not store any personal data';
 $string['settings:enable'] = 'Enable E-Mail Factor';
 $string['settings:enable_help'] = 'E-Mail Factor will be available for users to setup';
 $string['settings:weight'] = 'E-Mail Factor weight';
 $string['settings:weight_help'] = 'Factor weight determines the result factor combinations';
+$string['setupfactor'] = 'E-Mail Factor setup';
 $string['verificationcode'] = 'Enter verification code for confirmation';
 $string['verificationcode_help'] = 'Verification code has been sent to your email address';
-
-$string['email:subject'] = 'Your confirmation code';
-$string['email:message'] = 'You are tying to log in to Moodle. Your confirmation code is \'{$a}\'';
-
-$string['setupfactor'] = 'E-Mail Factor setup';
-$string['error:wrongverification'] = 'Incorrect verification code';
-
-$string['privacy:metadata'] = 'The E-Mail Factor plugin does not store any personal data';

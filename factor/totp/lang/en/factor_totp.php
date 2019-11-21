@@ -24,25 +24,22 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Authenticator app';
+$string['devicename'] = 'Device label';
+$string['devicenameexample'] = 'eg "Work iPhone 11"';
+$string['devicename_help'] = 'This is the device you have an authenticator app installed on. You can setup multiple devices so this label helps track which ones are being used. You should setup each device with their own unique code so they can be revoked separately.';
+$string['error:wrongverification'] = 'Incorrect verification code';
 $string['info'] = '<p>Use any TOTP Authenticator app to get verification code on your phone even when it is offline.</p>
 <p>eg Google Authenticator for <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8" target="_blank">iPhone</a> or <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</a></p>';
+$string['pluginname'] = 'Authenticator app';
+$string['privacy:metadata'] = 'The TOTP Factor plugin does not store any personal data';
 $string['settings:enable'] = 'Enable TOTP Factor';
 $string['settings:enable_help'] = 'TOTP Factor will be available for users to setup';
 $string['settings:weight'] = 'TOTP Factor weight';
 $string['settings:weight_help'] = 'Factor weight determines the result factor combinations';
 $string['settings:secretlength'] = 'TOTP secret key length';
 $string['settings:secretlength_help'] = 'Generated TOTP secret key string length';
-$string['verificationcode'] = 'Verification code';
-$string['verificationcode_help'] = 'Code validation is necessary to confirm you stored your secret key with GA app';
-$string['devicename'] = 'Device label';
-$string['devicenameexample'] = 'eg "Work iPhone 11"';
-$string['devicename_help'] = 'This is the device you have an authenticator app installed on. You can setup multiple devices so this label helps track which ones are being used. You should setup each device with their own unique code so they can be revoked separately.';
-
 $string['setupfactor'] = 'TOTP Factor Setup';
 $string['setupfactor:scan'] = 'Enter secret or scan QR code';
 $string['setupfactor:key'] = 'Secret key: ';
-$string['error:wrongverification'] = 'Incorrect verification code';
-
-$string['privacy:metadata'] = 'The TOTP Factor plugin does not store any personal data';
-
+$string['verificationcode'] = 'Verification code';
+$string['verificationcode_help'] = 'Code validation is necessary to confirm you stored your secret key with GA app';
