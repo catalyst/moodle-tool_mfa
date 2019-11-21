@@ -206,6 +206,7 @@ class factor extends object_factor_base {
             $row->timecreated = time();
             $row->createdfromip = $USER->lastip;
             $row->timemodified = time();
+            $row->lastverified = time();
             $row->revoked = 0;
 
             $DB->insert_record('factor_totp', $row);
