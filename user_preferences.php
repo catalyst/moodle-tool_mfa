@@ -49,7 +49,6 @@ if ($node = $PAGE->settingsnav->find('usercurrentsettings', null)) {
 }
 $PAGE->navbar->add(get_string('preferences:header', 'tool_mfa'), new \moodle_url('/admin/tool/mfa/user_preferences.php'));
 
-
 $OUTPUT = $PAGE->get_renderer('tool_mfa');
 $form = new preferences_form();
 
@@ -57,3 +56,7 @@ echo $OUTPUT->header();
 \tool_mfa\manager::display_debug_notification();
 $form->display();
 echo $OUTPUT->footer();
+
+if ($SESSION->tool_mfa_setwantsurl && \tool_mfa\manager::get_total_weight() >= 100) {
+    unset($SESSION->wantsurl);
+}

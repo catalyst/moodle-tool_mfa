@@ -32,15 +32,22 @@ defined('MOODLE_INTERNAL') || die();
  * @throws \moodle_exception
  */
 function tool_mfa_after_require_login() {
-    global $SESSION, $ME;
+    global $SESSION, $ME, $CFG;
 
     if (!tool_mfa_ready()) {
         return;
     }
 
     if (empty($SESSION->tool_mfa_authenticated) || !$SESSION->tool_mfa_authenticated) {
-        if (strpos($ME, '/admin/tool/mfa/') === false) {
-            redirect(new moodle_url('/admin/tool/mfa/auth.php', array('wantsurl' => $ME)));
+        if (empty($SESSION->wantsurl)) {
+            $SESSION->wantsurl = qualified_me();
+            $SESSION->tool_mfa_setwantsurl = true;
+        }
+
+        $clearurl = str_replace($CFG->wwwroot, '', $ME);
+
+        if (strpos($clearurl, '/admin/tool/mfa/') !== 0) {
+            redirect(new moodle_url('/admin/tool/mfa/auth.php'));
         }
     }
 }

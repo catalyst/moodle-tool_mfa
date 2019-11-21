@@ -29,10 +29,11 @@ require_once($CFG->libdir.'/adminlib.php');
 use tool_mfa\local\form\login_form;
 
 require_login(null, false);
-$wantsurl  = optional_param('wantsurl', '', PARAM_LOCALURL);
 
-if (empty($wantsurl)) {
+if (empty($SESSION->wantsurl)) {
     $wantsurl = '/';
+} else {
+    $wantsurl = $SESSION->wantsurl;
 }
 
 $context = context_user::instance($USER->id);
@@ -44,8 +45,7 @@ $PAGE->set_title($pagetitle);
 
 $OUTPUT = $PAGE->get_renderer('tool_mfa');
 
-$params = array('wantsurl' => $wantsurl);
-$currenturl = new moodle_url('/admin/tool/mfa/auth.php', $params);
+$currenturl = new moodle_url('/admin/tool/mfa/auth.php');
 
 if (isset($SESSION->tool_mfa_authenticated) && $SESSION->tool_mfa_authenticated) {
     redirect(new moodle_url($wantsurl));
@@ -103,6 +103,9 @@ if ($form->is_submitted() && (isset($factor) && $factor->get_state() != \tool_mf
             redirect(new moodle_url('/admin/tool/mfa/user_preferences.php'));
         }
 
+        if (!empty($SESSION->wantsurl)) {
+            unset($SESSION->wantsurl);
+        }
         redirect(new moodle_url($wantsurl));
     }
 
