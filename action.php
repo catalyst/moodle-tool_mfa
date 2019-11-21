@@ -111,7 +111,12 @@ switch ($action) {
 
         $PAGE->navbar->add(get_string('action:revoke', 'factor_'.$factor));
         $OUTPUT = $PAGE->get_renderer('tool_mfa');
-        $form = new revoke_factor_form($currenturl, array('factorname' => $factor, 'factorid' => $factorid));
+
+        $revokeparams = array(
+            'factorname' => $factorobject->get_display_name(),
+            'devicename' => $factorobject->get_device_name($factorid)
+        );
+        $form = new revoke_factor_form($currenturl, $revokeparams);
 
         if ($form->is_submitted()) {
             $form->is_validated();

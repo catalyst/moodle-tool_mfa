@@ -36,7 +36,13 @@ class revoke_factor_form extends \moodleform {
     public function definition() {
         global $OUTPUT;
         $mform = $this->_form;
-        $mform->addElement('html', $OUTPUT->heading(get_string('areyousure'), 4));
-        $this->add_action_buttons(true, get_string('yes'));
+        $factorname = $this->_customdata['factorname'];
+        $devicename = $this->_customdata['devicename'];
+
+        $mform->addElement('html', $OUTPUT->heading(get_string('areyousure', 'tool_mfa'), 4));
+        $mform->addElement('html', $OUTPUT->heading(get_string('factor', 'tool_mfa').': '.$factorname, 5));
+        $mform->addElement('html', $OUTPUT->heading(get_string('devicename', 'tool_mfa').': '.$devicename, 5));
+
+        $this->add_action_buttons(true, get_string('revoke', 'tool_mfa'));
     }
 }

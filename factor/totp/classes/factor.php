@@ -258,4 +258,9 @@ class factor extends object_factor_base {
     public function has_setup() {
         return true;
     }
+
+    public function get_device_name($factorid) {
+        global $DB;
+        return $DB->get_field('factor_totp', 'devicename', array('id' => $factorid));
+    }
 }

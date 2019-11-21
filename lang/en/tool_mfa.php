@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['achievedweight'] = 'Achieved weight';
+$string['areyousure'] = 'Are you sure you want to revoke factor?';
 $string['combination'] = 'Combination';
 $string['created'] = 'Created';
 $string['createdfromip'] = 'Created from IP';
