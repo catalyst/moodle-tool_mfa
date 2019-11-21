@@ -133,5 +133,23 @@ class manager {
         return $totalweight;
     }
 
+    /**
+     * Checks that provided factorid exists and belongs to current user.
+     *
+     * @param string $factorname
+     * @param int $factorid
+     * @return bool
+     * @throws \dml_exception
+     */
+    public static function is_factorid_valid($factorname, $factorid) {
+        global $DB, $USER;
+        $recordowner = $DB->get_field('factor_'.$factorname, 'userid', array('id' => $factorid));
+
+        if (!empty($recordowner) && $recordowner == $USER->id) {
+            return true;
+        }
+
+        return false;
+    }
 }
 
