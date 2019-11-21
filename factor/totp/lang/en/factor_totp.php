@@ -24,6 +24,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['action:revoke'] = 'Revoke TOTP Factor';
 $string['devicename'] = 'Device label';
 $string['devicenameexample'] = 'eg "Work iPhone 11"';
 $string['devicename_help'] = 'This is the device you have an authenticator app installed on. You can setup multiple devices so this label helps track which ones are being used. You should setup each device with their own unique code so they can be revoked separately.';

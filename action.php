@@ -25,6 +25,7 @@
 require_once(__DIR__ . '/../../../config.php');
 
 use tool_mfa\local\form\setup_factor_form;
+use tool_mfa\local\form\revoke_factor_form;
 
 require_login(null, false);
 if (isguestuser()) {
@@ -35,7 +36,7 @@ $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $factor = optional_param('factor', '', PARAM_ALPHANUMEXT);
 $factorid = optional_param('factorid', '', PARAM_INT);
 
-$params = array('action' => $action, 'factor' => $factor);
+$params = array('action' => $action, 'factor' => $factor, 'factorid' => $factorid);
 $currenturl = new moodle_url('/admin/tool/mfa/action.php', $params);
 
 $returnurl = new moodle_url('/admin/tool/mfa/user_preferences.php');
@@ -50,6 +51,10 @@ if (!tool_mfa_factor_exists($factor)) {
 
 if (!in_array($action, \tool_mfa\plugininfo\factor::get_factor_actions())) {
     print_error('error:actionnotfound', 'tool_mfa', $returnurl, $action);
+}
+
+if (!empty($factorid) && !tool_mfa_factorid_is_valid($factor, $factorid)) {
+    print_error('error:incorrectfactorid', 'tool_mfa', $returnurl, $factorid);
 }
 
 $factorobject = \tool_mfa\plugininfo\factor::get_factor($factor);
@@ -68,7 +73,7 @@ $PAGE->navbar->add(get_string('preferences:header', 'tool_mfa'), new \moodle_url
 
 switch ($action) {
     case 'setup':
-        if (!$factorobject->has_setup()) {
+        if (!$factorobject || !$factorobject->has_setup()) {
             redirect($returnurl);
         }
 
@@ -84,7 +89,7 @@ switch ($action) {
             }
 
             if ($data = $form->get_data()) {
-                if ($factorobject && $factorobject->setup_user_factor($data)) {
+                if ($factorobject->setup_user_factor($data)) {
                     $event = \tool_mfa\event\user_setup_factor::user_setup_factor_event($USER, $factorobject->get_display_name());
                     $event->trigger();
                     redirect($returnurl);
@@ -100,13 +105,35 @@ switch ($action) {
         break;
 
     case 'revoke':
-        if ($factorobject && $factorobject->has_revoke()) {
-            if (!$factorobject->revoke_user_factor($factorid)) {
-                print_error('error:revokefactor', 'tool_mfa', $returnurl);
+        if (!$factorobject || !$factorobject->has_revoke()) {
+            print_error('error:revoke', 'tool_mfa', $returnurl);
+        }
+
+        $PAGE->navbar->add(get_string('action:revoke', 'factor_'.$factor));
+        $OUTPUT = $PAGE->get_renderer('tool_mfa');
+        $form = new revoke_factor_form($currenturl, array('factorname' => $factor, 'factorid' => $factorid));
+
+        if ($form->is_submitted()) {
+            $form->is_validated();
+
+            if ($form->is_cancelled()) {
+                redirect($returnurl);
+            }
+
+            if ($form->get_data()) {
+                if ($factorobject->revoke_user_factor($factorid)) {
+                    $event = \tool_mfa\event\user_revoked_factor::user_revoked_factor_event($USER, $factorobject->get_display_name());
+                    $event->trigger();
+                    redirect($returnurl);
+                }
+
+                print_error('error:revoke', 'tool_mfa', $returnurl);
             }
         }
 
-        redirect($returnurl);
+        echo $OUTPUT->header();
+        $form->display();
+
         break;
 
     default:

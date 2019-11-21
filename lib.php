@@ -216,3 +216,22 @@ function tool_mfa_change_factor_order($factorname, $action) {
             break;
     }
 }
+
+/**
+ * Checks that provided factorid exists and belongs to current user.
+ *
+ * @param string $factorname
+ * @param int $factorid
+ * @return bool
+ * @throws dml_exception
+ */
+function tool_mfa_factorid_is_valid($factorname, $factorid) {
+    global $DB, $USER;
+    $recordowner = $DB->get_field('factor_'.$factorname, 'userid', array('id' => $factorid));
+
+    if (!empty($recordowner) && $recordowner == $USER->id) {
+        return true;
+    }
+
+    return false;
+}

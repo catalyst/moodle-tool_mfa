@@ -236,15 +236,8 @@ abstract class object_factor_base implements object_factor {
      * @throws \dml_exception
      */
     public function revoke_user_factor($factorid) {
-        global $DB, $USER;
-
-        $recordowner = $DB->get_field('factor_'.$this->name, 'userid', array('id' => $factorid));
-
-        if (!empty($recordowner) && $recordowner == $USER->id) {
-            return $DB->set_field('factor_'.$this->name, 'revoked', 1, array('id' => $factorid));
-        }
-
-        return false;
+        global $DB;
+        return $DB->set_field('factor_'.$this->name, 'revoked', 1, array('id' => $factorid));
     }
 
     /**
