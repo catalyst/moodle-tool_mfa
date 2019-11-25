@@ -31,10 +31,22 @@ use tool_mfa\local\factor\object_factor_base;
 
 class factor extends object_factor_base {
 
+    /**
+     * Auth Factor implementation.
+     * Factor has no setup, function always returns true.
+     *
+     * {@inheritDoc}
+     */
     public function setup_user_factor($data) {
         return true;
     }
 
+    /**
+     * Auth Factor implementation.
+     * Factor is a singleton, can only be one instance.
+     *
+     * {@inheritDoc}
+     */
     public function get_all_user_factors() {
 
         $factor = (object) array(
@@ -50,14 +62,32 @@ class factor extends object_factor_base {
         return [$factor];
     }
 
+    /**
+     * Auth Factor implementation.
+     * Factor cannot be revoked, so no extra functionality is needed.
+     *
+     * {@inheritDoc}
+     */
     public function get_active_user_factors() {
         return $this->get_all_user_factors();
     }
 
+    /**
+     * Auth Factor implementation.
+     * Factor does not have input.
+     *
+     * {@inheritDoc}
+     */
     public function has_input() {
         return false;
     }
 
+    /**
+     * Auth Factor implementation.
+     * State check is performed here, as there is no form to do it in.
+     *
+     * {@inheritDoc}
+     */
     public function get_state() {
         global $USER;
 
@@ -74,7 +104,14 @@ class factor extends object_factor_base {
         return $found ? \tool_mfa\plugininfo\factor::STATE_PASS : \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
     }
 
+    /**
+     * Auth Factor implementation.
+     * The state can never be set. Always return true.
+     *
+     * {@inheritDoc}
+     */
     public function set_state($state) {
         return true;
     }
 }
+
