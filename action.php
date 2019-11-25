@@ -90,8 +90,6 @@ switch ($action) {
 
             if ($data = $form->get_data()) {
                 if ($factorobject->setup_user_factor($data)) {
-                    $event = \tool_mfa\event\user_setup_factor::user_setup_factor_event($USER, $factorobject->get_display_name());
-                    $event->trigger();
                     redirect($returnurl);
                 }
 

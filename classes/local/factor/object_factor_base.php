@@ -332,4 +332,15 @@ abstract class object_factor_base implements object_factor {
         $SESSION->$property = $state;
         return true;
     }
+
+    /**
+     * Creates an event when user successfully setup a factor
+     *
+     * @param object $user
+     * @return void
+     */
+    public function create_event_after_factor_setup($user) {
+        $event = \tool_mfa\event\user_setup_factor::user_setup_factor_event($user, $this->get_display_name());
+        $event->trigger();
+    }
 }

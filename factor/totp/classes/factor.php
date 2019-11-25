@@ -210,6 +210,8 @@ class factor extends object_factor_base {
             $row->revoked = 0;
 
             $DB->insert_record('factor_totp', $row);
+            $this->create_event_after_factor_setup($USER);
+
             return true;
         }
 

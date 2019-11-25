@@ -44,7 +44,7 @@ class user_setup_factor extends \core\event\base {
     /**
      * Create instance of event.
      *
-     * @param int $user the User object of the User who has setup new factor
+     * @param object $user the User object of the User who has setup new factor
      * @param string $factorname setup factor
      *
      * @return user_passed_mfa the user_passed_mfa event
