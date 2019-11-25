@@ -31,6 +31,8 @@ $string['devicename_help'] = 'This is the device you have an authenticator app i
 $string['error:wrongverification'] = 'Incorrect verification code';
 $string['info'] = '<p>Use any TOTP Authenticator app to get verification code on your phone even when it is offline.</p>
 <p>eg Google Authenticator for <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8" target="_blank">iPhone</a> or <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</a></p>';
+$string['loginsubmit'] = 'Verify code';
+$string['loginskip'] = 'I don\'t have my device';
 $string['pluginname'] = 'Authenticator app';
 $string['privacy:metadata'] = 'The TOTP Factor plugin does not store any personal data';
 $string['settings:enable'] = 'Enable TOTP Factor';
@@ -42,5 +44,5 @@ $string['settings:secretlength_help'] = 'Generated TOTP secret key string length
 $string['setupfactor'] = 'TOTP Factor Setup';
 $string['setupfactor:scan'] = 'Enter secret or scan QR code';
 $string['setupfactor:key'] = 'Secret key: ';
-$string['verificationcode'] = 'Verification code';
+$string['verificationcode'] = 'Enter your 6 digit verification code';
 $string['verificationcode_help'] = 'Code validation is necessary to confirm you stored your secret key with GA app';
