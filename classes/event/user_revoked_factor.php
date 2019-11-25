@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event for successfully setup MFA Factor.
+ * Event for successfully revoked MFA Factor.
  *
  * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
@@ -28,7 +28,7 @@ namespace tool_mfa\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when user successfully setup new MFA Factor.
+ * Event for when user successfully revoked MFA Factor.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -40,18 +40,18 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class user_setup_factor extends \core\event\base {
+class user_revoked_factor extends \core\event\base {
     /**
      * Create instance of event.
      *
-     * @param object $user the User object of the User who has setup new factor
-     * @param string $factorname setup factor
+     * @param int $user the User object of the User who has revoked new factor
+     * @param string $factorname revoked factor
      *
      * @return user_passed_mfa the user_passed_mfa event
      *
      * @throws \coding_exception
      */
-    public static function user_setup_factor_event($user, $factorname) {
+    public static function user_revoked_factor_event($user, $factorname) {
 
         $data = array(
             'relateduserid' => null,
@@ -71,7 +71,7 @@ class user_setup_factor extends \core\event\base {
      * @return void
      */
     protected function init() {
-        $this->data['crud'] = 'c';
+        $this->data['crud'] = 'd';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
@@ -81,7 +81,7 @@ class user_setup_factor extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '{$this->other['userid']}' successfully setup {$this->other['factorname']}";
+        return "The user with id '{$this->other['userid']}' successfully revoked {$this->other['factorname']}";
     }
 
     /**
@@ -91,6 +91,6 @@ class user_setup_factor extends \core\event\base {
      * @throws \coding_exception
      */
     public static function get_name() {
-        return get_string('event:usersetupfactor', 'tool_mfa');
+        return get_string('event:userrevokedfactor', 'tool_mfa');
     }
 }

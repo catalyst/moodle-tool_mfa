@@ -238,10 +238,11 @@ abstract class object_factor_base implements object_factor {
     public function revoke_user_factor($factorid) {
         global $DB, $USER;
 
-        $recordowner = $DB->get_field('factor_'.$this->name, 'userid', array('id' => $factorid));
+        if ($DB->set_field('factor_'.$this->name, 'revoked', 1, array('id' => $factorid))) {
+            $event = \tool_mfa\event\user_revoked_factor::user_revoked_factor_event($USER, $this->get_display_name());
+            $event->trigger();
 
-        if (!empty($recordowner) && $recordowner == $USER->id) {
-            return $DB->set_field('factor_'.$this->name, 'revoked', 1, array('id' => $factorid));
+            return true;
         }
 
         return false;
@@ -330,5 +331,16 @@ abstract class object_factor_base implements object_factor {
         $property = 'factor_'.$this->name;
         $SESSION->$property = $state;
         return true;
+    }
+
+    /**
+     * Creates an event when user successfully setup a factor
+     *
+     * @param object $user
+     * @return void
+     */
+    public function create_event_after_factor_setup($user) {
+        $event = \tool_mfa\event\user_setup_factor::user_setup_factor_event($user, $this->get_display_name());
+        $event->trigger();
     }
 }

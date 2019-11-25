@@ -206,9 +206,12 @@ class factor extends object_factor_base {
             $row->timecreated = time();
             $row->createdfromip = $USER->lastip;
             $row->timemodified = time();
+            $row->lastverified = time();
             $row->revoked = 0;
 
             $DB->insert_record('factor_totp', $row);
+            $this->create_event_after_factor_setup($USER);
+
             return true;
         }
 
@@ -256,5 +259,10 @@ class factor extends object_factor_base {
      */
     public function has_setup() {
         return true;
+    }
+
+    public function get_device_name($factorid) {
+        global $DB;
+        return $DB->get_field('factor_totp', 'devicename', array('id' => $factorid));
     }
 }

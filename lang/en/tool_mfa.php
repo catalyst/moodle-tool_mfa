@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['achievedweight'] = 'Achieved weight';
+$string['areyousure'] = 'Are you sure you want to revoke factor?';
 $string['combination'] = 'Combination';
 $string['created'] = 'Created';
 $string['createdfromip'] = 'Created from IP';
@@ -35,12 +36,14 @@ $string['devicename'] = 'Device';
 $string['enablefactor'] = 'Enable factor';
 $string['error:directaccess'] = 'This page shouldn\'t be accessed directly';
 $string['error:factornotfound'] = 'MFA Factor \'{$a}\' not found';
+$string['error:wrongfactorid'] = 'Factor id \'{$a}\' is incorrect';
 $string['error:actionnotfound'] = 'Action \'{$a}\' not supported';
 $string['error:setupfactor'] = 'Can not setup factor';
-$string['error:revokefactor'] = 'Can not revoke factor';
+$string['error:revoke'] = 'Can not revoke factor';
 $string['error:notenoughfactors'] = 'Not enough factors to authenticate';
 $string['error:factornotenabled'] = 'MFA Factor \'{$a}\' not enabled';
 $string['event:userpassedmfa'] = 'Verification passed';
+$string['event:userrevokedfactor'] = 'Factor revocation';
 $string['event:usersetupfactor'] = 'Factor setup';
 $string['factor'] = 'Factor';
 $string['graceperiod'] = 'Grace period';
