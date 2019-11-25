@@ -84,7 +84,9 @@ if ($form->is_submitted()) {
     }
 }
 
-if ($form->is_submitted() && (isset($factor) && $factor->get_state() != \tool_mfa\plugininfo\factor::STATE_FAIL) || !isset($factor)) {
+if ($form->is_submitted()
+    && (isset($factor) && $factor->get_state() != \tool_mfa\plugininfo\factor::STATE_FAIL)
+    || !isset($factor)) {
     if (\tool_mfa\plugininfo\factor::get_next_user_factor()) {
         redirect($currenturl);
     }

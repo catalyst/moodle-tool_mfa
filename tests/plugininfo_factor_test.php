@@ -26,11 +26,15 @@
 defined('MOODLE_INTERNAL') || die();
 
 class tool_mfa_plugininfo_factor_testcase extends advanced_testcase {
+
     public function test_get_next_user_factor() {
+
         $this->resetAfterTest(true);
+
         // Create and login a user.
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
+
         // Test that with no enabled factors, false is returned.
         $this->assertFalse(\tool_mfa\plugininfo\factor::get_next_user_factor());
 
@@ -46,11 +50,11 @@ class tool_mfa_plugininfo_factor_testcase extends advanced_testcase {
         // Test that factor now appears (from STATE_UNKNOWN).
         $this->assertEquals(\tool_mfa\plugininfo\factor::get_next_user_factor()->name, 'totp');
 
-        // Now pass this factor
+        // Now pass this factor.
         $totpfactor->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
         $this->assertFalse(\tool_mfa\plugininfo\factor::get_next_user_factor());
 
-        // Add in a no-input factor
+        // Add in a no-input factor.
         set_config('enabled', 1, 'factor_auth');
         $this->assertEquals(2, count(\tool_mfa\plugininfo\factor::get_enabled_factors()));
 

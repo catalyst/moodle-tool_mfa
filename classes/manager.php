@@ -25,6 +25,8 @@
 
 namespace tool_mfa;
 
+defined('MOODLE_INTERNAL') || die();
+
 class manager {
 
     /**
