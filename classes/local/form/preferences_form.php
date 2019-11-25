@@ -51,7 +51,6 @@ class preferences_form extends \moodleform
         }
 
         $mform = $this->define_active_factors($mform);
-        $mform = $this->define_available_factors($mform);
     }
 
     /**
@@ -141,53 +140,4 @@ class preferences_form extends \moodleform
         return $mform;
     }
 
-    /**
-     * Defines section with available factors.
-     *
-     * @param $mform
-     * @return object $mform
-     * @throws \coding_exception
-     * @throws \moodle_exception
-     */
-    public function define_available_factors($mform) {
-        global $OUTPUT;
-
-        $mform->addElement('html', $OUTPUT->heading(get_string('preferences:availablefactors', 'tool_mfa'), 4));
-
-        $table = new \html_table();
-        $table->id = 'available_factors';
-        $table->attributes['class'] = 'generaltable';
-        $table->head  = array(
-            get_string('factor', 'tool_mfa'),
-            get_string('action'),
-        );
-        $table->colclasses = array('leftalign', 'centeralign');
-        $table->data  = array();
-
-        $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
-
-        foreach ($factors as $factor) {
-
-            if (!$factor->has_setup()) {
-                continue;
-            }
-
-            $setupparams = array('action' => 'setup', 'factor' => $factor->name);
-            $setupurl = new \moodle_url('action.php', $setupparams);
-            $setuplink = \html_writer::link($setupurl, get_string('setupfactor', 'tool_mfa'));
-
-            $row = new \html_table_row(array(
-                $OUTPUT->heading($factor->get_display_name(), 4) . $factor->get_info(),
-                $setuplink,
-            ));
-            $table->data[] = $row;
-        }
-
-        $return = $OUTPUT->box_start('generalbox');
-        $return .= \html_writer::table($table);
-        $return .= $OUTPUT->box_end();
-
-        $mform->addElement('html', $return);
-        return $mform;
-    }
 }

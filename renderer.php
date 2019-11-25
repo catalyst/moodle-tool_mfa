@@ -45,8 +45,54 @@ class tool_mfa_renderer extends plugin_renderer_base {
                 return \html_writer::tag('span', get_string('state:neutral', 'tool_mfa'), array('class' => 'badge badge-warning'));
 
             default:
-                return \html_writer::tag('span', get_string('state:unknown', 'tool_mfa'), array('class' => 'badge badge-secondary'));
+                return \html_writer::tag('span', get_string('state:unknown', 'tool_mfa'),
+                        array('class' => 'badge badge-secondary'));
         }
+    }
+
+    /**
+     * Returns a list of factors which a user can add
+     *
+     * @return html
+     */
+    public function available_factors() {
+        global $OUTPUT;
+
+        $html = $OUTPUT->heading(get_string('preferences:availablefactors', 'tool_mfa'), 4);
+
+        $table = new \html_table();
+        $table->id = 'available_factors';
+        $table->attributes['class'] = 'generaltable';
+        $table->head  = array(
+            get_string('factor', 'tool_mfa'),
+            get_string('action'),
+        );
+        $table->colclasses = array('leftalign', 'centeralign');
+        $table->data  = array();
+
+        $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+
+        foreach ($factors as $factor) {
+
+            if (!$factor->has_setup()) {
+                continue;
+            }
+
+            $setupparams = array('action' => 'setup', 'factor' => $factor->name);
+            $setupurl = new \moodle_url('action.php', $setupparams);
+            $setuplink = \html_writer::link($setupurl, get_string('setupfactor', 'tool_mfa'));
+
+            $row = new \html_table_row(array(
+                $OUTPUT->heading($factor->get_display_name(), 4) . $factor->get_info(),
+                $setuplink,
+            ));
+            $table->data[] = $row;
+        }
+
+        $html .= $OUTPUT->box_start('generalbox');
+        $html .= \html_writer::table($table);
+        $html .= $OUTPUT->box_end();
+        return $html;
     }
 
 }
