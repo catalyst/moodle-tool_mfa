@@ -39,7 +39,7 @@ if (empty($SESSION->wantsurl)) {
 $context = context_user::instance($USER->id);
 $PAGE->set_context($context);
 $PAGE->set_url('/admin/tool/mfa/auth.php');
-$PAGE->set_pagelayout('popup');
+$PAGE->set_pagelayout('secure');
 $pagetitle = $SITE->shortname.': '.get_string('mfa', 'tool_mfa');
 $PAGE->set_title($pagetitle);
 
