@@ -32,3 +32,8 @@ $settings->add(new admin_setting_configcheckbox('factor_auth/enabled',
 $settings->add(new admin_setting_configtext('factor_auth/weight',
     new lang_string('settings:weight', 'factor_auth'),
     new lang_string('settings:weight_help', 'factor_auth'), 100, PARAM_INT));
+
+$authtypes = get_enabled_auth_plugins(true);
+$settings->add(new admin_setting_configmulticheckbox('factor_auth/goodauth',
+    get_string('settings:goodauth', 'factor_auth'),
+    get_string('settings:goodauth_help', 'factor_auth'), array(), $authtypes));

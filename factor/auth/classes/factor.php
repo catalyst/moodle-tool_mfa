@@ -31,4 +31,50 @@ use tool_mfa\local\factor\object_factor_base;
 
 class factor extends object_factor_base {
 
+    public function setup_user_factor($data) {
+        return true;
+    }
+
+    public function get_all_user_factors() {
+
+        $factor = (object) array(
+            'id' => 1,
+            'name' => $this->name,
+            'devicename' => '-',
+            'timecreated' => '-',
+            'createdfromip' => '-',
+            'lastverified' => '-',
+            'revoked' => '-'
+        );
+
+        return [$factor];
+    }
+
+    public function get_active_user_factors() {
+        return $this->get_all_user_factors();
+    }
+
+    public function has_input() {
+        return false;
+    }
+
+    public function get_state() {
+        global $USER;
+
+        $safetypes = get_config('factor_auth', 'goodauth');
+        $safetypes = explode(',', $safetypes);
+        $authtypes = get_enabled_auth_plugins(true);
+        $found = false;
+        foreach ($safetypes as $type) {
+            if ($authtypes[$type] == $USER->auth) {
+                $found = true;
+            }
+        }
+
+        return $found ? \tool_mfa\plugininfo\factor::STATE_PASS : \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+    }
+
+    public function set_state($state) {
+        return true;
+    }
 }
