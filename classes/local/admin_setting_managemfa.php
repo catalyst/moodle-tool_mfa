@@ -96,11 +96,19 @@ class admin_setting_managemfa extends \admin_setting {
         $txt = get_strings(array('enable', 'disable', 'moveup', 'movedown', 'order', 'settings'));
         $txt->factor = get_string('factor', 'tool_mfa');
         $txt->weight = get_string('weight', 'tool_mfa');
+        $txt->setup = get_string('setuprequired', 'tool_mfa');
 
         $table = new \html_table();
         $table->id = 'managemfatable';
         $table->attributes['class'] = 'admintable generaltable';
-        $table->head  = array($txt->factor, $txt->enable, $txt->order, $txt->weight, $txt->settings);
+        $table->head  = array(
+            $txt->factor,
+            $txt->enable,
+            $txt->order,
+            $txt->weight,
+            $txt->settings,
+            $txt->setup,
+        );
         $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
         $table->data  = array();
 
@@ -144,7 +152,16 @@ class admin_setting_managemfa extends \admin_setting {
                 $updownlink = '';
             }
 
-            $rowarray = array($factor->get_display_name(), $hideshowlink, $updownlink, $factor->get_weight(), $settingslink);
+            $hassetup = $factor->has_setup() ? get_string('yes') : get_string('no');
+
+            $rowarray = array(
+                $factor->get_display_name(),
+                $hideshowlink,
+                $updownlink,
+                $factor->get_weight(),
+                $settingslink,
+                $hassetup,
+            );
             $row = new \html_table_row($rowarray);
             $row->attributes['class'] = $class;
 

@@ -75,6 +75,7 @@ $string['settings:debugmode'] = 'Enable debug mode';
 $string['settings:debugmode_help'] = 'Debug mode will display a small notification banner on MFA admin pages, as well as the user preferences page
          with information on the currently enabled factors.';
 $string['setup'] = 'Setup';
+$string['setuprequired'] = 'Setup required';
 $string['setupfactor'] = 'Setup factor';
 $string['state:pass'] = 'Pass';
 $string['state:fail'] = 'Fail';
