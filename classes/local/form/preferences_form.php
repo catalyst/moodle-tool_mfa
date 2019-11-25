@@ -104,6 +104,10 @@ class preferences_form extends \moodleform
 
             $userfactors = $factor->get_active_user_factors();
 
+            if (!$factor->has_setup()) {
+                continue;
+            }
+
             foreach ($userfactors as $userfactor) {
                 if ($factor->has_revoke()) {
                     $revokeparams = array('action' => 'revoke', 'factor' => $factor->name, 'factorid' => $userfactor->id);
