@@ -53,7 +53,7 @@ if (!in_array($action, \tool_mfa\plugininfo\factor::get_factor_actions())) {
     print_error('error:actionnotfound', 'tool_mfa', $returnurl, $action);
 }
 
-if (!empty($factorid) && !\tool_mfa\manager::is_factorid_valid($factor, $factorid)) {
+if (!empty($factorid) && !\tool_mfa\manager::is_factorid_valid($factor, $factorid, $USER)) {
     print_error('error:incorrectfactorid', 'tool_mfa', $returnurl, $factorid);
 }
 

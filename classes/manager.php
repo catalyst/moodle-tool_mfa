@@ -138,14 +138,15 @@ class manager {
      *
      * @param string $factorname
      * @param int $factorid
+     * @param object $user
      * @return bool
      * @throws \dml_exception
      */
-    public static function is_factorid_valid($factorname, $factorid) {
-        global $DB, $USER;
+    public static function is_factorid_valid($factorname, $factorid, $user) {
+        global $DB;
         $recordowner = $DB->get_field('factor_'.$factorname, 'userid', array('id' => $factorid));
 
-        if (!empty($recordowner) && $recordowner == $USER->id) {
+        if (!empty($recordowner) && $recordowner == $user->id) {
             return true;
         }
 
