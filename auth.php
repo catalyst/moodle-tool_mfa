@@ -47,6 +47,11 @@ $OUTPUT = $PAGE->get_renderer('tool_mfa');
 
 $currenturl = new moodle_url('/admin/tool/mfa/auth.php');
 
+// Check if enough factors have been passed from no input factors.
+if (tool_mfa_user_passed_enough_factors()) {
+    $SESSION->tool_mfa_authenticated = true;
+}
+
 if (isset($SESSION->tool_mfa_authenticated) && $SESSION->tool_mfa_authenticated) {
     redirect(new moodle_url($wantsurl));
 }

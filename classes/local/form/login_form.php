@@ -64,7 +64,7 @@ class login_form extends \moodleform {
             $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
             $mform2 = $factor->login_form_definition_after_data($mform);
 
-            $buttonarray=array();
+            $buttonarray = array();
             $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('loginsubmit', 'factor_' . $factorname));
             $buttonarray[] = &$mform->createElement('cancel', '', get_string('loginskip', 'factor_' . $factorname));
             $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
