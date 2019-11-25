@@ -115,12 +115,13 @@ if ($form->is_submitted() && (isset($factor) && $factor->get_state() != \tool_mf
 
 echo $OUTPUT->header();
 
+\tool_mfa\manager::display_debug_notification();
+
 if ($gracemode || empty($factorname)) {
     echo $OUTPUT->heading(get_string('pluginname', 'tool_mfa'));
 } else {
     echo $OUTPUT->heading(get_string('pluginname', 'factor_'.$factorname));
 }
 
-\tool_mfa\manager::display_debug_notification();
 $form->display();
 echo $OUTPUT->footer();
