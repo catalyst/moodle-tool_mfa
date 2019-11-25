@@ -31,7 +31,7 @@ class manager {
      * Displays a debug table with current factor information.
      */
     public static function display_debug_notification() {
-        global $OUTPUT;
+        global $OUTPUT, $PAGE;
 
         if (!get_config('tool_mfa', 'debugmode')) {
             return;
@@ -80,20 +80,8 @@ class manager {
             }
 
             // Status.
-            switch ($factor->get_state()) {
-                case \tool_mfa\plugininfo\factor::STATE_PASS:
-                    $state = get_string('state:pass', 'tool_mfa');
-                    break;
-                case \tool_mfa\plugininfo\factor::STATE_FAIL:
-                    $state = get_string('state:fail', 'tool_mfa');
-                    break;
-                case \tool_mfa\plugininfo\factor::STATE_UNKNOWN:
-                    $state = get_string('state:unknown', 'tool_mfa');
-                    break;
-                case \tool_mfa\plugininfo\factor::STATE_NEUTRAL:
-                    $state = get_string('state:neutral', 'tool_mfa');
-                    break;
-            }
+            $OUTPUT = $PAGE->get_renderer('tool_mfa');
+            $state = $OUTPUT->get_state_badge($factor->get_state());
 
             $table->data[] = array(
                 $factor->get_weight(),
@@ -104,13 +92,15 @@ class manager {
             );
         }
 
-        $finalstate = tool_mfa_user_passed_enough_factors() ? get_string('state:pass', 'tool_mfa') : get_string('state:fail', 'tool_mfa');
+        $finalstate = tool_mfa_user_passed_enough_factors()
+            ? \tool_mfa\plugininfo\factor::STATE_PASS
+            : \tool_mfa\plugininfo\factor::STATE_UNKNOWN;
         $table->data[] = array(
             '',
             '',
             '<b>' . get_string('overall', 'tool_mfa') . '</b>',
             self::get_total_weight(),
-            $finalstate,
+            $OUTPUT->get_state_badge($finalstate),
         );
 
         echo \html_writer::table($table);
