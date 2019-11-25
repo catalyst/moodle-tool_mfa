@@ -236,8 +236,16 @@ abstract class object_factor_base implements object_factor {
      * @throws \dml_exception
      */
     public function revoke_user_factor($factorid) {
-        global $DB;
-        return $DB->set_field('factor_'.$this->name, 'revoked', 1, array('id' => $factorid));
+        global $DB, $USER;
+
+        if ($DB->set_field('factor_'.$this->name, 'revoked', 1, array('id' => $factorid))) {
+            $event = \tool_mfa\event\user_revoked_factor::user_revoked_factor_event($USER, $this->get_display_name());
+            $event->trigger();
+
+            return true;
+        }
+
+        return false;
     }
 
     /**

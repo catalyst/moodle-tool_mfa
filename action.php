@@ -127,8 +127,6 @@ switch ($action) {
 
             if ($form->get_data()) {
                 if ($factorobject->revoke_user_factor($factorid)) {
-                    $event = \tool_mfa\event\user_revoked_factor::user_revoked_factor_event($USER, $factorobject->get_display_name());
-                    $event->trigger();
                     redirect($returnurl);
                 }
 
