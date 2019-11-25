@@ -90,6 +90,7 @@ switch ($action) {
 
             if ($data = $form->get_data()) {
                 if ($factorobject->setup_user_factor($data)) {
+                    $factorobject->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
                     redirect($returnurl);
                 }
 

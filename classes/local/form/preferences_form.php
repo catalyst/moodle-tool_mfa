@@ -34,10 +34,24 @@ class preferences_form extends \moodleform
      * @see moodleform::definition()
      */
     public function definition() {
+        global $SESSION, $OUTPUT;
         $mform = $this->_form;
+        $totalweight = \tool_mfa\manager::get_total_weight();
+
+        if ($totalweight >= 100) {
+            $mform->addElement('html', $OUTPUT->notification(get_string('enoughfactors', 'tool_mfa'), 'notifysuccess'));
+
+            if (!empty($SESSION->wantsurl)) {
+                $gotourl = new \moodle_url($SESSION->wantsurl);
+                $gotolink = \html_writer::link($gotourl, $gotourl);
+                $mform->addElement('html', $OUTPUT->notification(get_string('gotourl', 'tool_mfa').$gotolink, 'notifysuccess'));
+            }
+        } else {
+            $mform->addElement('html', $OUTPUT->notification(get_string('notenoughfactors', 'tool_mfa'), 'notifyproblem'));
+        }
+
         $mform = $this->define_active_factors($mform);
         $mform = $this->define_available_factors($mform);
-
     }
 
     /**
