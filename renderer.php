@@ -95,5 +95,88 @@ class tool_mfa_renderer extends plugin_renderer_base {
         return $html;
     }
 
+    /**
+     * Defines section with active user's factors.
+     *
+     * @return string $html
+     * @throws \coding_exception
+     */
+    public function active_factors() {
+        global $OUTPUT;
+
+        $html = $OUTPUT->heading(get_string('preferences:activefactors', 'tool_mfa'), 4);
+
+        $headers = get_strings(array(
+            'factor',
+            'devicename',
+            'created',
+            'createdfromip',
+            'lastverified',
+            'revoke',
+        ), 'tool_mfa');
+
+        $table = new \html_table();
+        $table->id = 'active_factors';
+        $table->attributes['class'] = 'generaltable';
+        $table->head  = array(
+            $headers->factor,
+            $headers->devicename,
+            $headers->created,
+            $headers->createdfromip,
+            $headers->lastverified,
+            $headers->revoke,
+        );
+        $table->colclasses = array(
+            'leftalign',
+            'leftalign',
+            'centeralign',
+            'centeralign',
+            'centeralign',
+            'centeralign',
+            'centeralign',
+            'centeralign',
+        );
+        $table->data  = array();
+
+        $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+
+        foreach ($factors as $factor) {
+
+            $userfactors = $factor->get_active_user_factors();
+
+            if (!$factor->has_setup()) {
+                continue;
+            }
+
+            foreach ($userfactors as $userfactor) {
+                if ($factor->has_revoke()) {
+                    $revokeparams = array('action' => 'revoke', 'factor' => $factor->name, 'factorid' => $userfactor->id);
+                    $revokeurl = new \moodle_url('action.php', $revokeparams);
+                    $revokelink = \html_writer::link($revokeurl, $headers->revoke);
+                } else {
+                    $revokelink = "";
+                }
+
+                $timecreated = $userfactor->timecreated == '-' ? '-' : userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
+                $lastverified = $userfactor->lastverified == '-' ? '-' : userdate($userfactor->lastverified, '%l:%M %p %d/%m/%Y');
+
+                $row = new \html_table_row(array(
+                    $factor->get_display_name(),
+                    $userfactor->devicename,
+                    $timecreated,
+                    $userfactor->createdfromip,
+                    $lastverified,
+                    $revokelink,
+                ));
+                $table->data[] = $row;
+            }
+        }
+
+        $html .= $OUTPUT->box_start('generalbox');
+        $html .= \html_writer::table($table);
+        $html .= $OUTPUT->box_end();
+
+        return $html;
+    }
 }
 
