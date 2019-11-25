@@ -80,10 +80,6 @@ if ($form->is_submitted()) {
             if (isset($factor)) {
                 $factor->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
             }
-        } else {
-            if (isset($factor)) {
-                $factor->set_state(\tool_mfa\plugininfo\factor::STATE_FAIL);
-            }
         }
     }
 }
