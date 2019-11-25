@@ -164,13 +164,13 @@ class preferences_form extends \moodleform
 
         foreach ($factors as $factor) {
 
-            if ($factor->has_setup()) {
-                $setupparams = array('action' => 'setup', 'factor' => $factor->name);
-                $setupurl = new \moodle_url('action.php', $setupparams);
-                $setuplink = \html_writer::link($setupurl, get_string('setupfactor', 'tool_mfa'));
-            } else {
-                $setuplink = '';
+            if (!$factor->has_setup()) {
+                continue;
             }
+
+            $setupparams = array('action' => 'setup', 'factor' => $factor->name);
+            $setupurl = new \moodle_url('action.php', $setupparams);
+            $setuplink = \html_writer::link($setupurl, get_string('setupfactor', 'tool_mfa'));
 
             $row = new \html_table_row(array(
                 $OUTPUT->heading($factor->get_display_name(), 4) . $factor->get_info(),
