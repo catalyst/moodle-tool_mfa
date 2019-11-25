@@ -79,6 +79,23 @@ class factor extends object_factor_base {
     }
 
     /**
+     * TOTP state
+     *
+     * {@inheritDoc}
+     */
+    public function get_state() {
+
+        $userfactors = $this->get_active_user_factors();
+
+        // If no codes are setup then we must be neutral not unknown.
+        if (count($userfactors) == 0) {
+            return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+        }
+
+        return parent::get_state();
+    }
+
+    /**
      * TOTP Factor implementation.
      *
      * {@inheritDoc}
