@@ -97,6 +97,7 @@ class admin_setting_managemfa extends \admin_setting {
         $txt->factor = get_string('factor', 'tool_mfa');
         $txt->weight = get_string('weight', 'tool_mfa');
         $txt->setup = get_string('setuprequired', 'tool_mfa');
+        $txt->input = get_string('inputrequired', 'tool_mfa');
 
         $table = new \html_table();
         $table->id = 'managemfatable';
@@ -108,6 +109,7 @@ class admin_setting_managemfa extends \admin_setting {
             $txt->weight,
             $txt->settings,
             $txt->setup,
+            $txt->input,
         );
         $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
         $table->data  = array();
@@ -153,6 +155,7 @@ class admin_setting_managemfa extends \admin_setting {
             }
 
             $hassetup = $factor->has_setup() ? get_string('yes') : get_string('no');
+            $hasinput = $factor->has_input() ? get_string('yes') : get_string('no');
 
             $rowarray = array(
                 $factor->get_display_name(),
@@ -161,6 +164,7 @@ class admin_setting_managemfa extends \admin_setting {
                 $factor->get_weight(),
                 $settingslink,
                 $hassetup,
+                $hasinput,
             );
             $row = new \html_table_row($rowarray);
             $row->attributes['class'] = $class;

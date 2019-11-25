@@ -54,6 +54,7 @@ $string['graceperiod:notconfigured'] = 'You haven\'t configured your MFA plugin 
 $string['graceperiod:canaccess'] = 'You still can access Moodle until your grace period is expired';
 $string['graceperiod:expires'] = 'Grace period expires \'{$a}\'';
 $string['graceperiod:redirect'] = 'You will be redirected now to user preferences page to configure your factors';
+$string['inputrequired'] = 'User input';
 $string['lastverified'] = 'Last verified';
 $string['mfa'] = 'MFA';
 $string['mfasettings'] = 'Manage MFA';
@@ -75,7 +76,7 @@ $string['settings:debugmode'] = 'Enable debug mode';
 $string['settings:debugmode_help'] = 'Debug mode will display a small notification banner on MFA admin pages, as well as the user preferences page
          with information on the currently enabled factors.';
 $string['setup'] = 'Setup';
-$string['setuprequired'] = 'Setup required';
+$string['setuprequired'] = 'User setup';
 $string['setupfactor'] = 'Setup factor';
 $string['state:pass'] = 'Pass';
 $string['state:fail'] = 'Fail';
