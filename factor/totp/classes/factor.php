@@ -150,13 +150,11 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function login_form_definition($mform) {
-        $userfactors = $this->get_active_user_factors();
 
-        if (count($userfactors) > 0) {
-            $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'),
-                array('autofocus' => 'autofocus', 'pattern' => '[0-9]*'));
-            $mform->setType("verificationcode", PARAM_ALPHANUM);
-        }
+        $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'),
+            array('autofocus' => 'autofocus', 'pattern' => '[0-9]*'));
+        $mform->setType("verificationcode", PARAM_ALPHANUM);
+        $mform->addHelpButton('verificationcode', 'verificationcode', 'factor_totp');
 
         return $mform;
     }

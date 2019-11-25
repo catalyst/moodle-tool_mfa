@@ -45,4 +45,4 @@ $string['setupfactor'] = 'TOTP Factor Setup';
 $string['setupfactor:scan'] = 'Enter secret or scan QR code';
 $string['setupfactor:key'] = 'Secret key: ';
 $string['verificationcode'] = 'Enter your 6 digit verification code';
-$string['verificationcode_help'] = 'Code validation is necessary to confirm you stored your secret key with GA app';
+$string['verificationcode_help'] = 'Open your Authenticator app such as Google Authenticator and look for the 6 digit code which matches this site and username';
