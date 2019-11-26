@@ -87,8 +87,15 @@ if ($form->is_submitted()) {
 if ($form->is_submitted()
     && (isset($factor) && $factor->get_state() != \tool_mfa\plugininfo\factor::STATE_FAIL)
     || !isset($factor)) {
-    if (\tool_mfa\plugininfo\factor::get_next_user_factor()) {
-        redirect($currenturl);
+
+    if ($next = \tool_mfa\plugininfo\factor::get_next_user_factor()) {
+        // Fallback factor means there are not enough factors setup or answered. Requires special handling.
+        if ($next->name == 'fallback') {
+            tool_mfa_logout();
+            print_error('error:notenoughfactors', 'tool_mfa', new moodle_url('/'));
+        } else {
+            redirect($currenturl);
+        }
     }
 
     if (tool_mfa_user_passed_enough_factors() || $gracemode) {

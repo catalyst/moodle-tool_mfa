@@ -154,7 +154,7 @@ class factor extends \core\plugininfo\base {
             }
         }
 
-        return false;
+        return new \tool_mfa\local\factor\fallback();
     }
 
     /**
@@ -240,3 +240,4 @@ class factor extends \core\plugininfo\base {
         $adminroot->add($parentnodename, $settings);
     }
 }
+
