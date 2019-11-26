@@ -154,7 +154,8 @@ class factor extends \core\plugininfo\base {
             }
         }
 
-        return false;
+        //return false;
+        redirect(new \moodle_url('/admin/tool/mfa/fallback.php'));
     }
 
     /**

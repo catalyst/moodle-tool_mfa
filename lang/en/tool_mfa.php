@@ -43,6 +43,7 @@ $string['error:setupfactor'] = 'Can not setup factor';
 $string['error:revoke'] = 'Can not revoke factor';
 $string['error:notenoughfactors'] = 'Not enough factors to authenticate';
 $string['error:factornotenabled'] = 'MFA Factor \'{$a}\' not enabled';
+$string['error:notenoughsetup'] = 'Not enough factors setup to login';
 $string['event:userpassedmfa'] = 'Verification passed';
 $string['event:userrevokedfactor'] = 'Factor revocation';
 $string['event:usersetupfactor'] = 'Factor setup';
