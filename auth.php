@@ -47,12 +47,33 @@ $OUTPUT = $PAGE->get_renderer('tool_mfa');
 
 $currenturl = new moodle_url('/admin/tool/mfa/auth.php');
 
-if (isset($SESSION->tool_mfa_authenticated) && $SESSION->tool_mfa_authenticated) {
+// OVERALL LOGIC
+// 1) Check state DONE
+//      -- If pass, set pass state -> redirect on
+//      -- If fail, cannot_login
+//      else v
+// 2) get the next factor DONE
+// 2.5) Check if fallback factor -> cannot_login DONE
+// 3) Display form for factor
+// 4) Submit form
+// 5) Submit actions ??
+
+
+$state = \tool_mfa\manager::check_status();
+if ($state == \tool_mfa\plugininfo\factor::STATE_PASS) {
     redirect(new moodle_url($wantsurl));
+} else if ($state == \tool_mfa\plugininfo\factor::STATE_FAIL) {
+    \tool_mfa\manager::cannot_login();
 }
 
-$userfactors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+$factor = \tool_mfa\plugininfo\factor::get_next_user_factor();
 
+if ($factor->get_state == \tool_mfa\plugininfo\factor::STATE_FAIL) {
+    // Catch any instant fail state not caught by manager (fallback)
+    \tool_mfa\manager::cannot_login();
+}
+
+/*$userfactors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
 if (count($userfactors) > 0) {
     $nextfactor = \tool_mfa\plugininfo\factor::get_next_user_factor();
     $gracemode = false;
@@ -60,26 +81,23 @@ if (count($userfactors) > 0) {
 } else {
     $factorname = null;
     $gracemode = true;
-}
+}*/
 
-$form = new login_form($currenturl, array('factor_name' => $factorname, 'grace_mode' => $gracemode));
-if (isset($nextfactor)) {
+
+$form = new login_form($currenturl, array('factor' => $nextfactor));
+/*if (isset($nextfactor)) {
     $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
-}
+}*/
 
+// KEEP
 if ($form->is_submitted()) {
     $form->is_validated();
 
     if ($form->is_cancelled()) {
-        if (isset($factor)) {
-            // Only set vars if from a factor.
-            $factor->set_state(\tool_mfa\plugininfo\factor::STATE_NEUTRAL);
-        }
+        $factor->set_state(\tool_mfa\plugininfo\factor::STATE_NEUTRAL);
     } else {
         if ($data = $form->get_data()) {
-            if (isset($factor)) {
-                $factor->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
-            }
+            $factor->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
         }
     }
 }
@@ -88,21 +106,20 @@ if ($form->is_submitted()
     && (isset($factor) && $factor->get_state() != \tool_mfa\plugininfo\factor::STATE_FAIL)
     || !isset($factor)) {
 
+    // RIPOUT
     if ($next = \tool_mfa\plugininfo\factor::get_next_user_factor()) {
         // Fallback factor means there are not enough factors setup or answered. Requires special handling.
         if ($next->name == 'fallback') {
-            tool_mfa_logout();
-            print_error('error:notenoughfactors', 'tool_mfa', new moodle_url('/'));
+            \tool_mfa\manager::mfa_logout();
         } else {
             redirect($currenturl);
         }
     }
 
+    // RIPOUT
     if (tool_mfa_user_passed_enough_factors() || $gracemode) {
-        $SESSION->tool_mfa_authenticated = true;
 
-        $event = \tool_mfa\event\user_passed_mfa::user_passed_mfa_event($USER);
-        $event->trigger();
+        \tool_mfa\manager::set_pass_state();
 
         if ($gracemode) {
             redirect(new moodle_url('/admin/tool/mfa/user_preferences.php'));
@@ -114,8 +131,7 @@ if ($form->is_submitted()
         redirect(new moodle_url($wantsurl));
     }
 
-    tool_mfa_logout();
-    print_error('error:notenoughfactors', 'tool_mfa', new moodle_url('/'));
+    \tool_mfa\manager::mfa_logout();
 }
 
 echo $OUTPUT->header();

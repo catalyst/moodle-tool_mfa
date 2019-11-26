@@ -78,20 +78,6 @@ function tool_mfa_ready() {
 }
 
 /**
- * Logout user.
- *
- * @return void
- */
-function tool_mfa_logout() {
-    $authsequence = get_enabled_auth_plugins();
-    foreach ($authsequence as $authname) {
-        $authplugin = get_auth_plugin($authname);
-        $authplugin->logoutpage_hook();
-    }
-    require_logout();
-}
-
-/**
  * Sets config variable for given factor.
  *
  * @param array $data
@@ -156,21 +142,6 @@ function tool_mfa_extend_navigation_user_settings($navigation, $user, $userconte
         $usernode = $navigation->find('useraccount', navigation_node::TYPE_CONTAINER);
         $usernode->add_node($node);
     }
-}
-
-/**
- * Checks that user passed enough factors to be authenticated.
- *
- * @return bool
- */
-function tool_mfa_user_passed_enough_factors() {
-
-    $totalweight = \tool_mfa\manager::get_total_weight();
-    if ($totalweight >= 100) {
-        return true;
-    }
-
-    return false;
 }
 
 /**

@@ -94,7 +94,7 @@ class manager {
             );
         }
 
-        $finalstate = tool_mfa_user_passed_enough_factors()
+        $finalstate = self::passed_enough_factors()
             ? \tool_mfa\plugininfo\factor::STATE_PASS
             : \tool_mfa\plugininfo\factor::STATE_UNKNOWN;
         $table->data[] = array(
@@ -143,6 +143,87 @@ class manager {
         }
 
         return false;
+    }
+
+    /**
+     * Function to display to the user that they cannot login, then log them out.
+     * 
+     * @return void
+     */
+    public static function cannot_login() {
+        self::mfa_logout();
+        print_error('error:notenoughfactors', 'tool_mfa', new moodle_url('/'));
+    }
+
+    /**
+     * Logout user.
+     *
+     * @return void
+     */
+    public static function mfa_logout() {
+        $authsequence = get_enabled_auth_plugins();
+        foreach ($authsequence as $authname) {
+            $authplugin = get_auth_plugin($authname);
+            $authplugin->logoutpage_hook();
+        }
+        require_logout();
+    }
+
+    /**
+     * Function to check the overall status of a user's authentication.
+     * 
+     * @return mixed a STATE variable from plugininfo
+     */
+    public static function check_status() {
+        global $SESSION;
+        
+        // 1) check for any failures, if so, return state fail
+        // 2) check passed enough factors, if so, return a pass
+        // 3) else neutral state
+
+        // 1
+        $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        $fail = false;
+        foreach ($factors as $factor) {
+            if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_FAIL) {
+                $fail = true;
+            }
+        }
+        if ($fail) {
+            return \tool_mfa\plugininfo\factor::STATE_FAIL;
+        }
+
+        // 2
+        // Check if pass state is already set, else, set pass state
+        if (isset($SESSION->tool_mfa_authenticated) && $SESSION->tool_mfa_authenticated) {
+            return \tool_mfa\plugininfo\factor::STATE_PASS;
+        } else if (self::passed_enough_factors()) {
+            self::set_pass_state();
+            return \tool_mfa\plugininfo\factor::STATE_PASS;
+        }
+
+        // 3
+        return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+    }
+
+    /**
+     * Checks whether user has passed enough factors to be allowed in
+     */
+    public static function passed_enough_factors() {
+        $totalweight = \tool_mfa\manager::get_total_weight();
+        if ($totalweight >= 100) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function set_pass_state() {
+        global $SESSION, $USER;
+        $SESSION->tool_mfa_authenticated = true;
+
+        $event = \tool_mfa\event\user_passed_mfa::user_passed_mfa_event($USER);
+        $event->trigger();
     }
 }
 

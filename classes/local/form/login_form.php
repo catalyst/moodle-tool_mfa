@@ -34,19 +34,19 @@ class login_form extends \moodleform {
      */
     public function definition() {
         $mform = $this->_form;
-        $factorname = $this->_customdata['factor_name'];
-        $gracemode = $this->_customdata['grace_mode'];
+        $factor = $this->_customdata['factor'];
+        ///$gracemode = $this->_customdata['grace_mode'];
 
-        $mform->addElement('hidden', 'factor_name', $factorname);
+        $mform->addElement('hidden', 'factor_name', $factor->name);
         $mform->setType('factor_name', PARAM_ALPHA);
 
-        $mform->addElement('hidden', 'grace_mode', $gracemode);
-        $mform->setType('grace_mode', PARAM_BOOL);
+        //$mform->addElement('hidden', 'grace_mode', $gracemode);
+        //$mform->setType('grace_mode', PARAM_BOOL);
 
-        if ($gracemode) {
+        /*if ($gracemode) {
             $mform = $this->define_grace_period_page($mform);
-        } else if (!empty($factorname)) {
-            $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
+        } else*/ if (!empty($factor)) {
+            //$factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
             $mform = $factor->login_form_definition($mform);
         }
     }
@@ -57,16 +57,17 @@ class login_form extends \moodleform {
      */
     public function definition_after_data() {
         $mform = $this->_form;
-        $gracemode = $this->_customdata['grace_mode'];
-        $factorname = $this->_customdata['factor_name'];
+        //$gracemode = $this->_customdata['grace_mode'];
+        $factor = $this->_customdata['factor'];
 
-        if (!$gracemode && !empty($factorname)) {
-            $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
+        //if (!$gracemode && !empty($factorname)) {
+        if (!empty($factor)) {
+            //$factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
             $mform2 = $factor->login_form_definition_after_data($mform);
 
             $buttonarray = array();
-            $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('loginsubmit', 'factor_' . $factorname));
-            $buttonarray[] = &$mform->createElement('cancel', '', get_string('loginskip', 'factor_' . $factorname));
+            $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('loginsubmit', 'factor_' . $factor->name));
+            $buttonarray[] = &$mform->createElement('cancel', '', get_string('loginskip', 'factor_' . $factor->name));
             $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
             $mform->closeHeaderBefore('buttonar');
         }
@@ -104,10 +105,10 @@ class login_form extends \moodleform {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        if (!$data['grace_mode']) {
+        //if (!$data['grace_mode']) {
             $factor = \tool_mfa\plugininfo\factor::get_factor($data['factor_name']);
             $errors += $factor->login_form_validation($data);
-        }
+        //}
 
         return $errors;
     }
