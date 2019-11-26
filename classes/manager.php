@@ -147,12 +147,12 @@ class manager {
 
     /**
      * Function to display to the user that they cannot login, then log them out.
-     * 
+     *
      * @return void
      */
     public static function cannot_login() {
         self::mfa_logout();
-        print_error('error:notenoughfactors', 'tool_mfa', new moodle_url('/'));
+        print_error('error:notenoughfactors', 'tool_mfa', new \moodle_url('/'));
     }
 
     /**
@@ -171,17 +171,13 @@ class manager {
 
     /**
      * Function to check the overall status of a user's authentication.
-     * 
+     *
      * @return mixed a STATE variable from plugininfo
      */
     public static function check_status() {
         global $SESSION;
-        
-        // 1) check for any failures, if so, return state fail
-        // 2) check passed enough factors, if so, return a pass
-        // 3) else neutral state
 
-        // 1
+        // Check for any instant fail states.
         $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
         $fail = false;
         foreach ($factors as $factor) {
@@ -193,8 +189,7 @@ class manager {
             return \tool_mfa\plugininfo\factor::STATE_FAIL;
         }
 
-        // 2
-        // Check if pass state is already set, else, set pass state
+        // Check for passing state. If found, ensure that session var is set.
         if (isset($SESSION->tool_mfa_authenticated) && $SESSION->tool_mfa_authenticated) {
             return \tool_mfa\plugininfo\factor::STATE_PASS;
         } else if (self::passed_enough_factors()) {
@@ -202,7 +197,7 @@ class manager {
             return \tool_mfa\plugininfo\factor::STATE_PASS;
         }
 
-        // 3
+        // Else return neutral state.
         return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
     }
 
@@ -210,7 +205,7 @@ class manager {
      * Checks whether user has passed enough factors to be allowed in
      */
     public static function passed_enough_factors() {
-        $totalweight = \tool_mfa\manager::get_total_weight();
+        $totalweight = self::get_total_weight();
         if ($totalweight >= 100) {
             return true;
         }
