@@ -89,7 +89,7 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function get_state() {
-        $USER;
+        global $USER;
         $starttime = get_user_preferences('factor_grace_first_login', null, $USER);
 
         // If no start time is recorded, status is unknown.
