@@ -100,5 +100,35 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
         $this->assertEquals(\tool_mfa\manager::get_status(), \tool_mfa\plugininfo\factor::STATE_NEUTRAL);
     }
 
+    public function test_passed_enough_factors() {
+        $this->resetAfterTest(true);
+
+        // Create and login a user.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Check when no factors are setup.
+        $this->assertEquals(\tool_mfa\manager::passed_enough_factors(), false);
+
+        // Setup a no input factor.
+        $this->set_factor_state('auth', 1, 100);
+        set_config('goodauth', '0', 'factor_auth');
+
+        // Check that is enough to pass.
+        $this->assertEquals(\tool_mfa\manager::passed_enough_factors(), true);
+
+        // Lower the weight of the factor.
+        $this->set_factor_state('auth', 1, 75);
+        $this->assertEquals(\tool_mfa\manager::passed_enough_factors(), false);
+
+        // Add another factor to get enough weight to pass, but dont set pass state yet.
+        $this->set_factor_state('email', 1, 100);
+        $factoremail = \tool_mfa\plugininfo\factor::get_factor('email');
+        $this->assertEquals(\tool_mfa\manager::passed_enough_factors(), false);
+
+        // Now pass the factor and check weight.
+        $factoremail->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
+        $this->assertEquals(\tool_mfa\manager::passed_enough_factors(), true);
+    }
 }
 
