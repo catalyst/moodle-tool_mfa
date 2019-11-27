@@ -17,6 +17,7 @@
     * [Email](#email)
     * [Other factors](#other-factors)
 * [Points and examples](#points-and-examples)
+* [Debugging](#debugging)
 * [Support](#support)
 
 ## What is this?
@@ -191,6 +192,19 @@ OR
 * on validate your email AND answer your security questions
 ```
 
+## Debugging
+
+While you are setting up MFA there are 2 things which help make it simple to see what is going on:
+
+1) In the settings page is a 'Summary of good conditions for login' which does what it says on the box. If you have not setup any factors, or if they are configured in a way which would never all login then it will warn you.
+
+2) You can turn on debug mode, when you are logging in and stepping through the MFA login flow if will show you the list of factors and how they have been resolved.
+
+If you have inadvertantly messed things up and locked yourself out, you can disable the whole MFA plugin from the CLI:
+
+```sh
+php admin/cli/cfg.php --component=tool_mfa --name=enabled --set=0
+```
 
 ## Support
 
