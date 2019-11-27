@@ -187,7 +187,6 @@ class manager {
         if (isset($SESSION->tool_mfa_authenticated) && $SESSION->tool_mfa_authenticated) {
             return \tool_mfa\plugininfo\factor::STATE_PASS;
         } else if (self::passed_enough_factors()) {
-            self::set_pass_state();
             return \tool_mfa\plugininfo\factor::STATE_PASS;
         }
 
@@ -213,6 +212,7 @@ class manager {
 
         $state = self::get_status();
         if ($state == \tool_mfa\plugininfo\factor::STATE_PASS) {
+            self::set_pass_state();
             unset($SESSION->wantsurl);
             redirect(new \moodle_url($wantsurl));
         } else if ($state == \tool_mfa\plugininfo\factor::STATE_FAIL) {

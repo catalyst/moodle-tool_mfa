@@ -69,6 +69,36 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
         $this->assertEquals(300, \tool_mfa\manager::get_total_weight());
     }
 
+    public function test_get_status() {
+        $this->resetAfterTest(true);
 
+        // Create and login a user.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Check for neutral status with no factors.
+        $this->assertEquals(\tool_mfa\manager::get_status(), \tool_mfa\plugininfo\factor::STATE_NEUTRAL);
+
+        // Now add a no input factor.
+        $this->set_factor_state('auth', 1, 100);
+        set_config('goodauth', '0', 'factor_auth');
+
+        // Check state is now passing.
+        $this->assertEquals(\tool_mfa\manager::get_status(), \tool_mfa\plugininfo\factor::STATE_PASS);
+
+        // Now add a failure state factor, and ensure that fail takes precedent.
+        $this->set_factor_state('email', 1, 100);
+        $factoremail = \tool_mfa\plugininfo\factor::get_factor('email');
+        $factoremail->set_state(\tool_mfa\plugininfo\factor::STATE_FAIL);
+
+        $this->assertEquals(\tool_mfa\manager::get_status(), \tool_mfa\plugininfo\factor::STATE_FAIL);
+
+        // Remove no input factor, and remove fail state from email. Simulates no data entered yet.
+        $this->set_factor_state('auth', 0, 100);
+        $factoremail->set_state(\tool_mfa\plugininfo\factor::STATE_NEUTRAL);
+
+        $this->assertEquals(\tool_mfa\manager::get_status(), \tool_mfa\plugininfo\factor::STATE_NEUTRAL);
+    }
 
 }
+
