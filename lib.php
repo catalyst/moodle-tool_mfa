@@ -64,13 +64,17 @@ function tool_mfa_after_require_login() {
 function tool_mfa_ready() {
 
     if (!empty($CFG->upgraderunning)) {
-        return;
+        return false;
     }
 
     $pluginenabled = get_config('tool_mfa', 'enabled');
+    if (empty($pluginenabled)) {
+        return false;
+    }
+
     $enabledfactors = \tool_mfa\plugininfo\factor::get_enabled_factors();
 
-    if (empty($pluginenabled) || count($enabledfactors) == 0) {
+    if (count($enabledfactors) == 0) {
         return false;
     }
 
