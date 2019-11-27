@@ -17,9 +17,9 @@
 /**
  * Plugin version and other meta-data are defined here.
  *
- * @package     factor_auth
+ * @package     factor_grace
  * @subpackage  tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

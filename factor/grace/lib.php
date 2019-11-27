@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Settings
+ * Hook library
  *
  * @package     factor_grace
  * @author      Peter Burnett <peterburnett@catalyst-au.net>
@@ -23,17 +23,13 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$settings->add(new admin_setting_configcheckbox('factor_grace/enabled',
-    new lang_string('settings:enable', 'factor_grace'),
-    new lang_string('settings:enable_help', 'factor_grace'), 0));
-
-$settings->add(new admin_setting_configtext('factor_grace/weight',
-    new lang_string('settings:weight', 'factor_grace'),
-    new lang_string('settings:weight_help', 'factor_grace'), 100, PARAM_INT));
-
-$name = new lang_string('settings:graceperiod', 'factor_grace');
-$description = new lang_string('settings:graceperiod_help', 'factor_grace');
-$settings->add(new admin_setting_configduration('factor_grace/graceperiod', $name, $description, '604800'));
-
+function factor_grace_after_require_login() {
+    global $USER;
+    // Check if MFA is ready.
+    if (tool_mfa_ready()) {
+        // Check if a login time is already recorded.
+        if (empty(get_user_preferences('factor_grace_first_login', null, $USER))) {
+            set_user_preference('factor_grace_first_login', time(), $USER);
+        }
+    }
+}

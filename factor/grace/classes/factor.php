@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Auth factor class.
+ * Grace period factor class.
  *
  * @package     tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,6 +33,7 @@ class factor extends object_factor_base {
 
     /**
      * Grace Factor implementation.
+     * This factor needs no user setup, return true.
      *
      * {@inheritDoc}
      */
@@ -42,6 +43,7 @@ class factor extends object_factor_base {
 
     /**
      * Grace Factor implementation.
+     * This factor is a singleton, return single instance.
      *
      * {@inheritDoc}
      */
@@ -62,6 +64,7 @@ class factor extends object_factor_base {
 
     /**
      * Grace Factor implementation.
+     * Factor cannot be revoked, no extra filtering required.
      *
      * {@inheritDoc}
      */
@@ -71,6 +74,7 @@ class factor extends object_factor_base {
 
     /**
      * Grace Factor implementation.
+     * Factor has no input.
      *
      * {@inheritDoc}
      */
@@ -80,27 +84,29 @@ class factor extends object_factor_base {
 
     /**
      * Grace Factor implementation.
+     * Checks the user login time against their first login after MFA activation.
      *
      * {@inheritDoc}
      */
     public function get_state() {
-        global $USER;
+        $USER;
+        $starttime = get_user_preferences('factor_grace_first_login', null, $USER);
 
-        $safetypes = get_config('factor_auth', 'goodauth');
-        $safetypes = explode(',', $safetypes);
-        $authtypes = get_enabled_auth_plugins(true);
-        $found = false;
-        foreach ($safetypes as $type) {
-            if ($authtypes[$type] == $USER->auth) {
-                $found = true;
-            }
+        // If no start time is recorded, status is unknown.
+        if (empty($starttime)) {
+            return \tool_mfa\plugininfo\factor::STATE_UNKNOWN;
+        } else {
+            $duration = get_config('factor_grace', 'graceperiod');
+
+            return (time() <= $starttime + $duration)
+            ? \tool_mfa\plugininfo\factor::STATE_PASS
+            : \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
         }
-
-        return $found ? \tool_mfa\plugininfo\factor::STATE_PASS : \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
     }
 
     /**
      * Grace Factor implementation.
+     * State cannot be set. Return true.
      *
      * {@inheritDoc}
      */

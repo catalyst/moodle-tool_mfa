@@ -17,8 +17,8 @@
 /**
  * Language strings.
  *
- * @package     factor_auth
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
+ * @package     factor_grace
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
