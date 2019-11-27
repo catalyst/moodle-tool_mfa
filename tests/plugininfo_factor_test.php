@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Tests for plugininfo.
  *
  * @package     tool_mfa
  * @author      Peter Burnett <peterburnett@catalyst-au.net>
