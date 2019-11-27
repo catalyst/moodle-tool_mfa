@@ -44,14 +44,8 @@ $currenturl = new moodle_url('/admin/tool/mfa/auth.php');
 // Perform state check.
 \tool_mfa\manager::check_status();
 
-// If not pass/fail, check next factor state.
 $factor = \tool_mfa\plugininfo\factor::get_next_user_factor();
-if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_FAIL) {
-    // Catch any instant fail state not caught by manager (fallback).
-    \tool_mfa\manager::cannot_login();
-}
-
-// If not, perform form actions for input factor.
+// If ok, perform form actions for input factor.
 $form = new login_form($currenturl, array('factor' => $factor));
 if ($form->is_submitted()) {
     $form->is_validated();

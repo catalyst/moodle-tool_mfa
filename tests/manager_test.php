@@ -76,8 +76,8 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
-        // Check for neutral status with no factors.
-        $this->assertEquals(\tool_mfa\manager::get_status(), \tool_mfa\plugininfo\factor::STATE_NEUTRAL);
+        // Check for fail status with no factors.
+        $this->assertEquals(\tool_mfa\manager::get_status(), \tool_mfa\plugininfo\factor::STATE_FAIL);
 
         // Now add a no input factor.
         $this->set_factor_state('auth', 1, 100);
@@ -95,7 +95,7 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
 
         // Remove no input factor, and remove fail state from email. Simulates no data entered yet.
         $this->set_factor_state('auth', 0, 100);
-        $factoremail->set_state(\tool_mfa\plugininfo\factor::STATE_NEUTRAL);
+        $factoremail->set_state(\tool_mfa\plugininfo\factor::STATE_UNKNOWN);
 
         $this->assertEquals(\tool_mfa\manager::get_status(), \tool_mfa\plugininfo\factor::STATE_NEUTRAL);
     }

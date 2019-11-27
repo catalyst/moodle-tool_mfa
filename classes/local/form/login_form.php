@@ -35,10 +35,6 @@ class login_form extends \moodleform {
     public function definition() {
         $mform = $this->_form;
         $factor = $this->_customdata['factor'];
-
-        $mform->addElement('hidden', 'factor_name', $factor->name);
-        $mform->setType('factor_name', PARAM_ALPHA);
-
         $mform = $factor->login_form_definition($mform);
     }
 
@@ -69,7 +65,7 @@ class login_form extends \moodleform {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        $factor = \tool_mfa\plugininfo\factor::get_factor($data['factor_name']);
+        $factor = $this->_customdata['factor'];
         $errors += $factor->login_form_validation($data);
 
         return $errors;

@@ -190,6 +190,12 @@ class manager {
             return \tool_mfa\plugininfo\factor::STATE_PASS;
         }
 
+        // Check next factor for instant fail (fallback).
+        if (\tool_mfa\plugininfo\factor::get_next_user_factor()->get_state() ==
+            \tool_mfa\plugininfo\factor::STATE_FAIL) {
+
+            return \tool_mfa\plugininfo\factor::STATE_FAIL;
+        }
         // Else return neutral state.
         return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
     }
