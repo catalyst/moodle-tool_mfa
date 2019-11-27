@@ -39,15 +39,15 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
         // First get weight with no active factors.
         $this->assertEquals(0, \tool_mfa\manager::get_total_weight());
 
-        // Now setup a couple of input based factors
+        // Now setup a couple of input based factors.
         $this->set_factor_state('totp', 1, 100);
-        
+
         $this->set_factor_state('email', 1, 100);
 
         // Check weight is still 0 with no passes.
         $this->assertEquals(0, \tool_mfa\manager::get_total_weight());
 
-        // Manually pass 1 factor
+        // Manually pass 1 .
         $factor = \tool_mfa\plugininfo\factor::get_factor('totp');
         $totpdata = [
             'secret' => 'fakekey',

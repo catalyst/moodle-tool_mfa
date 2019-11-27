@@ -30,12 +30,6 @@ use tool_mfa\local\form\login_form;
 
 require_login(null, false);
 
-if (empty($SESSION->wantsurl)) {
-    $wantsurl = '/';
-} else {
-    $wantsurl = $SESSION->wantsurl;
-}
-
 $context = context_user::instance($USER->id);
 $PAGE->set_context($context);
 $PAGE->set_url('/admin/tool/mfa/auth.php');
@@ -47,14 +41,8 @@ $OUTPUT = $PAGE->get_renderer('tool_mfa');
 
 $currenturl = new moodle_url('/admin/tool/mfa/auth.php');
 
-// Check for overall state.
-$state = \tool_mfa\manager::check_status();
-if ($state == \tool_mfa\plugininfo\factor::STATE_PASS) {
-    unset($SESSION->wantsurl);
-    redirect(new moodle_url($wantsurl));
-} else if ($state == \tool_mfa\plugininfo\factor::STATE_FAIL) {
-    \tool_mfa\manager::cannot_login();
-}
+// Perform state check.
+\tool_mfa\manager::check_status();
 
 // If not pass/fail, check next factor state.
 $factor = \tool_mfa\plugininfo\factor::get_next_user_factor();
@@ -78,7 +66,7 @@ if ($form->is_submitted()) {
     }
 
     // Move to next factor.
-    redirect($currenturl);
+    \tool_mfa\manager::check_status(true);
 }
 
 echo $OUTPUT->header();
