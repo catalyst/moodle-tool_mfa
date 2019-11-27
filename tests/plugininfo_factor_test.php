@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Tests for plugininfo.
  *
  * @package     tool_mfa
  * @author      Peter Burnett <peterburnett@catalyst-au.net>
@@ -35,8 +35,8 @@ class tool_mfa_plugininfo_factor_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
-        // Test that with no enabled factors, false is returned.
-        $this->assertFalse(\tool_mfa\plugininfo\factor::get_next_user_factor());
+        // Test that with no enabled factors, fallback is returned.
+        $this->assertEquals(\tool_mfa\plugininfo\factor::get_next_user_factor()->name, 'fallback');
 
         // Setup enabled totp factor for user.
         set_config('enabled', 1, 'factor_totp');
@@ -50,9 +50,9 @@ class tool_mfa_plugininfo_factor_testcase extends advanced_testcase {
         // Test that factor now appears (from STATE_UNKNOWN).
         $this->assertEquals(\tool_mfa\plugininfo\factor::get_next_user_factor()->name, 'totp');
 
-        // Now pass this factor.
+        // Now pass this factor, check for fallback.
         $totpfactor->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
-        $this->assertFalse(\tool_mfa\plugininfo\factor::get_next_user_factor());
+        $this->assertEquals(\tool_mfa\plugininfo\factor::get_next_user_factor()->name, 'fallback');
 
         // Add in a no-input factor.
         set_config('enabled', 1, 'factor_auth');
@@ -62,9 +62,9 @@ class tool_mfa_plugininfo_factor_testcase extends advanced_testcase {
         $this->assertTrue($authfactor->is_enabled());
         $this->assertFalse($authfactor->has_setup());
 
-        // TODO: Enable when a no_input factor is ready
-        /*$this->assertEquals(2, count(\tool_mfa\plugininfo\factor::get_active_user_factor_types()));
-        $this->assertFalse(\tool_mfa\plugininfo\factor::get_next_user_factor());*/
+        // Check that the next factor is still the fallback factor.
+        $this->assertEquals(2, count(\tool_mfa\plugininfo\factor::get_active_user_factor_types()));
+        $this->assertEquals(\tool_mfa\plugininfo\factor::get_next_user_factor()->name, 'fallback');
     }
 }
 
