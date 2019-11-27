@@ -263,6 +263,14 @@ class manager {
             $event = \tool_mfa\event\user_passed_mfa::user_passed_mfa_event($USER);
             $event->trigger();
         }
+
+        // Fire specific factor pass state actions.
+        $pluginsfunction = get_plugins_with_function('mfa_post_pass_state');
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $pluginfunction();
+            }
+        }
     }
 }
 

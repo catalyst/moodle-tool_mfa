@@ -23,6 +23,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 function factor_grace_after_require_login() {
     global $USER;
     // Check if MFA is ready.
@@ -31,5 +33,31 @@ function factor_grace_after_require_login() {
         if (empty(get_user_preferences('factor_grace_first_login', null, $USER))) {
             set_user_preference('factor_grace_first_login', time(), $USER);
         }
+    }
+}
+
+function factor_grace_mfa_post_pass_state() {
+    global $SESSION, $USER;
+
+    if (isset($SESSION->grace_message_shown) && $SESSION->grace_message_shown) {
+        return;
+    }
+
+    // Ensure grace factor passed before displaying notification.
+    $grace = \tool_mfa\plugininfo\factor::get_factor('grace');
+    if ($grace->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
+        $SESSION->grace_message_shown = true;
+
+        $url = new moodle_url('/admin/tool/mfa/user_preferences.php');
+        $link = \html_writer::link($url, get_string('preferences', 'factor_grace'));
+
+        // Can never be null here, STATE_PASS above.
+        $starttime = get_user_preferences('factor_grace_first_login', null, $USER);
+        $timeremaining = ($starttime + get_config('factor_grace', 'graceperiod')) - time();
+        $time = format_time($timeremaining);
+
+        $data = array('url' => $link, 'time' => $time);
+        $message = get_string('setupfactors', 'factor_grace', $data);
+        \core\notification::info($message);
     }
 }

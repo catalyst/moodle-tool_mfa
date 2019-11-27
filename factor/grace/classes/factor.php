@@ -64,16 +64,6 @@ class factor extends object_factor_base {
 
     /**
      * Grace Factor implementation.
-     * Factor cannot be revoked, no extra filtering required.
-     *
-     * {@inheritDoc}
-     */
-    public function get_active_user_factors() {
-        return $this->get_all_user_factors();
-    }
-
-    /**
-     * Grace Factor implementation.
      * Factor has no input.
      *
      * {@inheritDoc}
@@ -98,9 +88,13 @@ class factor extends object_factor_base {
         } else {
             $duration = get_config('factor_grace', 'graceperiod');
 
-            return (time() <= $starttime + $duration)
-            ? \tool_mfa\plugininfo\factor::STATE_PASS
-            : \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+            if (!empty($duration)) {
+                return (time() <= $starttime + $duration)
+                ? \tool_mfa\plugininfo\factor::STATE_PASS
+                : \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+            } else {
+                return \tool_mfa\plugininfo\factor::STATE_UNKNOWN;
+            }
         }
     }
 
