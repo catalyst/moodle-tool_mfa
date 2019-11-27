@@ -181,8 +181,14 @@ class admin_setting_managemfa extends \admin_setting {
      * @return string HTML code
      */
     public function define_factor_combinations_table() {
+        global $OUTPUT;
+
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
         $combinations = $this->get_factor_combinations($factors, 0, count($factors) - 1);
+
+        if (empty($combinations)) {
+            return $OUTPUT->notification(get_string('error:notenoughfactors', 'tool_mfa'), 'notifyproblem');
+        }
 
         $txt = get_strings(array('combination', 'totalweight'), 'tool_mfa');
         $table = new \html_table();
