@@ -60,38 +60,35 @@ class tool_mfa_renderer extends plugin_renderer_base {
 
         $html = $OUTPUT->heading(get_string('preferences:availablefactors', 'tool_mfa'), 4);
 
-        $table = new \html_table();
-        $table->id = 'available_factors';
-        $table->attributes['class'] = 'generaltable';
-        $table->head  = array(
-            get_string('factor', 'tool_mfa'),
-            get_string('action'),
-        );
-        $table->colclasses = array('leftalign', 'centeralign');
-        $table->data  = array();
-
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
-
         foreach ($factors as $factor) {
 
+            // TODO is_configured / is_ready
             if (!$factor->has_setup()) {
                 continue;
             }
-
-            $setupparams = array('action' => 'setup', 'factor' => $factor->name);
-            $setupurl = new \moodle_url('action.php', $setupparams);
-            $setuplink = \html_writer::link($setupurl, get_string('setupfactor', 'tool_mfa'));
-
-            $row = new \html_table_row(array(
-                $OUTPUT->heading($factor->get_display_name(), 4) . $factor->get_info(),
-                $setuplink,
-            ));
-            $table->data[] = $row;
+            $html .= $this->setup_factor($factor);
         }
 
-        $html .= $OUTPUT->box_start('generalbox');
-        $html .= \html_writer::table($table);
-        $html .= $OUTPUT->box_end();
+        return $html;
+    }
+
+    public function setup_factor($factor) {
+        global $OUTPUT;
+
+        $html = '';
+
+        $html .= html_writer::start_tag('div', array('class' => 'card'));
+        $html .= html_writer::tag('div', $factor->get_display_name(), array('class' => 'card-header'));
+        $html .= html_writer::start_tag('div', array('class' => 'card-body'));
+        $html .= $factor->get_info();
+
+        $setupparams = array('action' => 'setup', 'factor' => $factor->name);
+        $setupurl = new \moodle_url('action.php', $setupparams);
+        $html .= $OUTPUT->single_button($setupurl, get_string('setupfactor', 'tool_mfa'));
+        $html .= html_writer::end_tag('div');
+        $html .= html_writer::end_tag('div');
+
         return $html;
     }
 
