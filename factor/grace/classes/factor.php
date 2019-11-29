@@ -48,13 +48,23 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function get_all_user_factors() {
+        global $DB, $USER;
+
+        if (!$DB->record_exists('factor_grace', array('userid' => $USER->id))) {
+            $DB->insert_record('factor_grace', array(
+                'userid' => $USER->id,
+                'ip' => $USER->lastip,
+                'timecreated' => time(),
+            ));
+        }
+        $factorrecord = $DB->get_record('factor_grace', array('userid' => $USER->id));
 
         $factor = (object) array(
             'id' => 1,
             'name' => $this->name,
             'devicename' => '-',
-            'timecreated' => '-',
-            'createdfromip' => '-',
+            'timecreated' => $factorrecord->timecreated,
+            'createdfromip' => $factorrecord->timecreated,
             'lastverified' => '-',
             'revoked' => '-'
         );
@@ -79,8 +89,19 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function get_state() {
-        global $USER;
-        $starttime = get_user_preferences('factor_grace_first_login', null, $USER);
+        // Check if user already has a record, if not, create one at current time.
+        global $USER, $DB;
+
+        if (!$DB->record_exists('factor_grace', array('userid' => $USER->id))) {
+            $DB->insert_record('factor_grace', array(
+                'userid' => $USER->id,
+                'ip' => $USER->lastip,
+                'timecreated' => time(),
+            ));
+        }
+        $record = $DB->get_record('factor_grace', array('userid' => $USER->id));
+
+        $starttime = $record->timecreated;
 
         // If no start time is recorded, status is unknown.
         if (empty($starttime)) {
@@ -106,6 +127,32 @@ class factor extends object_factor_base {
      */
     public function set_state($state) {
         return true;
+    }
+
+    public function post_pass_state() {
+        global $SESSION, $USER;
+
+        if (isset($SESSION->grace_message_shown) && $SESSION->grace_message_shown) {
+            return;
+        }
+
+        // Ensure grace factor passed before displaying notification.
+        $grace = \tool_mfa\plugininfo\factor::get_factor('grace');
+        if ($grace->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
+            $SESSION->grace_message_shown = true;
+
+            $url = new \moodle_url('/admin/tool/mfa/user_preferences.php');
+            $link = \html_writer::link($url, get_string('preferences', 'factor_grace'));
+
+            // Can never be null here, STATE_PASS above.
+            $starttime = get_user_preferences('factor_grace_first_login', null, $USER);
+            $timeremaining = ($starttime + get_config('factor_grace', 'graceperiod')) - time();
+            $time = format_time($timeremaining);
+
+            $data = array('url' => $link, 'time' => $time);
+            $message = get_string('setupfactors', 'factor_grace', $data);
+            \core\notification::info($message);
+        }
     }
 }
 

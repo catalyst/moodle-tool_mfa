@@ -26,12 +26,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 $settings->add(new admin_setting_configcheckbox('factor_grace/enabled',
-    new lang_string('settings:enable', 'factor_grace'),
-    new lang_string('settings:enable_help', 'factor_grace'), 0));
+    new lang_string('settings:enablefactor', 'tool_mfa'),
+    new lang_string('settings:enablefactor_help', 'tool_mfa'), 0));
 
 $settings->add(new admin_setting_configtext('factor_grace/weight',
-    new lang_string('settings:weight', 'factor_grace'),
-    new lang_string('settings:weight_help', 'factor_grace'), 100, PARAM_INT));
+    new lang_string('settings:weight', 'tool_mfa'),
+    new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
 
 $name = new lang_string('settings:graceperiod', 'factor_grace');
 $description = new lang_string('settings:graceperiod_help', 'factor_grace');

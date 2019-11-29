@@ -343,4 +343,12 @@ abstract class object_factor_base implements object_factor {
         $event = \tool_mfa\event\user_setup_factor::user_setup_factor_event($user, $this->get_display_name());
         $event->trigger();
     }
+
+    /**
+     * Function for factor actions in the pass state.
+     * Override in child class if necessary.
+     */
+    public function post_pass_state() {
+        return null;
+    }
 }
