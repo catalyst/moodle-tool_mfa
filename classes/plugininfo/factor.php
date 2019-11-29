@@ -149,7 +149,7 @@ class factor extends \core\plugininfo\base {
                 continue;
             }
 
-            if ($factor->get_state() == self::STATE_UNKNOWN || $factor->get_state() == self::STATE_FAIL) {
+            if ($factor->get_state() == self::STATE_UNKNOWN) {
                 return $factor;
             }
         }
