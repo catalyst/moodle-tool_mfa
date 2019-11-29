@@ -77,6 +77,10 @@ $string['settings:general'] = 'General MFA settings';
 $string['settings:debugmode'] = 'Enable debug mode';
 $string['settings:debugmode_help'] = 'Debug mode will display a small notification banner on MFA admin pages, as well as the user preferences page
          with information on the currently enabled factors.';
+$string['settings:enablefactor'] = 'Enable factor';
+$string['settings:enablefactor_help'] = 'Check this control to allow the factor to be used for MFA authentication.';
+$string['settings:weight'] = 'Factor weight';
+$string['settings:weight_help'] = 'Weight is this factors contribution to the 100 required total if it passes.';
 $string['setup'] = 'Setup';
 $string['setuprequired'] = 'User setup';
 $string['setupfactor'] = 'Setup factor';
