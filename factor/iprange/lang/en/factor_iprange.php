@@ -25,3 +25,5 @@
 
 $string['pluginname'] = 'IP Range Factor';
 $string['privacy:metadata'] = 'The IP Range Factor plugin does not store any personal data';
+$string['settings:safeips'] = 'Safe IP ranges';
+$string['settings:safeips_help'] = 'Box to enter IPs to be counted as a pass in factor.';
