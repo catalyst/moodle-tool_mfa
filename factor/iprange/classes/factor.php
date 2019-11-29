@@ -34,7 +34,7 @@ class factor extends object_factor_base {
     /**
      * IP Range Factor implementation.
      * This factor needs no user setup, return true.
-     * 
+     *
      * {@inheritDoc}
      */
     public function setup_user_factor($data) {
@@ -44,7 +44,7 @@ class factor extends object_factor_base {
     /**
      * IP Range Factor implementation.
      * This factor is a singleton, return single instance.
-     * 
+     *
      * {@inheritDoc}
      */
     public function get_all_user_factors() {
@@ -64,7 +64,7 @@ class factor extends object_factor_base {
     /**
      * IP Range Factor implementation.
      * Factor has no input
-     * 
+     *
      * {@inheritDoc}
      */
     public function has_input() {
@@ -74,17 +74,27 @@ class factor extends object_factor_base {
     /**
      * IP Range Factor implementation.
      * Checks a users current IP against allowed and disallowed ranges.
-     * 
+     *
      * {@inheritDoc}
      */
     public function get_state() {
-        // MEATY IMPLEMENTATION HERE
+        $safeips = get_config('factor_iprange', 'safeips');
+
+        // TODO: Check for failures here.
+
+        if (!empty($safeips)) {
+            if (remoteip_in_list($safeips)) {
+                return \tool_mfa\plugininfo\factor::STATE_PASS;
+            }
+        }
+
+        return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
     }
 
     /**
      * IP Range Factor implementation.
      * Cannot set state, return true.
-     * 
+     *
      * {@inheritDoc}
      */
     public function set_state($state) {

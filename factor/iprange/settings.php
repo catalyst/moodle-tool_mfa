@@ -30,14 +30,9 @@ $settings->add(new admin_setting_configcheckbox('factor_iprange/enabled',
     new lang_string('settings:enablefactor_help', 'tool_mfa'), 0));
 
 $settings->add(new admin_setting_configtext('factor_iprange/weight',
-<<<<<<< HEAD
     new lang_string('settings:weight', 'tool_mfa'),
     new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
-=======
-    new lang_string('settings:weight', 'factor_iprange'),
-    new lang_string('settings:weight_help', 'factor_iprange'), 100, PARAM_INT));
 
 $settings->add(new admin_setting_configiplist('factor_iprange/safeips',
     new lang_string('settings:safeips', 'factor_iprange'),
     new lang_string('settings:safeips_help', 'factor_iprange'), null, PARAM_TEXT));
->>>>>>> 672fa7a... Added admin setting for IP entry
