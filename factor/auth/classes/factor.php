@@ -92,16 +92,20 @@ class factor extends object_factor_base {
         global $USER;
 
         $safetypes = get_config('factor_auth', 'goodauth');
-        $safetypes = explode(',', $safetypes);
-        $authtypes = get_enabled_auth_plugins(true);
-        $found = false;
-        foreach ($safetypes as $type) {
-            if ($authtypes[$type] == $USER->auth) {
-                $found = true;
-            }
-        }
+        if (strlen($safetypes) != 0) {
+            $safetypes = explode(',', $safetypes);
+            $authtypes = get_enabled_auth_plugins(true);
 
-        return $found ? \tool_mfa\plugininfo\factor::STATE_PASS : \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+            // Check all safetypes against user auth.
+            foreach ($safetypes as $type) {
+                if ($authtypes[$type] == $USER->auth) {
+                    return \tool_mfa\plugininfo\factor::STATE_PASS;
+                }
+            }
+            return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+        } else {
+            return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+        }
     }
 
     /**
