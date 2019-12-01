@@ -18,7 +18,7 @@
  * IP Range factor class.
  *
  * @package     tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,4 +31,73 @@ use tool_mfa\local\factor\object_factor_base;
 
 class factor extends object_factor_base {
 
+    /**
+     * IP Range Factor implementation.
+     * This factor needs no user setup, return true.
+     *
+     * {@inheritDoc}
+     */
+    public function setup_user_factor($data) {
+        return true;
+    }
+
+    /**
+     * IP Range Factor implementation.
+     * This factor is a singleton, return single instance.
+     *
+     * {@inheritDoc}
+     */
+    public function get_all_user_factors() {
+        $factor = (object) array(
+            'id' => 1,
+            'name' => $this->name,
+            'devicename' => '-',
+            'timecreated' => '-',
+            'createdfromip' => '-',
+            'lastverified' => '-',
+            'revoked' => '-'
+        );
+
+        return [$factor];
+    }
+
+    /**
+     * IP Range Factor implementation.
+     * Factor has no input
+     *
+     * {@inheritDoc}
+     */
+    public function has_input() {
+        return false;
+    }
+
+    /**
+     * IP Range Factor implementation.
+     * Checks a users current IP against allowed and disallowed ranges.
+     *
+     * {@inheritDoc}
+     */
+    public function get_state() {
+        $safeips = get_config('factor_iprange', 'safeips');
+
+        // TODO: Check for failures here.
+
+        if (!empty($safeips)) {
+            if (remoteip_in_list($safeips)) {
+                return \tool_mfa\plugininfo\factor::STATE_PASS;
+            }
+        }
+
+        return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+    }
+
+    /**
+     * IP Range Factor implementation.
+     * Cannot set state, return true.
+     *
+     * {@inheritDoc}
+     */
+    public function set_state($state) {
+        return true;
+    }
 }

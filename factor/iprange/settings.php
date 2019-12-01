@@ -32,3 +32,7 @@ $settings->add(new admin_setting_configcheckbox('factor_iprange/enabled',
 $settings->add(new admin_setting_configtext('factor_iprange/weight',
     new lang_string('settings:weight', 'tool_mfa'),
     new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
+
+$settings->add(new admin_setting_configiplist('factor_iprange/safeips',
+    new lang_string('settings:safeips', 'factor_iprange'),
+    new lang_string('settings:safeips_help', 'factor_iprange'), null, PARAM_TEXT));
