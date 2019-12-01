@@ -87,6 +87,8 @@ git apply admin/tool/mfa/core36.patch
 
 ## Configuration
 
+WARNING: Do not try to configure this plugin in the web GUI immediately after installation, at this point during the upgrade process you are not actually logged in so it is easy to 'brick' you moodle and lock yourself out.
+
 
 
 ### General settings
