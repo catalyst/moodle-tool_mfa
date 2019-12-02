@@ -349,6 +349,6 @@ abstract class object_factor_base implements object_factor {
      * Override in child class if necessary.
      */
     public function post_pass_state() {
-        return null;
+        return;
     }
 }
