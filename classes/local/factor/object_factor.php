@@ -147,13 +147,6 @@ interface object_factor {
     public function has_revoke();
 
     /**
-     * Returns true if factor has a property when this factor was verified last time.
-     *
-     * @return bool
-     */
-    public function has_lastverified();
-
-    /**
      * Returns true if factor needs to be setup by user and has setup_form.
      *
      * @return bool
@@ -189,4 +182,11 @@ interface object_factor {
      * @return void
      */
     public function post_pass_state();
+
+    /**
+     * Retrieves label for a factorid.
+     *
+     * @return string
+     */
+    public function get_label($factorid);
 }

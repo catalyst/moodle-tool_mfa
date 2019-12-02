@@ -230,48 +230,43 @@ abstract class object_factor_base implements object_factor {
 
     /**
      * Marks factor record as revoked.
+     * If factorid is not provided, revoke all instances of factor.
      *
      * @param int $factorid
      * @return bool
      * @throws \dml_exception
      */
-    public function revoke_user_factor($factorid) {
+    public function revoke_user_factor($factorid = null) {
         global $DB, $USER;
 
-        if ($DB->set_field('factor_'.$this->name, 'revoked', 1, array('id' => $factorid))) {
-            $event = \tool_mfa\event\user_revoked_factor::user_revoked_factor_event($USER, $this->get_display_name());
-            $event->trigger();
-
-            return true;
+        if (!empty($factorid)) {
+            $params = ['id' => $factorid];
+        } else {
+            $params = ['userid' => $USER->id, 'factor' => $this->name];
         }
+        $DB->set_field('tool_mfa', 'revoked', 1, $params);
 
-        return false;
-    }
+        $event = \tool_mfa\event\user_revoked_factor::user_revoked_factor_event($USER, $this->get_display_name());
+        $event->trigger();
 
-    /**
-     * Returns true if factor has a property when this factor was verified last time.
-     *
-     * Override in child class if necessary.
-     *
-     * @return bool
-     */
-    public function has_lastverified() {
-        return false;
+        return true;
     }
 
     /**
      * When validation code is correct - update lastverified field for given factor.
-     *
+     * If factor id is not provided, update all factor entries for user.
      * @param int $factorid
      * @return bool
      * @throws \dml_exception
      */
-    public function update_lastverified($factorid) {
-        global $DB;
-        if ($this->has_lastverified()) {
-            return $DB->set_field('factor_'.$this->name, 'lastverified', time(), array('id' => $factorid));
+    public function update_lastverified($factorid = null) {
+        global $DB, $USER;
+        if (!empty($factorid)) {
+            $params = ['id' => $factorid];
+        } else {
+            $params = ['factor' => $this->name, 'userid' => $USER->id];
         }
-        return false;
+        return $DB->set_field('tool_mfa', 'lastverified', time(), $params);
     }
 
     /**
@@ -349,6 +344,18 @@ abstract class object_factor_base implements object_factor {
      * Override in child class if necessary.
      */
     public function post_pass_state() {
-        return;
+        // Update lastverified for factor.
+        global $DB, $USER;
+        if ($this->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
+            $DB->set_field('tool_mfa', 'lastverified', time(), array('userid' => $USER->id, 'factor' => $this->name));
+        }
+    }
+
+    /**
+     * Function to retrieve the label for a factorid.
+     */
+    public function get_label($factorid) {
+        global $DB;
+        return $DB->get_field('tool_mfa', 'label', array('id' => $factorid));
     }
 }

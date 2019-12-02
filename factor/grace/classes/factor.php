@@ -40,20 +40,22 @@ class factor extends object_factor_base {
     public function get_all_user_factors() {
         global $DB, $USER;
 
-        $records = $DB->get_records('factor_grace', array('userid' => $USER->id));
+        $records = $DB->get_records('tool_mfa', array('userid' => $USER->id, 'factor' => $this->name));
 
         if (!empty($records)) {
             return $records;
         }
-        
+
         // Null records returned, build new record.
         $record = array(
             'userid' => $USER->id,
+            'factor' => $this->name,
             'createdfromip' => $USER->lastip,
             'timecreated' => time(),
+            'revoked' => 0,
         );
-        $record['id'] = $DB->insert_record('factor_grace', $record, true);
-        return [$record];
+        $record['id'] = $DB->insert_record('tool_mfa', $record, true);
+        return [(object) $record];
     }
 
     /**
@@ -115,7 +117,7 @@ class factor extends object_factor_base {
     }
 
     public function post_pass_state() {
-        global $USER;
+        parent::post_pass_state();
 
         // Ensure grace factor passed before displaying notification.
         if ($this->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
