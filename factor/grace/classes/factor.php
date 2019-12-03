@@ -33,16 +33,6 @@ class factor extends object_factor_base {
 
     /**
      * Grace Factor implementation.
-     * This factor needs no user setup, return true.
-     *
-     * {@inheritDoc}
-     */
-    public function setup_user_factor($data) {
-        return true;
-    }
-
-    /**
-     * Grace Factor implementation.
      * This factor is a singleton, return single instance.
      *
      * {@inheritDoc}
@@ -54,16 +44,16 @@ class factor extends object_factor_base {
 
         if (!empty($records)) {
             return $records;
-        } else {
-            // Null records returned, build new record.
-            $record = array(
-                'userid' => $USER->id,
-                'createdfromip' => $USER->lastip,
-                'timecreated' => time(),
-            );
-            $record['id'] = $DB->insert_record('factor_grace', $record, true);
-            return $record;
         }
+        
+        // Null records returned, build new record.
+        $record = array(
+            'userid' => $USER->id,
+            'createdfromip' => $USER->lastip,
+            'timecreated' => time(),
+        );
+        $record['id'] = $DB->insert_record('factor_grace', $record, true);
+        return [$record];
     }
 
     /**
