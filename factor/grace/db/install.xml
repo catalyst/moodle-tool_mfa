@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="admin/tool/mfa/factor/grace/db" VERSION="20191129" COMMENT="XMLDB file for Moodle admin/tool/mfa/factor/grace"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="factor_grace" COMMENT="Table to store when a user first entered the grace period">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="User ID"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="15" NOTNULL="false" SEQUENCE="false" COMMENT="The time that the user entered the grace period"/>
+        <FIELD NAME="createdfromip" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="IP the grace period was entered from"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

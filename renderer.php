@@ -63,7 +63,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
         foreach ($factors as $factor) {
 
-            // TODO is_configured / is_ready
+            // TODO is_configured / is_ready.
             if (!$factor->has_setup()) {
                 continue;
             }

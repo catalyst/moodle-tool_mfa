@@ -262,6 +262,12 @@ class manager {
             $SESSION->tool_mfa_authenticated = true;
             $event = \tool_mfa\event\user_passed_mfa::user_passed_mfa_event($USER);
             $event->trigger();
+
+            // Fire post pass state factor actions.
+            $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+            foreach ($factors as $factor) {
+                $factor->post_pass_state();
+            }
         }
     }
 }

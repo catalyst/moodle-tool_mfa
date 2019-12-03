@@ -182,4 +182,11 @@ interface object_factor {
      * @return bool
      */
     public function set_state($state);
+
+    /**
+     * Fires any additional actions required by the factor once the user reaches the pass state.
+     *
+     * @return void
+     */
+    public function post_pass_state();
 }
