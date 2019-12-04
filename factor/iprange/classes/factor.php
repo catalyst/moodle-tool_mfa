@@ -48,17 +48,24 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function get_all_user_factors() {
-        $factor = (object) array(
-            'id' => 1,
-            'name' => $this->name,
-            'devicename' => '-',
-            'timecreated' => '-',
-            'createdfromip' => '-',
-            'lastverified' => '-',
-            'revoked' => '-'
-        );
+        global $DB, $USER;
+        $records = $DB->get_records('tool_mfa', array('userid' => $USER->id, 'factor' => $this->name));
 
-        return [$factor];
+        if (!empty($records)) {
+            return $records;
+        }
+
+        // Null records returned, build new record.
+        $record = array(
+            'userid' => $USER->id,
+            'factor' => $this->name,
+            'timecreated' => time(),
+            'createdfromip' => $USER->lastip,
+            'timemodified' => time(),
+            'revoked' => 0,
+        );
+        $record['id'] = $DB->insert_record('tool_mfa', $record, true);
+        return [(object) $record];
     }
 
     /**

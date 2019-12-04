@@ -48,5 +48,10 @@ if ($hassiteconfig) {
     foreach (core_plugin_manager::instance()->get_plugins_of_type('factor') as $plugin) {
         $plugin->load_settings($ADMIN, 'toolmfafolder', $hassiteconfig);
     }
+
+    $ADMIN->add('reports', new admin_category('toolmfareports', get_string('mfareports', 'tool_mfa')));
+    $ADMIN->add('toolmfareports',
+        new admin_externalpage('factorreport', get_string('factorreport', 'tool_mfa'),
+        new moodle_url('/admin/tool/mfa/factor_report.php')));
 }
 

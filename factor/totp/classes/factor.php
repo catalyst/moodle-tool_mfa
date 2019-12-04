@@ -216,15 +216,16 @@ class factor extends object_factor_base {
         if (!empty($data->secret)) {
             $row = new \stdClass();
             $row->userid = $USER->id;
+            $row->factor = $this->name;
             $row->secret = $data->secret;
-            $row->devicename = $data->devicename;
+            $row->label = $data->devicename;
             $row->timecreated = time();
             $row->createdfromip = $USER->lastip;
             $row->timemodified = time();
             $row->lastverified = time();
             $row->revoked = 0;
 
-            $DB->insert_record('factor_totp', $row);
+            $DB->insert_record('tool_mfa', $row);
             $this->create_event_after_factor_setup($USER);
 
             return true;
@@ -240,13 +241,7 @@ class factor extends object_factor_base {
      */
     public function get_all_user_factors() {
         global $DB, $USER;
-        $sql = "SELECT id, 'totp' AS name, devicename, secret, timecreated, createdfromip, timemodified, lastverified, revoked
-                  FROM {factor_totp}
-                 WHERE userid = ?
-              ORDER BY revoked, timemodified";
-
-        $return = $DB->get_records_sql($sql, array($USER->id));
-        return $return;
+        return $DB->get_records('tool_mfa', array('userid' => $USER->id, 'factor' => $this->name));
     }
 
     /**
@@ -263,21 +258,17 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function has_lastverified() {
+    public function has_setup() {
         return true;
     }
 
     /**
      * TOTP Factor implementation.
+     * Empty override of parent.
      *
      * {@inheritDoc}
      */
-    public function has_setup() {
-        return true;
-    }
-
-    public function get_device_name($factorid) {
-        global $DB;
-        return $DB->get_field('factor_totp', 'devicename', array('id' => $factorid));
+    public function post_pass_state() {
+        return;
     }
 }

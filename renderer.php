@@ -159,7 +159,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
 
                 $row = new \html_table_row(array(
                     $factor->get_display_name(),
-                    $userfactor->devicename,
+                    $userfactor->label,
                     $timecreated,
                     $userfactor->createdfromip,
                     $lastverified,

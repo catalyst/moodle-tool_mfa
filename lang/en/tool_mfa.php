@@ -84,3 +84,5 @@ $string['state:unknown'] = 'Unknown';
 $string['state:neutral'] = 'Neutral';
 $string['totalweight'] = 'Total weight';
 $string['weight'] = 'Weight';
+$string['mfareports'] = 'MFA reports';
+$string['factorreport'] = 'All factor report';

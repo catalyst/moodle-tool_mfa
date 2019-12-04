@@ -53,14 +53,15 @@ if ($form->is_submitted()) {
     // Set state from user actions.
     if ($form->is_cancelled()) {
         $factor->set_state(\tool_mfa\plugininfo\factor::STATE_NEUTRAL);
+        // Move to next factor.
+        \tool_mfa\manager::check_status(true);
     } else {
         if ($data = $form->get_data()) {
             $factor->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
+            // Move to next factor.
+            \tool_mfa\manager::check_status(true);
         }
     }
-
-    // Move to next factor.
-    \tool_mfa\manager::check_status(true);
 }
 
 echo $OUTPUT->header();

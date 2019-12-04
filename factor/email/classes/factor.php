@@ -97,24 +97,28 @@ class factor extends object_factor_base {
 
     /**
      * E-Mail Factor implementation.
-     * As E-Mail Factor has nothing to configure from user side we store nothing in db.
      *
      * {@inheritDoc}
      */
     public function get_all_user_factors() {
-        global $USER;
+        global $DB, $USER;
 
-        $return = array((object) [
-            'id' => 1,
-            'name' => $this->name,
-            'useremail' => $USER->email,
-            'devicename' => get_string('default'),
-            'timecreated' => '-',
-            'createdfromip' => '-',
-            'lastverified' => '-',
-            'revoked' => (int)!$this->is_enabled(),
-        ]);
+        $records = $DB->get_records('tool_mfa', array('userid' => $USER->id, 'factor' => $this->name));
 
-        return $return;
+        if (!empty($records)) {
+            return $records;
+        }
+
+        // Null records returned, build new record.
+        $record = array(
+            'userid' => $USER->id,
+            'factor' => $this->name,
+            'label' => $USER->email,
+            'createdfromip' => $USER->lastip,
+            'timecreated' => time(),
+            'revoked' => 0,
+        );
+        $record['id'] = $DB->insert_record('tool_mfa', $record, true);
+        return [(object) $record];
     }
 }
