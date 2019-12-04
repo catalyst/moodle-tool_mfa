@@ -46,7 +46,7 @@ function tool_mfa_after_require_login() {
 
         $clearurl = str_replace($CFG->wwwroot, '', $ME);
 
-        if (strpos($clearurl, '/admin/tool/mfa/') !== 0) {
+        if (strpos($clearurl, '/admin/tool/mfa/auth.php') !== 0) {
             redirect(new moodle_url('/admin/tool/mfa/auth.php'));
         }
     }

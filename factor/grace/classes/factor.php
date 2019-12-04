@@ -45,7 +45,7 @@ class factor extends object_factor_base {
         if (!empty($records)) {
             return $records;
         }
-        
+
         // Null records returned, build new record.
         $record = array(
             'userid' => $USER->id,
