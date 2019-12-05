@@ -34,13 +34,13 @@ https://moodle.org/plugins/auth_a2fa
 
 This one is different because it is NOT a Moodle authentication plugin. It leverages new API's that Catalyst specifically implemented in Moodle Core to enable plugins to *augment* the login process instead of replacing it. This means that this MFA plugin can be added on top of any other authentication plugin resulting in a much cleaner architecture, and it means you can compose a solution that does everything you need instead of compromising by swapping out the entire login flow.
 
-See this tracker and the new dev docs for more info:
+See this tracker and the dev docs for more info:
 
 https://tracker.moodle.org/browse/MDL-66173
 
 https://docs.moodle.org/dev/Login_callbacks
 
-That other major difference is that we support multiple authentication factor *types* in this plugin, eg IP Range, Email, TOPT and in future others such as SMS or hardware tokens or anything else as sub-plugins.
+The other major difference is that we support multiple authentication factor **types** as sub plugins, eg IP Range, Email, TOPT and in future others such as SMS or hardware tokens or anything else as new sub-plugins. They can be flexible configured so that different combinations of factors are considered enough.
 
 ## Branches
 
@@ -65,13 +65,15 @@ Extract this into /var/www/yourmoodle/admin/tool/mfa/
 
 Then run the moodle upgrade as normal.
 
+https://docs.moodle.org/en/Installing_plugins
+
 
 Step 2: Apply core patches
 -------------------------------
 
-This plugin uses MDL-60470 improvement which was only added 3.7.
+This plugin requires [MDL-60470](https://tracker.moodle.org/browse/MDL-60470) which was only added 3.7.
 
-You can apply it in one line for 3.5 and 3.6:
+You can easily backport it in one line for 3.5 and 3.6:
 
 For Moodle 3.5:
 
@@ -87,7 +89,7 @@ git apply admin/tool/mfa/core36.patch
 
 ## Configuration
 
-WARNING: Do not try to configure this plugin in the web GUI immediately after installation, at this point during the upgrade process you are not actually logged in so it is easy to 'brick' you moodle and lock yourself out.
+WARNING: Do not try to fully configure this plugin in the web GUI immediately after installation, at this point during the upgrade process you are not actually logged in so it is easy to 'brick' you moodle and lock yourself out.
 
 
 
@@ -102,7 +104,7 @@ The main concept to understand is the concept of factors. Each user must satisfy
 
 #### IP Range
 
-Use this factor to say that if you are on a secure network then that counts for something. This is very useful because it requires no setup by the user, so you can set it up so that you can login fully via a secure network, and once logged in they can setup other factors like TOTP, and then use those other factors for logging in when not on a secure network.
+Use this factor to say that if you are on a secure network then that counts for something. This is very useful because it requires no setup by the end user, so you can set it up so that you can login fully via a secure network, and once logged in they can setup other factors like TOTP, and then use those other factors for logging in when not on a secure network.
 
 #### TOTP
 
@@ -114,11 +116,15 @@ This is so you can specify that logging in via say SAML via ADFS which may have 
 
 #### Security Questions
 
+*** Coming soon ***
+
 If the tool_securityquestions plugin is installed then you can use this as an additional factor. Note that because most people don't have security questions setup until after they have logged in the first time, this could be used more as a backup factor. ie if you have lost your TOTP device then you could fail back to this in order to login and re-setup your TOTP again.
 
 https://github.com/catalyst/moodle-tool_securityquestions
 
 #### Email
+
+*** Coming soon ***
 
 A simple factor which sends a short lived code to your email which you then need to enter to login. Generally speaking this is a low security factor because typically the same username and password which logs you into moodle is the same which logs you into your email so it doesn't add much value.
 
