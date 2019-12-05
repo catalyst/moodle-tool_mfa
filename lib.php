@@ -31,23 +31,30 @@ defined('MOODLE_INTERNAL') || die();
  * @return void
  * @throws \moodle_exception
  */
-function tool_mfa_after_require_login() {
-    global $SESSION, $ME, $CFG;
+function tool_mfa_after_require_login($courseorid = null, $autologinguest = null, $cm = null,
+    $setwantsurltome = null, $preventredirect = null) {
+    global $SESSION, $ME;
 
     if (!tool_mfa_ready()) {
+        // Set session var so if MFA becomes ready, you dont get locked from session.
+        $SESSION->tool_mfa_authenticated = true;
         return;
     }
 
     if (empty($SESSION->tool_mfa_authenticated) || !$SESSION->tool_mfa_authenticated) {
-        if (empty($SESSION->wantsurl)) {
-            $SESSION->wantsurl = qualified_me();
-            $SESSION->tool_mfa_setwantsurl = true;
-        }
+        $cleanurl = new moodle_url($ME);
+        $redir = \tool_mfa\manager::should_require_mfa($cleanurl, $preventredirect);
+        if ($redir == \tool_mfa\manager::REDIRECT) {
+            if (empty($SESSION->wantsurl)) {
+                !empty($setwantsurltome)
+                    ? $SESSION->wantsurl = $setwantsurltome
+                    : $SESSION->wantsurl = qualified_me();
 
-        $clearurl = str_replace($CFG->wwwroot, '', $ME);
-
-        if (strpos($clearurl, '/admin/tool/mfa/auth.php') !== 0) {
+                $SESSION->tool_mfa_setwantsurl = true;
+            }
             redirect(new moodle_url('/admin/tool/mfa/auth.php'));
+        } else if ($redir == \tool_mfa\manager::REDIRECT_EXCEPTION) {
+            throw new moodle_exception('redirecterrordetected', 'error');
         }
     }
 }

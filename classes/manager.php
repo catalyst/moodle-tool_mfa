@@ -29,6 +29,10 @@ defined('MOODLE_INTERNAL') || die();
 
 class manager {
 
+    const REDIRECT = 1;
+    const NO_REDIRECT = 0;
+    const REDIRECT_EXCEPTION = -1;
+
     /**
      * Displays a debug table with current factor information.
      */
@@ -257,6 +261,10 @@ class manager {
             $event = \tool_mfa\event\user_passed_mfa::user_passed_mfa_event($USER);
             $event->trigger();
 
+            // Unset session vars during mfa auth.
+            unset($SESSION->mfa_redir_referer);
+            unset($SESSION->mfa_redir_count);
+
             // Fire post pass state factor actions.
             $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
             foreach ($factors as $factor) {
@@ -264,5 +272,104 @@ class manager {
             }
         }
     }
-}
 
+    /**
+     * Checks whether the user should be redirected from the provided url.
+     *
+     * @return int
+     */
+    public static function should_require_mfa($url, $preventredirect) {
+        global $CFG, $USER, $SESSION;
+        // Remove all params before comparison.
+        $url->remove_all_params();
+
+        // Soft maintenance mode.
+        if (!empty($CFG->maintenance_enabled)) {
+            return self::NO_REDIRECT;
+        }
+
+        // Admin not setup.
+        if (!empty($CFG->adminsetuppending)) {
+            return self::NO_REDIRECT;
+        }
+
+        // Initial installation.
+        // We get this for free from get_plugins_with_function.
+
+        // Upgrade check.
+        // We get this for free from get_plugins_with_function.
+
+        // Honor prevent_redirect.
+        if ($preventredirect) {
+            return self::NO_REDIRECT;
+        }
+
+        // User not properly setup.
+        if (user_not_fully_set_up($USER)) {
+            return self::NO_REDIRECT;
+        }
+
+        // Enrolment.
+        $enrol = new \moodle_url('/enrol/index.php');
+        if ($enrol->compare($url)) {
+            return self::NO_REDIRECT;
+        }
+
+        // Guest access.
+        if (isguestuser()) {
+            return self::NO_REDIRECT;
+        }
+
+        // Forced password changes.
+        if (get_user_preferences('auth_forcepasswordchange')) {
+            return self::NO_REDIRECT;
+        }
+
+        // Login as.
+        if (\core\session\manager::is_loggedinas()) {
+            return self::NO_REDIRECT;
+        }
+
+        // Site policy.
+        if (isset($USER->policyagreed) && !$USER->policyagreed
+        && defined('NO_SITEPOLICY_CHECK') && !NO_SITEPOLICY_CHECK) {
+            $manager = new \core_privacy\local\sitepolicy\manager();
+            $policyurl = $manager->get_redirect_url(false);
+            if (!empty($policyurl)) {
+                return self::NO_REDIRECT;
+            }
+        }
+
+        // WS/AJAX check.
+        if (WS_SERVER || AJAX_SCRIPT) {
+            return self::REDIRECT_EXCEPTION;
+        }
+
+        // Circular checks.
+        if (isset($SESSION->mfa_redir_referer) &&
+            $SESSION->mfa_redir_referer != 'admin/tool/mfa/auth.php') {
+            if ($SESSION->mfa_redir_referer == get_local_referer(true)) {
+                // Possible redirect loop.
+                if (!isset($SESSION->mfa_redir_count)) {
+                    $SESSION->mfa_redir_count = 1;
+                } else {
+                    $SESSION->mfa_redir_count++;
+                }
+                if ($SESSION->mfa_redir_count > 5) {
+                    return self::REDIRECT_EXCEPTION;
+                }
+            } else {
+                // If not a match, reset counter.
+                $SESSION->mfa_redir_count = 0;
+            }
+        }
+        // Set referer after checks.
+        $SESSION->mfa_redir_referer = get_local_referer(true);
+
+        $safe = new \moodle_url('/admin/tool/mfa/auth.php');
+        if ($safe->compare($url)) {
+            return self::NO_REDIRECT;
+        }
+        return self::REDIRECT;
+    }
+}
