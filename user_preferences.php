@@ -24,8 +24,6 @@
 
 require_once(__DIR__ . '/../../../config.php');
 
-use tool_mfa\local\form\preferences_form;
-
 require_login(null, false);
 if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');

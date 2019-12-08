@@ -37,16 +37,9 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function login_form_definition($mform) {
-        $userfactors = $this->get_active_user_factors();
 
-        if (count($userfactors) > 0) {
-            $mform->addElement('hidden', 'secret');
-            $mform->setType('secret', PARAM_ALPHANUM);
-
-            $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_email'));
-            $mform->setType("verificationcode", PARAM_ALPHANUM);
-        }
-
+        $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_email'));
+        $mform->setType("verificationcode", PARAM_ALPHANUM);
         return $mform;
     }
 
@@ -56,14 +49,7 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function login_form_definition_after_data($mform) {
-        $secretfield = $mform->getElement('secret');
-        $secret = $secretfield->getValue();
-
-        if (empty($secret)) {
-            $secret = random_int(100000, 999999);
-            $secretfield->setValue($secret);
-            $this->email_verification_code($secret);
-        }
+        $this->generate_and_email_code();
         return $mform;
     }
 
@@ -71,13 +57,13 @@ class factor extends object_factor_base {
      * Sends and e-mail to user with given verification code.
      *
      */
-    public function email_verification_code($secret) {
-        global $USER;
+    public static function email_verification_code($instanceid) {
+        global $PAGE, $USER;
         $noreplyuser = \core_user::get_noreply_user();
         $subject = get_string('email:subject', 'factor_email');
-        $message = get_string('email:message', 'factor_email', $secret);
-        $messagehtml = text_to_html($message);
-        email_to_user($USER, $noreplyuser, $subject, $message, $messagehtml);
+        $renderer = $PAGE->get_renderer('factor_email');
+        $body = $renderer->generate_email($instanceid);
+        email_to_user($USER, $noreplyuser, $subject, $body, $body);
     }
 
     /**
@@ -86,9 +72,10 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function login_form_validation($data) {
+        global $USER;
         $return = array();
 
-        if ($data['verificationcode'] != $data['secret']) {
+        if (!$this->check_verification_code($data['verificationcode'])) {
             $return['verificationcode'] = get_string('error:wrongverification', 'factor_email');
         }
 
@@ -103,7 +90,11 @@ class factor extends object_factor_base {
     public function get_all_user_factors() {
         global $DB, $USER;
 
-        $records = $DB->get_records('tool_mfa', array('userid' => $USER->id, 'factor' => $this->name));
+        $records = $DB->get_records('tool_mfa', array(
+            'userid' => $USER->id,
+            'factor' => $this->name,
+            'label' => $USER->email
+        ));
 
         if (!empty($records)) {
             return $records;
@@ -120,5 +111,124 @@ class factor extends object_factor_base {
         );
         $record['id'] = $DB->insert_record('tool_mfa', $record, true);
         return [(object) $record];
+    }
+
+    public function has_input() {
+        if (self::is_ready()) {
+            return true;
+        }
+        return false;
+    }
+
+    public function get_state() {
+        if (!self::is_ready()) {
+            return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+        }
+
+        return parent::get_state();
+    }
+
+    private static function is_ready() {
+        global $DB, $USER;
+
+        if (empty($USER->email)) {
+            return false;
+        }
+        if (!validate_email($USER->email)) {
+            return false;
+        }
+        if (over_bounce_threshold($USER)) {
+            return false;
+        }
+
+        // If this factor is revoked, set to not ready.
+        if ($DB->record_exists('tool_mfa', array('userid' => $USER->id, 'factor' => 'email', 'revoked' => 1))) {
+            return false;
+        }
+        return true;
+    }
+
+    private function generate_and_email_code() {
+        global $DB, $USER;
+
+        // Get instance that isnt parent email type (label check).
+        // This check must exclude the main singleton record, with the label as the email.
+        // It must only grab the record with the user agent as the label.
+        $sql = 'SELECT *
+                  FROM {tool_mfa}
+                 WHERE userid = ?
+                   AND factor = ?
+               AND NOT label = ?';
+
+        $record = $DB->get_record_sql($sql, array($USER->id, 'email', $USER->email));
+        $duration = get_config('factor_email', 'duration');
+        $newcode = random_int(100000, 999999);
+
+        if (empty($record)) {
+            // No code active, generate new code.
+            $instanceid = $DB->insert_record('tool_mfa', array(
+                'userid' => $USER->id,
+                'factor' => 'email',
+                'secret' => $newcode,
+                'label' => $_SERVER['HTTP_USER_AGENT'],
+                'timecreated' => time(),
+                'createdfromip' => $USER->lastip,
+                'timemodified' => time(),
+                'lastverified' => time(),
+                'revoked' => 0,
+            ), true);
+            $this->email_verification_code($instanceid);
+
+        } else if ($record->timecreated + $duration < time()) {
+            // Old code found. Keep id, update fields.
+            $DB->update_record('tool_mfa', array(
+                'id' => $record->id,
+                'secret' => $newcode,
+                'label' => $_SERVER['HTTP_USER_AGENT'],
+                'timecreated' => time(),
+                'createdfromip' => $USER->lastip,
+                'timemodified' => time(),
+                'lastverified' => time(),
+                'revoked' => 0,
+            ));
+            $instanceid = $record->id;
+            $this->email_verification_code($instanceid);
+        }
+    }
+
+    private function check_verification_code($enteredcode) {
+        global $DB, $USER;
+        $duration = get_config('factor_email', 'duration');
+
+        // Get instance that isnt parent email type (label check).
+        // This check must exclude the main singleton record, with the label as the email.
+        // It must only grab the record with the user agent as the label.
+        $sql = 'SELECT *
+                  FROM {tool_mfa}
+                 WHERE userid = ?
+                   AND factor = ?
+               AND NOT label = ?';
+        $record = $DB->get_record_sql($sql, array($USER->id, 'email', $USER->email));
+
+        if ($enteredcode == $record->secret) {
+            if ($record->timecreated + $duration > time()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function post_pass_state() {
+        global $DB, $USER;
+        // Delete all email records except base record.
+        $selectsql = 'userid = ?
+                  AND factor = ?
+              AND NOT label = ?';
+        $DB->delete_records_select('tool_mfa', $selectsql, array($USER->id, 'email', $USER->email));
+    }
+
+    public function get_no_redirect_urls() {
+        $email = new \moodle_url('/admin/tool/mfa/factor/email/email.php');
+        return array($email);
     }
 }

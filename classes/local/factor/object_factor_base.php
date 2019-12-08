@@ -323,6 +323,11 @@ abstract class object_factor_base implements object_factor {
     public function set_state($state) {
         global $SESSION;
 
+        // Do not allow overwriting fail states.
+        if ($this->get_state() == \tool_mfa\plugininfo\factor::STATE_FAIL) {
+            return false;
+        }
+
         $property = 'factor_'.$this->name;
         $SESSION->$property = $state;
         return true;
@@ -357,5 +362,12 @@ abstract class object_factor_base implements object_factor {
     public function get_label($factorid) {
         global $DB;
         return $DB->get_field('tool_mfa', 'label', array('id' => $factorid));
+    }
+
+    /**
+     * Function to get urls that should not be redirected from.
+     */
+    public function get_no_redirect_urls() {
+        return array();
     }
 }

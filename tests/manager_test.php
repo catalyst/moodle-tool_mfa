@@ -93,7 +93,9 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
 
         $this->assertEquals(\tool_mfa\manager::get_status(), \tool_mfa\plugininfo\factor::STATE_FAIL);
 
-        // Remove no input factor, and remove fail state from email. Simulates no data entered yet.
+        // Remove no input factor, and remove fail state by logging in/out. Simulates no data entered yet.
+        $this->setUser(null);
+        $this->setUser($user);
         $this->set_factor_state('auth', 0, 100);
         $factoremail->set_state(\tool_mfa\plugininfo\factor::STATE_UNKNOWN);
 
@@ -237,7 +239,7 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
         $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
         $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
         $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
-        // Set count to threshold
+        // Set count to threshold.
         $SESSION->mfa_redir_count = 5;
         $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT_EXCEPTION);
         // Reset session vars.
