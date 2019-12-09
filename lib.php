@@ -47,8 +47,8 @@ function tool_mfa_after_require_login($courseorid = null, $autologinguest = null
         if ($redir == \tool_mfa\manager::REDIRECT) {
             if (empty($SESSION->wantsurl)) {
                 !empty($setwantsurltome)
-                    ? $SESSION->wantsurl = $setwantsurltome
-                    : $SESSION->wantsurl = qualified_me();
+                    ? $SESSION->wantsurl = qualified_me()
+                    : $SESSION->wantsurl = new moodle_url('/');
 
                 $SESSION->tool_mfa_setwantsurl = true;
             }
