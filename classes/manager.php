@@ -346,8 +346,10 @@ class manager {
         }
 
         // Circular checks.
+        $authurl = new \moodle_url('/admin/tool/mfa/auth.php');
         if (isset($SESSION->mfa_redir_referer) &&
-            $SESSION->mfa_redir_referer != 'admin/tool/mfa/auth.php') {
+            $SESSION->mfa_redir_referer != $authurl) {
+            echo $SESSION->mfa_redir_referer;
             if ($SESSION->mfa_redir_referer == get_local_referer(true)) {
                 // Possible redirect loop.
                 if (!isset($SESSION->mfa_redir_count)) {
