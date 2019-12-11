@@ -189,4 +189,11 @@ interface object_factor {
      * @return string
      */
     public function get_label($factorid);
+
+    /**
+     * Returns a list of urls to not redirect from.
+     *
+     * @return array
+     */
+    public function get_no_redirect_urls();
 }

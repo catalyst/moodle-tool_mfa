@@ -345,6 +345,14 @@ class manager {
             return self::REDIRECT_EXCEPTION;
         }
 
+        // Check factor defined safe urls.
+        $factorurls = self::get_factor_no_redirect_urls();
+        foreach ($factorurls as $factorurl) {
+            if ($factorurl->compare($url)) {
+                return self::NO_REDIRECT;
+            }
+        }
+
         // Circular checks.
         $authurl = new \moodle_url('/admin/tool/mfa/auth.php');
         if (isset($SESSION->mfa_redir_referer) &&
@@ -372,5 +380,19 @@ class manager {
             return self::NO_REDIRECT;
         }
         return self::REDIRECT;
+    }
+
+    /**
+     * Gets all defined factor urls that should not redirect.
+     *
+     * @return array
+     */
+    public static function get_factor_no_redirect_urls() {
+        $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        $urls = array();
+        foreach ($factors as $factor) {
+            $urls += $factor->get_no_redirect_urls();
+        }
+        return $urls;
     }
 }

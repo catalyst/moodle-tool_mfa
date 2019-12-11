@@ -13,30 +13,30 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
- * Settings
+ * Revoke email form.
  *
  * @package     factor_email
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace factor_email\form;
 
 defined('MOODLE_INTERNAL') || die();
 
-$settings->add(new admin_setting_configcheckbox('factor_email/enabled',
-    new lang_string('settings:enablefactor', 'tool_mfa'),
-    new lang_string('settings:enablefactor_help', 'tool_mfa'), 0));
+require_once($CFG->libdir . "/formslib.php");
 
-$settings->add(new admin_setting_configtext('factor_email/weight',
-    new lang_string('settings:weight', 'tool_mfa'),
-    new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
+class email extends \moodleform {
 
-$settings->add(new admin_setting_configduration('factor_email/duration',
-    get_string('settings:duration', 'factor_email'),
-    get_string('settings:duration_help', 'factor_email'), 30 * MINSECS, MINSECS));
+    public function definition() {
+        $mform = $this->_form;
+        $mform->addElement('html', get_string('email:accident', 'factor_email'));
+        $this->add_action_buttons(true, get_string('continue'));
+    }
 
-$settings->add(new admin_setting_configcheckbox('factor_email/suspend',
-    get_string('settings:suspend', 'factor_email'),
-    get_string('settings:suspend_help', 'factor_email'), 0));
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        return $errors;
+    }
+}
