@@ -147,8 +147,12 @@ class manager {
      * @return void
      */
     public static function cannot_login() {
+        global $OUTPUT;
+        echo $OUTPUT->header();
+        echo $OUTPUT->not_enough_factors();
+        echo $OUTPUT->footer();
         self::mfa_logout();
-        print_error('error:notenoughfactors', 'tool_mfa', new \moodle_url('/'));
+        die;
     }
 
     /**
