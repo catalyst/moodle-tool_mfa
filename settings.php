@@ -39,6 +39,10 @@ if ($hassiteconfig) {
     $description = new lang_string('settings:enabled_help', 'tool_mfa');
     $settings->add(new admin_setting_configcheckbox('tool_mfa/enabled', $name, '', false));
 
+    $name = new lang_string('settings:lockout', 'tool_mfa');
+    $description = new lang_string('settings:lockout_help', 'tool_mfa');
+    $settings->add(new admin_setting_configtext('tool_mfa/lockout', $name, $description, 10, PARAM_INT));
+
     $name = new lang_string('settings:debugmode', 'tool_mfa');
     $description = new lang_string('settings:debugmode_help', 'tool_mfa');
     $settings->add(new admin_setting_configcheckbox('tool_mfa/debugmode', $name, $description, false));
@@ -54,4 +58,3 @@ if ($hassiteconfig) {
         new admin_externalpage('factorreport', get_string('factorreport', 'tool_mfa'),
         new moodle_url('/admin/tool/mfa/factor_report.php')));
 }
-
