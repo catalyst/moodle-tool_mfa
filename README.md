@@ -13,7 +13,7 @@
     * [IP range](#ip-range)
     * [TOTP](#totp)
     * [Auth type](#auth-type)
-    * [Security Questions](#security-questions)
+    * [Non-admin](#non-admin)
     * [Email](#email)
     * [Other factors](#other-factors)
 * [Points and examples](#points-and-examples)
@@ -113,26 +113,23 @@ This is standard TOTP using Google Authenticator or any other app which conforms
 
 This is so you can specify that logging in via say SAML via ADFS which may have already done it's own MFA checks and is worth 100 points effectly make it exempt from additional checks.
 
-#### Security Questions
+#### Non-admin
 
-*** Coming soon ***
-
-If the tool_securityquestions plugin is installed then you can use this as an additional factor. Note that because most people don't have security questions setup until after they have logged in the first time, this could be used more as a backup factor. ie if you have lost your TOTP device then you could fail back to this in order to login and re-setup your TOTP again.
-
-https://github.com/catalyst/moodle-tool_securityquestions
+This factor enables you to give points for free to a user who is not an admin. This makes it easy to require admin users to have 2 or more factors while not affecting normal users. 
 
 #### Email
 
-*** Coming soon ***
+*** Not recommended for production use ***
 
 A simple factor which sends a short lived code to your email which you then need to enter to login. Generally speaking this is a low security factor because typically the same username and password which logs you into moodle is the same which logs you into your email so it doesn't add much value.
 
+This factor was implemented as a proof of concept of a factor which can return a hard FAIL state, ie positive evidence that your account is compromised rather than NEUTRAL where we simply lack evidence of additional factors that the end user is who they say they are.
+
 #### Other factors
 
-In theory you could impement almost anything as a factor, such as time of day, retina scans, or push notificatons. For a list of potential factor see:
+In theory you could impement almost anything as a factor, such as time of day, retina scans, or push notificatons. For a list of potential factor ideas see:
 
 https://en.wikipedia.org/wiki/Multi-factor_authentication#Authentication_factors
-
 
 ### Points and examples
 
