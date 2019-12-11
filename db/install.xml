@@ -10,7 +10,7 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User ID"/>
         <FIELD NAME="factor" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Factor type"/>
         <FIELD NAME="secret" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="Any secret data for factor"/>
-        <FIELD NAME="label" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="label for factor instance, eg device or email."/>
+        <FIELD NAME="label" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="label for factor instance, eg device or email."/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="15" NOTNULL="false" SEQUENCE="false" COMMENT="Time the factor instance was setup"/>
         <FIELD NAME="createdfromip" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="IP that the factor was setup from"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="15" NOTNULL="false" SEQUENCE="false" COMMENT="Time factor was last modified."/>
