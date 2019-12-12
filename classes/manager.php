@@ -421,4 +421,38 @@ class manager {
 
         sleep($currentduration);
     }
+
+    /*
+     * If MFA Plugin is ready check tool_mfa_authenticated USER property and
+     * start MFA authentication if it's not set or false.
+     *
+     * @return void
+     */
+    public static function require_auth($courseorid = null, $autologinguest = null, $cm = null,
+    $setwantsurltome = null, $preventredirect = null) {
+        global $SESSION, $ME;
+
+        if (!tool_mfa_ready()) {
+            // Set session var so if MFA becomes ready, you dont get locked from session.
+            $SESSION->tool_mfa_authenticated = true;
+            return;
+        }
+
+        if (empty($SESSION->tool_mfa_authenticated) || !$SESSION->tool_mfa_authenticated) {
+            $cleanurl = new \moodle_url($ME);
+            $redir = self::should_require_mfa($cleanurl, $preventredirect);
+            if ($redir == self::REDIRECT) {
+                if (empty($SESSION->wantsurl)) {
+                    !empty($setwantsurltome)
+                        ? $SESSION->wantsurl = qualified_me()
+                        : $SESSION->wantsurl = new \moodle_url('/');
+
+                    $SESSION->tool_mfa_setwantsurl = true;
+                }
+                redirect(new \moodle_url('/admin/tool/mfa/auth.php'));
+            } else if ($redir == self::REDIRECT_EXCEPTION) {
+                throw new \moodle_exception('redirecterrordetected', 'error');
+            }
+        }
+    }
 }

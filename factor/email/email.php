@@ -61,7 +61,7 @@ $form = new \factor_email\form\email($url);
 
 if ($form->is_cancelled()) {
 
-    redirect(new moodle_url());
+    redirect(new moodle_url('/'));
 } else if ($fromform = $form->get_data()) {
     if (empty($instance)) {
         $message = get_string('error:badcode', 'factor_email');
