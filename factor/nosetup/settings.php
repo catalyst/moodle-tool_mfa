@@ -15,18 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Settings
  *
- * @package     tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
+ * @package     factor_nosetup
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019121600;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2018051708.05;   // Requires MDL-60470 improvement.
-$plugin->component = 'tool_mfa';
-$plugin->release   = 'v0.1';
-$plugin->maturity  = MATURITY_STABLE;
+$settings->add(new admin_setting_configcheckbox('factor_nosetup/enabled',
+    new lang_string('settings:enablefactor', 'tool_mfa'),
+    new lang_string('settings:enablefactor_help', 'tool_mfa'), 0));
+
+$settings->add(new admin_setting_configtext('factor_nosetup/weight',
+    new lang_string('settings:weight', 'tool_mfa'),
+    new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));

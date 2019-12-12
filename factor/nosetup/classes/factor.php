@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * IP Range factor class.
+ * No setup factor class.
  *
  * @package     tool_mfa
  * @author      Peter Burnett <peterburnett@catalyst-au.net>
@@ -23,7 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace factor_iprange;
+namespace factor_nosetup;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,8 +32,8 @@ use tool_mfa\local\factor\object_factor_base;
 class factor extends object_factor_base {
 
     /**
-     * IP Range Factor implementation.
-     * This factor needs no user setup, return true.
+     * No Setup Factor implementation.
+     * Factor has no setup, function always returns true.
      *
      * {@inheritDoc}
      */
@@ -42,8 +42,8 @@ class factor extends object_factor_base {
     }
 
     /**
-     * IP Range Factor implementation.
-     * This factor is a singleton, return single instance.
+     * No Setup Factor implementation.
+     * Factor is a singleton, can only be one instance.
      *
      * {@inheritDoc}
      */
@@ -69,8 +69,8 @@ class factor extends object_factor_base {
     }
 
     /**
-     * IP Range Factor implementation.
-     * Factor has no input
+     * No Setup Factor implementation.
+     * Factor does not have input.
      *
      * {@inheritDoc}
      */
@@ -79,46 +79,26 @@ class factor extends object_factor_base {
     }
 
     /**
-     * IP Range Factor implementation.
-     * Checks a users current IP against allowed and disallowed ranges.
+     * No Setup Factor implementation.
+     * State check is performed here, as there is no form to do it in.
      *
      * {@inheritDoc}
      */
     public function get_state() {
-        $safeips = get_config('factor_iprange', 'safeips');
-
-        // TODO: Check for failures here.
-
-        if (!empty($safeips)) {
-            if (remoteip_in_list($safeips)) {
-                return \tool_mfa\plugininfo\factor::STATE_PASS;
-            }
+        $active = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        if (count($active) == 1 && reset($active)->name == 'nosetup') {
+            return \tool_mfa\plugininfo\factor::STATE_PASS;
         }
-
         return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
     }
 
     /**
-     * IP Range Factor implementation.
-     * Cannot set state, return true.
+     * No Setup Factor implementation.
+     * The state can never be set. Always return true.
      *
      * {@inheritDoc}
      */
     public function set_state($state) {
         return true;
-    }
-
-    /**
-     * IP Range Factor implementation.
-     * User can influence state prior to login.
-     * Possible states are either neutral or pass.
-     *
-     * {@inheritDoc}
-     */
-    public function possible_states($user) {
-        return array(
-            \tool_mfa\plugininfo\factor::STATE_PASS,
-            \tool_mfa\plugininfo\factor::STATE_NEUTRAL
-        );
     }
 }

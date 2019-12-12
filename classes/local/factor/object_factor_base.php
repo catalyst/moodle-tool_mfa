@@ -369,4 +369,14 @@ abstract class object_factor_base implements object_factor {
     public function get_no_redirect_urls() {
         return array();
     }
+
+    /**
+     * Function to get possible states for a user from factor.
+     * Implementation where state is based on deterministic user data.
+     * This should be overridden in factors where state is non-deterministic.
+     * E.g. IP changes based on whether a user is using a VPN.
+     */
+    public function possible_states($user) {
+        return $this->get_state();
+    }
 }

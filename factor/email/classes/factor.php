@@ -231,4 +231,14 @@ class factor extends object_factor_base {
         $email = new \moodle_url('/admin/tool/mfa/factor/email/email.php');
         return array($email);
     }
+
+    public function possible_states($user) {
+        // Email can return all states.
+        return array(
+            \tool_mfa\plugininfo\factor::STATE_FAIL,
+            \tool_mfa\plugininfo\factor::STATE_PASS,
+            \tool_mfa\plugininfo\factor::STATE_NEUTRAL,
+            \tool_mfa\plugininfo\factor::STATE_UNKNOWN,
+        );
+    }
 }

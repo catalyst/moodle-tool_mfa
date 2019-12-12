@@ -72,6 +72,7 @@ echo $OUTPUT->available_factors();
 
 echo $OUTPUT->footer();
 
-if ($SESSION->tool_mfa_setwantsurl && \tool_mfa\manager::get_total_weight() >= 100) {
+if (!empty($SESSION->tool_mfa_setwantsurl) && $SESSION->tool_mfa_setwantsurl
+    && \tool_mfa\manager::get_total_weight() >= 100) {
     unset($SESSION->wantsurl);
 }

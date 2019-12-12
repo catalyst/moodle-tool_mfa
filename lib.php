@@ -55,7 +55,7 @@ function tool_mfa_extend_navigation_user_settings($navigation, $user, $userconte
         return null;
     }
 
-    if (\tool_mfa\manager::is_ready()) {
+    if (\tool_mfa\manager::is_ready() && \tool_mfa\manager::possible_factor_setup()) {
         $url = new moodle_url('/admin/tool/mfa/user_preferences.php');
         $node = navigation_node::create(get_string('preferences:header', 'tool_mfa'), $url,
             navigation_node::TYPE_SETTING);

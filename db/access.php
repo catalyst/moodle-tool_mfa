@@ -15,18 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Definition of MFA sub-plugins (factors).
  *
  * @package     tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die;
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2019121600;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2018051708.05;   // Requires MDL-60470 improvement.
-$plugin->component = 'tool_mfa';
-$plugin->release   = 'v0.1';
-$plugin->maturity  = MATURITY_STABLE;
+$capabilities = array(
+    'tool/mfa:mfaaccess' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        )
+    ),
+ );

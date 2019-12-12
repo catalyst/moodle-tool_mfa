@@ -196,4 +196,11 @@ interface object_factor {
      * @return array
      */
     public function get_no_redirect_urls();
+
+    /**
+     * Returns all possible states for a user.
+     *
+     * @return array
+     */
+    public function possible_states($user);
 }
