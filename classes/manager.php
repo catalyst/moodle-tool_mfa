@@ -440,8 +440,8 @@ class manager {
 
         if (empty($SESSION->tool_mfa_authenticated) || !$SESSION->tool_mfa_authenticated) {
             $cleanurl = new \moodle_url($ME);
-            $redir = \tool_mfa\manager::should_require_mfa($cleanurl, $preventredirect);
-            if ($redir == \tool_mfa\manager::REDIRECT) {
+            $redir = self::should_require_mfa($cleanurl, $preventredirect);
+            if ($redir == self::REDIRECT) {
                 if (empty($SESSION->wantsurl)) {
                     !empty($setwantsurltome)
                         ? $SESSION->wantsurl = qualified_me()
@@ -450,7 +450,7 @@ class manager {
                     $SESSION->tool_mfa_setwantsurl = true;
                 }
                 redirect(new \moodle_url('/admin/tool/mfa/auth.php'));
-            } else if ($redir == \tool_mfa\manager::REDIRECT_EXCEPTION) {
+            } else if ($redir == self::REDIRECT_EXCEPTION) {
                 throw new \moodle_exception('redirecterrordetected', 'error');
             }
         }
