@@ -68,6 +68,9 @@ class login_form extends \moodleform {
         $factor = $this->_customdata['factor'];
         $errors += $factor->login_form_validation($data);
 
+        // Execute sleep time bruteforce mitigation.
+        \tool_mfa\manager::sleep_timer();
+
         return $errors;
     }
 }

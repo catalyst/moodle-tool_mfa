@@ -38,7 +38,7 @@ $string['email:revokesuccess'] = 'This code has been successfully revoked. All s
 $string['email:accident'] = 'If you did not request this email, click continue to attempt to invalidate the login attempt.
     If you clicked this link by accident, click cancel, and no action will be taken.';
 $string['settings:duration'] = 'Validity duration';
-$string['settings:duration_help'] = 'The preiod of time that the code is valid.';
+$string['settings:duration_help'] = 'The period of time that the code is valid.';
 $string['settings:suspend'] = 'Suspend unauthorised accounts';
 $string['settings:suspend_help'] = 'Check this to suspend user accounts if an unauthorised email verification is received.';
 $string['event:unauthemail'] = 'Unauthorised email received';

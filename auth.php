@@ -48,7 +48,16 @@ $factor = \tool_mfa\plugininfo\factor::get_next_user_factor();
 // If ok, perform form actions for input factor.
 $form = new login_form($currenturl, array('factor' => $factor));
 if ($form->is_submitted()) {
-    $form->is_validated();
+    if (!$form->is_validated() && !$form->is_cancelled()) {
+        // End user session if too many failed attempts.
+        empty($SESSION->mfa_fail_counter)
+            ? $SESSION->mfa_fail_counter = 1
+            : $SESSION->mfa_fail_counter++;
+
+        if ($SESSION->mfa_fail_counter >= get_config('tool_mfa', 'lockout')) {
+            \tool_mfa\manager::cannot_login();
+        }
+    }
 
     // Set state from user actions.
     if ($form->is_cancelled()) {
@@ -74,5 +83,9 @@ echo $OUTPUT->header();
 \tool_mfa\manager::display_debug_notification();
 
 echo $OUTPUT->heading(get_string('pluginname', 'factor_'.$factor->name));
+if (!empty($SESSION->mfa_fail_counter)) {
+    $remaining = get_config('tool_mfa', 'lockout') - $SESSION->mfa_fail_counter;
+    echo $OUTPUT->notification(get_string('lockoutnotification', 'tool_mfa', $remaining), 'notifyerror');
+}
 $form->display();
 echo $OUTPUT->footer();

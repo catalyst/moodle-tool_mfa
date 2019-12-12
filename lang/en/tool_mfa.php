@@ -79,6 +79,8 @@ $string['settings:debugmode_help'] = 'Debug mode will display a small notificati
          with information on the currently enabled factors.';
 $string['settings:enablefactor'] = 'Enable factor';
 $string['settings:enablefactor_help'] = 'Check this control to allow the factor to be used for MFA authentication.';
+$string['settings:lockout'] = 'Lockout threshold';
+$string['settings:lockout_help'] = 'Amount of attempts a user has at answering input factors before they are not permitted to login.';
 $string['settings:weight'] = 'Factor weight';
 $string['settings:weight_help'] = 'The weight of this factor if passed. A user needs at least 100 points to login.';
 $string['setup'] = 'Setup';
@@ -92,3 +94,4 @@ $string['totalweight'] = 'Total weight';
 $string['weight'] = 'Weight';
 $string['mfareports'] = 'MFA reports';
 $string['factorreport'] = 'All factor report';
+$string['lockoutnotification'] = 'You have {$a} verification attempts remaining.';

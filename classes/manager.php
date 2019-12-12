@@ -269,6 +269,9 @@ class manager {
             unset($SESSION->mfa_redir_referer);
             unset($SESSION->mfa_redir_count);
 
+            // Unset user preferences during mfa auth.
+            unset_user_preference('mfa_sleep_duration', $USER);
+
             // Fire post pass state factor actions.
             $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
             foreach ($factors as $factor) {
@@ -398,5 +401,24 @@ class manager {
             $urls += $factor->get_no_redirect_urls();
         }
         return $urls;
+    }
+
+    /**
+     * Sleeps for an increasing period of time.
+     */
+    public static function sleep_timer() {
+        global $USER;
+
+        $currentduration = get_user_preferences('mfa_sleep_duration', null, $USER);
+        if (!empty($currentduration)) {
+            // Double current time.
+            set_user_preference('mfa_sleep_duration', $currentduration * 2, $USER);
+        } else {
+            // No duration set.
+            $currentduration = 0.05;
+            set_user_preference('mfa_sleep_duration', $currentduration, $USER);
+        }
+
+        sleep($currentduration);
     }
 }
