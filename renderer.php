@@ -175,5 +175,39 @@ class tool_mfa_renderer extends plugin_renderer_base {
 
         return $html;
     }
-}
 
+    /**
+     * Generates notification text for display when user cannot login.
+     *
+     * @return string $notification
+     */
+    public function not_enough_factors() {
+        global $CFG, $OUTPUT, $SITE;
+
+        $notification = \html_writer::tag('h4', get_string('error:notenoughfactors', 'tool_mfa'));
+        $notification .= \html_writer::tag('p', get_string('error:reauth', 'tool_mfa'));
+
+        // Support link.
+        $supportemail = $CFG->supportemail;
+        if (!empty($supportemail)) {
+            $subject = get_string('email:subject', 'tool_mfa', $SITE->fullname);
+            $maillink = \html_writer::link("mailto:$supportemail?Subject=$subject", $supportemail);
+            $notification .= get_string('error:support', 'tool_mfa');
+            $notification .= \html_writer::tag('p', $maillink);
+        }
+
+        // Support page link.
+        $supportpage = $CFG->supportpage;
+        if (!empty($supportpage)) {
+            $linktext = \html_writer::link($supportpage, get_string('error:supportpage', 'tool_mfa'));
+            $notification .= $linktext;
+        }
+
+        // Home link.
+        $url = new \moodle_url('/');
+        $link = \html_writer::link($url, get_string('error:home', 'tool_mfa'));
+        $notification .= \html_writer::tag('p', $link);
+
+        return $OUTPUT->notification($notification, 'notifyerror');
+    }
+}
