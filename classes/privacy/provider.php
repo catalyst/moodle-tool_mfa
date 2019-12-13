@@ -26,23 +26,39 @@ namespace tool_mfa\privacy;
 
 defined('MOODLE_INTERNAL') || die;
 
-use core_privacy\local\metadata\null_provider;
-use core_privacy\local\legacy_polyfill;
+use core_privacy\local\metadata\collection;
 
 /**
  * Class provider
  * @package tool_mfa\privacy
  */
-class provider implements null_provider {
-    use legacy_polyfill;
+class provider implements
+    \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\data_provider {
 
     /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
+     * Returns metadata about this plugin's privacy policy.
      *
-     * @return  string
+     * @param   collection $collection The initialised collection to add items to.
+     * @return  collection     A listing of user data stored through this system.
      */
-    public static function _get_reason() {
-        return 'privacy:metadata';
+    public static function get_metadata(collection $collection) : collection {
+        $collection->add_database_table(
+            'tool_mfa',
+            [
+                'id' => 'privacy:metadata:tool_mfa:id',
+                'userid' => 'privacy:metadata:tool_mfa:userid',
+                'factor' => 'privacy:metadata:tool_mfa:factor',
+                'secret' => 'privacy:metadata:tool_mfa:secret',
+                'label' => 'privacy:metadata:tool_mfa:label',
+                'timecreated' => 'privacy:metadata:tool_mfa:timecreated',
+                'createdfromip' => 'privacy:metadata:tool_mfa:createdfromip',
+                'timemodified' => 'privacy:metadata:tool_mfa:timemodified',
+                'lastverified' => 'privacy:metadata:tool_mfa:lastverified',
+            ],
+            'privacy:metadata:tool_mfa'
+        );
+
+        return $collection;
     }
 }
