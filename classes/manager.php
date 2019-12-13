@@ -432,7 +432,7 @@ class manager {
     $setwantsurltome = null, $preventredirect = null) {
         global $SESSION, $ME;
 
-        if (!tool_mfa_ready()) {
+        if (!self::mfa_ready()) {
             // Set session var so if MFA becomes ready, you dont get locked from session.
             $SESSION->tool_mfa_authenticated = true;
             return;
@@ -453,6 +453,107 @@ class manager {
             } else if ($redir == self::REDIRECT_EXCEPTION) {
                 throw new \moodle_exception('redirecterrordetected', 'error');
             }
+        }
+    }
+
+    /**
+     * Sets config variable for given factor.
+     *
+     * @param array $data
+     * @param string $factor
+     *
+     * @return bool true or exception
+     * @throws dml_exception
+     */
+    public static function set_factor_config($data, $factor) {
+        foreach ($data as $key => $newvalue) {
+            $oldvalue = get_config($factor, $key);
+            if ($oldvalue != $newvalue) {
+                set_config($key, $newvalue, $factor);
+                add_to_config_log($key, $oldvalue, $newvalue, $factor);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if MFA Plugin is enabled and has enabled factor.
+     * If plugin is disabled or there is no enabled factors,
+     * it means there is nothing to do from user side.
+     * Thus, login flow shouldn't be extended with MFA.
+     *
+     * @return bool
+     * @throws \dml_exception
+     */
+    public static function mfa_ready() {
+        global $CFG;
+
+        if (!empty($CFG->upgraderunning)) {
+            return false;
+        }
+
+        $pluginenabled = get_config('tool_mfa', 'enabled');
+        if (empty($pluginenabled)) {
+            return false;
+        }
+
+        $enabledfactors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+
+        if (count($enabledfactors) == 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Changes the order for given factor.
+     *
+     * @param string $factorname
+     * @param string $action
+     *
+     * @return void
+     * @throws dml_exception
+     */
+    public static function change_factor_order($factorname, $action) {
+        $order = explode(',', get_config('tool_mfa', 'factor_order'));
+        $key = array_search($factorname, $order);
+
+        switch ($action) {
+            case 'up':
+                if ($key >= 1) {
+                    $fsave = $order[$key];
+                    $order[$key] = $order[$key - 1];
+                    $order[$key - 1] = $fsave;
+                    self::set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
+                }
+                break;
+
+            case 'down':
+                if ($key < (count($order) - 1)) {
+                    $fsave = $order[$key];
+                    $order[$key] = $order[$key + 1];
+                    $order[$key + 1] = $fsave;
+                    self::set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
+                }
+                break;
+
+            case 'enable':
+                if (!$key) {
+                    $order[] = $factorname;
+                    self::set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
+                }
+                break;
+
+            case 'disable':
+                if ($key) {
+                    unset($order[$key]);
+                    self::set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
+                }
+                break;
+
+            default:
+                break;
         }
     }
 }

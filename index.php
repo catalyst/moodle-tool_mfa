@@ -39,7 +39,7 @@ $PAGE->set_url('/admin/tool/mfa/index.php');
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $factor = optional_param('factor', '', PARAM_ALPHANUMEXT);
 
-if (empty($factor) || !tool_mfa_factor_exists($factor)) {
+if (empty($factor) || !\tool_mfa\plugininfo\factor::factor_exists($factor)) {
     print_error('factornotfound', 'tool_mfa', $returnurl, $factor);
 }
 
@@ -58,8 +58,8 @@ foreach (\tool_mfa\plugininfo\factor::get_enabled_factors() as $enabledfactor) {
 switch ($action) {
     case 'disable':
         if (in_array($factor, $enabledfactors)) {
-            tool_mfa_set_factor_config(array('enabled' => 0), 'factor_' . $factor);
-            tool_mfa_change_factor_order($factor, $action);
+            \tool_mfa\manager::set_factor_config(array('enabled' => 0), 'factor_' . $factor);
+            \tool_mfa\manager::change_factor_order($factor, $action);
 
             \core\session\manager::gc(); // Remove stale sessions.
             core_plugin_manager::reset_caches();
@@ -68,8 +68,8 @@ switch ($action) {
 
     case 'enable':
         if (!in_array($factor, $enabledfactors)) {
-            tool_mfa_set_factor_config(array('enabled' => 1), 'factor_' . $factor);
-            tool_mfa_change_factor_order($factor, $action);
+            \tool_mfa\manager::set_factor_config(array('enabled' => 1), 'factor_' . $factor);
+            \tool_mfa\manager::change_factor_order($factor, $action);
 
             \core\session\manager::gc(); // Remove stale sessions.
             core_plugin_manager::reset_caches();
@@ -78,7 +78,7 @@ switch ($action) {
 
     case 'up':
     case 'down':
-        tool_mfa_change_factor_order($factor, $action);
+        \tool_mfa\manager::change_factor_order($factor, $action);
 
         \core\session\manager::gc(); // Remove stale sessions.
         core_plugin_manager::reset_caches();
