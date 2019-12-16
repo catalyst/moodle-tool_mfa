@@ -432,7 +432,7 @@ class manager {
     $setwantsurltome = null, $preventredirect = null) {
         global $SESSION, $ME;
 
-        if (!self::mfa_ready()) {
+        if (!self::is_ready()) {
             // Set session var so if MFA becomes ready, you dont get locked from session.
             $SESSION->tool_mfa_authenticated = true;
             return;
@@ -466,11 +466,15 @@ class manager {
      * @throws dml_exception
      */
     public static function set_factor_config($data, $factor) {
+        $factorconf = get_config($factor);
         foreach ($data as $key => $newvalue) {
-            $oldvalue = get_config($factor, $key);
-            if ($oldvalue != $newvalue) {
+            if (empty($factorconf->$key)) {
+                add_to_config_log($key, null, $newvalue, $factor);
                 set_config($key, $newvalue, $factor);
-                add_to_config_log($key, $oldvalue, $newvalue, $factor);
+
+            } else if ($factorconf->$key != $newvalue) {
+                add_to_config_log($key, $factorconf->$key, $newvalue, $factor);
+                set_config($key, $newvalue, $factor);
             }
         }
         return true;
@@ -485,7 +489,7 @@ class manager {
      * @return bool
      * @throws \dml_exception
      */
-    public static function mfa_ready() {
+    public static function is_ready() {
         global $CFG;
 
         if (!empty($CFG->upgraderunning)) {
@@ -507,7 +511,8 @@ class manager {
     }
 
     /**
-     * Changes the order for given factor.
+     * Performs factor actions for given factor.
+     * Change factor order and enable/disable.
      *
      * @param string $factorname
      * @param string $action
@@ -515,7 +520,7 @@ class manager {
      * @return void
      * @throws dml_exception
      */
-    public static function change_factor_order($factorname, $action) {
+    public static function do_factor_action($factorname, $action) {
         $order = explode(',', get_config('tool_mfa', 'factor_order'));
         $key = array_search($factorname, $order);
 
@@ -555,5 +560,7 @@ class manager {
             default:
                 break;
         }
+
+        // Set config after switch selection.
     }
 }

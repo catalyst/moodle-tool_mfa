@@ -59,7 +59,7 @@ switch ($action) {
     case 'disable':
         if (in_array($factor, $enabledfactors)) {
             \tool_mfa\manager::set_factor_config(array('enabled' => 0), 'factor_' . $factor);
-            \tool_mfa\manager::change_factor_order($factor, $action);
+            \tool_mfa\manager::do_factor_action($factor, $action);
 
             \core\session\manager::gc(); // Remove stale sessions.
             core_plugin_manager::reset_caches();
@@ -69,7 +69,7 @@ switch ($action) {
     case 'enable':
         if (!in_array($factor, $enabledfactors)) {
             \tool_mfa\manager::set_factor_config(array('enabled' => 1), 'factor_' . $factor);
-            \tool_mfa\manager::change_factor_order($factor, $action);
+            \tool_mfa\manager::do_factor_action($factor, $action);
 
             \core\session\manager::gc(); // Remove stale sessions.
             core_plugin_manager::reset_caches();
@@ -78,7 +78,7 @@ switch ($action) {
 
     case 'up':
     case 'down':
-        \tool_mfa\manager::change_factor_order($factor, $action);
+        \tool_mfa\manager::do_factor_action($factor, $action);
 
         \core\session\manager::gc(); // Remove stale sessions.
         core_plugin_manager::reset_caches();

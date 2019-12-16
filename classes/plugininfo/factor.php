@@ -248,12 +248,7 @@ class factor extends \core\plugininfo\base {
      * @return bool
      */
     public static function factor_exists($factorname) {
-        $factors = self::get_factors();
-        foreach ($factors as $factor) {
-            if ($factorname == $factor->name) {
-                return true;
-            }
-        }
-        return false;
+        $factor = self::get_factor($factorname);
+        return !$factor ? false : true;
     }
 }
