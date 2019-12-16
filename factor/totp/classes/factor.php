@@ -271,4 +271,12 @@ class factor extends object_factor_base {
     public function post_pass_state() {
         return;
     }
+
+    public function possible_states($user) {
+        return array(
+            \tool_mfa\plugininfo\factor::STATE_PASS,
+            \tool_mfa\plugininfo\factor::STATE_NEUTRAL,
+            \tool_mfa\plugininfo\factor::STATE_UNKNOWN,
+        );
+    }
 }

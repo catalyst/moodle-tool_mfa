@@ -17,16 +17,18 @@
 /**
  * Plugin version and other meta-data are defined here.
  *
- * @package     tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
+ * @package     factor_nosetup
+ * @subpackage  tool_mfa
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019121600;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2018051708.05;   // Requires MDL-60470 improvement.
-$plugin->component = 'tool_mfa';
-$plugin->release   = 'v0.1';
-$plugin->maturity  = MATURITY_STABLE;
+$plugin->version      = 2019102400;      // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires     = 2018051708.05;   // Requires MDL-60470 improvement.
+$plugin->component    = 'factor_nosetup';
+$plugin->release      = 'v0.1';
+$plugin->maturity     = MATURITY_STABLE;
+$plugin->dependencies = array('tool_mfa' => 2019102400);

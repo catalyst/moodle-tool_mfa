@@ -490,7 +490,13 @@ class manager {
      * @throws \dml_exception
      */
     public static function is_ready() {
-        global $CFG;
+        global $CFG, $USER;
+
+        // Check if user can interact with MFA.
+        $usercontext = \context_user::instance($USER->id);
+        if (!has_capability('tool/mfa:mfaaccess', $usercontext, $USER)) {
+            return false;
+        }
 
         if (!empty($CFG->upgraderunning)) {
             return false;
@@ -502,7 +508,6 @@ class manager {
         }
 
         $enabledfactors = \tool_mfa\plugininfo\factor::get_enabled_factors();
-
         if (count($enabledfactors) == 0) {
             return false;
         }
@@ -530,7 +535,6 @@ class manager {
                     $fsave = $order[$key];
                     $order[$key] = $order[$key - 1];
                     $order[$key - 1] = $fsave;
-                    self::set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
                 }
                 break;
 
@@ -539,28 +543,47 @@ class manager {
                     $fsave = $order[$key];
                     $order[$key] = $order[$key + 1];
                     $order[$key + 1] = $fsave;
-                    self::set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
                 }
                 break;
 
             case 'enable':
                 if (!$key) {
                     $order[] = $factorname;
-                    self::set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
                 }
                 break;
 
             case 'disable':
                 if ($key) {
                     unset($order[$key]);
-                    self::set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
                 }
                 break;
 
             default:
                 break;
         }
+        self::set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
+    }
 
-        // Set config after switch selection.
+    /*
+     * If it is possible for a user to setup a factor that could put them into a pass state, returns true.
+     *
+     * @return bool
+     */
+    public static function possible_factor_setup() {
+        global $USER;
+
+        // Get all active factors.
+        $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+
+        // If a factor has setup, and can pass, return true.
+        foreach ($factors as $factor) {
+            if ($factor->has_setup()) {
+                if (in_array(\tool_mfa\plugininfo\factor::STATE_PASS, $factor->possible_states($USER))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

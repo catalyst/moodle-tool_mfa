@@ -273,4 +273,69 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
         $_SERVER['HTTP_REFERER'] = 'http://phpunit.test';
         $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
     }
+
+    public function test_possible_factor_setup() {
+        // Setup test and user.
+        $this->resetAfterTest(true);
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Test for totp is able to be setup.
+        set_config('enabled', 1, 'factor_totp');
+        $this->assertTrue(\tool_mfa\manager::possible_factor_setup());
+        set_config('enabled', 0, 'factor_totp');
+
+        // Test TOTP is already setup and can be managed.
+        $totp = \tool_mfa\plugininfo\factor::get_factor('totp');
+        set_config('enabled', 1, 'factor_totp');
+        $totpdata = [
+            'secret' => 'fakekey',
+            'devicename' => 'fakedevice'
+        ];
+        $this->assertTrue($totp->setup_user_factor((object) $totpdata));
+        $this->assertTrue(\tool_mfa\manager::possible_factor_setup());
+        set_config('enabled', 0, 'factor_totp');
+
+        // Test no factors can be setup.
+        set_config('enabled', 1, 'factor_email');
+        set_config('enabled', 1, 'factor_admin');
+        $this->assertFalse(\tool_mfa\manager::possible_factor_setup());
+        set_config('enabled', 0, 'factor_email');
+        set_config('enabled', 0, 'factor_admin');
+    }
+
+    public function test_is_ready() {
+        // Setup test and user.
+        global $CFG;
+        $this->resetAfterTest(true);
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        set_config('enabled', 1, 'factor_nosetup');
+        set_config('enabled', 1, 'tool_mfa');
+
+        // Capability Check.
+        $this->assertTrue(\tool_mfa\manager::is_ready());
+        // Swap to role without capability.
+        $this->setGuestUser();
+        $this->assertFalse(\tool_mfa\manager::is_ready());
+        $this->setUser($user);
+
+        // Enabled check.
+        $this->assertTrue(\tool_mfa\manager::is_ready());
+        set_config('enabled', 0, 'tool_mfa');
+        $this->assertFalse(\tool_mfa\manager::is_ready());
+        set_config('enabled', 1, 'tool_mfa');
+
+        // Upgrade check.
+        $this->assertTrue(\tool_mfa\manager::is_ready());
+        $CFG->upgraderunning = true;
+        $this->assertFalse(\tool_mfa\manager::is_ready());
+        unset($CFG->upgraderunning);
+
+        // No factors check.
+        $this->assertTrue(\tool_mfa\manager::is_ready());
+        set_config('enabled', 0, 'factor_nosetup');
+        $this->assertFalse(\tool_mfa\manager::is_ready());
+        set_config('enabled', 1, 'factor_nosetup');
+    }
 }

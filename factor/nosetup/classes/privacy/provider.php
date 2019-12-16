@@ -13,20 +13,36 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
- * Plugin version and other meta-data are defined here.
+ * Privacy provider.
  *
- * @package     tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
+ * @package     factor_nosetup
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace factor_nosetup\privacy;
 
-$plugin->version   = 2019121600;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2018051708.05;   // Requires MDL-60470 improvement.
-$plugin->component = 'tool_mfa';
-$plugin->release   = 'v0.1';
-$plugin->maturity  = MATURITY_STABLE;
+defined('MOODLE_INTERNAL') || die;
+
+use core_privacy\local\metadata\null_provider;
+use core_privacy\local\legacy_polyfill;
+
+/**
+ * Class provider
+ * @package factor_iprange\privacy
+ */
+class provider implements null_provider {
+    use legacy_polyfill;
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function _get_reason() {
+        return 'privacy:metadata';
+    }
+}
