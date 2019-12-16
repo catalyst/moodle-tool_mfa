@@ -57,6 +57,9 @@ if ($form->is_submitted()) {
         if ($SESSION->mfa_fail_counter >= get_config('tool_mfa', 'lockout')) {
             \tool_mfa\manager::cannot_login();
         }
+
+        // Clear form input using JS.
+        $PAGE->requires->js_call_amd('tool_mfa/clear_field', 'init');
     }
 
     // Set state from user actions.
