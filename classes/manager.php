@@ -432,7 +432,7 @@ class manager {
     $setwantsurltome = null, $preventredirect = null) {
         global $SESSION, $ME;
 
-        if (!tool_mfa_ready()) {
+        if (!self::is_ready()) {
             // Set session var so if MFA becomes ready, you dont get locked from session.
             $SESSION->tool_mfa_authenticated = true;
             return;
@@ -454,5 +454,113 @@ class manager {
                 throw new \moodle_exception('redirecterrordetected', 'error');
             }
         }
+    }
+
+    /**
+     * Sets config variable for given factor.
+     *
+     * @param array $data
+     * @param string $factor
+     *
+     * @return bool true or exception
+     * @throws dml_exception
+     */
+    public static function set_factor_config($data, $factor) {
+        $factorconf = get_config($factor);
+        foreach ($data as $key => $newvalue) {
+            if (empty($factorconf->$key)) {
+                add_to_config_log($key, null, $newvalue, $factor);
+                set_config($key, $newvalue, $factor);
+
+            } else if ($factorconf->$key != $newvalue) {
+                add_to_config_log($key, $factorconf->$key, $newvalue, $factor);
+                set_config($key, $newvalue, $factor);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if MFA Plugin is enabled and has enabled factor.
+     * If plugin is disabled or there is no enabled factors,
+     * it means there is nothing to do from user side.
+     * Thus, login flow shouldn't be extended with MFA.
+     *
+     * @return bool
+     * @throws \dml_exception
+     */
+    public static function is_ready() {
+        global $CFG;
+
+        if (!empty($CFG->upgraderunning)) {
+            return false;
+        }
+
+        $pluginenabled = get_config('tool_mfa', 'enabled');
+        if (empty($pluginenabled)) {
+            return false;
+        }
+
+        $enabledfactors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+
+        if (count($enabledfactors) == 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Performs factor actions for given factor.
+     * Change factor order and enable/disable.
+     *
+     * @param string $factorname
+     * @param string $action
+     *
+     * @return void
+     * @throws dml_exception
+     */
+    public static function do_factor_action($factorname, $action) {
+        $order = explode(',', get_config('tool_mfa', 'factor_order'));
+        $key = array_search($factorname, $order);
+
+        switch ($action) {
+            case 'up':
+                if ($key >= 1) {
+                    $fsave = $order[$key];
+                    $order[$key] = $order[$key - 1];
+                    $order[$key - 1] = $fsave;
+                    self::set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
+                }
+                break;
+
+            case 'down':
+                if ($key < (count($order) - 1)) {
+                    $fsave = $order[$key];
+                    $order[$key] = $order[$key + 1];
+                    $order[$key + 1] = $fsave;
+                    self::set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
+                }
+                break;
+
+            case 'enable':
+                if (!$key) {
+                    $order[] = $factorname;
+                    self::set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
+                }
+                break;
+
+            case 'disable':
+                if ($key) {
+                    unset($order[$key]);
+                    self::set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        // Set config after switch selection.
     }
 }

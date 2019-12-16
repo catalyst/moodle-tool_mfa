@@ -31,13 +31,13 @@ abstract class tool_mfa_testcase extends \advanced_testcase {
     }
 
     protected function set_factor_config($factor, $key, $value) {
-        tool_mfa_set_factor_config(array($key => $value), 'factor_' . $factor->name);
+        \tool_mfa\manager::set_factor_config(array($key => $value), 'factor_' . $factor->name);
 
         if ($key == 'enabled') {
             if ($value == 1) {
-                tool_mfa_change_factor_order($factor->name, 'enable');
+                \tool_mfa\manager::do_factor_action($factor->name, 'enable');
             } else {
-                tool_mfa_change_factor_order($factor->name, 'disable');
+                \tool_mfa\manager::do_factor_action($factor->name, 'disable');
             }
         }
     }

@@ -239,5 +239,16 @@ class factor extends \core\plugininfo\base {
 
         $adminroot->add($parentnodename, $settings);
     }
-}
 
+    /**
+     * Checks that given factor exists.
+     *
+     * @param string $factorname
+     *
+     * @return bool
+     */
+    public static function factor_exists($factorname) {
+        $factor = self::get_factor($factorname);
+        return !$factor ? false : true;
+    }
+}

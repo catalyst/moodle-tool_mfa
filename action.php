@@ -45,7 +45,7 @@ if (empty($factor) || empty($action)) {
     print_error('error:directaccess', 'tool_mfa', $returnurl);
 }
 
-if (!tool_mfa_factor_exists($factor)) {
+if (!\tool_mfa\plugininfo\factor::factor_exists($factor)) {
     print_error('error:factornotfound', 'tool_mfa', $returnurl, $factor);
 }
 
