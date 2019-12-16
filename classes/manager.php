@@ -395,7 +395,7 @@ class manager {
      * @return array
      */
     public static function get_factor_no_redirect_urls() {
-        $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
         $urls = array();
         foreach ($factors as $factor) {
             $urls += $factor->get_no_redirect_urls();
