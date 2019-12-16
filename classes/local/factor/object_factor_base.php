@@ -350,9 +350,8 @@ abstract class object_factor_base implements object_factor {
      */
     public function post_pass_state() {
         // Update lastverified for factor.
-        global $DB, $USER;
         if ($this->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
-            $DB->set_field('tool_mfa', 'lastverified', time(), array('userid' => $USER->id, 'factor' => $this->name));
+            $this->update_lastverified();
         }
     }
 
