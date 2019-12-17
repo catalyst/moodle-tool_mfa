@@ -105,3 +105,4 @@ $string['mfareports'] = 'MFA reports';
 $string['factorreport'] = 'All factor report';
 $string['lockoutnotification'] = 'You have {$a} verification attempts remaining.';
 $string['mfa:mfaaccess'] = 'Interact with MFA';
+$string['factorsetup'] = 'Factor \'{$a}\' successfully setup.';
