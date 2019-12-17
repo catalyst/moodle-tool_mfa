@@ -71,20 +71,47 @@ https://docs.moodle.org/en/Installing_plugins
 Step 2: Apply core patches
 -------------------------------
 
-This plugin requires [MDL-60470](https://tracker.moodle.org/browse/MDL-60470) which was only added 3.7.
+This plugin requires [MDL-60470](https://tracker.moodle.org/browse/MDL-60470) which was only added 3.7, and [MDL-66340](https://tracker.moodle.org/browse/MDL-66340), which was added in 3.8.
 
-You can easily backport it in one line for 3.5 and 3.6:
+You can easily backport these patches in one line for 3.5, 3.6 and 3.7:
 
 For Moodle 3.5:
 
 ```
-git apply admin/tool/mfa/core35.patch
+git apply --whitespace=nowarn admin/tool/mfa/patch/core35.diff
 ```
 
 For Moodle 3.6:
 
 ```
-git apply admin/tool/mfa/core36.patch
+git apply --whitespace=nowarn admin/tool/mfa/patch/core36.diff
+```
+
+For Moodle 3.7:
+
+```
+git apply --whitespace=nowarn admin/tool/mfa/patch/core37.diff
+```
+
+### Manual cherry-pick
+In case the patches do not work due to an update to older Moodle branches (such as security updates), you can manually perform the cherry-picks.
+For [MDL-60470](https://tracker.moodle.org/browse/MDL-60470):
+
+```
+git cherry-pick bf9f255523e5f8feb7cb39067475389ba260ff4e
+```
+If there are merge conflicts, ensure the lines that you are adding are consistent with the lines being added inside the patch files. Everything else can safely be ignored.
+
+For [MDL-66340](https://tracker.moodle.org/browse/MDL-66340):
+
+```
+git cherry-pick 4ed105a9fd4c37e063d384ff155bd10c3bfbb303
+```
+As with above, if there are merge conflicts, ensure the lines that you are adding are consistent with the lines being added inside the patch files. Everything else can safely be ignored.
+
+Once this has been performed, you can generate your own patch files using `git format-patch`. An example for Moodle 3.5 is below:
+```
+git format-patch MOODLE_35_STABLE --stdout > admin/tool/mfa/patch/new_core35.diff
 ```
 
 ## Configuration
