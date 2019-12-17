@@ -115,7 +115,7 @@ This is so you can specify that logging in via say SAML via ADFS which may have 
 
 #### Non-admin
 
-This factor enables you to give points for free to a user who is not an admin. This makes it easy to require admin users to have 2 or more factors while not affecting normal users. 
+This factor enables you to give points for free to a user who is not an admin. This makes it easy to require admin users to have 2 or more factors while not affecting normal users.
 
 #### Email
 
@@ -151,11 +151,11 @@ Then it will show:
 
 ```
 You must be:
-* logged in via saml
+* has an authentication type of saml
 OR
-* on a secure network
+* is on a secured network
 OR
-* use TOTP
+* using a TOTP app
 ```
 
 #### Example 2
@@ -164,11 +164,11 @@ If you change all 3 points to 50 then it would say:
 
 ```
 You must be:
-* logged in via saml AND on a secure network
+* has an authentication type of saml AND is on a secured network
 OR
-* logged in via saml AND use TOTP
+* has an authentication type of saml AND using a TOTP app
 OR
-* on a secure network AND use TOTP
+* is on a secured network AND using a TOTP app
 ```
 
 #### Example 3
@@ -187,13 +187,13 @@ Then these are valid conditions:
 
 ```
 You must be:
-* logged in via saml
+* has an authentication type of saml
 OR
-* be on a secure network
+* is on a secured network
 OR
-* use TOTP
+* using a TOTP app
 OR
-* on validate your email AND answer your security questions
+* has valid email setup AND answers security questions
 ```
 
 ## Debugging

@@ -379,4 +379,13 @@ abstract class object_factor_base implements object_factor {
     public function possible_states($user) {
         return $this->get_state();
     }
+
+    /**
+     * Returns condition for passing factor.
+     * Implementation for basic conditions.
+     * Override for complex conditions such as auth type.
+     */
+    public function get_summary_condition() {
+        return get_string('summarycondition', "factor_".$this->name);
+    }
 }

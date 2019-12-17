@@ -54,3 +54,4 @@ $string['privacy:metadata'] = 'The E-Mail Factor plugin does not store any perso
 $string['setupfactor'] = 'E-Mail Factor setup';
 $string['verificationcode'] = 'Enter verification code for confirmation';
 $string['verificationcode_help'] = 'Verification code has been sent to your email address';
+$string['summarycondition'] = 'has valid email setup';

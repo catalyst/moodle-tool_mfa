@@ -30,3 +30,4 @@ $string['pluginname'] = 'IP Range Factor';
 $string['privacy:metadata'] = 'The IP Range Factor plugin does not store any personal data';
 $string['settings:safeips'] = 'Safe IP ranges';
 $string['settings:safeips_help'] = 'Enter a list of IP addresses or subnets to be counted as a pass in factor. If empty noone will pass this factor. {$a->info} {$a->syntax}';
+$string['summarycondition'] = 'is on a secured network';

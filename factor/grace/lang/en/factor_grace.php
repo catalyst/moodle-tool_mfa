@@ -30,5 +30,6 @@ $string['settings:graceperiod_help'] = 'Period of time when users can access Moo
 $string['setupfactors'] = 'You are currently in grace mode, and may not have enough factors setup to login once the grace period is over.
     Visit {$a->url} to check your authentication status, and setup more authentication factors. Your grace period expires in {$a->time}.';
 $string['preferences'] = 'User Preferences';
+$string['summarycondition'] = 'is within grace period';
 
 $string['privacy:metadata'] = 'The Grace period factor plugin does not store any personal data';

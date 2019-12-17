@@ -201,10 +201,11 @@ class admin_setting_managemfa extends \admin_setting {
         foreach ($combinations as $combination) {
             $string = '';
             foreach ($combination['combination'] as $factor) {
-                $string .= ' + ' . $factor->get_display_name() . ' <sup>' . $factor->get_weight() . '</sup>';
+                $string .= get_string('connector', 'tool_mfa') . $factor->get_summary_condition()
+                . ' <sup>' . $factor->get_weight() . '</sup>';
             }
 
-            $string = substr($string, 3);
+            $string = substr($string, 5);
             $table->data[] = new \html_table_row(array($string, $combination['totalweight']));
         }
 

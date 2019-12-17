@@ -113,6 +113,11 @@ class factor extends object_factor_base {
         return [(object) $record];
     }
 
+    /**
+     * E-Mail Factor implementation.
+     *
+     * {@inheritDoc}
+     */
     public function has_input() {
         if (self::is_ready()) {
             return true;
@@ -120,6 +125,11 @@ class factor extends object_factor_base {
         return false;
     }
 
+    /**
+     * E-Mail Factor implementation.
+     *
+     * {@inheritDoc}
+     */
     public function get_state() {
         if (!self::is_ready()) {
             return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
@@ -128,6 +138,11 @@ class factor extends object_factor_base {
         return parent::get_state();
     }
 
+    /**
+     * Checks whether user email is correctly configured.
+     *
+     * @return bool
+     */
     private static function is_ready() {
         global $DB, $USER;
 
@@ -148,6 +163,11 @@ class factor extends object_factor_base {
         return true;
     }
 
+    /**
+     * Generates and emails the code for login to the user, stores codes in DB.
+     *
+     * @return void
+     */
     private function generate_and_email_code() {
         global $DB, $USER;
 
@@ -196,6 +216,11 @@ class factor extends object_factor_base {
         }
     }
 
+    /**
+     * Verifies entered code against stored DB record.
+     *
+     * @return bool
+     */
     private function check_verification_code($enteredcode) {
         global $DB, $USER;
         $duration = get_config('factor_email', 'duration');
@@ -218,6 +243,11 @@ class factor extends object_factor_base {
         return false;
     }
 
+    /**
+     * Cleans up email records once MFA passed.
+     *
+     * {@inheritDoc}
+     */
     public function post_pass_state() {
         global $DB, $USER;
         // Delete all email records except base record.
@@ -225,13 +255,27 @@ class factor extends object_factor_base {
                   AND factor = ?
               AND NOT label = ?';
         $DB->delete_records_select('tool_mfa', $selectsql, array($USER->id, 'email', $USER->email));
+
+        // Update factor timeverified.
+        parent::post_pass_state();
     }
 
+    /**
+     * Email factor implementation.
+     * Email page must be safe to authorise session from link.
+     *
+     * {@inheritDoc}
+     */
     public function get_no_redirect_urls() {
         $email = new \moodle_url('/admin/tool/mfa/factor/email/email.php');
         return array($email);
     }
 
+    /**
+     * Email factor implementation.
+     *
+     * {@inheritDoc}
+     */
     public function possible_states($user) {
         // Email can return all states.
         return array(

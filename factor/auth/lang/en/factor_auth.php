@@ -28,5 +28,6 @@ $string['info'] = 'Check the type of authentication used to login as an MFA fact
 
 $string['settings:goodauth'] = 'Factor authentication types';
 $string['settings:goodauth_help'] = 'Select all authentication types to use as a factor for MFA. Any types not selected will not be treated as a FAIL in MFA.';
+$string['summarycondition'] = 'has an authentication type of {$a}';
 
 $string['privacy:metadata'] = 'The Auth Factor plugin does not store any personal data';

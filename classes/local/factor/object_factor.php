@@ -203,4 +203,11 @@ interface object_factor {
      * @return array
      */
     public function possible_states($user);
+
+    /**
+     * Return summary condition for passing factor.
+     *
+     * @return array
+     */
+    public function get_summary_condition();
 }
