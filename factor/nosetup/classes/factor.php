@@ -85,11 +85,15 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function get_state() {
-        $active = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
-        if (count($active) == 1 && reset($active)->name == 'nosetup') {
-            return \tool_mfa\plugininfo\factor::STATE_PASS;
+        // Check if user has any other input or setup factors active.
+        $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        foreach ($factors as $factor) {
+            if ($factor->has_input() || $factor->has_setup()) {
+                return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+            }
         }
-        return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+
+        return \tool_mfa\plugininfo\factor::STATE_PASS;
     }
 
     /**
@@ -99,6 +103,22 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function set_state($state) {
+        return true;
+    }
+
+    /**
+     * No Setup Factor implementation.
+     * nosetup should not be a valid combination with another factor.
+     *
+     * {@inheritDoc}
+     */
+    public function check_combination($combination) {
+        // If this combination has more than 1 factor that has setup or input, not valid.
+        foreach ($combination as $factor) {
+            if ($factor->has_setup() || $factor->has_input()) {
+                return false;
+            }
+        }
         return true;
     }
 }

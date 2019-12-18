@@ -388,4 +388,13 @@ abstract class object_factor_base implements object_factor {
     public function get_summary_condition() {
         return get_string('summarycondition', "factor_".$this->name);
     }
+
+    /**
+     * Checks whether the factor combination is valid based on factor behaviour.
+     * E.g. a combination with nosetup and another factor is not valid,
+     * as you cannot pass nosetup with another factor.
+     */
+    public function check_combination($combination) {
+        return true;
+    }
 }
