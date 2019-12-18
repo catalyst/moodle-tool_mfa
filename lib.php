@@ -31,6 +31,13 @@ defined('MOODLE_INTERNAL') || die();
  */
 function tool_mfa_after_require_login($courseorid = null, $autologinguest = null, $cm = null,
     $setwantsurltome = null, $preventredirect = null) {
+
+    global $SESSION;
+    // Tests for hooks being fired to test patches.
+    if (PHPUNIT_TEST) {
+        $SESSION->mfa_login_hook_test = true;
+    }
+
     \tool_mfa\manager::require_auth($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
 }
 
@@ -65,7 +72,13 @@ function tool_mfa_extend_navigation_user_settings($navigation, $user, $userconte
 }
 
 function tool_mfa_after_config() {
-    global $SESSION;
+    global $CFG;
+
+    // Tests for hooks being fired to test patches.
+    // Store in $CFG, $SESSION not present at this point.
+    if (PHPUNIT_TEST) {
+        $CFG->mfa_config_hook_test = true;
+    }
 
     // Check for not logged in.
     if (isloggedin() && !isguestuser()) {

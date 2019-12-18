@@ -338,4 +338,19 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
         $this->assertFalse(\tool_mfa\manager::is_ready());
         set_config('enabled', 1, 'factor_nosetup');
     }
+
+    public function test_core_hooks() {
+        // Setup test and user.
+        require_once(__DIR__ . '/../../../../config.php');
+        global $CFG, $SESSION;
+        $this->resetAfterTest(true);
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Require login to fire hooks. Config we get for free.
+        require_login();
+
+        $this->assertTrue($CFG->mfa_config_hook_test);
+        $this->assertTrue($SESSION->mfa_login_hook_test);
+    }
 }

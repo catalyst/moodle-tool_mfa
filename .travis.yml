@@ -14,17 +14,17 @@ dist: trusty
 matrix:
   include:
     - php: 7.1
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE CORE_PATCH=core35.patch
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE CORE_PATCH=core35.diff
     - php: 7.1
-      env: DB=pgsql  MOODLE_BRANCH=MOODLE_35_STABLE CORE_PATCH=core35.patch
+      env: DB=pgsql  MOODLE_BRANCH=MOODLE_35_STABLE CORE_PATCH=core35.diff
     - php: 7.1
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE CORE_PATCH=core36.patch
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE CORE_PATCH=core36.diff
     - php: 7.1
-      env: DB=pgsql  MOODLE_BRANCH=MOODLE_36_STABLE CORE_PATCH=core36.patch
+      env: DB=pgsql  MOODLE_BRANCH=MOODLE_36_STABLE CORE_PATCH=core36.diff
     - php: 7.2
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE CORE_PATCH=core37.diff
     - php: 7.2
-      env: DB=pgsql  MOODLE_BRANCH=MOODLE_37_STABLE
+      env: DB=pgsql  MOODLE_BRANCH=MOODLE_37_STABLE CORE_PATCH=core37.diff
     - php: 7.2
       env: DB=mysqli MOODLE_BRANCH=master
     - php: 7.2
@@ -39,7 +39,8 @@ before_install:
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
 
 install:
-  - moodle-plugin-ci install
+  - moodle-plugin-ci install -vvv
+  - if [ ! -z "$CORE_PATCH" ]; then (cd /home/travis/build/moodle; git apply admin/tool/mfa/patch/$CORE_PATCH); fi
 
 script:
   - moodle-plugin-ci phplint
@@ -50,4 +51,3 @@ script:
   - moodle-plugin-ci grunt
   - moodle-plugin-ci phpunit
   - moodle-plugin-ci behat
-
