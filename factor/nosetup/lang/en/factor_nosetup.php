@@ -26,4 +26,6 @@
 $string['pluginname'] = 'No other factors';
 $string['info'] = 'This factor passes if the user has no other factors setup.';
 
+$string['summarycondition'] = 'has no other factors setup';
+
 $string['privacy:metadata'] = 'The No other factors plugin does not store any personal data';

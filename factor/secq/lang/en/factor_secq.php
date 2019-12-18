@@ -24,5 +24,6 @@
  */
 $string['pluginname'] = 'Security Questions';
 $string['info'] = 'Answer Security Questions as a factor.';
+$string['summarycondition'] = 'answers security questions';
 
 $string['privacy:metadata'] = 'The Security Questions factor plugin does not store any personal data';

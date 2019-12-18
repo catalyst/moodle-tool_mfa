@@ -113,5 +113,25 @@ class factor extends object_factor_base {
     public function set_state($state) {
         return true;
     }
-}
 
+    /**
+     * Auth factor implementation.
+     * Return list of auth types that are safe.
+     *
+     * {@inheritDoc}
+     */
+    public function get_summary_condition() {
+        $safetypes = get_config('factor_auth', 'goodauth');
+        $authtypes = get_enabled_auth_plugins(true);
+        $string = '';
+
+        if (strlen($safetypes) > 0) {
+            $safetypes = explode(',', $safetypes);
+            foreach ($safetypes as $type) {
+                $string .= $authtypes[$type];
+            }
+        }
+
+        return get_string('summarycondition', 'factor_'.$this->name, $string);
+    }
+}

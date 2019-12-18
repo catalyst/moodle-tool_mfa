@@ -47,7 +47,7 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function get_all_user_factors() {
-        // FACTOR FUNCTIONALITY HERE
+        // FACTOR FUNCTIONALITY HERE.
         return array();
     }
 
@@ -63,7 +63,7 @@ class factor extends object_factor_base {
 
     /**
      * Security Questions Factor implementation.
-     * RETURN CORRECT STATE WHEN IMPLEMENTED
+     * RETURN CORRECT STATE WHEN IMPLEMENTED.
      *
      * {@inheritDoc}
      */
