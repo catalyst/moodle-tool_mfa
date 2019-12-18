@@ -63,14 +63,28 @@ class manager {
         );
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
         $userfactors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        $runningtotal = 0;
+        $weighttoggle = false;
 
         foreach ($factors as $factor) {
 
             $namespace = 'factor_'.$factor->name;
             $name = get_string('pluginname', $namespace);
 
-            $achieved = $factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS ? $factor->get_weight() : 0;
-            $achieved = '+'.$achieved;
+            // If factor is unknown, pending from here.
+            if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_UNKNOWN) {
+                $weighttoggle = true;
+            }
+
+            // Stop adding weight if 100 achieved.
+            if (!$weighttoggle) {
+                $achieved = $factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS ? $factor->get_weight() : 0;
+                $achieved = '+'.$achieved;
+                $runningtotal += $achieved;
+
+            } else {
+                $achieved = '';
+            }
 
             // Setup.
             if ($factor->has_setup()) {
@@ -87,7 +101,12 @@ class manager {
 
             // Status.
             $OUTPUT = $PAGE->get_renderer('tool_mfa');
-            $state = $OUTPUT->get_state_badge($factor->get_state());
+            // If toggle has been flipped, fall to default pending badge.
+            if ($weighttoggle) {
+                $state = $OUTPUT->get_state_badge('');
+            } else {
+                $state = $OUTPUT->get_state_badge($factor->get_state());
+            }
 
             $table->data[] = array(
                 $factor->get_weight(),
@@ -96,6 +115,11 @@ class manager {
                 $achieved,
                 $state,
             );
+
+            // If we just hit 100, flip toggle.
+            if ($runningtotal >= 100) {
+                $weighttoggle = true;
+            }
         }
 
         $finalstate = self::get_status();
@@ -103,7 +127,7 @@ class manager {
             '',
             '',
             '<b>' . get_string('overall', 'tool_mfa') . '</b>',
-            self::get_total_weight(),
+            self::get_cumulative_weight(),
             $OUTPUT->get_state_badge($finalstate),
         );
 
@@ -245,7 +269,7 @@ class manager {
             }
         }
 
-        $totalweight = self::get_total_weight();
+        $totalweight = self::get_cumulative_weight();
         if ($totalweight >= 100) {
             return true;
         }
@@ -585,5 +609,25 @@ class manager {
         }
 
         return false;
+    }
+
+    /**
+     * Gets current user weight, up until first unknown factor.
+     */
+    public static function get_cumulative_weight() {
+        $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        $totalweight = 0;
+        foreach ($factors as $factor) {
+            if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
+                $totalweight += $factor->get_weight();
+                // If over 100, break. Dont care about >100.
+                if ($totalweight >= 100) {
+                    break;
+                }
+            } else if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_UNKNOWN) {
+                break;
+            }
+        }
+        return $totalweight;
     }
 }

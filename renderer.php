@@ -44,9 +44,12 @@ class tool_mfa_renderer extends plugin_renderer_base {
             case \tool_mfa\plugininfo\factor::STATE_NEUTRAL:
                 return \html_writer::tag('span', get_string('state:neutral', 'tool_mfa'), array('class' => 'badge badge-warning'));
 
-            default:
+            case \tool_mfa\plugininfo\factor::STATE_UNKNOWN:
                 return \html_writer::tag('span', get_string('state:unknown', 'tool_mfa'),
                         array('class' => 'badge badge-secondary'));
+
+            default:
+                return \html_writer::tag('span', get_string('pending', 'tool_mfa'), array('class' => 'badge badge-secondary'));
         }
     }
 
