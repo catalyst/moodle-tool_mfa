@@ -193,7 +193,7 @@ class admin_setting_managemfa extends \admin_setting {
         $txt = get_strings(array('combination', 'totalweight'), 'tool_mfa');
         $table = new \html_table();
         $table->id = 'managemfatable';
-        $table->attributes['class'] = 'admintable generaltable';
+        $table->attributes['class'] = 'admintable generaltable table table-bordered';
         $table->head  = array($txt->combination, $txt->totalweight);
         $table->colclasses = array('leftalign', 'centeralign');
         $table->data  = array();
