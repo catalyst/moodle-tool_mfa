@@ -53,7 +53,7 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
             'secret' => 'fakekey',
             'devicename' => 'fakedevice'
         ];
-        $this->assertTrue($factor->setup_user_factor((object) $totpdata));
+        $this->assertNotEmpty($factor->setup_user_factor((object) $totpdata));
         $factor->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
         $this->assertEquals(100, \tool_mfa\manager::get_total_weight());
 
@@ -292,7 +292,7 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
             'secret' => 'fakekey',
             'devicename' => 'fakedevice'
         ];
-        $this->assertTrue($totp->setup_user_factor((object) $totpdata));
+        $this->assertNotEmpty($totp->setup_user_factor((object) $totpdata));
         $this->assertTrue(\tool_mfa\manager::possible_factor_setup());
         set_config('enabled', 0, 'factor_totp');
 

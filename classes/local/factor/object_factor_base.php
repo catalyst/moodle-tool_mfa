@@ -145,10 +145,10 @@ abstract class object_factor_base implements object_factor {
      * Dummy implementation. Should be overridden in child class.
      *
      * @param array $data
-     * @return bool
+     * @return stdClass the record if created, or null.
      */
     public function setup_user_factor($data) {
-        return false;
+        return null;
     }
 
     /**

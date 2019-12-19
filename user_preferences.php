@@ -30,7 +30,8 @@ if (isguestuser()) {
 }
 
 $userid = optional_param('userid', $USER->id, PARAM_INT);
-$setup = optional_param('setup', '', PARAM_TEXT);
+$action = optional_param('action', '', PARAM_TEXT);
+$factorid = optional_param('factorid', 0, PARAM_INT);
 $user = core_user::get_user($userid);
 if (!$user || !core_user::is_real_user($userid)) {
     throw new moodle_exception('invaliduser', 'error');
@@ -66,9 +67,13 @@ if ($totalweight >= 100) {
     echo $OUTPUT->notification(get_string('notenoughfactors', 'tool_mfa'), 'notifyproblem');
 }
 
-if (!empty($setup)) {
-    $factor = \tool_mfa\plugininfo\factor::get_factor($setup);
-    echo $OUTPUT->notification(get_string('factorsetup', 'tool_mfa', $factor->get_display_name()), 'notifysuccess');
+if (!empty($action)) {
+    if ($factorid != 0) {
+        $instance = \tool_mfa\plugininfo\factor::get_instance_from_id($factorid);
+        $factor = \tool_mfa\plugininfo\factor::get_factor($instance->factor);
+        $string = $factor->get_display_name().' - '.$instance->label;
+        echo $OUTPUT->notification(get_string('factor'.$action, 'tool_mfa', $string), 'notifysuccess');
+    }
 }
 
 echo $OUTPUT->active_factors();

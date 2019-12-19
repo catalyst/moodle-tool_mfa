@@ -33,16 +33,6 @@ class factor extends object_factor_base {
 
     /**
      * IP Range Factor implementation.
-     * This factor needs no user setup, return true.
-     *
-     * {@inheritDoc}
-     */
-    public function setup_user_factor($data) {
-        return true;
-    }
-
-    /**
-     * IP Range Factor implementation.
      * This factor is a singleton, return single instance.
      *
      * {@inheritDoc}
