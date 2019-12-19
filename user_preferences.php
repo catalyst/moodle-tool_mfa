@@ -48,25 +48,9 @@ if ($node = $PAGE->settingsnav->find('usercurrentsettings', null)) {
     $PAGE->navbar->add($node->get_content(), $node->action());
 }
 $PAGE->navbar->add(get_string('preferences:header', 'tool_mfa'), new \moodle_url('/admin/tool/mfa/user_preferences.php'));
-
 $OUTPUT = $PAGE->get_renderer('tool_mfa');
 
 echo $OUTPUT->header();
-
-$totalweight = \tool_mfa\manager::get_total_weight();
-
-if ($totalweight >= 100) {
-    echo $OUTPUT->notification(get_string('enoughfactors', 'tool_mfa'), 'notifysuccess');
-
-    if (!empty($SESSION->wantsurl)) {
-        $gotourl = new \moodle_url($SESSION->wantsurl);
-        $gotolink = \html_writer::link($gotourl, $gotourl);
-        echo $OUTPUT->notification(get_string('gotourl', 'tool_mfa').$gotolink, 'notifysuccess');
-    }
-} else {
-    echo $OUTPUT->notification(get_string('notenoughfactors', 'tool_mfa'), 'notifyproblem');
-}
-
 if (!empty($action)) {
     if ($factorid != 0) {
         $instance = \tool_mfa\plugininfo\factor::get_instance_from_id($factorid);
