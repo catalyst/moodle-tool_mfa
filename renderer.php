@@ -91,6 +91,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
         $html .= $OUTPUT->single_button($setupurl, $factor->get_setup_string());
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('div');
+        $html .= '<br>';
 
         return $html;
     }
@@ -117,7 +118,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
 
         $table = new \html_table();
         $table->id = 'active_factors';
-        $table->attributes['class'] = 'generaltable';
+        $table->attributes['class'] = 'generaltable table table-bordered';
         $table->head  = array(
             $headers->factor,
             $headers->devicename,
@@ -176,9 +177,8 @@ class tool_mfa_renderer extends plugin_renderer_base {
         if (count($table->data) == 0) {
             return '';
         }
-        $html .= $OUTPUT->box_start('generalbox');
         $html .= \html_writer::table($table);
-        $html .= $OUTPUT->box_end();
+        $html .= '<br>';
 
         return $html;
     }

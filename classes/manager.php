@@ -42,8 +42,7 @@ class manager {
         if (!get_config('tool_mfa', 'debugmode')) {
             return;
         }
-
-        $output = $OUTPUT->heading(get_string('debugmode:heading', 'tool_mfa'), 3);
+        $html = $OUTPUT->heading(get_string('debugmode:heading', 'tool_mfa'), 3);
 
         $table = new \html_table();
         $table->head = array(
@@ -53,7 +52,7 @@ class manager {
             get_string('achievedweight', 'tool_mfa'),
             get_string('status'),
         );
-        $table->attributes['class'] = 'admintable generaltable';
+        $table->attributes['class'] = 'admintable generaltable table table-bordered';
         $table->colclasses = array(
             'text-right',
             '',
@@ -131,7 +130,8 @@ class manager {
             $OUTPUT->get_state_badge($finalstate),
         );
 
-        echo \html_writer::table($table);
+        $html .= \html_writer::table($table);
+        echo $html;
     }
 
     /**
