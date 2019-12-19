@@ -88,7 +88,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
 
         $setupparams = array('action' => 'setup', 'factor' => $factor->name);
         $setupurl = new \moodle_url('action.php', $setupparams);
-        $html .= $OUTPUT->single_button($setupurl, get_string('setupfactor', 'tool_mfa'));
+        $html .= $OUTPUT->single_button($setupurl, $factor->get_setup_string());
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('div');
 

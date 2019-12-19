@@ -397,4 +397,11 @@ abstract class object_factor_base implements object_factor {
     public function check_combination($combination) {
         return true;
     }
+
+    /*
+     * Gets the string for setup button on preferences page.
+     */
+    public function get_setup_string() {
+        return get_string('setupfactor', 'tool_mfa');
+    }
 }
