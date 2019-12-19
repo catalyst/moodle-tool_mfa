@@ -229,7 +229,16 @@ class admin_setting_managemfa extends \admin_setting {
         $totalweight = 0, $combination = array(), $result = array()) {
 
         if ($totalweight >= 100) {
-            $result[] = array('totalweight' => $totalweight, 'combination' => $combination);
+            // Ensure this is a valid combination before appending result.
+            $valid = true;
+            foreach ($combination as $factor) {
+                if (!$factor->check_combination($combination)) {
+                    $valid = false;
+                }
+            }
+            if ($valid) {
+                $result[] = array('totalweight' => $totalweight, 'combination' => $combination);
+            }
             return $result;
         } else if ($start > $end) {
             return $result;

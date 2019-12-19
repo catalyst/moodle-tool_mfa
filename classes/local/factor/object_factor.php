@@ -210,4 +210,14 @@ interface object_factor {
      * @return array
      */
     public function get_summary_condition();
+
+    /**
+     * Checks whether the factor combination is valid based on factor behaviour.
+     * E.g. a combination with nosetup and another factor is not valid,
+     * as you cannot pass nosetup with another factor.
+     *
+     * @param array array of factors that make up the combination
+     * @return bool
+     */
+    public function check_combination($combination);
 }
