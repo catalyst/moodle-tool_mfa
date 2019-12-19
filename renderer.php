@@ -86,7 +86,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
         $html .= html_writer::start_tag('div', array('class' => 'card-body'));
         $html .= $factor->get_info();
 
-        $setupparams = array('action' => 'setup', 'factor' => $factor->name);
+        $setupparams = array('action' => 'setup', 'factor' => $factor->name, 'sesskey' => sesskey());
         $setupurl = new \moodle_url('action.php', $setupparams);
         $html .= $OUTPUT->single_button($setupurl, $factor->get_setup_string());
         $html .= html_writer::end_tag('div');
@@ -150,7 +150,8 @@ class tool_mfa_renderer extends plugin_renderer_base {
 
             foreach ($userfactors as $userfactor) {
                 if ($factor->has_revoke()) {
-                    $revokeparams = array('action' => 'revoke', 'factor' => $factor->name, 'factorid' => $userfactor->id);
+                    $revokeparams = array('action' => 'revoke', 'factor' => $factor->name,
+                        'factorid' => $userfactor->id, 'sesskey' => sesskey());
                     $revokeurl = new \moodle_url('action.php', $revokeparams);
                     $revokelink = \html_writer::link($revokeurl, $headers->revoke);
                 } else {

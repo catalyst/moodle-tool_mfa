@@ -73,6 +73,9 @@ $PAGE->navbar->add(get_string('preferences:header', 'tool_mfa'), new \moodle_url
 
 switch ($action) {
     case 'setup':
+        // Ensure sesskey is valid.
+        require_sesskey();
+
         if (!$factorobject || !$factorobject->has_setup()) {
             redirect($returnurl);
         }
@@ -92,7 +95,7 @@ switch ($action) {
                 $record = $factorobject->setup_user_factor($data);
                 if (!empty($record)) {
                     $factorobject->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
-                    $finalurl = new moodle_url($returnurl, array('setup' => $record->id));
+                    $finalurl = new moodle_url($returnurl, array('action' => 'setup', 'factorid' => $record->id));
                     redirect($finalurl);
                 }
 
@@ -106,6 +109,9 @@ switch ($action) {
         break;
 
     case 'revoke':
+        // Ensure sesskey is valid.
+        require_sesskey();
+
         if (!$factorobject || !$factorobject->has_revoke()) {
             print_error('error:revoke', 'tool_mfa', $returnurl);
         }
@@ -128,7 +134,7 @@ switch ($action) {
 
             if ($form->get_data()) {
                 if ($factorobject->revoke_user_factor($factorid)) {
-                    $finalurl = new moodle_url($returnurl, array('revoked' => $factorid));
+                    $finalurl = new moodle_url($returnurl, array('action' => 'revoked', 'factorid' => $factorid));
                     redirect($finalurl);
                 }
 

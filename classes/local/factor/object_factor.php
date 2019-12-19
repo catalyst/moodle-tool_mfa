@@ -226,5 +226,5 @@ interface object_factor {
      *
      * @return string the string to display on the button.
      */
-   public function get_setup_string();
+    public function get_setup_string();
 }
