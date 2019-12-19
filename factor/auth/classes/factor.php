@@ -33,16 +33,6 @@ class factor extends object_factor_base {
 
     /**
      * Auth Factor implementation.
-     * Factor has no setup, function always returns true.
-     *
-     * {@inheritDoc}
-     */
-    public function setup_user_factor($data) {
-        return true;
-    }
-
-    /**
-     * Auth Factor implementation.
      * Factor is a singleton, can only be one instance.
      *
      * {@inheritDoc}

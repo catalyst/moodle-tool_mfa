@@ -119,7 +119,7 @@ interface object_factor {
      * Returns true if factor has been successfully added, otherwise false.
      *
      * @param array $data
-     * @return bool
+     * @return stdClass the factor record, or null.
      */
     public function setup_user_factor($data);
 

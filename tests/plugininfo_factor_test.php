@@ -45,7 +45,7 @@ class tool_mfa_plugininfo_factor_testcase extends advanced_testcase {
             'secret' => 'fakekey',
             'devicename' => 'fakedevice'
         ];
-        $this->assertTrue($totpfactor->setup_user_factor((object) $totpdata));
+        $this->assertNotEmpty($totpfactor->setup_user_factor((object) $totpdata));
 
         // Test that factor now appears (from STATE_UNKNOWN).
         $this->assertEquals(\tool_mfa\plugininfo\factor::get_next_user_factor()->name, 'totp');
@@ -67,4 +67,3 @@ class tool_mfa_plugininfo_factor_testcase extends advanced_testcase {
         $this->assertEquals(\tool_mfa\plugininfo\factor::get_next_user_factor()->name, 'fallback');
     }
 }
-

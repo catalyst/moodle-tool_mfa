@@ -225,13 +225,14 @@ class factor extends object_factor_base {
             $row->lastverified = time();
             $row->revoked = 0;
 
-            $DB->insert_record('tool_mfa', $row);
+            $id = $DB->insert_record('tool_mfa', $row);
+            $record = $DB->get_record('tool_mfa', array('id' => $id));
             $this->create_event_after_factor_setup($USER);
 
-            return true;
+            return $record;
         }
 
-        return false;
+        return null;
     }
 
     /**

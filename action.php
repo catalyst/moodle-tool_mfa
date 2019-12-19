@@ -89,9 +89,10 @@ switch ($action) {
             }
 
             if ($data = $form->get_data()) {
-                if ($factorobject->setup_user_factor($data)) {
+                $record = $factorobject->setup_user_factor($data);
+                if (!empty($record)) {
                     $factorobject->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
-                    $finalurl = new moodle_url($returnurl, array('setup' => $factorobject->name));
+                    $finalurl = new moodle_url($returnurl, array('setup' => $record->id));
                     redirect($finalurl);
                 }
 
@@ -127,7 +128,8 @@ switch ($action) {
 
             if ($form->get_data()) {
                 if ($factorobject->revoke_user_factor($factorid)) {
-                    redirect($returnurl);
+                    $finalurl = new moodle_url($returnurl, array('revoked' => $factorid));
+                    redirect($finalurl);
                 }
 
                 print_error('error:revoke', 'tool_mfa', $returnurl);

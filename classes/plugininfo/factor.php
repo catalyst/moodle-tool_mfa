@@ -251,4 +251,16 @@ class factor extends \core\plugininfo\base {
         $factor = self::get_factor($factorname);
         return !$factor ? false : true;
     }
+
+    /**
+     * Returns instance of any factor from the factorid.
+     *
+     * @param int $factorid
+     *
+     * @return stdClass|null Factor instance or nothing if not found.
+     */
+    public static function get_instance_from_id($factorid) {
+        global $DB;
+        return $DB->get_record('tool_mfa', array('id' => $factorid));
+    }
 }
