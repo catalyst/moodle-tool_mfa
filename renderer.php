@@ -171,7 +171,10 @@ class tool_mfa_renderer extends plugin_renderer_base {
                 $table->data[] = $row;
             }
         }
-
+        // If table has no data, don't output.
+        if (count($table->data) == 0) {
+            return '';
+        }
         $html .= $OUTPUT->box_start('generalbox');
         $html .= \html_writer::table($table);
         $html .= $OUTPUT->box_end();
