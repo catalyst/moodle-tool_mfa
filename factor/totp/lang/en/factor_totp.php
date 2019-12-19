@@ -43,3 +43,4 @@ $string['setupfactor:key'] = 'Secret key: ';
 $string['verificationcode'] = 'Enter your 6 digit verification code';
 $string['verificationcode_help'] = 'Open your Authenticator app such as Google Authenticator and look for the 6 digit code which matches this site and username';
 $string['summarycondition'] = 'using a TOTP app';
+$string['factorsetup'] = 'Setup App';

@@ -220,4 +220,11 @@ interface object_factor {
      * @return bool
      */
     public function check_combination($combination);
+
+    /*
+     * Gets the string for setup button on preferences page.
+     *
+     * @return string the string to display on the button.
+     */
+   public function get_setup_string();
 }

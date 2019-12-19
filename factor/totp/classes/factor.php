@@ -272,11 +272,26 @@ class factor extends object_factor_base {
         return;
     }
 
+    /**
+     * TOTP Factor implementation.
+     * TOTP cannot return fail state.
+     *
+     * {@inheritDoc}
+     */
     public function possible_states($user) {
         return array(
             \tool_mfa\plugininfo\factor::STATE_PASS,
             \tool_mfa\plugininfo\factor::STATE_NEUTRAL,
             \tool_mfa\plugininfo\factor::STATE_UNKNOWN,
         );
+    }
+
+    /**
+     * TOTP Factor implementation.
+     *
+     * {@inheritDoc}
+     */
+    public function get_setup_string() {
+        return get_string('factorsetup', 'factor_totp');
     }
 }
