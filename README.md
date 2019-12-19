@@ -169,7 +169,7 @@ When you configure the points in the admin settings it will generate a list of v
 If you have 3 factors configured, all factors default to 100 points effectiely making any of then enough to login:
 
 ```
-auth_saml => 100
+auth=saml => 100
 iprange => 100
 totp => 100
 ```
