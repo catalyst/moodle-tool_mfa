@@ -29,7 +29,7 @@ $string['devicename'] = 'Device label';
 $string['devicenameexample'] = 'eg "Work iPhone 11"';
 $string['devicename_help'] = 'This is the device you have an authenticator app installed on. You can setup multiple devices so this label helps track which ones are being used. You should setup each device with their own unique code so they can be revoked separately.';
 $string['error:wrongverification'] = 'Incorrect verification code';
-$string['info'] = '<p>Use any TOTP Authenticator app to get verification code on your phone even when it is offline.</p>
+$string['info'] = '<p>Use any TOTP Authenticator app to get a verification code on your phone even when it is offline.</p>
 <p>eg Google Authenticator for <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8" target="_blank">iPhone</a> or <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</a></p>';
 $string['loginsubmit'] = 'Verify code';
 $string['loginskip'] = 'I don\'t have my device';

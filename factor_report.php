@@ -60,7 +60,7 @@ foreach ($authtypes as $authtype) {
                         ON tm.userid = u.id
                     WHERE u.auth = ? AND tm.factor = ?';
             $count = $DB->count_records_sql($sql, array($authtype, $column));
-            $row[] = format_float($count, 0);
+            $row[] = $count ? format_float($count, 0) : '-';
         }
     }
     $table->data[] = $row;
