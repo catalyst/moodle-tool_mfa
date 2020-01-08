@@ -152,6 +152,12 @@ A simple factor which sends a short lived code to your email which you then need
 
 This factor was implemented as a proof of concept of a factor which can return a hard FAIL state, ie positive evidence that your account is compromised rather than NEUTRAL where we simply lack evidence of additional factors that the end user is who they say they are.
 
+#### Grace Mode
+The gracemode is a factor to allow users to log in without interacting with MFA for a set period of time. Users can only achieve the points for this factor if there are no other input factors for them to interact with during the login process. This factor should be placed last in the list, that way all other factors are interacted with during the login process first. On the first page after login, if a user is currently within their grace period, regardless of whether they used gracemode as a login factor, they are presented a notification informing them of the grace period length, and that they may need to setup other factors or risk being locked out once the grace period expires.
+
+#### No Setup Factor
+This factor is designed to allow people to pass only if they have not setup other factors for MFA already. Once another factor, such as TOTP is setup for a user, this factor no longer gives points, therefore the user must use TOTP to authenticate. This allows for an optional MFA rollout, where only users who wish to use MFA are affected by the MFA rollout.
+
 #### Other factors
 
 In theory you could impement almost anything as a factor, such as time of day, retina scans, or push notificatons. For a list of potential factor ideas see:
