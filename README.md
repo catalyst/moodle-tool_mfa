@@ -9,13 +9,14 @@
 * [Branches](#branches)
 * [Installation](#installation)
 * [Configuration](#configuration)
-  * [Factors](#factors)
-    * [IP range](#ip-range)
-    * [TOTP](#totp)
-    * [Auth type](#auth-type)
-    * [Non-admin](#non-admin)
-    * [Email](#email)
-    * [Other factors](#other-factors)
+  * [IP range](#ip-range)
+  * [TOTP](#totp)
+  * [Auth type](#auth-type)
+  * [Non-admin](#non-admin)
+  * [Email](#email)
+  * [Grace mode](#grace-mode)
+  * [Np-setup factor](#no-setup-factor)
+  * [Other factors](#other-factors)
 * [Points and examples](#points-and-examples)
 * [Debugging](#debugging)
 * [Support](#support)
@@ -118,33 +119,25 @@ git format-patch MOODLE_35_STABLE --stdout > admin/tool/mfa/patch/new_core35.dif
 
 WARNING: Do not try to fully configure this plugin in the web GUI immediately after installation, at this point during the upgrade process you are not actually logged in so it is easy to 'brick' your moodle and lock yourself out.
 
-
-### General settings
-
-* Grace period - This is important as some configurations of factors won't allow you to login. So you can optionally set a grace period where people can login and setup their other authentication factors
-
-
-### Factors
-
 The main concept to understand is the concept of factors. Each user must satisfy some combination of factors which sum to 100 points in order to login. By configuring multiple factors and weighting them you can easily have quite complex and flexible rules.
 
-#### IP Range
+### IP Range
 
 Use this factor to say that if you are on a secure network then that counts for something. This is very useful because it requires no setup by the end user, so you can set it up so that you can login fully via a secure network, and once logged in they can setup other factors like TOTP, and then use those other factors for logging in when not on a secure network.
 
-#### TOTP
+### TOTP
 
 This is standard TOTP using Google Authenticator or any other app which conforms to the open standard.
 
-#### Auth Type
+### Auth Type
 
 This is so you can specify that logging in via say SAML via ADFS which may have already done it's own MFA checks and is worth 100 points effectly make it exempt from additional checks.
 
-#### Non-admin
+### Non-admin
 
 This factor enables you to give points for free to a user who is not an admin. This makes it easy to require admin users to have 2 or more factors while not affecting normal users.
 
-#### Email
+### Email
 
 *** Not recommended for production use ***
 
@@ -152,13 +145,15 @@ A simple factor which sends a short lived code to your email which you then need
 
 This factor was implemented as a proof of concept of a factor which can return a hard FAIL state, ie positive evidence that your account is compromised rather than NEUTRAL where we simply lack evidence of additional factors that the end user is who they say they are.
 
-#### Grace Mode
-The gracemode is a factor to allow users to log in without interacting with MFA for a set period of time. Users can only achieve the points for this factor if there are no other input factors for them to interact with during the login process. This factor should be placed last in the list, that way all other factors are interacted with during the login process first. On the first page after login, if a user is currently within their grace period, regardless of whether they used gracemode as a login factor, they are presented a notification informing them of the grace period length, and that they may need to setup other factors or risk being locked out once the grace period expires.
+### Grace mode
 
-#### No Setup Factor
-This factor is designed to allow people to pass only if they have not setup other factors for MFA already. Once another factor, such as TOTP is setup for a user, this factor no longer gives points, therefore the user must use TOTP to authenticate. This allows for an optional MFA rollout, where only users who wish to use MFA are affected by the MFA rollout.
+The grace mode is a pseudo factor to allow users to log in without interacting with MFA for a set period of time. Users can only achieve the points for this factor if there are no other input factors for them to interact with during the login process. This factor should be placed last in the list, that way all other factors are interacted with during the login process first. On the first page after login, if a user is currently within their grace period, regardless of whether they used gracemode as a login factor, they are presented a notification informing them of the grace period length, and that they may need to setup other factors or risk being locked out once the grace period expires.
 
-#### Other factors
+### No-setup Factor
+
+This pseudo factor is designed to allow people to pass only if they have not setup other factors for MFA already. Once another factor, such as TOTP is setup for a user, this factor no longer gives points, therefore the user must use TOTP to authenticate. This allows for an optional MFA rollout, where only users who wish to use MFA are affected by the MFA rollout.
+
+### Other factors
 
 In theory you could impement almost anything as a factor, such as time of day, retina scans, or push notificatons. For a list of potential factor ideas see:
 
