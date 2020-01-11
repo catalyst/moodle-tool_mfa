@@ -131,7 +131,7 @@ This is standard TOTP using Google Authenticator or any other app which conforms
 
 ### Auth Type
 
-This is so you can specify that logging in via say SAML via ADFS which may have already done it's own MFA checks and is worth 100 points effectly make it exempt from additional checks.
+This is so you can specify that users with certain auth types, eg SAML via ADFS, which may have already done it's own MFA checks, is worth 100 points which makes it exempt from additional checks.
 
 ### Non-admin
 
@@ -159,13 +159,13 @@ In theory you could impement almost anything as a factor, such as time of day, r
 
 https://en.wikipedia.org/wiki/Multi-factor_authentication#Authentication_factors
 
-### Points and examples
+## Points and examples
 
 If a users cumulative points is high enough then they are able to login. Points can be weighted for different factors. Some factors do not require any input, such as checking their IP Address is inside secure subnet, while other factors require input such as entering a code like TOTP or SMS. Factors with no input are checked first and then the remaining factors are checked in from the largest points to the smaller until you either have a cumulative points high enough to login, or you run out of factors and you are denied login.
 
 When you configure the points in the admin settings it will generate a list of valid factor permutations to easily check it's configured the way you want.
 
-#### Example 1
+### Example 1
 
 If you have 3 factors configured, all factors default to 100 points effectiely making any of then enough to login:
 
@@ -186,7 +186,7 @@ OR
 * using a TOTP app
 ```
 
-#### Example 2
+### Example 2
 
 If you change all 3 points to 50 then it would say:
 
@@ -199,7 +199,7 @@ OR
 * is on a secured network AND using a TOTP app
 ```
 
-#### Example 3
+### Example 3
 
 With a configuration of:
 
@@ -230,7 +230,7 @@ While you are setting up MFA there are 2 things which help make it simple to see
 
 1) In the settings page is a 'Summary of good conditions for login' which does what it says on the box. If you have not setup any factors, or if they are configured in a way which would never all login then it will warn you.
 
-2) You can turn on debug mode, when you are logging in and stepping through the MFA login flow if will show you the list of factors and how they have been resolved.
+2) You can turn on debug mode, when you are logging in and stepping through the MFA login flow if will show you the list of factors and how they have been resolved. This is also shown on the MFA user settings page after you have logged in showing what combination was used for you session.
 
 If you have inadvertantly messed things up and locked yourself out, you can disable the whole MFA plugin from the CLI:
 
