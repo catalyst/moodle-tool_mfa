@@ -72,7 +72,7 @@ function tool_mfa_extend_navigation_user_settings($navigation, $user, $userconte
 }
 
 function tool_mfa_after_config() {
-    global $CFG;
+    global $CFG, $SESSION;
 
     // Tests for hooks being fired to test patches.
     // Store in $CFG, $SESSION not present at this point.
