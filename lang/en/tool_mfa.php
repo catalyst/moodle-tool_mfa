@@ -107,3 +107,4 @@ $string['factorsetup'] = 'Factor \'{$a}\' successfully setup.';
 $string['factorrevoked'] = 'Factor \'{$a}\' successfully revoked.';
 $string['connector'] = ' AND ';
 $string['pending'] = 'Pending';
+$string['redirecterrordetected'] = 'Unsupported redirect detected, script execution terminated. Redirection error occured between MFA and {$a}.';

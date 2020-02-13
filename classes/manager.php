@@ -314,6 +314,12 @@ class manager {
         // Remove all params before comparison.
         $url->remove_all_params();
 
+        // Dont redirect if already on auth.php
+        $authurl = new \moodle_url('/admin/tool/mfa/auth.php');
+        if ($url->compare($authurl)) {
+            return self::NO_REDIRECT;
+        }
+
         // Soft maintenance mode.
         if (!empty($CFG->maintenance_enabled)) {
             return self::NO_REDIRECT;
@@ -362,17 +368,20 @@ class manager {
         }
 
         // Site policy.
-        if (isset($USER->policyagreed) && !$USER->policyagreed
-        && defined('NO_SITEPOLICY_CHECK') && !NO_SITEPOLICY_CHECK) {
+        if (isset($USER->policyagreed) && !$USER->policyagreed) {
             $manager = new \core_privacy\local\sitepolicy\manager();
             $policyurl = $manager->get_redirect_url(false);
-            if (!empty($policyurl)) {
+            if (!empty($policyurl) && $url->compare($policyurl)) {
                 return self::NO_REDIRECT;
             }
         }
 
         // WS/AJAX check.
         if (WS_SERVER || AJAX_SCRIPT) {
+            if (isset($SESSION->mfa_pending) && !empty($SESSION->mfa_pending)) {
+                // Allow AJAX and WS, but never from auth.php
+                return self::NO_REDIRECT;
+            }
             return self::REDIRECT_EXCEPTION;
         }
 
@@ -385,9 +394,8 @@ class manager {
         }
 
         // Circular checks.
-        $authurl = new \moodle_url('/admin/tool/mfa/auth.php');
-        if (isset($SESSION->mfa_redir_referer) &&
-            $SESSION->mfa_redir_referer != $authurl) {
+        if (isset($SESSION->mfa_redir_referer)
+            && $SESSION->mfa_redir_referer != $authurl) {
             if ($SESSION->mfa_redir_referer == get_local_referer(true)) {
                 // Possible redirect loop.
                 if (!isset($SESSION->mfa_redir_count)) {
@@ -406,10 +414,6 @@ class manager {
         // Set referer after checks.
         $SESSION->mfa_redir_referer = get_local_referer(true);
 
-        $safe = new \moodle_url('/admin/tool/mfa/auth.php');
-        if ($safe->compare($url)) {
-            return self::NO_REDIRECT;
-        }
         return self::REDIRECT;
     }
 
@@ -419,10 +423,10 @@ class manager {
      * @return array
      */
     public static function get_factor_no_redirect_urls() {
-        $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+        $factors = \tool_mfa\plugininfo\factor::get_factors();
         $urls = array();
         foreach ($factors as $factor) {
-            $urls += $factor->get_no_redirect_urls();
+            $urls = array_merge($urls, $factor->get_no_redirect_urls());
         }
         return $urls;
     }
@@ -464,7 +468,17 @@ class manager {
 
         if (empty($SESSION->tool_mfa_authenticated) || !$SESSION->tool_mfa_authenticated) {
             $cleanurl = new \moodle_url($ME);
+            $authurl = new \moodle_url('/admin/tool/mfa/auth.php');
+
             $redir = self::should_require_mfa($cleanurl, $preventredirect);
+
+            if ($redir == self::NO_REDIRECT && !$cleanurl->compare($authurl)) {
+                // A non-MFA page that should take precedence.
+                // This check is for any pages, such as site policy, that must occur before MFA.
+                // This check allows AJAX and WS requests to fire on these pages without throwing an exception.
+                $SESSION->mfa_pending = true;
+            }
+
             if ($redir == self::REDIRECT) {
                 if (empty($SESSION->wantsurl)) {
                     !empty($setwantsurltome)
@@ -473,9 +487,16 @@ class manager {
 
                     $SESSION->tool_mfa_setwantsurl = true;
                 }
-                redirect(new \moodle_url('/admin/tool/mfa/auth.php'));
+                // Remove pending status.
+                // We must now auth with MFA, now that pending statuses are resolved.
+                unset($SESSION->mfa_pending);
+                redirect($authurl);
             } else if ($redir == self::REDIRECT_EXCEPTION) {
-                throw new \moodle_exception('redirecterrordetected', 'error');
+                if (!empty($SESSION->mfa_redir_referer)) {
+                    throw new \moodle_exception('redirecterrordetected', 'tool_mfa', $SESSION->mfa_redir_referer);
+                } else {
+                    throw new \moodle_exception('redirecterrordetected', 'error');
+                }
             }
         }
     }
