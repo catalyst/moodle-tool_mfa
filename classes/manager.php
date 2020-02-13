@@ -458,7 +458,7 @@ class manager {
      */
     public static function require_auth($courseorid = null, $autologinguest = null, $cm = null,
     $setwantsurltome = null, $preventredirect = null) {
-        global $SESSION, $ME;
+        global $PAGE, $SESSION, $FULLME;
 
         if (!self::is_ready()) {
             // Set session var so if MFA becomes ready, you dont get locked from session.
@@ -467,7 +467,12 @@ class manager {
         }
 
         if (empty($SESSION->tool_mfa_authenticated) || !$SESSION->tool_mfa_authenticated) {
-            $cleanurl = new \moodle_url($ME);
+            if ($PAGE->has_set_url()) {
+                $cleanurl = $PAGE->url;
+            } else {
+                // Use $FULLME instead.
+                $cleanurl = new \moodle_url($FULLME);
+            }
             $authurl = new \moodle_url('/admin/tool/mfa/auth.php');
 
             $redir = self::should_require_mfa($cleanurl, $preventredirect);
