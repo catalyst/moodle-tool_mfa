@@ -41,7 +41,7 @@ $string['error:actionnotfound'] = 'Action \'{$a}\' not supported';
 $string['error:setupfactor'] = 'Can not setup factor';
 $string['error:revoke'] = 'Can not revoke factor';
 $string['error:notenoughfactors'] = 'Unable to authenticate';
-$string['error:reauth'] = 'Login again to attempt re-verification of any skipped factors.';
+$string['error:reauth'] = 'We couldn\'t confirm your identity sufficiently to meet this sites authentication security policy. If you skipped any factors you can try again, or please contact your site administrator.';
 $string['error:support'] = 'If you are still unable to login, or believe you are seeing this in error,
      please send an email to the following address for support:';
 $string['error:supportpage'] = 'Click here to go to the general support page.';
