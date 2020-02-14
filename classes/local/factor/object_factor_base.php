@@ -404,4 +404,14 @@ abstract class object_factor_base implements object_factor {
     public function get_setup_string() {
         return get_string('setupfactor', 'tool_mfa');
     }
+
+    /**
+     * Deletes all instances of factor for a user.
+     *
+     * @param int $userid the id to delete for.
+     */
+    public function delete_factor_for_user($userid) {
+        global $DB;
+        $DB->delete_records('tool_mfa', array('userid' => $userid, 'factor' => $this->name));
+    }
 }

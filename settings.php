@@ -28,6 +28,9 @@ defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
 
     $ADMIN->add('tools', new admin_category('toolmfafolder', new lang_string('pluginname', 'tool_mfa'), false));
+    $ADMIN->add('toolmfafolder', new admin_externalpage('tool_mfa_resetfactor',
+    get_string('resetfactor', 'tool_mfa'),
+    new moodle_url('/admin/tool/mfa/reset_factor.php')));
 
     $settings = new admin_settingpage('managemfa', new lang_string('mfasettings', 'tool_mfa'));
     $settings->add(new \tool_mfa\local\admin_setting_managemfa());

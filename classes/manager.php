@@ -314,7 +314,7 @@ class manager {
         // Remove all params before comparison.
         $url->remove_all_params();
 
-        // Dont redirect if already on auth.php
+        // Dont redirect if already on auth.php.
         $authurl = new \moodle_url('/admin/tool/mfa/auth.php');
         if ($url->compare($authurl)) {
             return self::NO_REDIRECT;
@@ -379,7 +379,7 @@ class manager {
         // WS/AJAX check.
         if (WS_SERVER || AJAX_SCRIPT) {
             if (isset($SESSION->mfa_pending) && !empty($SESSION->mfa_pending)) {
-                // Allow AJAX and WS, but never from auth.php
+                // Allow AJAX and WS, but never from auth.php.
                 return self::NO_REDIRECT;
             }
             return self::REDIRECT_EXCEPTION;
