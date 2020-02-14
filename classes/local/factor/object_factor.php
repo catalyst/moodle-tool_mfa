@@ -227,4 +227,11 @@ interface object_factor {
      * @return string the string to display on the button.
      */
     public function get_setup_string();
+
+    /**
+     * Deletes all instances of a factor for user.
+     *
+     * @param userid the id of the user to delete for.
+     */
+    public function delete_factor_for_user($userid);
 }

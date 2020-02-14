@@ -36,4 +36,3 @@ $settings->add(new admin_setting_configtext('factor_grace/weight',
 $name = new lang_string('settings:graceperiod', 'factor_grace');
 $description = new lang_string('settings:graceperiod_help', 'factor_grace');
 $settings->add(new admin_setting_configduration('factor_grace/graceperiod', $name, $description, '604800'));
-
