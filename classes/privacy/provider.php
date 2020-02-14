@@ -27,6 +27,11 @@ namespace tool_mfa\privacy;
 defined('MOODLE_INTERNAL') || die;
 
 use core_privacy\local\metadata\collection;
+use core_privacy\local\request\contextlist;
+use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\writer;
+use core_privacy\local\request\userlist;
 
 /**
  * Class provider
@@ -60,5 +65,122 @@ class provider implements
         );
 
         return $collection;
+    }
+
+    /**
+     * Get the list of contexts that contain user information for the given user.
+     *
+     * @param int $userid the userid to search.
+     * @return contextlist the contexts in which data is contained.
+     */
+    public static function get_contexts_for_userid(int $userid) : contextlist {
+        $contextlist = new \core_privacy\local\request\contextlist();
+        $contextlist->add_user_context($userid);
+        $contextlist->add_system_context();
+        return $contextlist;
+    }
+
+    /**
+     * Gets the list of users who have data with a context.
+     *
+     * @param userlist $userlist the userlist containing users who have data in this context.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        $context = $userlist->get_context();
+        // If current context is system, all users are contained within, get all users.
+        if ($context->contextlevel == CONTEXT_SYSTEM) {
+            $sql = "
+            SELECT *
+            FROM {tool_mfa}";
+            $userlist->add_from_sql('userid', $sql, array());
+        }
+    }
+
+    /**
+     * Exports all data stored in provided contexts for user.
+     *
+     * @param approved_contextlist $contextlist the list of contexts to export for.
+     */
+    public static function export_user_data(approved_contextlist $contextlist) {
+        global $DB;
+        $userid = $contextlist->get_user()->id;
+        foreach ($contextlist as $context) {
+
+            // If not in system context, exit loop.
+            if ($context->contextlevel == CONTEXT_SYSTEM) {
+
+                $parentclass = array();
+
+                // Get records for user ID.
+                $rows = $DB->get_records('tool_mfa', array('userid' => $userid));
+
+                if (count($rows) > 0) {
+                    $i = 0;
+                    foreach ($rows as $row) {
+                        $parentclass[$i]['userid'] = $row->userid;
+                        $timecreated = \core_privacy\local\request\transform::datetime($row->timecreated);
+                        $parentclass[$i]['factor'] = $row->factor;
+                        $parentclass[$i]['timecreated'] = $timecreated;
+                        $parentclass[$i]['createdfromip'] = $row->createdfromip;
+                        $timemodified = \core_privacy\local\request\transform::datetime($row->timemodified);
+                        $parentclass[$i]['timemodified'] = $timemodified;
+                        $lastverified = \core_privacy\local\request\transform::datetime($row->lastverified);
+                        $parentclass[$i]['lastverified'] = $lastverified;
+                        $parentclass[$i]['revoked'] = $row->revoked;
+                        $i++;
+                    }
+                }
+
+                writer::with_context($context)->export_data(
+                    [get_string('privacy:metadata:tool_mfa', 'tool_mfa')],
+                    (object) $parentclass);
+            }
+        }
+    }
+
+    /**
+     * Deletes data for all users in context.
+     *
+     * @param context $context The context to delete for.
+     */
+    public static function delete_data_for_all_users_in_context(\context $context) {
+        global $DB;
+        // All data contained in system context.
+        if ($context->contextlevel == CONTEXT_SYSTEM) {
+            $sql = "
+            DELETE
+            FROM {tool_mfa}";
+            $DB->execute($sql);
+        }
+    }
+
+    /**
+     * Deletes all data in all provided contexts for user.
+     *
+     * @param approved_contextlist $contextlist the list of contexts to delete for.
+     */
+    public static function delete_data_for_user(approved_contextlist $contextlist) {
+        global $DB;
+        $userid = $contextlist->get_user()->id;
+        foreach ($contextlist as $context) {
+            // If not in system context, skip context.
+            if ($context->contextlevel == CONTEXT_SYSTEM) {
+                $sql = "DELETE
+                        FROM {tool_mfa} mfa
+                        WHERE mfa.userid = :userid";
+
+                $DB->execute($sql, array('userid' => $userid));
+            }
+        }
+    }
+
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        $users = $userlist->get_users();
+        foreach ($users as $user) {
+            // Create contextlist.
+            $contextlist = new approved_contextlist($user, 'tool_mfa', array(CONTEXT_SYSTEM));
+            // Call delete data.
+            self::delete_data_for_user($contextlist);
+        }
     }
 }
