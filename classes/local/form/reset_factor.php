@@ -38,7 +38,7 @@ class reset_factor extends \moodleform {
 
         $mform->addElement('select', 'factor', get_string('selectfactor', 'tool_mfa'), $factors);
 
-        $mform->addElement('text', 'resetfactor', get_string('resetfactor', 'tool_mfa'),
+        $mform->addElement('text', 'resetfactor', get_string('resetuser', 'tool_mfa'),
             array('placeholder' => get_string('resetfactorplaceholder', 'tool_mfa')));
         $mform->setType('resetfactor', PARAM_TEXT);
         $mform->addRule('resetfactor', get_string('userempty', 'tool_mfa'), 'required');
@@ -61,7 +61,9 @@ class reset_factor extends \moodleform {
         if (empty($user)) {
             $errors['resetfactor'] = get_string('usernotfound', 'tool_mfa');
         } else {
-            $SESSION->tool_mfa_resetuser = $user;
+            // Add custom field to store user.
+            $this->_form->addElement('hidden', 'user', $user);
+            $this->_form->setType('user', PARAM_RAW);
         }
 
         return $errors;

@@ -34,15 +34,20 @@ if ($form->is_cancelled()) {
     $settingsurl = new moodle_url('/admin/category.php?category=toolmfafolder');
     redirect($settingsurl);
 } else if ($fromform = $form->get_data()) {
-    // Reset factor here.
-    $user = $SESSION->tool_mfa_resetuser;
-    unset($SESSION->tool_mfa_resetuser);
+    $user = $fromform->user;
 
     // Get factor from select index.
     $factor = $factors[$fromform->factor];
     $factor->delete_factor_for_user($user->id);
     $stringarr = array('factor' => $factor->get_display_name(), 'username' => $user->username);
     \core\notification::success(get_string('resetsuccess', 'tool_mfa', $stringarr));
+
+    // Emit event for deletion.
+    $event = \tool_mfa\event\user_deleted_factor::user_deleted_factor_event($user, $USER, $factor->name);
+    $event->trigger();
+
+    // Reload page.
+    redirect($PAGE->url);
 }
 
 echo $OUTPUT->header();
