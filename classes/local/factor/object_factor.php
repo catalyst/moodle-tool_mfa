@@ -147,6 +147,29 @@ interface object_factor {
     public function has_revoke();
 
     /**
+     * Marks factor record as revoked.
+     * If factorid is not provided, revoke all instances of factor.
+     *
+     * @return bool
+     */
+    public function revoke_user_factor($factorid);
+
+    /**
+     * When validation code is correct - update lastverified field for given factor.
+     * If factor id is not provided, update all factor entries for user.
+     *
+     * @return bool
+     */
+    public function update_lastverified($factorid);
+
+    /**
+     * Gets lastverified timestamp.
+     *
+     * @return int
+     */
+    public function get_lastverified($factorid);
+
+    /**
      * Returns true if factor needs to be setup by user and has setup_form.
      *
      * @return bool

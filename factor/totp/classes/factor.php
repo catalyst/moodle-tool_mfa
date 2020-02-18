@@ -187,6 +187,13 @@ class factor extends object_factor_base {
 
         foreach ($factors as $factor) {
             $totp = TOTP::create($factor->secret);
+
+            // First check if this code matches the last verified timestamp.
+            $lastverified = $this->get_lastverified($factor->id);
+            if ($totp->verify($data['verificationcode'], $lastverified, 1)) {
+                return array('verificationcode' => get_string('error:codealreadyused', 'factor_totp'));
+            }
+
             if ($totp->verify($data['verificationcode'], time(), 1)) {
                 $result = array();
                 $this->update_lastverified($factor->id);
