@@ -30,6 +30,10 @@ $string['devicenameexample'] = 'eg "Work iPhone 11"';
 $string['devicename_help'] = 'This is the device you have an authenticator app installed on. You can setup multiple devices so this label helps track which ones are being used. You should setup each device with their own unique code so they can be revoked separately.';
 $string['error:wrongverification'] = 'Incorrect verification code';
 $string['error:codealreadyused'] = 'This code has already been used to authenticate. Please wait for a new code to be generated, and try again.';
+$string['error:oldcode'] = 'This code is too old. Please verify the time on your authenticator device is correct and try again.
+    Current system time is {$a}.';
+$string['error:futurecode'] = 'This code is invalid. Please verify the time on your authenticator device is correct and try again.
+    Current system time is {$a}.';
 $string['info'] = '<p>Use any TOTP Authenticator app to get a verification code on your phone even when it is offline.</p>
 <p>eg Google Authenticator for <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8" target="_blank">iPhone</a> or <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</a></p>';
 $string['loginsubmit'] = 'Verify code';
@@ -38,6 +42,9 @@ $string['pluginname'] = 'Authenticator app';
 $string['privacy:metadata'] = 'The TOTP Factor plugin does not store any personal data';
 $string['settings:secretlength'] = 'TOTP secret key length';
 $string['settings:secretlength_help'] = 'Generated TOTP secret key string length';
+$string['settings:window'] = 'TOTP verification window';
+$string['settings:window_help'] = 'How long each code is valid for. You can set this to a higher value as a workaround if your users device clocks are often slightly wrong.
+    Rounded down to the nearest 30 seconds, which is the time between new generated codes.';
 $string['setupfactor'] = 'TOTP Factor Setup';
 $string['setupfactor:scan'] = 'Enter secret or scan QR code';
 $string['setupfactor:key'] = 'Secret key: ';
@@ -45,3 +52,4 @@ $string['verificationcode'] = 'Enter your 6 digit verification code';
 $string['verificationcode_help'] = 'Open your Authenticator app such as Google Authenticator and look for the 6 digit code which matches this site and username';
 $string['summarycondition'] = 'using a TOTP app';
 $string['factorsetup'] = 'Setup App';
+$string['systimeformat'] = '%l:%M:%S %P %Z';
