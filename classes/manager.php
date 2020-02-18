@@ -171,10 +171,13 @@ class manager {
      * @return void
      */
     public static function cannot_login() {
-        global $OUTPUT;
+        global $OUTPUT, $USER;
         echo $OUTPUT->header();
         echo $OUTPUT->not_enough_factors();
         echo $OUTPUT->footer();
+        // Emit an event for failure, then logout.
+        $event = \tool_mfa\event\user_failed_mfa::user_failed_mfa_event($USER);
+        $event->trigger();
         self::mfa_logout();
         die;
     }
