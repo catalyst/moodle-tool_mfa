@@ -46,6 +46,13 @@ use tool_mfa\local\factor\object_factor_base;
 use OTPHP\TOTP;
 
 class factor extends object_factor_base {
+
+    const TOTP_OLD = 'old';
+    const TOTP_FUTURE = 'future';
+    const TOTP_USED = 'used';
+    const TOTP_VALID = 'valid';
+    const TOTP_INVALID = 'invalid';
+
     /**
      * Generates TOTP URI for given secret key.
      * Uses site name, domain and user name to make GA account look like:
@@ -184,22 +191,70 @@ class factor extends object_factor_base {
     public function login_form_validation($data) {
         $factors = $this->get_active_user_factors();
         $result = array('verificationcode' => get_string('error:wrongverification', 'factor_totp'));
+        $windowconfig = get_config('factor_totp', 'window');
 
         foreach ($factors as $factor) {
             $totp = TOTP::create($factor->secret);
+            // Convert seconds to windows.
+            $window = (int) floor($windowconfig / $totp->getPeriod());
+            $factorresult = $this->validate_code($data['verificationcode'], $window, $totp, $factor);
+            $time = userdate(time(), get_string('systimeformat', 'factor_totp'));
 
-            // First check if this code matches the last verified timestamp.
-            $lastverified = $this->get_lastverified($factor->id);
-            if ($totp->verify($data['verificationcode'], $lastverified, 1)) {
-                return array('verificationcode' => get_string('error:codealreadyused', 'factor_totp'));
-            }
+            switch ($factorresult) {
+                case self::TOTP_USED:
+                    return array('verificationcode' => get_string('error:codealreadyused', 'factor_totp'));
 
-            if ($totp->verify($data['verificationcode'], time(), 1)) {
-                $result = array();
-                $this->update_lastverified($factor->id);
+                case self::TOTP_OLD:
+                    return array('verificationcode' => get_string('error:oldcode', 'factor_totp', $time));
+
+                case self::TOTP_FUTURE:
+                    return array('verificationcode' => get_string('error:futurecode', 'factor_totp', $time));
+
+                case self::TOTP_VALID:
+                    $this->update_lastverified($factor->id);
+                    return array();
+
+                default:
+                    continue(2);
             }
         }
         return $result;
+    }
+
+    /**
+     * Checks the code for reuse, clock skew, and validity.
+     *
+     * @param string $code the code to check.
+     * @param int $window the window to check validity for.
+     * @param TOTP $totp the totp object to check against.
+     * @param stdClass $factor the factor with information required.
+     *
+     * @return const constant with verification state.
+     */
+    public function validate_code($code, $window, $totp, $factor) {
+        // First check if this code matches the last verified timestamp.
+        $lastverified = $this->get_lastverified($factor->id);
+        if ($totp->verify($code, $lastverified, $window)) {
+            return self::TOTP_USED;
+        }
+
+        // The window in which to check for clock skew, 5 increments past valid window.
+        $skewwindow = $window + 5;
+        $pasttimestamp = time() - ($skewwindow * $totp->getPeriod());
+        $futuretimestamp = time() + ($skewwindow * $totp->getPeriod());
+
+        if ($totp->verify($code, time(), $window)) {
+            return self::TOTP_VALID;
+        } else if ($totp->verify($code, $pasttimestamp, $skewwindow)) {
+            // Check for clock skew in the past 10 periods.
+            return self::TOTP_OLD;
+        } else if ($totp->verify($code, $futuretimestamp, $skewwindow)) {
+            // Check for clock skew in the future 10 periods.
+            return self::TOTP_FUTURE;
+        } else {
+            // In all other cases, code is invalid.
+            return self::TOTP_INVALID;
+        }
     }
 
     /**
