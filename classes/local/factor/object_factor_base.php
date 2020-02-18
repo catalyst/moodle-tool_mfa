@@ -270,6 +270,19 @@ abstract class object_factor_base implements object_factor {
     }
 
     /**
+     * Gets lastverified timestamp.
+     *
+     * @param int $factorid
+     * @return int|bool the lastverified timestamp, or false if not found.
+     */
+    public function get_lastverified($factorid) {
+        global $DB;
+
+        $record = $DB->get_record('tool_mfa', array('id' => $factorid));
+        return $record->lastverified;
+    }
+
+    /**
      * Returns true if factor needs to be setup by user and has setup_form.
      *
      * Override in child class if necessary.
