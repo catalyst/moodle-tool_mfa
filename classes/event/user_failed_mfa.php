@@ -35,28 +35,31 @@ defined('MOODLE_INTERNAL') || die();
  * }
  *
  * @package     tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class user_passed_mfa extends \core\event\base {
+class user_failed_mfa extends \core\event\base {
     /**
      * Create instance of event.
      *
-     * @param int $user the User object of the User who passed all MFA factor checks.
+     * @param int $user the User object of the User who failed MFA authentication.
      *
-     * @return user_passed_mfa the user_passed_mfa event
+     * @return user_failed_mfa the user_passed_mfa event
      *
      * @throws \coding_exception
      */
-    public static function user_passed_mfa_event($user) {
-
+    public static function user_failed_mfa_event($user) {
         // Build debug info string.
         $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
         $debug = '';
+        $failurereason = get_string('event:faillockout', 'tool_mfa');
         foreach ($factors as $factor) {
             $debug .= "<br> Factor {$factor->name} status: {$factor->get_state()}";
+            if ($factor->get_state() === \tool_mfa\plugininfo\factor::STATE_FAIL) {
+                $failurereason = get_string('event:failfactor', 'tool_mfa');
+            }
         }
 
         $data = array(
@@ -64,7 +67,8 @@ class user_passed_mfa extends \core\event\base {
             'context' => \context_user::instance($user->id),
             'other' => array (
                 'userid' => $user->id,
-                'debug' => $debug
+                'debug' => $debug,
+                'failurereason' => $failurereason
             )
         );
 
@@ -87,7 +91,7 @@ class user_passed_mfa extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '{$this->other['userid']}' successfully passed MFA. <br> Information: {$this->other['debug']}";
+        return "The user with id '{$this->other['userid']}' failed authenticating with MFA. <br> Information: {$this->other['failurereason']}{$this->other['debug']}";
     }
 
     /**
@@ -97,6 +101,6 @@ class user_passed_mfa extends \core\event\base {
      * @throws \coding_exception
      */
     public static function get_name() {
-        return get_string('event:userpassedmfa', 'tool_mfa');
+        return get_string('event:userfailedmfa', 'tool_mfa');
     }
 }
