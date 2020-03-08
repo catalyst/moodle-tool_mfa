@@ -175,8 +175,12 @@ class factor extends object_factor_base {
      */
     public function login_form_definition($mform) {
 
-        $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'),
-            array('autofocus' => 'autofocus', 'pattern' => '[0-9]*'));
+        $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'), [
+            'autofocus' => 'autofocus',
+            'inputmode' => 'numeric',
+            'pattern'   => '[0-9]*',
+            'autocomplete' => 'one-time-code',
+        ]);
         $mform->setType("verificationcode", PARAM_ALPHANUM);
         $mform->addHelpButton('verificationcode', 'verificationcode', 'factor_totp');
 
