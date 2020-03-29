@@ -165,4 +165,15 @@ class factor extends object_factor_base {
         }
         return true;
     }
+
+    /**
+     * Grace Factor implementation.
+     * Gracemode can change outcome just by waiting, or based on other factors.
+     */
+    public function possible_states($user) {
+        return array(
+            \tool_mfa\plugininfo\factor::STATE_PASS,
+            \tool_mfa\plugininfo\factor::STATE_NEUTRAL
+        );
+    }
 }

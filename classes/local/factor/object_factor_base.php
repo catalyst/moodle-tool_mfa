@@ -390,7 +390,7 @@ abstract class object_factor_base implements object_factor {
      * E.g. IP changes based on whether a user is using a VPN.
      */
     public function possible_states($user) {
-        return $this->get_state();
+        return array($this->get_state());
     }
 
     /**
