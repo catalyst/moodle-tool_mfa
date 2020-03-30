@@ -659,4 +659,36 @@ class manager {
         }
         return $totalweight;
     }
+
+    /**
+     * Checks whether the factor was actually used in the login process.
+     *
+     * @param string factorname the name of the factor.
+     * @return bool true if factor is pending.
+     */
+    public static function check_factor_pending($factorname) {
+        $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        // Setup vars.
+        $pending = array();
+        $totalweight = 0;
+        $weighttoggle = false;
+
+        foreach ($factors as $factor) {
+            // If toggle is reached, put in pending and continue.
+            if ($weighttoggle) {
+                $pending[] = $factor->name;
+                continue;
+            }
+
+            if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
+                $totalweight += $factor->get_weight();
+                if ($totalweight >= 100) {
+                    $weighttoggle = true;
+                }
+            }
+        }
+
+        // Check whether factor falls into pending category.
+        return in_array($factorname, $pending);
+    }
 }

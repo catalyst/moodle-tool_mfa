@@ -133,7 +133,8 @@ class factor extends object_factor_base {
         parent::post_pass_state();
 
         // Ensure grace factor passed before displaying notification.
-        if ($this->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
+        if ($this->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS
+            && !\tool_mfa\manager::check_factor_pending($this->name)) {
             $url = new \moodle_url('/admin/tool/mfa/user_preferences.php');
             $link = \html_writer::link($url, get_string('preferences', 'factor_grace'));
 
