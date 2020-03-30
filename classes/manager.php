@@ -617,8 +617,10 @@ class manager {
         self::set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
     }
 
-    /*
-     * If it is possible for a user to setup a factor that could put them into a pass state, returns true.
+    /**
+     * Checks if a factor that can make a user pass can be setup.
+     * It checks if a user will always pass regardless,
+     * then checks if there are factors that can be setup to let a user pass.
      *
      * @return bool
      */
@@ -628,7 +630,19 @@ class manager {
         // Get all active factors.
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
 
-        // If a factor has setup, and can pass, return true.
+        // Check if there are enough factors that a user can ONLY pass, if so, don't display the menu.
+        $weight = 0;
+        foreach ($factors as $factor) {
+            $states = $factor->possible_states($USER);
+            if (count($states) == 1 && reset($states) == \tool_mfa\plugininfo\factor::STATE_PASS) {
+                $weight += $factor->get_weight();
+                if ($weight >= 100) {
+                    return false;
+                }
+            }
+        }
+
+        // Now if there is a factor that can be setup, that may return a pass state for the user, display menu.
         foreach ($factors as $factor) {
             if ($factor->has_setup()) {
                 if (in_array(\tool_mfa\plugininfo\factor::STATE_PASS, $factor->possible_states($USER))) {
