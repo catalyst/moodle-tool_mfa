@@ -42,7 +42,7 @@ $OUTPUT = $PAGE->get_renderer('tool_mfa');
 $currenturl = new moodle_url('/admin/tool/mfa/auth.php');
 
 // Perform state check.
-\tool_mfa\manager::check_status();
+\tool_mfa\manager::resolve_mfa_status();
 
 $factor = \tool_mfa\plugininfo\factor::get_next_user_factor();
 // If ok, perform form actions for input factor.
