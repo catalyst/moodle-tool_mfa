@@ -501,7 +501,7 @@ class manager {
                 redirect($authurl);
             } else if ($redir == self::REDIRECT_EXCEPTION) {
                 if (!empty($SESSION->mfa_redir_referer)) {
-                    throw new \moodle_exception('redirecterrordetected', 'tool_mfa', $SESSION->mfa_redir_referer);
+                    throw new \moodle_exception('redirecterrordetected', 'tool_mfa', $SESSION->mfa_redir_referer, $SESSION->mfa_redir_referer);
                 } else {
                     throw new \moodle_exception('redirecterrordetected', 'error');
                 }
