@@ -149,6 +149,9 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
             ['/admin/tool/mfa/action.php', 'http://test.server/parent/directory', true],
             ['/', 'http://test.server/parent/directory', true, array('url' => $badparam1)],
             ['/', 'http://test.server/parent/directory', true, array('url' => $badparam2)],
+            ['/admin/tool/securityquestions/set_responses.php', 'http://test.server', false],
+            ['/admin/tool/securityquestions/set_responses.php', 'http://test.server', false, ['delete' => 1]],
+            ['/admin/tool/securityquestions/randompage.php', 'http://test.server', true, ['delete' => 1]],
         ];
     }
 

@@ -63,17 +63,17 @@ if ($form->is_submitted()) {
     if ($form->is_cancelled()) {
         $factor->set_state(\tool_mfa\plugininfo\factor::STATE_NEUTRAL);
         // Move to next factor.
-        \tool_mfa\manager::check_status(true);
+        \tool_mfa\manager::resolve_mfa_status(true);
     } else {
         if ($data = $form->get_data()) {
             // Did user submit something that causes a fail state?
             if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_FAIL) {
-                \tool_mfa\manager::check_status(true);
+                \tool_mfa\manager::resolve_mfa_status(true);
             }
 
             $factor->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
             // Move to next factor.
-            \tool_mfa\manager::check_status(true);
+            \tool_mfa\manager::resolve_mfa_status(true);
         }
     }
 }
