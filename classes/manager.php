@@ -236,8 +236,10 @@ class manager {
      * @param bool $shouldreload whether the function should reload (used for auth.php).
      * @return void
      */
-    public static function check_status($shouldreload = false) {
+    public static function resolve_mfa_status($shouldreload = false) {
         global $SESSION;
+
+        $authurl = new \moodle_url('/admin/tool/mfa/auth.php');
 
         if (empty($SESSION->wantsurl)) {
             $wantsurl = '/';
@@ -249,11 +251,19 @@ class manager {
         if ($state == \tool_mfa\plugininfo\factor::STATE_PASS) {
             self::set_pass_state();
             unset($SESSION->wantsurl);
-            redirect(new \moodle_url($wantsurl));
+            // Check if user even had to reach auth page.
+            if (isset($SESSION->tool_mfa_has_been_redirected)) {
+                redirect(new \moodle_url($wantsurl));
+            } else {
+                // Don't touch anything, let user be on their way.
+                return;
+            }
         } else if ($state == \tool_mfa\plugininfo\factor::STATE_FAIL) {
             self::cannot_login();
         } else if ($shouldreload) {
-            redirect(new \moodle_url('/admin/tool/mfa/auth.php'));
+            // Set a session variable to track whether user is where they want to be.
+            $SESSION->tool_mfa_has_been_redirected = true;
+            redirect($authurl);
         }
     }
 
@@ -319,7 +329,7 @@ class manager {
 
         // Dont redirect if already on auth.php.
         $authurl = new \moodle_url('/admin/tool/mfa/auth.php');
-        if ($url->compare($authurl)) {
+        if ($url->compare($authurl, URL_MATCH_BASE)) {
             return self::NO_REDIRECT;
         }
 
@@ -351,7 +361,7 @@ class manager {
 
         // Enrolment.
         $enrol = new \moodle_url('/enrol/index.php');
-        if ($enrol->compare($url)) {
+        if ($enrol->compare($url, URL_MATCH_BASE)) {
             return self::NO_REDIRECT;
         }
 
@@ -374,7 +384,7 @@ class manager {
         if (isset($USER->policyagreed) && !$USER->policyagreed) {
             $manager = new \core_privacy\local\sitepolicy\manager();
             $policyurl = $manager->get_redirect_url(false);
-            if (!empty($policyurl) && $url->compare($policyurl)) {
+            if (!empty($policyurl) && $url->compare($policyurl, URL_MATCH_BASE)) {
                 return self::NO_REDIRECT;
             }
         }
@@ -480,7 +490,7 @@ class manager {
 
             $redir = self::should_require_mfa($cleanurl, $preventredirect);
 
-            if ($redir == self::NO_REDIRECT && !$cleanurl->compare($authurl)) {
+            if ($redir == self::NO_REDIRECT && !$cleanurl->compare($authurl, URL_MATCH_BASE)) {
                 // A non-MFA page that should take precedence.
                 // This check is for any pages, such as site policy, that must occur before MFA.
                 // This check allows AJAX and WS requests to fire on these pages without throwing an exception.
@@ -498,7 +508,10 @@ class manager {
                 // Remove pending status.
                 // We must now auth with MFA, now that pending statuses are resolved.
                 unset($SESSION->mfa_pending);
-                redirect($authurl);
+
+                // Call resolve_status to instantly pass if no redirect is required.
+                self::resolve_mfa_status(true);
+
             } else if ($redir == self::REDIRECT_EXCEPTION) {
                 if (!empty($SESSION->mfa_redir_referer)) {
                     throw new \moodle_exception('redirecterrordetected', 'tool_mfa', $SESSION->mfa_redir_referer, $SESSION->mfa_redir_referer);
