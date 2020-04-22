@@ -60,7 +60,7 @@ class user_deleted_factor extends \core\event\base {
             'other' => array (
                 'userid' => $user->id,
                 'factorname' => $factorname,
-                'delete' => $deleteuser
+                'delete' => $deleteuser->id
             )
         );
 
@@ -83,7 +83,13 @@ class user_deleted_factor extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '{$this->other['delete']->id}' successfully deleted {$this->other['factorname']} factor for user with id '{$this->other['userid']}'";
+        // The log message changed from logging the deleter user object to the ID. This must be kept for backwards compat
+        // With old log events.
+        if (is_object($this->other['delete'])) {
+            return "The user with id '{$this->other['delete']->id}' successfully deleted {$this->other['factorname']} factor for user with id '{$this->other['userid']}'";
+        } else {
+            return "The user with id '{$this->other['delete']}' successfully deleted {$this->other['factorname']} factor for user with id '{$this->other['userid']}'";
+        }
     }
 
     /**

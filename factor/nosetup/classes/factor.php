@@ -37,9 +37,9 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function get_all_user_factors() {
-        global $DB, $USER;
-        $records = $DB->get_records('tool_mfa', array('userid' => $USER->id, 'factor' => $this->name));
+    public function get_all_user_factors($user) {
+        global $DB;
+        $records = $DB->get_records('tool_mfa', array('userid' => $user->id, 'factor' => $this->name));
 
         if (!empty($records)) {
             return $records;
@@ -47,10 +47,10 @@ class factor extends object_factor_base {
 
         // Null records returned, build new record.
         $record = array(
-            'userid' => $USER->id,
+            'userid' => $user->id,
             'factor' => $this->name,
             'timecreated' => time(),
-            'createdfromip' => $USER->lastip,
+            'createdfromip' => $user->lastip,
             'timemodified' => time(),
             'revoked' => 0,
         );
@@ -84,6 +84,25 @@ class factor extends object_factor_base {
         }
 
         return \tool_mfa\plugininfo\factor::STATE_PASS;
+    }
+
+    /**
+     * No setup implementation.
+     * Copy of get_state, but can take other user..
+     *
+     * @param stdClass $user
+     * @return void
+     */
+    public function possible_states($user) {
+        // Check if user has any other input or setup factors active.
+        $factors = \tool_mfa\plugininfo\factor::get_active_other_user_factor_types($user);
+        foreach ($factors as $factor) {
+            if ($factor->has_input() || $factor->has_setup()) {
+                return array(\tool_mfa\plugininfo\factor::STATE_NEUTRAL);
+            }
+        }
+
+        return array(\tool_mfa\plugininfo\factor::STATE_PASS);
     }
 
     /**

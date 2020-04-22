@@ -91,8 +91,8 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function get_state() {
-
-        $userfactors = $this->get_active_user_factors();
+        global $USER;
+        $userfactors = $this->get_active_user_factors($USER);
 
         // If no codes are setup then we must be neutral not unknown.
         if (count($userfactors) == 0) {
@@ -193,7 +193,8 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function login_form_validation($data) {
-        $factors = $this->get_active_user_factors();
+        global $USER;
+        $factors = $this->get_active_user_factors($USER);
         $result = array('verificationcode' => get_string('error:wrongverification', 'factor_totp'));
         $windowconfig = get_config('factor_totp', 'window');
 
@@ -306,9 +307,9 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function get_all_user_factors() {
-        global $DB, $USER;
-        return $DB->get_records('tool_mfa', array('userid' => $USER->id, 'factor' => $this->name));
+    public function get_all_user_factors($user) {
+        global $DB;
+        return $DB->get_records('tool_mfa', array('userid' => $user->id, 'factor' => $this->name));
     }
 
     /**

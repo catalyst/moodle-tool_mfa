@@ -31,5 +31,6 @@ $string['setupfactors'] = 'You are currently in grace mode, and may not have eno
     Visit {$a->url} to check your authentication status, and setup more authentication factors. Your grace period expires in {$a->time}.';
 $string['preferences'] = 'User Preferences';
 $string['summarycondition'] = 'is within grace period';
+$string['revokeexpiredfactors'] = 'Revoke expired gracemode factors';
 
 $string['privacy:metadata'] = 'The Grace period factor plugin does not store any personal data';
