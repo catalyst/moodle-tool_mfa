@@ -89,11 +89,11 @@ $factorsusedsql = "SELECT CONCAT(u.auth, '_', tm.factor) as id,
                      FROM {tool_mfa} tm
                      JOIN {user} u ON u.id = tm.userid
                     WHERE tm.lastverified >= ?
-                      AND tm.revoked = 0
                       AND u.deleted = 0
                       AND u.suspended = 0
+                      AND (tm.revoked = 0 OR (tm.revoked = 1 AND tm.timemodified > ?))
                  GROUP BY CONCAT(u.auth, '_', tm.factor)";
-$factorsusedinfo = $DB->get_records_sql($factorsusedsql, [$lookback]);
+$factorsusedinfo = $DB->get_records_sql($factorsusedsql, [$lookback, $lookback]);
 
 // Auth rows.
 $authtypes = get_enabled_auth_plugins(true);

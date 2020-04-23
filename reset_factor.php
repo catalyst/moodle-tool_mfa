@@ -38,13 +38,9 @@ if ($form->is_cancelled()) {
 
     // Get factor from select index.
     $factor = $factors[$fromform->factor];
-    $factor->delete_factor_for_user($user->id);
+    $factor->delete_factor_for_user($user);
     $stringarr = array('factor' => $factor->get_display_name(), 'username' => $user->username);
     \core\notification::success(get_string('resetsuccess', 'tool_mfa', $stringarr));
-
-    // Emit event for deletion.
-    $event = \tool_mfa\event\user_deleted_factor::user_deleted_factor_event($user, $USER, $factor->name);
-    $event->trigger();
 
     // Reload page.
     redirect($PAGE->url);

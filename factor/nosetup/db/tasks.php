@@ -15,18 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Language strings.
+ * Task scheduler
  *
- * @package     factor_nosetup
- * @author      Peter Burnett <peterburnett@catalyst-au.net>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   factor_nosetup
+ * @author    Peter Burnett <peterburnett@catalyst-au.net>
+ * @copyright Catalyst IT
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'No other factors';
-$string['info'] = 'This factor passes if the user has no other factors setup.';
-$string['deleteunusablefactors'] = 'Delete unusable Nosetup factors';
+defined('MOODLE_INTERNAL') || die();
 
-$string['summarycondition'] = 'has no other factors setup';
-
-$string['privacy:metadata'] = 'The No other factors plugin does not store any personal data';
+$tasks = [
+    [
+        'classname' => 'factor_nosetup\task\delete_unusable_factors',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => '0',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+    ],
+];

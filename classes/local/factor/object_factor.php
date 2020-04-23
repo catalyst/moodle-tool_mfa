@@ -126,17 +126,19 @@ interface object_factor {
     /**
      * Returns an array of all user factors of given type (both active and revoked).
      *
+     * @param stdClass user the user to check against.
      * @return array
      */
-    public function get_all_user_factors();
+    public function get_all_user_factors($user);
 
     /**
      * Returns an array of active user factor records.
      * Filters get_all_user_factors() output.
      *
+     * @param stdClass user the user to check against.
      * @return array
      */
-    public function get_active_user_factors();
+    public function get_active_user_factors($user);
 
     /**
      * Returns true if factor class has factor records that might be revoked.
@@ -254,7 +256,7 @@ interface object_factor {
     /**
      * Deletes all instances of a factor for user.
      *
-     * @param userid the id of the user to delete for.
+     * @param stdClass $user the user to delete for.
      */
-    public function delete_factor_for_user($userid);
+    public function delete_factor_for_user($user);
 }

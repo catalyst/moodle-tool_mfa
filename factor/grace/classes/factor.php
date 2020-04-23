@@ -37,10 +37,10 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function get_all_user_factors() {
-        global $DB, $USER;
+    public function get_all_user_factors($user) {
+        global $DB;
 
-        $records = $DB->get_records('tool_mfa', array('userid' => $USER->id, 'factor' => $this->name));
+        $records = $DB->get_records('tool_mfa', array('userid' => $user->id, 'factor' => $this->name));
 
         if (!empty($records)) {
             return $records;
@@ -48,9 +48,9 @@ class factor extends object_factor_base {
 
         // Null records returned, build new record.
         $record = array(
-            'userid' => $USER->id,
+            'userid' => $user->id,
             'factor' => $this->name,
-            'createdfromip' => $USER->lastip,
+            'createdfromip' => $user->lastip,
             'timecreated' => time(),
             'revoked' => 0,
         );
@@ -64,8 +64,8 @@ class factor extends object_factor_base {
      *
      * @return array the array of active factors.
      */
-    public function get_active_user_factors() {
-        return $this->get_all_user_factors();
+    public function get_active_user_factors($user) {
+        return $this->get_all_user_factors($user);
     }
 
     /**
@@ -85,7 +85,8 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function get_state() {
-        $records = ($this->get_all_user_factors());
+        global $USER;
+        $records = ($this->get_all_user_factors($USER));
         $record = reset($records);
 
         // First check if user has any other input or setup factors active.
@@ -130,6 +131,7 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function post_pass_state() {
+        global $USER;
         parent::post_pass_state();
 
         // Ensure grace factor passed before displaying notification.
@@ -138,7 +140,7 @@ class factor extends object_factor_base {
             $url = new \moodle_url('/admin/tool/mfa/user_preferences.php');
             $link = \html_writer::link($url, get_string('preferences', 'factor_grace'));
 
-            $records = ($this->get_all_user_factors());
+            $records = ($this->get_all_user_factors($USER));
             $record = reset($records);
             $starttime = $record->timecreated;
             $timeremaining = ($starttime + get_config('factor_grace', 'graceperiod')) - time();

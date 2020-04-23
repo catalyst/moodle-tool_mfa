@@ -156,9 +156,10 @@ abstract class object_factor_base implements object_factor {
      *
      * Dummy implementation. Should be overridden in child class.
      *
+     * @param stdClass user the user to check against.
      * @return array
      */
-    public function get_all_user_factors() {
+    public function get_all_user_factors($user) {
         return array();
     }
 
@@ -166,11 +167,12 @@ abstract class object_factor_base implements object_factor {
      * Returns an array of active user factor records.
      * Filters get_all_user_factors() output.
      *
+     * @param stdClass user object to check against.
      * @return array
      */
-    public function get_active_user_factors() {
+    public function get_active_user_factors($user) {
         $return = array();
-        $factors = $this->get_all_user_factors();
+        $factors = $this->get_all_user_factors($user);
         foreach ($factors as $factor) {
             if ($factor->revoked == 0) {
                 $return[] = $factor;
@@ -421,10 +423,14 @@ abstract class object_factor_base implements object_factor {
     /**
      * Deletes all instances of factor for a user.
      *
-     * @param int $userid the id to delete for.
+     * @param stdClass $user the user to delete for.
      */
-    public function delete_factor_for_user($userid) {
-        global $DB;
-        $DB->delete_records('tool_mfa', array('userid' => $userid, 'factor' => $this->name));
+    public function delete_factor_for_user($user) {
+        global $DB, $USER;
+        $DB->delete_records('tool_mfa', array('userid' => $user->id, 'factor' => $this->name));
+
+        // Emit event for deletion.
+        $event = \tool_mfa\event\user_deleted_factor::user_deleted_factor_event($user, $USER, $this->name);
+        $event->trigger();
     }
 }

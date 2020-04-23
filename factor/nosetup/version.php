@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version      = 2019102400;      // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version      = 2020042302;      // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires     = 2018051708.05;   // Requires MDL-60470 improvement.
 $plugin->component    = 'factor_nosetup';
 $plugin->release      = 'v0.1';

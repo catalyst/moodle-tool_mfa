@@ -46,6 +46,13 @@ The other major difference is that we support multiple authentication factor **t
 ## Branches
 
 `master` is considered stable and supports these versions, with the caveat of backporting the API's needed.
+A minimum of PHP7.0 is required to run this plugin.
+
+| Moodle Version    |  Branch      | Patches              |
+|-------------------|--------------|----------------------|
+| Moodle 3.8 -3.9   | master       | None                 |
+| Moodle 3.7        | master       | MDL-66340            |
+| Moodle 3.5-3.6    | master       | MDL-66340, MDL-60470 |
 
 ## Installation
 

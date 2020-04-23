@@ -103,7 +103,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
      * @throws \coding_exception
      */
     public function active_factors() {
-        global $OUTPUT;
+        global $OUTPUT, $USER;
 
         $html = $OUTPUT->heading(get_string('preferences:activefactors', 'tool_mfa'), 4);
 
@@ -143,7 +143,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
 
         foreach ($factors as $factor) {
 
-            $userfactors = $factor->get_active_user_factors();
+            $userfactors = $factor->get_active_user_factors($USER);
 
             if (!$factor->has_setup()) {
                 continue;
