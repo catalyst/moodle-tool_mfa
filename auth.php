@@ -37,8 +37,6 @@ $PAGE->set_pagelayout('secure');
 $pagetitle = $SITE->shortname.': '.get_string('mfa', 'tool_mfa');
 $PAGE->set_title($pagetitle);
 
-$OUTPUT = $PAGE->get_renderer('tool_mfa');
-
 $currenturl = new moodle_url('/admin/tool/mfa/auth.php');
 
 // Perform state check.
