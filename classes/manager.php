@@ -171,10 +171,21 @@ class manager {
      * @return void
      */
     public static function cannot_login() {
-        global $OUTPUT, $USER;
-        echo $OUTPUT->header();
-        echo $OUTPUT->not_enough_factors();
-        echo $OUTPUT->footer();
+        global $ME, $PAGE, $USER;
+
+        // Determine page URL without triggering warnings from $PAGE.
+        if (!preg_match("~(\/admin\/tool\/mfa\/auth.php)~", $ME)) {
+            // If URL isn't set, we need to redir to auth.php.
+            // This ensures URL and required info is correctly set.
+            // Then we arrive back here.
+            redirect(new \moodle_url('/admin/tool/mfa/auth.php'));
+        }
+
+        $renderer = $PAGE->get_renderer('tool_mfa');
+
+        echo $renderer->header();
+        echo $renderer->not_enough_factors();
+        echo $renderer->footer();
         // Emit an event for failure, then logout.
         $event = \tool_mfa\event\user_failed_mfa::user_failed_mfa_event($USER);
         $event->trigger();
