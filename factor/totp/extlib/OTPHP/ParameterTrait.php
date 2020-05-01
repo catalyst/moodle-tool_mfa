@@ -63,7 +63,7 @@ trait ParameterTrait
     /**
      * @param string|null $secret
      */
-    private function setSecret(?string $secret)
+    private function setSecret($secret)
     {
         $this->setParameter('secret', $secret);
     }
@@ -71,7 +71,7 @@ trait ParameterTrait
     /**
      * @return string|null
      */
-    public function getLabel(): ?string
+    public function getLabel()
     {
         return $this->label;
     }
@@ -87,7 +87,7 @@ trait ParameterTrait
     /**
      * @return string|null
      */
-    public function getIssuer(): ?string
+    public function getIssuer()
     {
         return $this->issuer;
     }

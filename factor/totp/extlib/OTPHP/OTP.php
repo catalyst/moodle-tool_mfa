@@ -27,7 +27,7 @@ abstract class OTP implements OTPInterface
      * @param string      $digest
      * @param int         $digits
      */
-    protected function __construct(?string $secret, string $digest, int $digits)
+    protected function __construct($secret, string $digest, int $digits)
     {
         $this->setSecret($secret);
         $this->setDigest($digest);
@@ -129,7 +129,7 @@ abstract class OTP implements OTPInterface
             $result[] = chr($int & 0xFF);
             $int >>= 8;
         }
-        
+
         return str_pad(implode(array_reverse($result)), 8, "\000", STR_PAD_LEFT);
     }
 
