@@ -30,7 +30,7 @@ interface OTPInterface
      *
      * @return bool
      */
-    public function verify(string $otp, ?int $input = null, ?int $window = null): bool;
+    public function verify(string $otp, $input = null, $window = null): bool;
 
     /**
      * @return string The secret of the OTP
@@ -45,12 +45,12 @@ interface OTPInterface
     /**
      * @return string|null The label of the OTP
      */
-    public function getLabel(): ?string;
+    public function getLabel();
 
     /**
      * @return string|null The issuer
      */
-    public function getIssuer(): ?string;
+    public function getIssuer();
 
     /**
      * @param string $issuer

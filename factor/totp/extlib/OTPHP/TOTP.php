@@ -26,7 +26,7 @@ final class TOTP extends OTP implements TOTPInterface
      * @param int         $digits
      * @param int         $epoch
      */
-    protected function __construct(?string $secret, int $period, string $digest, int $digits, int $epoch = 0)
+    protected function __construct($secret, int $period, string $digest, int $digits, int $epoch = 0)
     {
         parent::__construct($secret, $digest, $digits);
         $this->setPeriod($period);
@@ -44,7 +44,7 @@ final class TOTP extends OTP implements TOTPInterface
      *
      * @return self
      */
-    public static function create(?string $secret = null, int $period = 30, string $digest = 'sha1', int $digits = 6, int $epoch = 0): self
+    public static function create($secret = null, int $period = 30, string $digest = 'sha1', int $digits = 6, int $epoch = 0): self
     {
         return new self($secret, $period, $digest, $digits, $epoch);
     }
@@ -101,7 +101,7 @@ final class TOTP extends OTP implements TOTPInterface
      * If no timestamp is provided, the OTP is verified at the actual timestamp
      * {@inheritdoc}
      */
-    public function verify(string $otp, ?int $timestamp = null, ?int $window = null): bool
+    public function verify(string $otp, $timestamp = null, $window = null): bool
     {
         $timestamp = $this->getTimestamp($timestamp);
 
@@ -142,12 +142,12 @@ final class TOTP extends OTP implements TOTPInterface
      *
      * @return int
      */
-    private function getTimestamp(?int $timestamp): int
+    private function getTimestamp($timestamp): int
     {
         $timestamp = $timestamp ?? time();
         Assertion::greaterOrEqualThan($timestamp, 0, 'Timestamp must be at least 0.');
 
-        return $timestamp;
+        return (int) $timestamp;
     }
 
     /**

@@ -13,6 +13,10 @@ dist: trusty
 
 matrix:
   include:
+    - php: 7.0
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE CORE_PATCH=core35.diff
+    - php: 7.0
+      env: DB=pgsql  MOODLE_BRANCH=MOODLE_35_STABLE CORE_PATCH=core35.diff
     - php: 7.1
       env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE CORE_PATCH=core35.diff
     - php: 7.1
