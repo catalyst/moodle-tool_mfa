@@ -86,19 +86,19 @@ You can easily backport these patches in one line for 3.5, 3.6 and 3.7:
 For Moodle 3.5:
 
 ```
-git apply --whitespace=nowarn admin/tool/mfa/patch/core35.diff
+git am --whitespace=nowarn < admin/tool/mfa/patch/core35.diff
 ```
 
 For Moodle 3.6:
 
 ```
-git apply --whitespace=nowarn admin/tool/mfa/patch/core36.diff
+git am --whitespace=nowarn < admin/tool/mfa/patch/core36.diff
 ```
 
 For Moodle 3.7:
 
 ```
-git apply --whitespace=nowarn admin/tool/mfa/patch/core37.diff
+git am --whitespace=nowarn < admin/tool/mfa/patch/core37.diff
 ```
 
 ### Manual cherry-pick
