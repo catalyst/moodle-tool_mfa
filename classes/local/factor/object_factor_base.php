@@ -36,13 +36,29 @@ abstract class object_factor_base implements object_factor {
     public $name;
 
     /**
+     * Lock counter.
+     */
+    private $lockcounter;
+
+    /**
      * Class constructor
      *
      * @param string factor name
      *
      */
     public function __construct($name) {
+        global $DB, $USER;
         $this->name = $name;
+
+        // Setup the lock counter.
+        $sql = "SELECT MAX(lockcounter) FROM {tool_mfa} WHERE userid = ? AND factor = ?";
+        $this->lockcounter = $DB->get_field_sql($sql, [$USER->id, $name]);
+
+        // Now lock this factor if over the counter.
+        $lockthreshold = get_config('tool_mfa', 'lockout');
+        if ($this->lockcounter >= $lockthreshold) {
+            $this->set_state(\tool_mfa\plugininfo\factor::STATE_LOCKED);
+        }
     }
 
     /**
@@ -432,5 +448,34 @@ abstract class object_factor_base implements object_factor {
         // Emit event for deletion.
         $event = \tool_mfa\event\user_deleted_factor::user_deleted_factor_event($user, $USER, $this->name);
         $event->trigger();
+    }
+
+    /**
+     * Increments the lock counter for a factor.
+     *
+     * @return void
+     */
+    public function increment_lock_counter() {
+        global $DB, $USER;
+
+        $this->lockcounter++;
+        // Update record in DB.
+        $DB->set_field('tool_mfa', 'lockcounter', $this->lockcounter, ['userid' => $USER->id, 'factor' => $this->name]);
+
+        // Now lock this factor if over the counter.
+        $lockthreshold = get_config('tool_mfa', 'lockout');
+        if ($this->lockcounter >= $lockthreshold) {
+            $this->set_state(\tool_mfa\plugininfo\factor::STATE_LOCKED);
+        }
+    }
+
+    /**
+     * Return the number of remaining attempts at this factor.
+     *
+     * @return int the number of attempts at this factor remaining.
+     */
+    public function get_remaining_attempts() {
+        $lockthreshold = get_config('tool_mfa', 'lockout');
+        return $lockthreshold - $this->lockcounter;
     }
 }

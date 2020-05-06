@@ -48,6 +48,9 @@ class tool_mfa_renderer extends plugin_renderer_base {
                 return \html_writer::tag('span', get_string('state:unknown', 'tool_mfa'),
                         array('class' => 'badge badge-secondary'));
 
+            case \tool_mfa\plugininfo\factor::STATE_LOCKED:
+                return \html_writer::tag('span', get_string('state:locked', 'tool_mfa'), array('class' => 'badge badge-error'));
+
             default:
                 return \html_writer::tag('span', get_string('pending', 'tool_mfa'), array('class' => 'badge badge-secondary'));
         }

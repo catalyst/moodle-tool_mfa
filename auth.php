@@ -47,14 +47,10 @@ $factor = \tool_mfa\plugininfo\factor::get_next_user_factor();
 $form = new login_form($currenturl, array('factor' => $factor));
 if ($form->is_submitted()) {
     if (!$form->is_validated() && !$form->is_cancelled()) {
-        // End user session if too many failed attempts.
-        empty($SESSION->mfa_fail_counter)
-            ? $SESSION->mfa_fail_counter = 1
-            : $SESSION->mfa_fail_counter++;
-
-        if ($SESSION->mfa_fail_counter >= get_config('tool_mfa', 'lockout')) {
-            \tool_mfa\manager::cannot_login();
-        }
+        // Increment the fail counter for the factor,
+        // And let the factor handle locking logic.
+        $factor->increment_lock_counter();
+        \tool_mfa\manager::resolve_mfa_status(true);
     }
 
     // Set state from user actions.
@@ -81,9 +77,10 @@ echo $OUTPUT->header();
 \tool_mfa\manager::display_debug_notification();
 
 echo $OUTPUT->heading(get_string('pluginname', 'factor_'.$factor->name));
-if (!empty($SESSION->mfa_fail_counter)) {
-    $remaining = get_config('tool_mfa', 'lockout') - $SESSION->mfa_fail_counter;
-    echo $OUTPUT->notification(get_string('lockoutnotification', 'tool_mfa', $remaining), 'notifyerror');
+// Check if a notification is required for factor lockouts.
+$remattempts = $factor->get_remaining_attempts();
+if ($remattempts < get_config('tool_mfa', 'lockout')) {
+    echo $OUTPUT->notification(get_string('lockoutnotification', 'tool_mfa', $remattempts), 'notifyerror');
 }
 $form->display();
 echo $OUTPUT->footer();

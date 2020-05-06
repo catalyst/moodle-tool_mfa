@@ -25,6 +25,8 @@
 
 namespace factor_nosetup\task;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Scheduled task to add log events into DB table.
  */
