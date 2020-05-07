@@ -307,7 +307,7 @@ class manager {
      * @return void
      */
     public static function set_pass_state() {
-        global $SESSION, $USER;
+        global $DB, $SESSION, $USER;
         if (!isset($SESSION->tool_mfa_authenticated)) {
             $SESSION->tool_mfa_authenticated = true;
             $event = \tool_mfa\event\user_passed_mfa::user_passed_mfa_event($USER);
@@ -320,10 +320,17 @@ class manager {
             // Unset user preferences during mfa auth.
             unset_user_preference('mfa_sleep_duration', $USER);
 
+            // Clear locked user factors, they may now reauth with anything.
+            $DB->set_field('tool_mfa', 'lockcounter', 0, ['userid' => $USER->id]);
+
             // Fire post pass state factor actions.
             $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
             foreach ($factors as $factor) {
                 $factor->post_pass_state();
+                // Also set the states for this session to neutral if they were locked.
+                if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_LOCKED) {
+                    $factor->set_state(\tool_mfa\plugininfo\factor::STATE_NEUTRAL);
+                }
             }
         }
     }
@@ -525,7 +532,8 @@ class manager {
 
             } else if ($redir == self::REDIRECT_EXCEPTION) {
                 if (!empty($SESSION->mfa_redir_referer)) {
-                    throw new \moodle_exception('redirecterrordetected', 'tool_mfa', $SESSION->mfa_redir_referer, $SESSION->mfa_redir_referer);
+                    throw new \moodle_exception('redirecterrordetected', 'tool_mfa',
+                        $SESSION->mfa_redir_referer, $SESSION->mfa_redir_referer);
                 } else {
                     throw new \moodle_exception('redirecterrordetected', 'error');
                 }

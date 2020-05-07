@@ -25,6 +25,8 @@
 
 namespace factor_grace\task;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Scheduled task to revoke expired gracemode factors
  */
@@ -65,7 +67,7 @@ class revoke_expired_factors extends \core\task\scheduled_task {
         }
         $revoketime = time() - $duration;
 
-        // Single query implementation
+        // Single query implementation.
         $sql = "UPDATE {tool_mfa}
                     SET revoked = 1,
                         timemodified = :timemodified

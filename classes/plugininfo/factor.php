@@ -33,6 +33,8 @@ class factor extends \core\plugininfo\base {
     const STATE_PASS = 'pass';
     const STATE_FAIL = 'fail';
     const STATE_NEUTRAL = 'neutral';
+    // Locked state is identical to neutral, but can't be overridden.
+    const STATE_LOCKED = 'locked';
 
     /**
      * Finds all MFA factors.

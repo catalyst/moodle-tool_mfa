@@ -105,7 +105,7 @@ foreach ($authtypes as $authtype) {
     $row[] = $allusersinfo[$authtype]->count ?? '-';
     $row[] = $mfausersinfo[$authtype]->count ?? '-';
 
-    // Create a running counter for the total
+    // Create a running counter for the total.
     $authtotal = 0;
 
     // Now for each factor add the count from the factor query, and increment the running total.
@@ -120,7 +120,7 @@ foreach ($authtypes as $authtype) {
         }
     }
 
-    // Append the total of all factors to final column
+    // Append the total of all factors to final column.
     $row[] = $authtotal ? format_float($authtotal, 0) : '-';
 
     $table->data[] = $row;

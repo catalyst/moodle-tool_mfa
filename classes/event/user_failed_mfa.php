@@ -91,7 +91,8 @@ class user_failed_mfa extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '{$this->other['userid']}' failed authenticating with MFA. <br> Information: {$this->other['failurereason']}{$this->other['debug']}";
+        return "The user with id '{$this->other['userid']}' failed authenticating with MFA.
+            <br> Information: {$this->other['failurereason']}{$this->other['debug']}";
     }
 
     /**

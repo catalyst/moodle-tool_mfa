@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="admin/tool/mfa/db" VERSION="20191203" COMMENT="XMLDB file for Moodle admin/tool/mfa"
+<XMLDB PATH="admin/tool/mfa/db" VERSION="20200507" COMMENT="XMLDB file for Moodle admin/tool/mfa"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -16,6 +16,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="15" NOTNULL="false" SEQUENCE="false" COMMENT="Time factor was last modified."/>
         <FIELD NAME="lastverified" TYPE="int" LENGTH="15" NOTNULL="false" SEQUENCE="false" COMMENT="Time user was last verified with this factor."/>
         <FIELD NAME="revoked" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lockcounter" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Counter of failed attempts"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
