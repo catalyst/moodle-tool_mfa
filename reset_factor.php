@@ -42,6 +42,10 @@ if ($form->is_cancelled()) {
     $stringarr = array('factor' => $factor->get_display_name(), 'username' => $user->username);
     \core\notification::success(get_string('resetsuccess', 'tool_mfa', $stringarr));
 
+    // Add a user preference, to display a notification to the user that their factor was reset.
+    $prefname = 'tool_mfa_reset_' . $factor->name;
+    set_user_preference($prefname, true, $user);
+
     // Reload page.
     redirect($PAGE->url);
 }

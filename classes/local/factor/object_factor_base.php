@@ -466,6 +466,9 @@ abstract class object_factor_base implements object_factor {
         $lockthreshold = get_config('tool_mfa', 'lockout');
         if ($this->lockcounter >= $lockthreshold) {
             $this->set_state(\tool_mfa\plugininfo\factor::STATE_LOCKED);
+
+            // Lastly output a notification showing the user the factor is locked.
+            \core\notification::error(get_string('factorlocked', 'tool_mfa', $this->get_display_name()));
         }
     }
 

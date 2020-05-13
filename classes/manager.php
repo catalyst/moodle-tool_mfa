@@ -332,6 +332,20 @@ class manager {
                     $factor->set_state(\tool_mfa\plugininfo\factor::STATE_NEUTRAL);
                 }
             }
+
+            // Output notifications if any factors were reset for this user.
+            $enabledfactors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+            foreach ($enabledfactors as $factor) {
+                $pref = 'tool_mfa_reset_' . $factor->name;
+                $factorpref = get_user_preferences($pref, false);
+                if ($factorpref)  {
+                    $url = new \moodle_url('/admin/tool/mfa/user_preferences.php');
+                    $link = \html_writer::link($url, get_string('preferenceslink', 'tool_mfa'));
+                    $data = ['factor' => $factor->get_display_name(), 'url' => $link];
+                    \core\notification::warning(get_string('factorreset', 'tool_mfa', $data));
+                    unset_user_preference($pref);
+                }
+            }
         }
     }
 
