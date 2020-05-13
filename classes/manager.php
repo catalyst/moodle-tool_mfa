@@ -25,6 +25,8 @@
 
 namespace tool_mfa;
 
+use Exception;
+
 defined('MOODLE_INTERNAL') || die();
 
 class manager {
@@ -320,8 +322,12 @@ class manager {
             // Unset user preferences during mfa auth.
             unset_user_preference('mfa_sleep_duration', $USER);
 
-            // Clear locked user factors, they may now reauth with anything.
-            $DB->set_field('tool_mfa', 'lockcounter', 0, ['userid' => $USER->id]);
+            try {
+                // Clear locked user factors, they may now reauth with anything.
+                @$DB->set_field('tool_mfa', 'lockcounter', 0, ['userid' => $USER->id]);
+            } catch (Exception $e) {
+                // This occurs when upgrade.php hasn't been run. Nothing to do here.
+            }
 
             // Fire post pass state factor actions.
             $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
