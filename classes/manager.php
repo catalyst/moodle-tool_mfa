@@ -25,6 +25,8 @@
 
 namespace tool_mfa;
 
+use Exception;
+
 defined('MOODLE_INTERNAL') || die();
 
 class manager {
@@ -320,8 +322,15 @@ class manager {
             // Unset user preferences during mfa auth.
             unset_user_preference('mfa_sleep_duration', $USER);
 
-            // Clear locked user factors, they may now reauth with anything.
-            $DB->set_field('tool_mfa', 'lockcounter', 0, ['userid' => $USER->id]);
+            try {
+                // Clear locked user factors, they may now reauth with anything.
+                @$DB->set_field('tool_mfa', 'lockcounter', 0, ['userid' => $USER->id]);
+            // @codingStandardsIgnoreStart
+            } catch (Exception $e) {
+                // This occurs when upgrade.php hasn't been run. Nothing to do here.
+                // Coding standards ignored, they break on empty catches.
+            }
+            // @codingStandardsIgnoreEnd
 
             // Fire post pass state factor actions.
             $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
@@ -338,7 +347,7 @@ class manager {
             foreach ($enabledfactors as $factor) {
                 $pref = 'tool_mfa_reset_' . $factor->name;
                 $factorpref = get_user_preferences($pref, false);
-                if ($factorpref)  {
+                if ($factorpref) {
                     $url = new \moodle_url('/admin/tool/mfa/user_preferences.php');
                     $link = \html_writer::link($url, get_string('preferenceslink', 'tool_mfa'));
                     $data = ['factor' => $factor->get_display_name(), 'url' => $link];

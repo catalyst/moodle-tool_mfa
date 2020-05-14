@@ -50,14 +50,20 @@ abstract class object_factor_base implements object_factor {
         global $DB, $USER;
         $this->name = $name;
 
-        // Setup the lock counter.
-        $sql = "SELECT MAX(lockcounter) FROM {tool_mfa} WHERE userid = ? AND factor = ?";
-        $this->lockcounter = $DB->get_field_sql($sql, [$USER->id, $name]);
+        // Check if lockcounter column exists (incase upgrade hasnt run yet).
+        try {
+            // Setup the lock counter.
+            $sql = "SELECT MAX(lockcounter) FROM {tool_mfa} WHERE userid = ? AND factor = ?";
+            @$this->lockcounter = $DB->get_field_sql($sql, [$USER->id, $name]);
 
-        // Now lock this factor if over the counter.
-        $lockthreshold = get_config('tool_mfa', 'lockout');
-        if ($this->lockcounter >= $lockthreshold) {
-            $this->set_state(\tool_mfa\plugininfo\factor::STATE_LOCKED);
+            // Now lock this factor if over the counter.
+            $lockthreshold = get_config('tool_mfa', 'lockout');
+            if ($this->lockcounter >= $lockthreshold) {
+                $this->set_state(\tool_mfa\plugininfo\factor::STATE_LOCKED);
+            }
+        } catch (\dml_exception $e) {
+            // Set counter to -1.
+            $this->lockcounter = -1;
         }
     }
 
@@ -458,6 +464,11 @@ abstract class object_factor_base implements object_factor {
     public function increment_lock_counter() {
         global $DB, $USER;
 
+        // If lockcounter is negative, the field does not exist yet.
+        if ($this->lockcounter === -1) {
+            return;
+        }
+
         $this->lockcounter++;
         // Update record in DB.
         $DB->set_field('tool_mfa', 'lockcounter', $this->lockcounter, ['userid' => $USER->id, 'factor' => $this->name]);
@@ -479,6 +490,11 @@ abstract class object_factor_base implements object_factor {
      */
     public function get_remaining_attempts() {
         $lockthreshold = get_config('tool_mfa', 'lockout');
-        return $lockthreshold - $this->lockcounter;
+        if ($this->lockcounter === -1) {
+            // If upgrade.php hasnt been run yet, just return 10.
+            return $lockthreshold;
+        } else {
+            return $lockthreshold - $this->lockcounter;
+        }
     }
 }
