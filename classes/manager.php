@@ -263,9 +263,9 @@ class manager {
         $state = self::get_status();
         if ($state == \tool_mfa\plugininfo\factor::STATE_PASS) {
             self::set_pass_state();
-            unset($SESSION->wantsurl);
             // Check if user even had to reach auth page.
             if (isset($SESSION->tool_mfa_has_been_redirected)) {
+                unset($SESSION->wantsurl);
                 redirect(new \moodle_url($wantsurl));
             } else {
                 // Don't touch anything, let user be on their way.
