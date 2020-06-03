@@ -38,7 +38,9 @@ function tool_mfa_after_require_login($courseorid = null, $autologinguest = null
         $SESSION->mfa_login_hook_test = true;
     }
 
-    \tool_mfa\manager::require_auth($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
+    if (empty($SESSION->tool_mfa_authenticated)) {
+        \tool_mfa\manager::require_auth($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
+    }
 }
 
 /**
