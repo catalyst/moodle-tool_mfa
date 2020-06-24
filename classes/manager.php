@@ -173,7 +173,7 @@ class manager {
      * @return void
      */
     public static function cannot_login() {
-        global $ME, $PAGE, $USER;
+        global $ME, $PAGE, $SESSION, $USER;
 
         // Determine page URL without triggering warnings from $PAGE.
         if (!preg_match("~(\/admin\/tool\/mfa\/auth.php)~", $ME)) {
@@ -191,7 +191,9 @@ class manager {
         // Emit an event for failure, then logout.
         $event = \tool_mfa\event\user_failed_mfa::user_failed_mfa_event($USER);
         $event->trigger();
-        self::mfa_logout();
+
+        // We should set the redir flag, as this page is generated through auth.php.
+        $SESSION->tool_mfa_has_been_redirected = true;
         die;
     }
 
@@ -225,19 +227,28 @@ class manager {
             }
         }
 
-        // Check for passing state. If found, ensure that session var is set.
-        if (isset($SESSION->tool_mfa_authenticated) && $SESSION->tool_mfa_authenticated) {
-            return \tool_mfa\plugininfo\factor::STATE_PASS;
-        } else if (self::passed_enough_factors()) {
-            return \tool_mfa\plugininfo\factor::STATE_PASS;
-        }
+        $passcondition = ((isset($SESSION->tool_mfa_authenticated) && $SESSION->tool_mfa_authenticated) ||
+            self::passed_enough_factors());
 
         // Check next factor for instant fail (fallback).
         if (\tool_mfa\plugininfo\factor::get_next_user_factor()->get_state() ==
             \tool_mfa\plugininfo\factor::STATE_FAIL) {
 
+            // We need to handle a special case here, where someone reached the fallback,
+            // If they were able to modify their state on the error page, such as passing iprange,
+            // We must return pass.
+            if ($passcondition) {
+                return \tool_mfa\plugininfo\factor::STATE_PASS;
+            }
+
             return \tool_mfa\plugininfo\factor::STATE_FAIL;
         }
+
+        // Now check for general passing state. If found, ensure that session var is set.
+        if ($passcondition) {
+            return \tool_mfa\plugininfo\factor::STATE_PASS;
+        }
+
         // Else return neutral state.
         return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
     }
