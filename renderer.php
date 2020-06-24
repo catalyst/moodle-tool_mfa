@@ -209,15 +209,16 @@ class tool_mfa_renderer extends plugin_renderer_base {
         // Support page link.
         $supportpage = $CFG->supportpage;
         if (!empty($supportpage)) {
-            $linktext = \html_writer::link($supportpage, get_string('error:supportpage', 'tool_mfa'));
+            $linktext = \html_writer::link($supportpage, $supportpage);
             $notification .= $linktext;
         }
+        $return = $OUTPUT->notification($notification, 'notifyerror');
 
-        // Home link.
-        $url = new \moodle_url('/');
-        $link = \html_writer::link($url, get_string('error:home', 'tool_mfa'));
-        $notification .= \html_writer::tag('p', $link);
+        // Logout button.
+        $url = new \moodle_url('\admin\tool\mfa\auth.php', ['logout' => 1]);
+        $btn = new \single_button($url, get_string('logout'), 'post', true);
+        $return .= $this->render($btn);
 
-        return $OUTPUT->notification($notification, 'notifyerror');
+        return $return;
     }
 }

@@ -37,6 +37,21 @@ $PAGE->set_pagelayout('secure');
 $pagetitle = $SITE->shortname.': '.get_string('mfa', 'tool_mfa');
 $PAGE->set_title($pagetitle);
 
+// The only page action allowed here is a logout if it was requested.
+$logout = optional_param('logout', false, PARAM_BOOL);
+if ($logout) {
+    if (!empty($SESSION->wantsurl)) {
+        // If we have the wantsurl, we should redirect there, to keep it intact.
+        $wantsurl = $SESSION->wantsurl;
+    } else {
+        // Else redirect home.
+        $wantsurl = new \moodle_url($CFG->wwwroot);
+    }
+
+    \tool_mfa\manager::mfa_logout();
+    redirect($wantsurl);
+}
+
 $currenturl = new moodle_url('/admin/tool/mfa/auth.php');
 
 // Perform state check.

@@ -41,10 +41,10 @@ $string['error:actionnotfound'] = 'Action \'{$a}\' not supported';
 $string['error:setupfactor'] = 'Can not setup factor';
 $string['error:revoke'] = 'Can not revoke factor';
 $string['error:notenoughfactors'] = 'Unable to authenticate';
-$string['error:reauth'] = 'We couldn\'t confirm your identity sufficiently to meet this sites authentication security policy. This may be due to some factors being failed or locked, or you may have skipped factors. If you skipped any factors you can try again, or please contact your site administrator.';
+$string['error:reauth'] = 'We couldn\'t confirm your identity sufficiently to meet this sites authentication security policy.<br>This may be due to: <br> 1) Steps being locked - please wait a few minutes and try again.
+     <br> 2) Steps being failed - please double check the details in each step. <br> 3) Steps were skipped - please reload this page or try logging in again.';
 $string['error:support'] = 'If you are still unable to login, or believe you are seeing this in error,
      please send an email to the following address for support:';
-$string['error:supportpage'] = 'Click here to go to the general support page.';
 $string['error:home'] = 'Click here to return home.';
 $string['error:factornotenabled'] = 'MFA Factor \'{$a}\' not enabled';
 $string['email:subject'] = 'Unable to login to {$a}';
