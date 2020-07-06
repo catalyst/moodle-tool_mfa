@@ -195,7 +195,9 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
 
         // User not setup properly.
         $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::REDIRECT);
-        $this->setUser(null);
+        $notsetup = clone($user);
+        unset($notsetup->firstname);
+        $this->setUser($notsetup);
         $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::NO_REDIRECT);
         $this->setUser($user);
 
