@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="admin/tool/mfa/db" VERSION="20200519" COMMENT="XMLDB file for Moodle admin/tool/mfa"
+<XMLDB PATH="admin/tool/mfa/db" VERSION="20200707" COMMENT="XMLDB file for Moodle tool_mfa"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
