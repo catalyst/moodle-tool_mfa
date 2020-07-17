@@ -160,6 +160,10 @@ The grace mode is a pseudo factor to allow users to log in without interacting w
 
 This pseudo factor is designed to allow people to pass only if they have not setup other factors for MFA already. Once another factor, such as TOTP is setup for a user, this factor no longer gives points, therefore the user must use TOTP to authenticate. This allows for an optional MFA rollout, where only users who wish to use MFA are affected by the MFA rollout.
 
+### User capability
+
+This factor checks whether a user has a capability, in the system context. If the user has this capability, they will not gain the points for this factor, and must instead use other factors to authenticate with the system. This is similar to the non-admin factor, however it operates on a role basis. In practice, the capability 'factor/capability:cannotpassfactor' should be given to roles who must use other factors to authenticate to the system. There is an additional setting for this factor, that will allow admins to gain points for this factor, as by default they will always gain no points for this factor.
+
 ### Other factors
 
 In theory you could impement almost anything as a factor, such as time of day, retina scans, or push notificatons. For a list of potential factor ideas see:
