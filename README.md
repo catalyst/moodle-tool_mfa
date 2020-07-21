@@ -164,6 +164,10 @@ This pseudo factor is designed to allow people to pass only if they have not set
 
 This factor checks whether a user has a capability, in the system context. If the user has this capability, they will not gain the points for this factor, and must instead use other factors to authenticate with the system. This is similar to the non-admin factor, however it operates on a role basis. In practice, the capability 'factor/capability:cannotpassfactor' should be given to roles who must use other factors to authenticate to the system. There is an additional setting for this factor, that will allow admins to gain points for this factor, as by default they will always gain no points for this factor.
 
+### Role Factor
+
+This factor checks whether a user has any chosen roles assigned in any context, and does not provide points if so. This can be used to ensure the selected roles must use a higher level of authentication such as TOTP, while letting non-specified roles authenticate seamlessly. This factor should generally have high privilege roles such as Manager and Administrator selected to enforce higher account security for these groups.
+
 ### Other factors
 
 In theory you could impement almost anything as a factor, such as time of day, retina scans, or push notificatons. For a list of potential factor ideas see:
