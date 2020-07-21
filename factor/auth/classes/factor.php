@@ -113,14 +113,15 @@ class factor extends object_factor_base {
     public function get_summary_condition() {
         $safetypes = get_config('factor_auth', 'goodauth');
         $authtypes = get_enabled_auth_plugins(true);
-        $string = '';
 
+        $auths = [];
         if (strlen($safetypes) > 0) {
             $safetypes = explode(',', $safetypes);
             foreach ($safetypes as $type) {
-                $string .= $authtypes[$type];
+                $auths[] = $authtypes[$type];
             }
         }
+        $string = implode(', ', $auths);
 
         return get_string('summarycondition', 'factor_'.$this->name, $string);
     }
