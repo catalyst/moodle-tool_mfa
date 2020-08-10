@@ -53,7 +53,8 @@ script:
   - moodle-plugin-ci validate
   - moodle-plugin-ci savepoints
   - moodle-plugin-ci mustache
-  - moodle-plugin-ci grunt
+# Grunt currently fails due to ES6 transpilation
+#  - moodle-plugin-ci grunt
   - moodle-plugin-ci phpunit -vvv
   - moodle-plugin-ci behat
   # Privacy Specific tests

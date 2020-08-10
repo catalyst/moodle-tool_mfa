@@ -68,7 +68,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
         foreach ($factors as $factor) {
 
             // TODO is_configured / is_ready.
-            if (!$factor->has_setup()) {
+            if (!$factor->has_setup() || !$factor->show_setup_buttons()) {
                 continue;
             }
             $html .= $this->setup_factor($factor);

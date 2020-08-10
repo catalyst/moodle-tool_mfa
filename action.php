@@ -73,8 +73,6 @@ $PAGE->navbar->add(get_string('preferences:header', 'tool_mfa'), new \moodle_url
 
 switch ($action) {
     case 'setup':
-        // Ensure sesskey is valid.
-        require_sesskey();
 
         if (!$factorobject || !$factorobject->has_setup()) {
             redirect($returnurl);

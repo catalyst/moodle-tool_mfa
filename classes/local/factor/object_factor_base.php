@@ -45,7 +45,7 @@ abstract class object_factor_base implements object_factor {
      *
      * @var \tool_mfa\local\secret_manager
      */
-    private $secretmanager;
+    protected $secretmanager;
 
     /**
      * Class constructor
@@ -325,6 +325,15 @@ abstract class object_factor_base implements object_factor {
      */
     public function has_setup() {
         return false;
+    }
+
+    /**
+     * If has_setup returns true, decides if the setup buttons should be shown on the preferences page.
+     *
+     * @return bool
+     */
+    public function show_setup_buttons() {
+        return $this->has_setup();
     }
 
     /**

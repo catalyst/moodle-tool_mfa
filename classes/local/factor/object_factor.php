@@ -179,6 +179,13 @@ interface object_factor {
     public function has_setup();
 
     /**
+     * If has_setup returns true, decides if the setup buttons should be shown on the preferences page.
+     *
+     * @return bool
+     */
+    public function show_setup_buttons();
+
+    /**
      * Returns true if factor requires user input for success or failure during login.
      *
      * @return bool
