@@ -56,3 +56,4 @@ $string['verificationcode'] = 'Enter verification code for confirmation';
 $string['verificationcode_help'] = 'Verification code has been sent to your telegram address';
 $string['summarycondition'] = 'has valid telegram setup';
 $string['settings:telegrambottoken'] = 'Token of Telegram bot';
+$string['telegram:telegramuserid'] = 'Your Telegram user ID';

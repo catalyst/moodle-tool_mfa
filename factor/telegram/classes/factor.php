@@ -47,7 +47,19 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function login_form_definition_after_data($mform) {
-        $telegramuserid = 1292580991; // TODO
+        global $DB, $USER;
+        $sql = 'SELECT *
+                  FROM {tool_mfa}
+                 WHERE userid = ?
+                   AND factor = \'telegram\'
+                   AND label LIKE \'telegram:%\'';
+        $record = $DB->get_record_sql($sql, array($USER->id));
+        if (empty($record)) {
+            throw new \coding_exception('Factor has not been set up for this user!');
+        }
+
+        $telegramuserid = substr($record->label, strlen('telegram:'));
+
         $this->generate_and_telegram_code($telegramuserid);
         return $mform;
     }
@@ -229,6 +241,61 @@ class factor extends object_factor_base {
     public function get_no_redirect_urls() {
         $telegram = new \moodle_url('/admin/tool/mfa/factor/telegram/telegram.php');
         return array($telegram);
+    }
+
+
+    /**
+     * TOTP Factor implementation.
+     *
+     * {@inheritDoc}
+     */
+    public function setup_factor_form_definition($mform) {
+        $mform->addElement('text', 'telegramuserid', get_string('telegram:telegramuserid', 'factor_telegram'));
+        $mform->setType('telegramuserid', PARAM_ALPHANUM);
+
+        return $mform;
+    }
+
+    /**
+     * TOTP Factor implementation.
+     *
+     * {@inheritDoc}
+     */
+    public function setup_user_factor($data) {
+        global $DB, $USER;
+
+        $sql = 'SELECT *
+                  FROM {tool_mfa}
+                 WHERE userid = ?
+                   AND factor = \'telegram\'
+                   AND label LIKE \'telegram:%\'';
+        $record = $DB->get_record_sql($sql, array($USER->id));
+
+        if (!empty($data->telegramuserid)) {
+            $row = new \stdClass();
+            $row->userid = $USER->id;
+            $row->factor = $this->name;
+            $row->label = 'telegram:'.$data->telegramuserid;
+            $row->timecreated = time();
+            $row->createdfromip = $USER->lastip;
+            $row->timemodified = time();
+            $row->lastverified = time();
+            $row->revoked = 0;
+
+            if (empty($record)) {
+                $id = $DB->insert_record('tool_mfa', $row);
+            } else {
+                $id = $row->id = $record->id;
+                $DB->update_record('tool_mfa', $row);
+            }
+
+            $record = $DB->get_record('tool_mfa', array('id' => $id));
+            $this->create_event_after_factor_setup($USER);
+
+            return $record;
+        }
+
+        return null;
     }
 
     /**
