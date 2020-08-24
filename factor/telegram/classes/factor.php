@@ -31,7 +31,7 @@ use tool_mfa\local\factor\object_factor_base;
 
 class factor extends object_factor_base {
     /**
-     * Telegram Factor implementation.
+     * User input for the generated code.
      *
      * {@inheritDoc}
      */
@@ -42,12 +42,14 @@ class factor extends object_factor_base {
     }
 
     /**
-     * E-Mail Factor implementation.
+     * Generate a token that is sent to the user via Telegram.
      *
      * {@inheritDoc}
      */
     public function login_form_definition_after_data($mform) {
         global $DB, $USER;
+
+        // Get the user's Telegram ID from the tool_mfa configuration.
         $sql = 'SELECT *
                   FROM {tool_mfa}
                  WHERE userid = ?
@@ -60,12 +62,13 @@ class factor extends object_factor_base {
 
         $telegramuserid = substr($record->label, strlen('telegram:'));
 
+        // Send a random code to the user on Telegram.
         $this->generate_and_telegram_code($telegramuserid);
         return $mform;
     }
 
     /**
-     * E-Mail Factor implementation.
+     * Validate the entered code.
      *
      * {@inheritDoc}
      */
@@ -90,7 +93,7 @@ class factor extends object_factor_base {
 
         $records = $DB->get_records('tool_mfa', array(
             'userid' => $user->id,
-            'factor' => $this->name,
+            'factor' => $this->name, // TODO look for prefix
         ));
         return $records;
     }
@@ -125,6 +128,7 @@ class factor extends object_factor_base {
         global $DB, $USER;
 
         // If this factor is revoked, set to not ready.
+        // Looking for prefix is not necessary: A single record with "revoked" is sufficient.
         if ($DB->record_exists('tool_mfa', array('userid' => $USER->id, 'factor' => 'telegram', 'revoked' => 1))) {
             return false;
         }
@@ -213,7 +217,7 @@ class factor extends object_factor_base {
                  WHERE userid = ?
                    AND factor = ?
                    AND label NOT LIKE \'telegram:%\'';
-        $record = $DB->get_record_sql($sql, array($USER->id, 'telegram')); //TODO
+        $record = $DB->get_record_sql($sql, array($USER->id, 'telegram'));
 
         if ($enteredcode == $record->secret) {
             if ($record->timecreated + $duration > time()) {
@@ -234,7 +238,7 @@ class factor extends object_factor_base {
         $selectsql = 'userid = ?
                   AND factor = ?
                    AND label NOT LIKE \'telegram:%\'';
-        $DB->delete_records_select('tool_mfa', $selectsql, array($USER->id, 'telegram')); //TODO
+        $DB->delete_records_select('tool_mfa', $selectsql, array($USER->id, 'telegram'));
 
         // Update factor timeverified.
         parent::post_pass_state();
