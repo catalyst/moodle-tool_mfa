@@ -79,7 +79,7 @@ class factor extends object_factor_base {
         $records = $DB->get_records('tool_mfa', array(
             'userid' => $user->id,
             'factor' => $this->name,
-            'label' => $user->telegram
+            'label' => $user->email
         ));
 
         if (!empty($records)) {
@@ -90,7 +90,7 @@ class factor extends object_factor_base {
         $record = array(
             'userid' => $user->id,
             'factor' => $this->name,
-            'label' => $user->telegram,
+            'label' => $user->email,
             'createdfromip' => $user->lastip,
             'timecreated' => time(),
             'revoked' => 0,
@@ -183,7 +183,7 @@ class factor extends object_factor_base {
                 'lastverified' => time(),
                 'revoked' => 0,
             ), true);
-            $telegram = new Telegram("1204730014:AAEMpzxxRPRnQTLZ9eCMNgCAmBd0d9pX8iQ");
+            $telegram = new telegram("1204730014:AAEMpzxxRPRnQTLZ9eCMNgCAmBd0d9pX8iQ");
             $telegram->send_message(1292580991, $newcode);
 
         } else if ($record->timecreated + $duration < time()) {
@@ -199,7 +199,7 @@ class factor extends object_factor_base {
                 'revoked' => 0,
             ));
             $instanceid = $record->id;
-            $telegram = new Telegram("1204730014:AAEMpzxxRPRnQTLZ9eCMNgCAmBd0d9pX8iQ");
+            $telegram = new telegram("1204730014:AAEMpzxxRPRnQTLZ9eCMNgCAmBd0d9pX8iQ");
             $telegram->send_message(1292580991, $newcode);
         }
     }
