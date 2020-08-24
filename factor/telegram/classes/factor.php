@@ -36,7 +36,6 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function login_form_definition($mform) {
-
         $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_telegram'));
         $mform->setType("verificationcode", PARAM_ALPHANUM);
         return $mform;
@@ -48,7 +47,8 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function login_form_definition_after_data($mform) {
-        $this->generate_and_telegram_code();
+        $telegramuserid = 1292580991; // TODO
+        $this->generate_and_telegram_code($telegramuserid);
         return $mform;
     }
 
@@ -79,36 +79,12 @@ class factor extends object_factor_base {
         $records = $DB->get_records('tool_mfa', array(
             'userid' => $user->id,
             'factor' => $this->name,
-            'label' => $user->email
         ));
-
-        if (!empty($records)) {
-            return $records;
-        }
-
-        // Null records returned, build new record.
-        $record = array(
-            'userid' => $user->id,
-            'factor' => $this->name,
-            'label' => $user->email,
-            'createdfromip' => $user->lastip,
-            'timecreated' => time(),
-            'revoked' => 0,
-        );
-        $record['id'] = $DB->insert_record('tool_mfa', $record, true);
-        return [(object) $record];
+        return $records;
     }
 
-    /**
-     * E-Mail Factor implementation.
-     *
-     * {@inheritDoc}
-     */
-    public function has_input() {
-        if (self::is_ready()) {
-            return true;
-        }
-        return false;
+    public function has_setup() {
+        return true;
     }
 
     /**
@@ -117,7 +93,11 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function get_state() {
-        if (!self::is_ready()) {
+        global $USER;
+        $userfactors = $this->get_active_user_factors($USER);
+
+        // If no codes are setup then we must be neutral not unknown.
+        if (count($userfactors) == 0) {
             return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
         }
 
@@ -132,16 +112,6 @@ class factor extends object_factor_base {
     private static function is_ready() {
         global $DB, $USER;
 
-        if (empty($USER->email)) { //TODO
-            return false;
-        }
-        if (!validate_email($USER->email)) { //TODO
-            return false;
-        }
-        if (over_bounce_threshold($USER)) {
-            return false;
-        }
-
         // If this factor is revoked, set to not ready.
         if ($DB->record_exists('tool_mfa', array('userid' => $USER->id, 'factor' => 'telegram', 'revoked' => 1))) {
             return false;
@@ -154,19 +124,19 @@ class factor extends object_factor_base {
      *
      * @return void
      */
-    private function generate_and_telegram_code() {
+    private function generate_and_telegram_code($telegramuserid) {
         global $DB, $USER;
 
-        // Get instance that isnt parent email type (label check).
-        // This check must exclude the main singleton record, with the label as the email.
+        // Get instance that isnt the parent type that defines the username.
+        // This check must exclude the main singleton record, with the label that contains the userid.
         // It must only grab the record with the user agent as the label.
         $sql = 'SELECT *
                   FROM {tool_mfa}
                  WHERE userid = ?
-                   AND factor = ?
-               AND NOT label = ?';
+                   AND factor = \'telegram\'
+                   AND label NOT LIKE \'telegram:%\'';
 
-        $record = $DB->get_record_sql($sql, array($USER->id, 'telegram', $USER->email)); //TODO
+        $record = $DB->get_record_sql($sql, array($USER->id));
         $duration = get_config('factor_telegram', 'duration');
         $newcode = random_int(100000, 999999);
 
@@ -185,7 +155,7 @@ class factor extends object_factor_base {
             ), true);
             $token = get_config('factor_telegram', 'telegrambottoken');
             $telegram = new telegram($token);
-            $telegram->send_message(1292580991, $newcode);
+            $telegram->send_message($telegramuserid, $newcode);
 
         } else if ($record->timecreated + $duration < time()) {
             // Old code found. Keep id, update fields.
@@ -202,7 +172,7 @@ class factor extends object_factor_base {
             $instanceid = $record->id;
             $token = get_config('factor_telegram', 'telegrambottoken');
             $telegram = new telegram($token);
-            $telegram->send_message(1292580991, $newcode);
+            $telegram->send_message($telegramuserid, $newcode);
         }
     }
 
@@ -222,8 +192,8 @@ class factor extends object_factor_base {
                   FROM {tool_mfa}
                  WHERE userid = ?
                    AND factor = ?
-               AND NOT label = ?';
-        $record = $DB->get_record_sql($sql, array($USER->id, 'telegram', $USER->email)); //TODO
+                   AND label NOT LIKE \'telegram:%\'';
+        $record = $DB->get_record_sql($sql, array($USER->id, 'telegram')); //TODO
 
         if ($enteredcode == $record->secret) {
             if ($record->timecreated + $duration > time()) {
@@ -240,11 +210,11 @@ class factor extends object_factor_base {
      */
     public function post_pass_state() {
         global $DB, $USER;
-        // Delete all email records except base record.
+        // Delete all telegram records except base record.
         $selectsql = 'userid = ?
                   AND factor = ?
-              AND NOT label = ?';
-        $DB->delete_records_select('tool_mfa', $selectsql, array($USER->id, 'telegram', $USER->email)); //TODO
+                   AND label NOT LIKE \'telegram:%\'';
+        $DB->delete_records_select('tool_mfa', $selectsql, array($USER->id, 'telegram')); //TODO
 
         // Update factor timeverified.
         parent::post_pass_state();
