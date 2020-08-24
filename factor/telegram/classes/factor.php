@@ -183,7 +183,8 @@ class factor extends object_factor_base {
                 'lastverified' => time(),
                 'revoked' => 0,
             ), true);
-            $telegram = new telegram("1204730014:AAEMpzxxRPRnQTLZ9eCMNgCAmBd0d9pX8iQ");
+            $token = get_config('factor_telegram', 'telegrambottoken');
+            $telegram = new telegram($token);
             $telegram->send_message(1292580991, $newcode);
 
         } else if ($record->timecreated + $duration < time()) {
@@ -199,7 +200,8 @@ class factor extends object_factor_base {
                 'revoked' => 0,
             ));
             $instanceid = $record->id;
-            $telegram = new telegram("1204730014:AAEMpzxxRPRnQTLZ9eCMNgCAmBd0d9pX8iQ");
+            $token = get_config('factor_telegram', 'telegrambottoken');
+            $telegram = new telegram($token);
             $telegram->send_message(1292580991, $newcode);
         }
     }

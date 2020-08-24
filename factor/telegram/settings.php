@@ -34,6 +34,10 @@ $settings->add(new admin_setting_configtext('factor_telegram/weight',
     new lang_string('settings:weight', 'tool_mfa'),
     new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
 
+$settings->add(new admin_setting_configtext('factor_telegram/telegrambottoken',
+    new lang_string('settings:telegrambottoken', 'factor_telegram'),
+    new lang_string('settings:telegrambottoken', 'factor_telegram'), null,PARAM_TEXT, 50));
+
 $settings->add(new admin_setting_configduration('factor_telegram/duration',
     get_string('settings:duration', 'factor_telegram'),
     get_string('settings:duration_help', 'factor_telegram'), 30 * MINSECS, MINSECS));
