@@ -17,7 +17,7 @@
 /**
  * Settings
  *
- * @package     factor_telegram
+ * @package     factor_u2f
  * @subpackage  tool_mfa
  * @author      Jan Dageförde, Laura Troost
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,22 +26,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$settings->add(new admin_setting_configcheckbox('factor_telegram/enabled',
+$settings->add(new admin_setting_configcheckbox('factor_u2f/enabled',
     new lang_string('settings:enablefactor', 'tool_mfa'),
     new lang_string('settings:enablefactor_help', 'tool_mfa'), 0));
 
-$settings->add(new admin_setting_configtext('factor_telegram/weight',
+$settings->add(new admin_setting_configtext('factor_u2f/weight',
     new lang_string('settings:weight', 'tool_mfa'),
     new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
 
-$settings->add(new admin_setting_configtext('factor_telegram/telegrambottoken',
-    new lang_string('settings:telegrambottoken', 'factor_telegram'),
-    new lang_string('settings:telegrambottoken', 'factor_telegram'), null,PARAM_TEXT, 50));
-
-$settings->add(new admin_setting_configduration('factor_telegram/duration',
-    get_string('settings:duration', 'factor_telegram'),
-    get_string('settings:duration_help', 'factor_telegram'), 30 * MINSECS, MINSECS));
-
-$settings->add(new admin_setting_configcheckbox('factor_telegram/suspend',
-    get_string('settings:suspend', 'factor_telegram'),
-    get_string('settings:suspend_help', 'factor_telegram'), 0));
+$settings->add(new admin_setting_configcheckbox('factor_u2f/suspend',
+    get_string('settings:suspend', 'factor_u2f'),
+    get_string('settings:suspend_help', 'factor_u2f'), 0));

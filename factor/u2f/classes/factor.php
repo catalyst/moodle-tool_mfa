@@ -15,15 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Email factor class.
+ * U2F factor class (yubikey etc.).
  *
- * @package     factor_telegram
+ * @package     factor_u2f
  * @subpackage  tool_mfa
  * @author      Jan Dageförde, Laura Troost
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace factor_telegram;
+namespace factor_u2f;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,24 +36,24 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function login_form_definition($mform) {
-        $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_telegram'));
+        $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_u2f'));
         $mform->setType("verificationcode", PARAM_ALPHANUM);
         return $mform;
     }
 
     /**
-     * Generate a token that is sent to the user via Telegram.
+     * Generate a token that is sent to the user via u2f.
      *
      * {@inheritDoc}
      */
     public function login_form_definition_after_data($mform) {
         global $DB, $USER;
 
-        // Get the user's Telegram ID from the tool_mfa configuration.
+        // Get the user's u2f ID from the tool_mfa configuration.
         $sql = 'SELECT *
                   FROM {tool_mfa}
                  WHERE userid = ?
-                   AND factor = \'telegram\'
+                   AND factor = \'u2f\'
                    AND label LIKE \'telegram:%\'';
         $record = $DB->get_record_sql($sql, array($USER->id));
         if (empty($record)) {
@@ -77,14 +77,14 @@ class factor extends object_factor_base {
         $return = array();
 
         if (!$this->check_verification_code($data['verificationcode'])) {
-            $return['verificationcode'] = get_string('error:wrongverification', 'factor_telegram');
+            $return['verificationcode'] = get_string('error:wrongverification', 'factor_u2f');
         }
 
         return $return;
     }
 
     /**
-     * Telegram Factor implementation.
+     * U2F Factor implementation.
      *
      * {@inheritDoc}
      */
@@ -120,7 +120,7 @@ class factor extends object_factor_base {
     }
 
     /**
-     * Checks whether user telegram is correctly configured.
+     * Checks whether user u2f is correctly configured.
      *
      * @return bool
      */
@@ -129,7 +129,7 @@ class factor extends object_factor_base {
 
         // If this factor is revoked, set to not ready.
         // Looking for prefix is not necessary: A single record with "revoked" is sufficient.
-        if ($DB->record_exists('tool_mfa', array('userid' => $USER->id, 'factor' => 'telegram', 'revoked' => 1))) {
+        if ($DB->record_exists('tool_mfa', array('userid' => $USER->id, 'factor' => 'u2f', 'revoked' => 1))) {
             return false;
         }
         return true;
@@ -149,18 +149,18 @@ class factor extends object_factor_base {
         $sql = 'SELECT *
                   FROM {tool_mfa}
                  WHERE userid = ?
-                   AND factor = \'telegram\'
+                   AND factor = \'u2f\'
                    AND label NOT LIKE \'telegram:%\'';
 
         $record = $DB->get_record_sql($sql, array($USER->id));
-        $duration = get_config('factor_telegram', 'duration');
+        $duration = get_config('factor_u2f', 'duration');
         $newcode = random_int(100000, 999999);
 
         if (empty($record)) {
             // No code active, generate new code.
             $instanceid = $DB->insert_record('tool_mfa', array(
                 'userid' => $USER->id,
-                'factor' => 'telegram',
+                'factor' => 'u2f',
                 'secret' => $newcode,
                 'label' => $_SERVER['HTTP_USER_AGENT'],
                 'timecreated' => time(),
@@ -169,12 +169,12 @@ class factor extends object_factor_base {
                 'lastverified' => time(),
                 'revoked' => 0,
             ), true);
-            $token = get_config('factor_telegram', 'telegrambottoken');
+            $token = get_config('factor_u2f', 'telegrambottoken');
             $telegram = new telegram($token);
             $a = new \stdClass();
             $a->sitename = 'Moodle'; // TODO
             $a->code = $newcode;
-            $message = get_string('telegram:message', 'factor_telegram', $a);
+            $message = get_string('u2f:message', 'factor_u2f', $a);
             $telegram->send_message($telegramuserid, $message);
 
         } else if ($record->timecreated + $duration < time()) {
@@ -190,12 +190,12 @@ class factor extends object_factor_base {
                 'revoked' => 0,
             ));
             $instanceid = $record->id;
-            $token = get_config('factor_telegram', 'telegrambottoken');
+            $token = get_config('factor_u2f', 'telegrambottoken');
             $telegram = new telegram($token);
             $a = new \stdClass();
             $a->sitename = 'Moodle'; // TODO
             $a->code = $newcode;
-            $message = get_string('telegram:message', 'factor_telegram', $a);
+            $message = get_string('u2f:message', 'factor_u2f', $a);
             $telegram->send_message($telegramuserid, $message);
         }
     }
@@ -207,7 +207,7 @@ class factor extends object_factor_base {
      */
     private function check_verification_code($enteredcode) {
         global $DB, $USER;
-        $duration = get_config('factor_telegram', 'duration');
+        $duration = get_config('factor_u2f', 'duration');
 
         // Get instance that isnt parent email type (label check).
         // This check must exclude the main singleton record, with the label as the email.
@@ -217,7 +217,7 @@ class factor extends object_factor_base {
                  WHERE userid = ?
                    AND factor = ?
                    AND label NOT LIKE \'telegram:%\'';
-        $record = $DB->get_record_sql($sql, array($USER->id, 'telegram'));
+        $record = $DB->get_record_sql($sql, array($USER->id, 'u2f'));
 
         if ($enteredcode == $record->secret) {
             if ($record->timecreated + $duration > time()) {
@@ -234,11 +234,11 @@ class factor extends object_factor_base {
      */
     public function post_pass_state() {
         global $DB, $USER;
-        // Delete all telegram records except base record.
+        // Delete all u2f records except base record.
         $selectsql = 'userid = ?
                   AND factor = ?
                    AND label NOT LIKE \'telegram:%\'';
-        $DB->delete_records_select('tool_mfa', $selectsql, array($USER->id, 'telegram'));
+        $DB->delete_records_select('tool_mfa', $selectsql, array($USER->id, 'u2f'));
 
         // Update factor timeverified.
         parent::post_pass_state();
@@ -267,7 +267,7 @@ class factor extends object_factor_base {
         $sql = 'SELECT *
                   FROM {tool_mfa}
                  WHERE userid = ?
-                   AND factor = \'telegram\'
+                   AND factor = \'u2f\'
                    AND label LIKE \'telegram:%\'';
         $record = $DB->get_record_sql($sql, array($USER->id));
 
