@@ -48,3 +48,5 @@ $string['verificationcode_help'] = 'Verification code has been sent to your Tele
 $string['summarycondition'] = 'has valid U2F setup';
 $string['u2f:u2f_name'] = 'Name of the U2F device';
 $string['error'] = 'Wrong token';
+$string['press-button'] = 'Please press the button on your hardware key...';
+$string['press-button-done'] = 'Button pressed, thank you!';

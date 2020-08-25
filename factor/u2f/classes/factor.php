@@ -163,23 +163,25 @@ class factor extends object_factor_base {
     public function setup_factor_form_definition($mform) {
         global $PAGE, $CFG;
 
+        $renderer = $PAGE->get_renderer('core');
+        $pressbuttonhtml = $renderer->render_from_template('factor_u2f/press-button', []);
+
         $mform->addElement('text', 'u2f_name', get_string('u2f:u2f_name', 'factor_u2f'));
         $mform->setType('u2f_name', PARAM_ALPHANUM);
+        $mform->addElement('html', $pressbuttonhtml);
         $mform->addElement('hidden', 'request', '', ["id" => 'id_request']);
         $mform->setType('request', PARAM_RAW);
         $mform->addElement('hidden', 'response_input', '', ['id'=> 'id_response_input']);
         $mform->setType('response_input', PARAM_RAW);
-        $renderer = $PAGE->get_renderer('core');
 
+        // Prepare data for U2F request.
         $url = parse_url($CFG->wwwroot);
         $u2f = new U2F($url['scheme'].'://'.$url['host']);
         $data = $u2f->getRegisterData([]);
         list($request, $signatures) = $data;
-
         $script = $renderer->render_from_template('factor_u2f/u2f-registration', ['wwwroot' => $CFG->wwwroot,
             'request' => json_encode($request), 'signatures' => json_encode($signatures)]);
         $mform->addElement('html', $script);
-        //$mform->_form->getAttribute()
         return $mform;
     }
 
