@@ -23,28 +23,34 @@
     }
 }}
 <script>
-    hide_button = function() {
+    document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('id_submitbutton').style.display = 'none';
-    };
-    document.addEventListener("DOMContentLoaded", hide_button, false);
-    var req = {{{request}}};
-    u2f.sign(req[0].appId, req[0].challenge, req,
-    function(deviceResponse){
-        if(deviceResponse.errorCode === 0 ) {
-            document.getElementById('id_response_input').value=JSON.stringify(deviceResponse);
-            document.getElementById('id_request').value=JSON.stringify(req);
-            document.getElementById('id_response_input').form.submit();
-        } else {
-            var div = document.createElement('div');
-            div.setAttribute('class', 'alert alert-danger alert-block fade in')
-            div.textContent = "Wrong U2F device.";
-            var button = document.createElement('button');
-            button.setAttribute('class', 'close');
-            button.setAttribute('data-dismiss', 'alert');
-            button.innerHTML = "x";
-            div.appendChild(button);
-            var form_element = document.getElementById(document.getElementById('id_request').form.getAttribute('id'));
-            form_element.appendChild(div);
-        }
+        require(['core/templates'], function (templates) {
+            var req = {{{request}}};
+            u2f.sign(req[0].appId, req[0].challenge, req,
+                    function (deviceResponse) {
+                        if (deviceResponse.errorCode === 0) {
+                            document.getElementById('id_response_input').value = JSON.stringify(deviceResponse);
+                            document.getElementById('id_request').value = JSON.stringify(req);
+                            document.getElementById('id_response_input').form.submit();
+                            templates.render('factor_u2f/press-button-done', {})
+                                    .then(function (html, js) {
+                                        templates.replaceNode('#factor_u2f-press-button', html, js);
+                                        document.getElementById('id_submitbutton').disabled = false;
+                                    });
+                        } else {
+                            var div = document.createElement('div');
+                            div.setAttribute('class', 'alert alert-danger alert-block fade in')
+                            div.textContent = "Wrong U2F device.";
+                            var button = document.createElement('button');
+                            button.setAttribute('class', 'close');
+                            button.setAttribute('data-dismiss', 'alert');
+                            button.innerHTML = "x";
+                            div.appendChild(button);
+                            var form_element = document.getElementById(document.getElementById('id_request').form.getAttribute('id'));
+                            form_element.appendChild(div);
+                        }
+                    });
+        })
     });
 </script>
