@@ -23,6 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['action:revoke'] = 'Revoke U2F Factor';
 $string['u2f:subject'] = 'Your confirmation code';
 $string['u2f:message'] = 'You are trying to log in to Moodle. Your confirmation code is \'{$a->secret}\'.
      Alternatively you can click {$a->link} from the same device to authorise this session.';
