@@ -170,7 +170,7 @@ class factor extends object_factor_base {
 
         if($url['scheme'] == "http"){
             $mform->addElement('html', '<div class="m-element-notification m-element-notification--warning">
-            You should use https for u2f authentication.</div></div>');
+            You cannot use https for u2f authentication.</div></div>');
         } else {
             $renderer = $PAGE->get_renderer('core');
             $pressbuttonhtml = $renderer->render_from_template('factor_u2f/press-button', []);
