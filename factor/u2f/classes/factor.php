@@ -73,6 +73,10 @@ class factor extends object_factor_base {
     public function login_form_validation($data) {
         global $USER, $CFG, $DB;
         $return = array();
+        if(empty($data['response_input'])) {
+            $return['verificationcode'] = get_string('error', 'factor_u2f');
+            return $return;
+        }
 
         $factors = $this->get_all_user_factors($USER);
         $registrations = [];
