@@ -137,7 +137,7 @@ class factor extends object_factor_base {
      * @return void
      */
     private function generate_and_telegram_code($telegramuserid) {
-        global $DB, $USER;
+        global $DB, $USER, $CFG;
 
         // Get instance that isnt the parent type that defines the username.
         // This check must exclude the main singleton record, with the label that contains the userid.
@@ -167,7 +167,11 @@ class factor extends object_factor_base {
             ), true);
             $token = get_config('factor_telegram', 'telegrambottoken');
             $telegram = new telegram($token);
-            $telegram->send_message($telegramuserid, $newcode);
+            $a = new \stdClass();
+            $a->sitename = 'Moodle'; // TODO
+            $a->code = $newcode;
+            $message = get_string('telegram:message', 'factor_telegram', $a);
+            $telegram->send_message($telegramuserid, $message);
 
         } else if ($record->timecreated + $duration < time()) {
             // Old code found. Keep id, update fields.
@@ -184,7 +188,11 @@ class factor extends object_factor_base {
             $instanceid = $record->id;
             $token = get_config('factor_telegram', 'telegrambottoken');
             $telegram = new telegram($token);
-            $telegram->send_message($telegramuserid, $newcode);
+            $a = new \stdClass();
+            $a->sitename = 'Moodle'; // TODO
+            $a->code = $newcode;
+            $message = get_string('telegram:message', 'factor_telegram', $a);
+            $telegram->send_message($telegramuserid, $message);
         }
     }
 
@@ -231,18 +239,6 @@ class factor extends object_factor_base {
         // Update factor timeverified.
         parent::post_pass_state();
     }
-
-    /**
-     * Email factor implementation.
-     * Email page must be safe to authorise session from link.
-     *
-     * {@inheritDoc}
-     */
-    public function get_no_redirect_urls() {
-        $telegram = new \moodle_url('/admin/tool/mfa/factor/telegram/telegram.php');
-        return array($telegram);
-    }
-
 
     /**
      * TOTP Factor implementation.
