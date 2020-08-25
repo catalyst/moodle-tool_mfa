@@ -33,7 +33,3 @@ $settings->add(new admin_setting_configcheckbox('factor_u2f/enabled',
 $settings->add(new admin_setting_configtext('factor_u2f/weight',
     new lang_string('settings:weight', 'tool_mfa'),
     new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
-
-$settings->add(new admin_setting_configcheckbox('factor_u2f/suspend',
-    get_string('settings:suspend', 'factor_u2f'),
-    get_string('settings:suspend_help', 'factor_u2f'), 0));
