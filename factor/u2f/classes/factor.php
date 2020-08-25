@@ -43,6 +43,9 @@ class factor extends object_factor_base {
     public function login_form_definition($mform) {
         global $PAGE, $CFG, $USER;
 
+        $renderer = $PAGE->get_renderer('core');
+        $pressbuttonhtml = $renderer->render_from_template('factor_u2f/press-button', []);
+        $mform->addElement('html', $pressbuttonhtml);
         $mform->addElement('hidden', 'request', '', ["id" => 'id_request']);
         $mform->setType('request', PARAM_RAW);
         $mform->addElement('hidden', 'response_input', '', ['id'=> 'id_response_input']);

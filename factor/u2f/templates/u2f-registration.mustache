@@ -25,7 +25,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('id_submitbutton').disabled = true;
-        require(['core/templates', 'jquery'], function (templates, $) {
+        require(['core/templates'], function (templates) {
             var req = {{{request}}};
             var sigs = {{{signatures}}};
             var registerRequests = [{version: req.version, challenge: req.challenge, attestation: 'direct'}];
