@@ -31,6 +31,7 @@ require_once($CFG->dirroot."/admin/tool/mfa/factor/u2f/thirdparty/vendor/autoloa
 
 use moodleform;
 use tool_mfa\local\factor\object_factor_base;
+use u2flib_server\Error;
 use u2flib_server\U2F;
 
 class factor extends object_factor_base {
@@ -40,36 +41,29 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function login_form_definition($mform) {
-        $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_u2f'));
-        $mform->setType("verificationcode", PARAM_ALPHANUM);
-        return $mform;
-    }
+        global $PAGE, $CFG, $USER;
 
-    /**
-     * Generate a token that is sent to the user via u2f.
-     *
-     * {@inheritDoc}
-     */
-    public function login_form_definition_after_data($mform) {
-        global $DB, $USER;
+        $mform->addElement('hidden', 'request', '', ["id" => 'id_request']);
+        $mform->setType('request', PARAM_RAW);
+        $mform->addElement('hidden', 'response_input', '', ['id'=> 'id_response_input']);
+        $mform->setType('response_input', PARAM_RAW);
+        $renderer = $PAGE->get_renderer('core');
 
-        // Get the user's u2f ID from the tool_mfa configuration.
-        $sql = 'SELECT *
-                  FROM {tool_mfa}
-                 WHERE userid = ?
-                   AND factor = \'u2f\'
-                   AND label LIKE \'telegram:%\'';
-        $record = $DB->get_record_sql($sql, array($USER->id));
-        if (empty($record)) {
-            throw new \coding_exception('Factor has not been set up for this user!');
+        $url = parse_url($CFG->wwwroot);
+        $u2f = new U2F($url['scheme'].'://'.$url['host']);
+        $factors = $this->get_all_user_factors($USER);
+        $registrations = [];
+        foreach ($factors as $f) {
+            $registrations[] = json_decode($f->secret);
         }
+        $request = $u2f->getAuthenticateData($registrations);  //TODO
 
-        $telegramuserid = substr($record->label, strlen('telegram:'));
-
-        // Send a random code to the user on Telegram.
-        $this->generate_and_telegram_code($telegramuserid);
+        $script = $renderer->render_from_template('factor_u2f/u2f-login', ['request' => json_encode($request)]);
+        $mform->addElement('html', $script);
+        //$mform->_form->getAttribute()
         return $mform;
     }
+
 
     /**
      * Validate the entered code.
@@ -77,12 +71,34 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function login_form_validation($data) {
-        global $USER;
+        global $USER, $CFG, $DB;
         $return = array();
 
-        if (!$this->check_verification_code($data['verificationcode'])) {
-            $return['verificationcode'] = get_string('error:wrongverification', 'factor_u2f');
+        $factors = $this->get_all_user_factors($USER);
+        $registrations = [];
+        foreach ($factors as $f) {
+            $registrations[$f->id] = json_decode($f->secret);
         }
+        $url = parse_url($CFG->wwwroot);
+        $u2f = new U2F($url['scheme'].'://'.$url['host']);
+        try {
+            $authentication = $u2f->doAuthenticate(json_decode($data['request']), $registrations, json_decode($data['response_input']));
+            foreach ($registrations as $id => $registration) {
+                if ($authentication->keyHandle === $registration->keyHandle) {
+                    $row = $DB->get_record('tool_mfa', array('id' => $id));
+                    $row->secret = json_encode($authentication);
+                    $row->timemodified = time();
+                    $row->lastverified = time();
+
+                    $DB->update_record('tool_mfa', $row);
+
+                    break;
+                }
+            }
+        } catch (Error $e) {
+            $return['verificationcode'] = get_string('error', 'factor_u2f'); //TODO
+        }
+
 
         return $return;
     }
@@ -97,7 +113,7 @@ class factor extends object_factor_base {
 
         $records = $DB->get_records('tool_mfa', array(
             'userid' => $user->id,
-            'factor' => $this->name, // TODO look for prefix
+            'factor' => $this->name,
         ));
         return $records;
     }
@@ -124,47 +140,12 @@ class factor extends object_factor_base {
     }
 
     /**
-     * Checks whether user u2f is correctly configured.
-     *
-     * @return bool
-     */
-    private static function is_ready() {
-        global $DB, $USER;
-
-        // If this factor is revoked, set to not ready.
-        // Looking for prefix is not necessary: A single record with "revoked" is sufficient.
-        if ($DB->record_exists('tool_mfa', array('userid' => $USER->id, 'factor' => 'u2f', 'revoked' => 1))) {
-            return false;
-        }
-        return true;
-    }
-
-
-
-    /**
-     * Cleans up email records once MFA passed.
-     *
-     * {@inheritDoc}
-     */
-    public function post_pass_state() {
-        global $DB, $USER;
-        // Delete all u2f records except base record.
-        $selectsql = 'userid = ?
-                  AND factor = ?
-                   AND label NOT LIKE \'telegram:%\'';
-        $DB->delete_records_select('tool_mfa', $selectsql, array($USER->id, 'u2f'));
-
-        // Update factor timeverified.
-        parent::post_pass_state();
-    }
-
-    /**
      * TOTP Factor implementation.
      *
      * @param $mform
      */
     public function setup_factor_form_definition($mform) {
-        global $PAGE, $CFG, $SITE;
+        global $PAGE, $CFG;
 
         $mform->addElement('text', 'u2f_name', get_string('u2f:u2f_name', 'factor_u2f'));
         $mform->setType('u2f_name', PARAM_ALPHANUM);
