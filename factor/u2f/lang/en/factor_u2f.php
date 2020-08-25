@@ -54,4 +54,4 @@ $string['setupfactor'] = 'U2F hardware key factor setup';
 $string['verificationcode'] = 'Enter verification code for confirmation';
 $string['verificationcode_help'] = 'Verification code has been sent to your Telegram account';
 $string['summarycondition'] = 'has valid U2F setup';
-$string['telegram:telegramuserid'] = 'Your Telegram user ID';
+$string['u2f:u2f_name'] = 'Name of the U2F device';

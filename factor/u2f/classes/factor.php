@@ -27,7 +27,11 @@ namespace factor_u2f;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot."/admin/tool/mfa/factor/u2f/thirdparty/vendor/autoload.php");
+
+use moodleform;
 use tool_mfa\local\factor\object_factor_base;
+use u2flib_server\U2F;
 
 class factor extends object_factor_base {
     /**
@@ -135,97 +139,7 @@ class factor extends object_factor_base {
         return true;
     }
 
-    /**
-     * Generates and emails the code for login to the user, stores codes in DB.
-     *
-     * @return void
-     */
-    private function generate_and_telegram_code($telegramuserid) {
-        global $DB, $USER, $CFG;
 
-        // Get instance that isnt the parent type that defines the username.
-        // This check must exclude the main singleton record, with the label that contains the userid.
-        // It must only grab the record with the user agent as the label.
-        $sql = 'SELECT *
-                  FROM {tool_mfa}
-                 WHERE userid = ?
-                   AND factor = \'u2f\'
-                   AND label NOT LIKE \'telegram:%\'';
-
-        $record = $DB->get_record_sql($sql, array($USER->id));
-        $duration = get_config('factor_u2f', 'duration');
-        $newcode = random_int(100000, 999999);
-
-        if (empty($record)) {
-            // No code active, generate new code.
-            $instanceid = $DB->insert_record('tool_mfa', array(
-                'userid' => $USER->id,
-                'factor' => 'u2f',
-                'secret' => $newcode,
-                'label' => $_SERVER['HTTP_USER_AGENT'],
-                'timecreated' => time(),
-                'createdfromip' => $USER->lastip,
-                'timemodified' => time(),
-                'lastverified' => time(),
-                'revoked' => 0,
-            ), true);
-            $token = get_config('factor_u2f', 'telegrambottoken');
-            $telegram = new telegram($token);
-            $a = new \stdClass();
-            $a->sitename = 'Moodle'; // TODO
-            $a->code = $newcode;
-            $message = get_string('u2f:message', 'factor_u2f', $a);
-            $telegram->send_message($telegramuserid, $message);
-
-        } else if ($record->timecreated + $duration < time()) {
-            // Old code found. Keep id, update fields.
-            $DB->update_record('tool_mfa', array(
-                'id' => $record->id,
-                'secret' => $newcode,
-                'label' => $_SERVER['HTTP_USER_AGENT'],
-                'timecreated' => time(),
-                'createdfromip' => $USER->lastip,
-                'timemodified' => time(),
-                'lastverified' => time(),
-                'revoked' => 0,
-            ));
-            $instanceid = $record->id;
-            $token = get_config('factor_u2f', 'telegrambottoken');
-            $telegram = new telegram($token);
-            $a = new \stdClass();
-            $a->sitename = 'Moodle'; // TODO
-            $a->code = $newcode;
-            $message = get_string('u2f:message', 'factor_u2f', $a);
-            $telegram->send_message($telegramuserid, $message);
-        }
-    }
-
-    /**
-     * Verifies entered code against stored DB record.
-     *
-     * @return bool
-     */
-    private function check_verification_code($enteredcode) {
-        global $DB, $USER;
-        $duration = get_config('factor_u2f', 'duration');
-
-        // Get instance that isnt parent email type (label check).
-        // This check must exclude the main singleton record, with the label as the email.
-        // It must only grab the record with the user agent as the label.
-        $sql = 'SELECT *
-                  FROM {tool_mfa}
-                 WHERE userid = ?
-                   AND factor = ?
-                   AND label NOT LIKE \'telegram:%\'';
-        $record = $DB->get_record_sql($sql, array($USER->id, 'u2f'));
-
-        if ($enteredcode == $record->secret) {
-            if ($record->timecreated + $duration > time()) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * Cleans up email records once MFA passed.
@@ -247,12 +161,28 @@ class factor extends object_factor_base {
     /**
      * TOTP Factor implementation.
      *
-     * {@inheritDoc}
+     * @param $mform
      */
     public function setup_factor_form_definition($mform) {
-        $mform->addElement('text', 'telegramuserid', get_string('telegram:telegramuserid', 'factor_telegram'));
-        $mform->setType('telegramuserid', PARAM_ALPHANUM);
+        global $PAGE, $CFG, $SITE;
 
+        $mform->addElement('text', 'u2f_name', get_string('u2f:u2f_name', 'factor_u2f'));
+        $mform->setType('u2f_name', PARAM_ALPHANUM);
+        $mform->addElement('hidden', 'request', '', ["id" => 'id_request']);
+        $mform->setType('request', PARAM_RAW);
+        $mform->addElement('hidden', 'response_input', '', ['id'=> 'id_response_input']);
+        $mform->setType('response_input', PARAM_RAW);
+        $renderer = $PAGE->get_renderer('core');
+
+        $url = parse_url($CFG->wwwroot);
+        $u2f = new U2F($url['scheme'].'://'.$url['host']);
+        $data = $u2f->getRegisterData([]);  //TODO
+        list($request, $signatures) = $data;
+
+        $script = $renderer->render_from_template('factor_u2f/u2f-registration', ['wwwroot' => $CFG->wwwroot,
+            'request' => json_encode($request), 'signatures' => json_encode($signatures)]);
+        $mform->addElement('html', $script);
+        //$mform->_form->getAttribute()
         return $mform;
     }
 
@@ -262,32 +192,24 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function setup_user_factor($data) {
-        global $DB, $USER;
+        global $DB, $USER, $CFG;
 
-        $sql = 'SELECT *
-                  FROM {tool_mfa}
-                 WHERE userid = ?
-                   AND factor = \'u2f\'
-                   AND label LIKE \'telegram:%\'';
-        $record = $DB->get_record_sql($sql, array($USER->id));
-
-        if (!empty($data->telegramuserid)) {
+        if (!empty($data->u2f_name)) {
+            $url = parse_url($CFG->wwwroot);
+            $u2f = new U2F($url['scheme'].'://'.$url['host']);
+            $registration = $u2f->doRegister(json_decode($data->request), json_decode($data->response_input));
             $row = new \stdClass();
             $row->userid = $USER->id;
             $row->factor = $this->name;
-            $row->label = 'telegram:'.$data->telegramuserid;
+            $row->label = $data->u2f_name;
+            $row->secret = json_encode($registration);
             $row->timecreated = time();
             $row->createdfromip = $USER->lastip;
             $row->timemodified = time();
             $row->lastverified = time();
             $row->revoked = 0;
 
-            if (empty($record)) {
-                $id = $DB->insert_record('tool_mfa', $row);
-            } else {
-                $id = $row->id = $record->id;
-                $DB->update_record('tool_mfa', $row);
-            }
+            $id = $DB->insert_record('tool_mfa', $row);
 
             $record = $DB->get_record('tool_mfa', array('id' => $id));
             $this->create_event_after_factor_setup($USER);
