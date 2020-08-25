@@ -44,7 +44,9 @@ class factor extends object_factor_base {
         global $PAGE, $CFG, $USER;
 
         $renderer = $PAGE->get_renderer('core');
-        $pressbuttonhtml = $renderer->render_from_template('factor_u2f/press-button', []);
+        $pressbuttonhtml = $renderer->render_from_template('factor_u2f/press-button', [
+            'tokenillustration' => $renderer->image_url('token', 'factor_u2f'),
+        ]);
         $mform->addElement('html', $pressbuttonhtml);
         $mform->addElement('hidden', 'request', '', ["id" => 'id_request']);
         $mform->setType('request', PARAM_RAW);
@@ -176,7 +178,9 @@ class factor extends object_factor_base {
             You cannot use https for u2f authentication.</div></div>');
         } else {
             $renderer = $PAGE->get_renderer('core');
-            $pressbuttonhtml = $renderer->render_from_template('factor_u2f/press-button', []);
+            $pressbuttonhtml = $renderer->render_from_template('factor_u2f/press-button', [
+                'tokenillustration' => $renderer->image_url('token', 'factor_u2f'),
+            ]);
 
             $mform->addElement('text', 'u2f_name', get_string('u2f:u2f_name', 'factor_u2f'));
             $mform->setType('u2f_name', PARAM_ALPHANUM);
