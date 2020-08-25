@@ -56,7 +56,7 @@ class factor extends object_factor_base {
         foreach ($factors as $f) {
             $registrations[] = json_decode($f->secret);
         }
-        $request = $u2f->getAuthenticateData($registrations);  //TODO
+        $request = $u2f->getAuthenticateData($registrations);
 
         $script = $renderer->render_from_template('factor_u2f/u2f-login', ['request' => json_encode($request)]);
         $mform->addElement('html', $script);
@@ -139,7 +139,7 @@ class factor extends object_factor_base {
     }
 
     /**
-     * E-Mail Factor implementation.
+     * U2F Factor implementation.
      *
      * {@inheritDoc}
      */
@@ -156,7 +156,7 @@ class factor extends object_factor_base {
     }
 
     /**
-     * TOTP Factor implementation.
+     * U2F Factor implementation.
      *
      * @param $mform
      */
@@ -173,7 +173,7 @@ class factor extends object_factor_base {
 
         $url = parse_url($CFG->wwwroot);
         $u2f = new U2F($url['scheme'].'://'.$url['host']);
-        $data = $u2f->getRegisterData([]);  //TODO
+        $data = $u2f->getRegisterData([]);
         list($request, $signatures) = $data;
 
         $script = $renderer->render_from_template('factor_u2f/u2f-registration', ['wwwroot' => $CFG->wwwroot,
@@ -184,7 +184,7 @@ class factor extends object_factor_base {
     }
 
     /**
-     * TOTP Factor implementation.
+     * U2F Factor implementation.
      *
      * {@inheritDoc}
      */
@@ -218,12 +218,12 @@ class factor extends object_factor_base {
     }
 
     /**
-     * Email factor implementation.
+     * U2F factor implementation.
      *
      * {@inheritDoc}
      */
     public function possible_states($user) {
-        // Email can return all states.
+        // U2F can return all states.
         return array(
             \tool_mfa\plugininfo\factor::STATE_FAIL,
             \tool_mfa\plugininfo\factor::STATE_PASS,
