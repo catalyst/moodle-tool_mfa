@@ -23,14 +23,22 @@
     }
 }}
 <script>
-    var req = {{{request}}};
-    var sigs = {{{signatures}}};
-    var registerRequests = [{version: req.version, challenge: req.challenge, attestation: 'direct'}];
-    u2f.register(req.appId, registerRequests, sigs,
-    function(deviceResponse){
-        document.getElementById('id_response_input').value=JSON.stringify(deviceResponse);
-        document.getElementById('id_request').value=JSON.stringify(req);
-        //TODO success message.
-        // TODO disable/enable submit button.
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('id_submitbutton').disabled = true;
+        require(['core/templates', 'jquery'], function (templates, $) {
+            var req = {{{request}}};
+            var sigs = {{{signatures}}};
+            var registerRequests = [{version: req.version, challenge: req.challenge, attestation: 'direct'}];
+            u2f.register(req.appId, registerRequests, sigs,
+                    function (deviceResponse) {
+                        document.getElementById('id_response_input').value = JSON.stringify(deviceResponse);
+                        document.getElementById('id_request').value = JSON.stringify(req);
+                        templates.render('factor_u2f/press-button-done', {})
+                                .then(function (html, js) {
+                                    templates.replaceNode('#factor_u2f-press-button', html, js);
+                                    document.getElementById('id_submitbutton').disabled = false;
+                                });
+                    });
+        });
+    }, false);
 </script>
