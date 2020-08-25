@@ -118,7 +118,19 @@ class factor extends object_factor_base {
         return $records;
     }
 
+    /**
+     * Users need to set up their own credentials by registering their individual token(s).
+     * @return bool
+     */
     public function has_setup() {
+        return true;
+    }
+
+    /**
+     * Users are able to revoke individual U2F factors.
+     * @return bool
+     */
+    public function has_revoke() {
         return true;
     }
 
