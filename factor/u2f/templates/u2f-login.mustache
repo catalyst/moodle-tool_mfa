@@ -23,6 +23,10 @@
     }
 }}
 <script>
+    hide_button = function() {
+        document.getElementById('id_submitbutton').style.display = 'none';
+    };
+    document.addEventListener("DOMContentLoaded", hide_button, false);
     var req = {{{request}}};
     u2f.sign(req[0].appId, req[0].challenge, req,
     function(deviceResponse){
