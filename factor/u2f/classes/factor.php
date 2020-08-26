@@ -56,7 +56,7 @@ class factor extends object_factor_base {
 
         $url = parse_url($CFG->wwwroot);
         $u2f = new U2F($url['scheme'].'://'.$url['host']);
-        $factors = $this->get_all_user_factors($USER);
+        $factors = $this->get_active_user_factors($USER);
         $registrations = [];
         foreach ($factors as $f) {
             $registrations[] = json_decode($f->secret);
@@ -83,7 +83,7 @@ class factor extends object_factor_base {
             return $return;
         }
 
-        $factors = $this->get_all_user_factors($USER);
+        $factors = $this->get_active_user_factors($USER);
         $registrations = [];
         foreach ($factors as $f) {
             $registrations[$f->id] = json_decode($f->secret);
