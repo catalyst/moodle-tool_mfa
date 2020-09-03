@@ -86,8 +86,8 @@ class secret_manager {
             'revoked' => 0
         ];
         $datastr = json_encode($data);
-
-        $SESSION->$this->sessionvar = $datastr;
+        $field = $this->sessionvar;
+        $SESSION->$field = $datastr;
     }
 
     public function validate_secret(string $secret) {
@@ -98,7 +98,8 @@ class secret_manager {
         if ($status !== self::NONVALID) {
             if ($status === self::VALID) {
                 // Remove session token.
-                unset($SESSION->$this->sessionvar);
+                $field = $this->sessionvar;
+                unset($SESSION->$field);
             }
             return $status;
         }
@@ -118,14 +119,16 @@ class secret_manager {
     }
 
     private function check_secret_against_db(string $secret) {
-        global $DB;
+        global $DB, $USER;
 
-        $sql = 'SELECT *
+        $sql = "SELECT *
                   FROM {tool_mfa_secrets}
                  WHERE secret = :secret
-                   AND expiry > :now';
+                   AND expiry > :now
+                   AND userid = :userid
+                   AND factor = :factor";
 
-        $record = $DB->get_record_sql($sql, ['secret' => $secret, 'now' => time()]);
+        $record = $DB->get_record_sql($sql, ['secret' => $secret, 'now' => time(), 'userid' => $USER->id, 'factor' => $this->factor]);
 
         if (!empty($record)) {
             if ($record->revoked) {
@@ -139,17 +142,68 @@ class secret_manager {
     private function check_secret_against_session(string $secret) {
         global $SESSION;
 
-       if (!empty($SESSION->this->sessionvar)) {
-           $data = json_decode($SESSION->$this->sessionvar);
+        $field = $this->sessionvar;
+        if (!empty($SESSION->$field)) {
+           $data = json_decode($SESSION->$field);
            if ($data->revoked) {
                return self::REVOKED;
            }
            return self::VALID;
-       }
+        }
        return self::NONVALID;
     }
 
-    public function revoke_secret(string $secret){}
+    public function revoke_secret(string $secret) {
+        // Check session first. Faster and more likely.
+        $status = $this->check_secret_against_session($secret);
+        if ($status === self::VALID) {
+            // We only need to do something if this is a valid secret.
+            $this->revoke_session_secret($secret);
+        }
 
-    private function has_active_secret(){}
+        // Now DB.
+        $status = $this->check_secret_against_db($secret);
+        if ($status === self::VALID) {
+            $this->revoke_db_secret($secret);
+        }
+    }
+
+    private function revoke_session_secret(string $secret) : void {
+        global $SESSION;
+
+        $field = $this->sessionvar;
+        // We know at this point this is a valid session secret.
+        $data = json_decode($SESSION->$field);
+        $data->revoked = 1;
+        // Now write it back into the session.
+        $SESSION->$field = json_encode($data);
+    }
+
+    private function revoke_db_secret(string $secret) : void {
+        global $DB, $USER;
+        // We know this secret is valid, so we don't need to check expiry.
+        $DB->set_field('tool_mfa_secrets', 'revoked', 1, ['userid' => $USER->id, 'factor' => $this->factor, 'secret' => $secret]);
+    }
+
+    private function has_active_secret() : bool{
+        global $DB, $SESSION;
+
+        $field = $this->sessionvar;
+        // Check for session first.
+        if (isset($SESSION->$field)) {
+            return true;
+        }
+
+        // Now DB.
+        $sql = "SELECT *
+                  FROM {tool_mfa_secrets}
+                   AND expiry > :now
+                   AND userid = :userid
+                   AND factor = :factor";
+        if ($DB->record_exists_sql($sql, ['now' => time(), 'userid' => $USER->id, 'factor' => $this->factor])) {
+            return true;
+        }
+
+        return false;
+    }
 }
