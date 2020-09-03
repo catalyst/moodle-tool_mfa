@@ -47,17 +47,17 @@ class secret_manager {
      * @param integer $expires the length of time the secret is valid. e.g. 1 min = 60
      * @param boolean $session whether this secret should be stored in the session.
      * @param string $secret an optional provided secret
-     * @return void
+     * @return string the secret code, or 0 if no new code created.
      */
-    public function create_secret(int $expires, bool $session, string $secret = null) : void {
+    public function create_secret(int $expires, bool $session, string $secret = null) : int {
         // Setup a secret if not provided.
         if (empty($secret)) {
             $secret = random_int(100000, 999999);
         }
 
         // Check if there already an active secret, unless we are forcibly given a code.
-        if ($this->has_active_secret() && $secret) {
-            return;
+        if ($this->has_active_secret() && empty($secret)) {
+            return '';
         }
 
         // Now pass the code where it needs to go.
@@ -66,6 +66,8 @@ class secret_manager {
         } else {
             $this->add_secret_to_db($secret, $expires);
         }
+
+        return $secret;
     }
 
     /**

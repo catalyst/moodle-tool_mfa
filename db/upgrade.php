@@ -76,4 +76,37 @@ function xmldb_tool_mfa_upgrade($oldversion) {
         // Mfa savepoint reached.
         upgrade_plugin_savepoint(true, 2020051900, 'tool', 'mfa');
     }
+
+    if ($oldversion < 2020090300) {
+
+        // Define table tool_mfa_secrets to be created.
+        $table = new xmldb_table('tool_mfa_secrets');
+
+        // Adding fields to table tool_mfa_secrets.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('factor', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('secret', XMLDB_TYPE_CHAR, '1333', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '15', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('expiry', XMLDB_TYPE_INTEGER, '15', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('revoked', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table tool_mfa_secrets.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+        // Adding indexes to table tool_mfa_secrets.
+        $table->add_index('factor', XMLDB_INDEX_NOTUNIQUE, array('factor'));
+        $table->add_index('expiry', XMLDB_INDEX_NOTUNIQUE, array('expiry'));
+
+        // Conditionally launch create table for tool_mfa_secrets.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Mfa savepoint reached.
+        upgrade_plugin_savepoint(true, 2020090300, 'tool', 'mfa');
+    }
+
+    return true;
 }
