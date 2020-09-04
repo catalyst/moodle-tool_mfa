@@ -2,49 +2,45 @@ language: php
 
 addons:
   firefox: "47.0.1"
-  postgresql: "9.5"
+  postgresql: "9.6"
+
+services:
+  - mysql
 
 cache:
   directories:
     - $HOME/.composer/cache
     - $HOME/.npm
 
-dist: trusty
+dist: xenial
 
 matrix:
   include:
     - php: 7.0
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE CORE_PATCH=core35.diff NODEJS=14
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE CORE_PATCH=core35.diff
     - php: 7.0
-      env: DB=pgsql  MOODLE_BRANCH=MOODLE_35_STABLE CORE_PATCH=core35.diff NODEJS=14
+      env: DB=pgsql  MOODLE_BRANCH=MOODLE_35_STABLE CORE_PATCH=core35.diff
     - php: 7.1
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE CORE_PATCH=core35.diff NODEJS=14
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE CORE_PATCH=core35.diff
     - php: 7.1
-      env: DB=pgsql  MOODLE_BRANCH=MOODLE_35_STABLE CORE_PATCH=core35.diff NODEJS=14
+      env: DB=pgsql  MOODLE_BRANCH=MOODLE_35_STABLE CORE_PATCH=core35.diff
     - php: 7.1
       env: DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE CORE_PATCH=core36.diff
     - php: 7.1
       env: DB=pgsql  MOODLE_BRANCH=MOODLE_36_STABLE CORE_PATCH=core36.diff
     - php: 7.2
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE CORE_PATCH=core37.diff NODEJS=14
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE CORE_PATCH=core37.diff
     - php: 7.2
-      env: DB=pgsql  MOODLE_BRANCH=MOODLE_37_STABLE CORE_PATCH=core37.diff NODEJS=14
+      env: DB=pgsql  MOODLE_BRANCH=MOODLE_37_STABLE CORE_PATCH=core37.diff
     - php: 7.2
-      env: DB=mysqli MOODLE_BRANCH=master NODEJS=14
+      env: DB=mysqli MOODLE_BRANCH=master
     - php: 7.2
-      env: DB=pgsql  MOODLE_BRANCH=master NODEJS=14
+      env: DB=pgsql  MOODLE_BRANCH=master
 
 before_install:
   - phpenv config-rm xdebug.ini
-  - if [ "$NODEJS" = 14 ]; then
-      nvm install 14.0.0;
-      nvm use 14.0.0;
-    else
-      nvm install 8.9;
-      nvm use 8.9;
-    fi
   - cd ../..
-  - composer create-project -n --no-dev --prefer-dist moodlerooms/moodle-plugin-ci ci ^2
+  - composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3;
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
 
 install:

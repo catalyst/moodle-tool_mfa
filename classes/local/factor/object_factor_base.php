@@ -43,7 +43,7 @@ abstract class object_factor_base implements object_factor {
     /**
      * Secret manager
      *
-     * @var \tool_mfa\secret_manager
+     * @var \tool_mfa\local\secret_manager
      */
     private $secretmanager;
 
