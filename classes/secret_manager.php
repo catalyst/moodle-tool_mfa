@@ -305,4 +305,21 @@ class secret_manager {
 
         return false;
     }
+
+    /**
+     * Deletes any user secrets hanging around in the database.
+     *
+     * @return void
+     */
+    public function cleanup_temp_secrets() : void {
+        global $DB, $USER;
+        // Session records are autocleaned up.
+        // Only DB cleanup required.
+
+        $sql = 'DELETE FROM {tool_mfa_secrets}
+                      WHERE userid = :userid
+                        AND factor = :factor';
+
+        $DB->delete_records_sql($sql, ['userid' => $USER->id, 'factor' => $this->factor]);
+    }
 }
