@@ -90,6 +90,7 @@ function xmldb_tool_mfa_upgrade($oldversion) {
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '15', null, XMLDB_NOTNULL, null, null);
         $table->add_field('expiry', XMLDB_TYPE_INTEGER, '15', null, XMLDB_NOTNULL, null, null);
         $table->add_field('revoked', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('sessionid', XMLDB_TYPE_CHAR, '100', null, null, null, null);
 
         // Adding keys to table tool_mfa_secrets.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));

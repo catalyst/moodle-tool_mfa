@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 class tool_mfa_secret_manager_testcase extends \advanced_testcase {
     public function test_create_secret() {
-        global $DB, $SESSION;
+        global $DB;
 
         $this->resetAfterTest(true);
         $this->setUser($this->getDataGenerator()->create_user());
@@ -37,10 +37,17 @@ class tool_mfa_secret_manager_testcase extends \advanced_testcase {
         // Test adding secret to DB.
         $secman = new \tool_mfa\secret_manager('mock');
 
+        // Mutate the sessionid using reflection.
+        $reflectedsessionid = new \ReflectionProperty($secman, 'sessionid');
+        $reflectedsessionid->setAccessible(true);
+        $reflectedsessionid->setValue($secman, 'fakesession');
+
         $sec1 = $secman->create_secret(1800, false);
         $count1 = $DB->count_records('tool_mfa_secrets', ['factor' => 'mock']);
+        $record1 = $DB->get_record('tool_mfa_secrets', []);
         $this->assertEquals(1, $count1);
         $this->assertNotEquals('', $sec1);
+        $this->assertTrue(empty($record1->sessionid));
         $sec2 = $secman->create_secret(1800, false);
         $count2 = $DB->count_records('tool_mfa_secrets', ['factor' => 'mock']);
         $this->assertEquals(1, $count2);
@@ -48,14 +55,15 @@ class tool_mfa_secret_manager_testcase extends \advanced_testcase {
         $DB->delete_records('tool_mfa_secrets', []);
 
         // Now adding secret to session.
-        $this->assertTrue(empty($SESSION->tool_mfa_secrets_mock));
         $sec1 = $secman->create_secret(1800, true);
-        $this->assertTrue(!empty($SESSION->tool_mfa_secrets_mock));
+        $count1 = $DB->count_records('tool_mfa_secrets', ['factor' => 'mock']);
+        $record1 = $DB->get_record('tool_mfa_secrets', []);
+        $this->assertEquals(1, $count1);
         $this->assertNotEquals('', $sec1);
+        $this->assertEquals('fakesession', $record1->sessionid);
         $sec2 = $secman->create_secret(1800, true);
-        $this->assertTrue(!empty($SESSION->tool_mfa_secrets_mock));
         $this->assertEquals('', $sec2);
-        unset($SESSION->tool_mfa_secrets_mock);
+        $DB->delete_records('tool_mfa_secrets', []);
 
         // Now test adding a forced code.
         $sec1 = $secman->create_secret(1800, false);
@@ -75,6 +83,7 @@ class tool_mfa_secret_manager_testcase extends \advanced_testcase {
         $this->resetAfterTest(true);
         $secman = new \tool_mfa\secret_manager('mock');
         $this->setUser($this->getDataGenerator()->create_user());
+        $sid = 'fakeid';
 
         // Let's make stuff public using reflection.
         $reflectedscanner = new \ReflectionClass($secman);
@@ -89,56 +98,36 @@ class tool_mfa_secret_manager_testcase extends \advanced_testcase {
         $this->assertEquals('mock', $record->factor);
         $this->assertGreaterThanOrEqual(time(), (int) $record->expiry);
         $this->assertEquals(0, $record->revoked);
-    }
+        $DB->delete_records('tool_mfa_secrets', []);
 
-    public function test_add_secret_to_session() {
-        global $SESSION;
-
-        $this->resetAfterTest(true);
-        $secman = new \tool_mfa\secret_manager('mock');
-        $this->setUser($this->getDataGenerator()->create_user());
-
-        // Let's make stuff public using reflection.
-        $reflectedscanner = new \ReflectionClass($secman);
-        $reflectedmethod = $reflectedscanner->getMethod('add_secret_to_session');
-        $reflectedmethod->setAccessible(true);
-
-        // Now add a secret and confirm it creates the correct record.
-        $reflectedmethod->invoke($secman, 'code', 1800);
-        $parent = json_decode($SESSION->tool_mfa_secrets_mock, true);
-        $data = json_decode($parent['code']);
-        $this->assertEquals('code', $data->secret);
-        $this->assertGreaterThanOrEqual(time(), (int) $data->expiry);
-        $this->assertEquals(0, $data->revoked);
+        // Now add a sessionid and confirm it is added correctly.
+        $reflectedmethod->invoke($secman, 'code', 1800, $sid);
+        $record = $DB->get_record('tool_mfa_secrets', []);
+        $this->assertEquals('code', $record->secret);
+        $this->assertGreaterThanOrEqual(time(), (int) $record->expiry);
+        $this->assertEquals(0, $record->revoked);
+        $this->assertEquals($sid, $record->sessionid);
     }
 
     public function test_validate_secret() {
-        global $DB, $SESSION;
+        global $DB;
 
         // Test adding a code and getting it returned, then validated.
         $this->resetAfterTest(true);
         $this->setUser($this->getDataGenerator()->create_user());
         $secman = new \tool_mfa\secret_manager('mock');
 
-        $secret = $secman->create_secret(1800, true);
-        $this->assertEquals(\tool_mfa\secret_manager::VALID, $secman->validate_secret($secret));
-        unset($SESSION->tool_mfa_secrets_mock);
         $secret = $secman->create_secret(1800, false);
         $this->assertEquals(\tool_mfa\secret_manager::VALID, $secman->validate_secret($secret));
         $DB->delete_records('tool_mfa_secrets', []);
 
         // Test a manual forced code.
-        $secret = $secman->create_secret(1800, true, 'code');
+        $secret = $secman->create_secret(1800, false, 'code');
         $this->assertEquals(\tool_mfa\secret_manager::VALID, $secman->validate_secret($secret));
-        unset($SESSION->tool_mfa_secrets_mock);
-        $secret = $secman->create_secret(1800, false);
-        $this->assertEquals(\tool_mfa\secret_manager::VALID, $secman->validate_secret($secret));
+        $this->assertEquals('code', $secret);
         $DB->delete_records('tool_mfa_secrets', []);
 
         // Test bad codes.
-        $secret = $secman->create_secret(1800, true);
-        $this->assertEquals(\tool_mfa\secret_manager::NONVALID, $secman->validate_secret('nonvalid'));
-        unset($SESSION->tool_mfa_secrets_mock);
         $secret = $secman->create_secret(1800, false);
         $this->assertEquals(\tool_mfa\secret_manager::NONVALID, $secman->validate_secret('nonvalid'));
         $DB->delete_records('tool_mfa_secrets', []);
@@ -153,89 +142,25 @@ class tool_mfa_secret_manager_testcase extends \advanced_testcase {
         $DB->delete_records('tool_mfa_secrets', []);
 
         // Test expired secrets.
-        $secret = $secman->create_secret(-1, true);
-        $this->assertEquals(\tool_mfa\secret_manager::NONVALID, $secman->validate_secret($secret));
-        unset($SESSION->tool_mfa_secrets_mock);
         $secret = $secman->create_secret(-1, false);
         $this->assertEquals(\tool_mfa\secret_manager::NONVALID, $secman->validate_secret($secret));
         $DB->delete_records('tool_mfa_secrets', []);
-        unset($SESSION->tool_mfa_secrets_mock);
-    }
 
-    public function test_check_secret_against_db() {
-        global $DB;
+        // Session locked code from the same session id.
+        // Mutate the sessionid using reflection.
+        $reflectedsessionid = new \ReflectionProperty($secman, 'sessionid');
+        $reflectedsessionid->setAccessible(true);
+        $reflectedsessionid->setValue($secman, 'fakesession');
 
-        $this->resetAfterTest(true);
-        $secman = new \tool_mfa\secret_manager('mock');
-        $this->setUser($this->getDataGenerator()->create_user());
-
-        // Let's make stuff public using reflection.
-        $reflectedscanner = new \ReflectionClass($secman);
-        $reflectedmethod = $reflectedscanner->getMethod('check_secret_against_db');
-        $reflectedmethod->setAccessible(true);
-
-        // Good code.
-        $secret = $secman->create_secret(1800, false);
-        $result = $reflectedmethod->invoke($secman, $secret);
-        $this->assertEquals(\tool_mfa\secret_manager::VALID, $result);
-
-        // Bad code.
-        $result = $reflectedmethod->invoke($secman, 'nonvalid');
-        $this->assertEquals(\tool_mfa\secret_manager::NONVALID, $result);
-
-        // Revoked code.
-        $DB->set_field('tool_mfa_secrets', 'revoked', 1, []);
-        $result = $reflectedmethod->invoke($secman, $secret);
-        $this->assertEquals(\tool_mfa\secret_manager::REVOKED, $result);
-        $DB->set_field('tool_mfa_secrets', 'revoked', 0, []);
-
-        // Expired code.
-        $DB->set_field('tool_mfa_secrets', 'expiry', time() - 1, []);
-        $result = $reflectedmethod->invoke($secman, $secret);
-        $this->assertEquals(\tool_mfa\secret_manager::NONVALID, $result);
-
-        // Code in session not DB.
         $secret = $secman->create_secret(1800, true);
-        $result = $reflectedmethod->invoke($secman, $secret);
-        $this->assertEquals(\tool_mfa\secret_manager::NONVALID, $result);
-    }
+        $this->assertEquals(\tool_mfa\secret_manager::VALID, $secman->validate_secret($secret));
+        $DB->delete_records('tool_mfa_secrets', []);
 
-    public function test_check_secret_against_session() {
-        global $SESSION;
-
-        $this->resetAfterTest(true);
-        $secman = new \tool_mfa\secret_manager('mock');
-        $this->setUser($this->getDataGenerator()->create_user());
-
-        // Let's make stuff public using reflection.
-        $reflectedscanner = new \ReflectionClass($secman);
-        $reflectedmethod = $reflectedscanner->getMethod('check_secret_against_session');
-        $reflectedmethod->setAccessible(true);
-
-        // Good code.
+        // Now test a session locked code from a different sessionid.
         $secret = $secman->create_secret(1800, true);
-        $result = $reflectedmethod->invoke($secman, $secret);
-        $this->assertEquals(\tool_mfa\secret_manager::VALID, $result);
-
-        // Bad code.
-        $result = $reflectedmethod->invoke($secman, 'nonvalid');
-        $this->assertEquals(\tool_mfa\secret_manager::NONVALID, $result);
-
-        // Revoked code.
-        $secman->revoke_secret($secret);
-        $result = $reflectedmethod->invoke($secman, $secret);
-        $this->assertEquals(\tool_mfa\secret_manager::REVOKED, $result);
-        unset($SESSION->tool_mfa_secrets_mock);
-
-        // Expired code.
-        $secret = $secman->create_secret(-1, true);
-        $result = $reflectedmethod->invoke($secman, $secret);
-        $this->assertEquals(\tool_mfa\secret_manager::NONVALID, $result);
-
-        // Code in DB not session.
-        $secret = $secman->create_secret(1800, false);
-        $result = $reflectedmethod->invoke($secman, $secret);
-        $this->assertEquals(\tool_mfa\secret_manager::NONVALID, $result);
+        $reflectedsessionid->setValue($secman, 'diffsession');
+        $this->assertEquals(\tool_mfa\secret_manager::NONVALID, $secman->validate_secret($secret));
+        $DB->delete_records('tool_mfa_secrets', []);
     }
 
     public function test_revoke_secret() {
@@ -263,58 +188,8 @@ class tool_mfa_secret_manager_testcase extends \advanced_testcase {
         $this->assertEquals(\tool_mfa\secret_manager::NONVALID, $secman->validate_secret('nonvalid'));
     }
 
-    public function test_revoke_session_secret() {
-        global $SESSION;
-
-        $this->resetAfterTest(true);
-        $secman = new \tool_mfa\secret_manager('mock');
-        $this->setUser($this->getDataGenerator()->create_user());
-
-        // Let's make stuff public using reflection.
-        $reflectedscanner = new \ReflectionClass($secman);
-
-        $reflectedmethod = $reflectedscanner->getMethod('revoke_session_secret');
-        $reflectedmethod->setAccessible(true);
-
-        // We do not need to test bad data, as it is validated before this method call.
-        // Test revoking a good secret.
-        $secret = $secman->create_secret(1800, true);
-        $parentarr = json_decode($SESSION->tool_mfa_secrets_mock, true);
-        $data = json_decode($parentarr[$secret]);
-        $this->assertEquals(0, $data->revoked);
-
-        $reflectedmethod->invoke($secman, $secret);
-        $parentarr = json_decode($SESSION->tool_mfa_secrets_mock, true);
-        $data = json_decode($parentarr[$secret]);
-        $this->assertEquals(1, $data->revoked);
-    }
-
-    public function test_revoke_db_secret() {
-        global $DB;
-
-        $this->resetAfterTest(true);
-        $secman = new \tool_mfa\secret_manager('mock');
-        $this->setUser($this->getDataGenerator()->create_user());
-
-        // Let's make stuff public using reflection.
-        $reflectedscanner = new \ReflectionClass($secman);
-
-        $reflectedmethod = $reflectedscanner->getMethod('revoke_db_secret');
-        $reflectedmethod->setAccessible(true);
-
-        // We do not need to test bad data, as it is validated before this method call.
-        // Test revoking a good secret.
-        $secret = $secman->create_secret(1800, false);
-        $record = $DB->get_record('tool_mfa_secrets', []);
-        $this->assertEquals(0, $record->revoked);
-
-        $reflectedmethod->invoke($secman, $secret);
-        $record = $DB->get_record('tool_mfa_secrets', []);
-        $this->assertEquals(1, $record->revoked);
-    }
-
     public function test_has_active_secret() {
-        global $DB, $SESSION;
+        global $DB;
 
         $this->resetAfterTest(true);
         $secman = new \tool_mfa\secret_manager('mock');
@@ -325,18 +200,6 @@ class tool_mfa_secret_manager_testcase extends \advanced_testcase {
 
         $reflectedmethod = $reflectedscanner->getMethod('has_active_secret');
         $reflectedmethod->setAccessible(true);
-
-        // Session secrets.
-        $this->assertFalse($reflectedmethod->invoke($secman));
-        $secman->create_secret(1800, true);
-        $this->assertTrue($reflectedmethod->invoke($secman));
-        unset($SESSION->tool_mfa_secrets_mock);
-        $secman->create_secret(-1, true);
-        $this->assertFalse($reflectedmethod->invoke($secman));
-        unset($SESSION->tool_mfa_secrets_mock);
-        $secret = $secman->create_secret(1800, true);
-        $secman->revoke_secret($secret);
-        $this->assertFalse($reflectedmethod->invoke($secman));
 
         // DB secrets.
         $this->assertFalse($reflectedmethod->invoke($secman));
@@ -349,5 +212,26 @@ class tool_mfa_secret_manager_testcase extends \advanced_testcase {
         $secret = $secman->create_secret(1800, false);
         $secman->revoke_secret($secret);
         $this->assertFalse($reflectedmethod->invoke($secman));
+
+        // Now check a secret with session involvement.
+        // Mutate the sessionid using reflection.
+        $reflectedsessionid = new \ReflectionProperty($secman, 'sessionid');
+        $reflectedsessionid->setAccessible(true);
+        $reflectedsessionid->setValue($secman, 'fakesession');
+
+        $this->assertFalse($reflectedmethod->invoke($secman, true));
+        $secman->create_secret(1800, true);
+        $this->assertTrue($reflectedmethod->invoke($secman, true));
+        $DB->delete_records('tool_mfa_secrets', []);
+        $secman->create_secret(-1, true);
+        $this->assertFalse($reflectedmethod->invoke($secman, true));
+        $DB->delete_records('tool_mfa_secrets', []);
+        $secret = $secman->create_secret(1800, true);
+        $secman->revoke_secret($secret);
+        $this->assertFalse($reflectedmethod->invoke($secman, true));
+        $DB->delete_records('tool_mfa_secrets', []);
+        $secret = $secman->create_secret(1800, true);
+        $reflectedsessionid->setValue($secman, 'diffsession');
+        $this->assertFalse($reflectedmethod->invoke($secman, true));
     }
 }
