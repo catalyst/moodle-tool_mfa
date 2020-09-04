@@ -102,8 +102,8 @@ class secret_manager {
      */
     private function add_secret_to_session(string $secret, int $expires) : void {
         global $SESSION;
-        $expirytime = time() + $expires;
 
+        $expirytime = time() + $expires;
         $data = [
             'secret' => $secret,
             'timecreated' => time(),
@@ -111,8 +111,19 @@ class secret_manager {
             'revoked' => 0
         ];
         $datastr = json_encode($data);
+
+        // Determine if there is already session data.
         $field = $this->sessionvar;
-        $SESSION->$field = $datastr;
+        if (!empty($SESSION->$field)) {
+            $parentarr = json_decode($SESSION->$field, true);
+        } else {
+            $parentarr = [];
+        }
+
+        // If there is ever secret collision (from forcing) 1 record is still fine.
+        $parentarr[$secret] = $datastr;
+
+        $SESSION->$field = json_encode($parentarr);
     }
 
     /**
@@ -130,7 +141,9 @@ class secret_manager {
             if ($status === self::VALID) {
                 // Remove session token.
                 $field = $this->sessionvar;
-                unset($SESSION->$field);
+                $data = json_decode($SESSION->$field, true);
+                unset($data[$secret]);
+                $SESSION->$field = json_encode($data);
             }
             return $status;
         }
@@ -187,15 +200,19 @@ class secret_manager {
 
         $field = $this->sessionvar;
         if (!empty($SESSION->$field)) {
-           $data = json_decode($SESSION->$field);
-           if ($data->secret !== $secret || $data->expiry < time()) {
-               return self::NONVALID;
-           } else if ($data->revoked) {
-               return self::REVOKED;
-           }
-           return self::VALID;
+            $parentarr = json_decode($SESSION->$field, true);
+            if (!empty($parentarr[$secret])) {
+                $data = json_decode($parentarr[$secret]);
+                if ($data->secret !== $secret || $data->expiry < time()) {
+                    return self::NONVALID;
+                } else if ($data->revoked) {
+                    return self::REVOKED;
+                }
+                return self::VALID;
+            }
+            return self::NONVALID;
         }
-       return self::NONVALID;
+        return self::NONVALID;
     }
 
     /**
@@ -209,7 +226,7 @@ class secret_manager {
         $status = $this->check_secret_against_session($secret);
         if ($status === self::VALID) {
             // We only need to do something if this is a valid secret.
-            $this->revoke_session_secret();
+            $this->revoke_session_secret($secret);
         }
 
         // Now DB.
@@ -222,17 +239,20 @@ class secret_manager {
     /**
      * Revokes the current session level secret.
      *
+     * @param string $secret the secret to revoke.
      * @return void
      */
-    private function revoke_session_secret() : void {
+    private function revoke_session_secret(string $secret) : void {
         global $SESSION;
 
         $field = $this->sessionvar;
         // We know at this point this is a valid session secret.
-        $data = json_decode($SESSION->$field);
+        $parentarr = json_decode($SESSION->$field, true);
+        $data = json_decode($parentarr[$secret]);
         $data->revoked = 1;
+        $parentarr[$secret] = json_encode($data);
         // Now write it back into the session.
-        $SESSION->$field = json_encode($data);
+        $SESSION->$field = json_encode($parentarr);
     }
 
     /**
@@ -252,13 +272,19 @@ class secret_manager {
      *
      * @return boolean
      */
-    private function has_active_secret() : bool{
+    private function has_active_secret() : bool {
         global $DB, $SESSION, $USER;
 
         $field = $this->sessionvar;
         // Check for session first.
         if (isset($SESSION->$field)) {
-            return true;
+            $parentarr = json_decode($SESSION->$field, true);
+            foreach ($parentarr as $dataenc) {
+                $data = json_decode($dataenc);
+                if ($data->expiry > time() && !$data->revoked) {
+                    return true;
+                }
+            }
         }
 
         // Now DB.

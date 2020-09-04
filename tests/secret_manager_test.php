@@ -105,7 +105,8 @@ class tool_mfa_secret_manager_testcase extends \advanced_testcase {
 
         //Now add a secret and confirm it creates the correct record.
         $reflectedmethod->invoke($secman, 'code', 1800);
-        $data = json_decode($SESSION->tool_mfa_secrets_mock);
+        $parent = json_decode($SESSION->tool_mfa_secrets_mock, true);
+        $data = json_decode($parent['code']);
         $this->assertEquals('code', $data->secret);
         $this->assertGreaterThanOrEqual(time(), (int) $data->expiry);
         $this->assertEquals(0, $data->revoked);
