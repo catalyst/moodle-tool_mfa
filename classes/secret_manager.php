@@ -49,15 +49,16 @@ class secret_manager {
      * @param string $secret an optional provided secret
      * @return string the secret code, or 0 if no new code created.
      */
-    public function create_secret(int $expires, bool $session, string $secret = null) : int {
-        // Setup a secret if not provided.
-        if (empty($secret)) {
-            $secret = random_int(100000, 999999);
-        }
+    public function create_secret(int $expires, bool $session, string $secret = null) : string {
 
         // Check if there already an active secret, unless we are forcibly given a code.
         if ($this->has_active_secret() && empty($secret)) {
             return '';
+        }
+
+        // Setup a secret if not provided.
+        if (empty($secret)) {
+            $secret = random_int(100000, 999999);
         }
 
         // Now pass the code where it needs to go.
@@ -82,7 +83,7 @@ class secret_manager {
         $expirytime = time() + $expires;
 
         $data = [
-            'userid' => $USER,
+            'userid' => $USER->id,
             'factor' => $this->factor,
             'secret' => $secret,
             'timecreated' => time(),
@@ -263,7 +264,7 @@ class secret_manager {
         // Now DB.
         $sql = "SELECT *
                   FROM {tool_mfa_secrets}
-                   AND expiry > :now
+                 WHERE expiry > :now
                    AND userid = :userid
                    AND factor = :factor";
         if ($DB->record_exists_sql($sql, ['now' => time(), 'userid' => $USER->id, 'factor' => $this->factor])) {
