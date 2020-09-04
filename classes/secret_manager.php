@@ -158,7 +158,7 @@ class secret_manager {
             return $status;
         }
 
-        //This is always nonvalid.
+        // This is always nonvalid.
         return $status;
     }
 
@@ -178,7 +178,12 @@ class secret_manager {
                    AND userid = :userid
                    AND factor = :factor";
 
-        $record = $DB->get_record_sql($sql, ['secret' => $secret, 'now' => time(), 'userid' => $USER->id, 'factor' => $this->factor]);
+        $record = $DB->get_record_sql($sql, [
+            'secret' => $secret,
+            'now' => time(),
+            'userid' => $USER->id,
+            'factor' => $this->factor
+        ]);
 
         if (!empty($record)) {
             if ($record->revoked) {
@@ -258,7 +263,7 @@ class secret_manager {
     /**
      * Revokes a DB secret.
      *
-     * @param string $secret
+     * @param string $secret the secret to revoke.
      * @return void
      */
     private function revoke_db_secret(string $secret) : void {
