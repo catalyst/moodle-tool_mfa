@@ -292,7 +292,8 @@ class secret_manager {
                   FROM {tool_mfa_secrets}
                  WHERE expiry > :now
                    AND userid = :userid
-                   AND factor = :factor";
+                   AND factor = :factor
+                   AND revoked = 0";
         if ($DB->record_exists_sql($sql, ['now' => time(), 'userid' => $USER->id, 'factor' => $this->factor])) {
             return true;
         }
