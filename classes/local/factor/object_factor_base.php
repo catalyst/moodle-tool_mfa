@@ -58,7 +58,7 @@ abstract class object_factor_base implements object_factor {
         $this->name = $name;
 
         // Setup secret manager.
-        $this->secretmanager = new \tool_mfa\secret_manager($this->name);
+        $this->secretmanager = new \tool_mfa\local\secret_manager($this->name);
 
         // Check if lockcounter column exists (incase upgrade hasnt run yet).
         try {

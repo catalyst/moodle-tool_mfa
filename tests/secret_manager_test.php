@@ -35,7 +35,7 @@ class tool_mfa_secret_manager_testcase extends \advanced_testcase {
         $this->setUser($this->getDataGenerator()->create_user());
 
         // Test adding secret to DB.
-        $secman = new \tool_mfa\secret_manager('mock');
+        $secman = new \tool_mfa\local\secret_manager('mock');
 
         // Mutate the sessionid using reflection.
         $reflectedsessionid = new \ReflectionProperty($secman, 'sessionid');
@@ -81,7 +81,7 @@ class tool_mfa_secret_manager_testcase extends \advanced_testcase {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
-        $secman = new \tool_mfa\secret_manager('mock');
+        $secman = new \tool_mfa\local\secret_manager('mock');
         $this->setUser($this->getDataGenerator()->create_user());
         $sid = 'fakeid';
 
@@ -115,35 +115,35 @@ class tool_mfa_secret_manager_testcase extends \advanced_testcase {
         // Test adding a code and getting it returned, then validated.
         $this->resetAfterTest(true);
         $this->setUser($this->getDataGenerator()->create_user());
-        $secman = new \tool_mfa\secret_manager('mock');
+        $secman = new \tool_mfa\local\secret_manager('mock');
 
         $secret = $secman->create_secret(1800, false);
-        $this->assertEquals(\tool_mfa\secret_manager::VALID, $secman->validate_secret($secret));
+        $this->assertEquals(\tool_mfa\local\secret_manager::VALID, $secman->validate_secret($secret));
         $DB->delete_records('tool_mfa_secrets', []);
 
         // Test a manual forced code.
         $secret = $secman->create_secret(1800, false, 'code');
-        $this->assertEquals(\tool_mfa\secret_manager::VALID, $secman->validate_secret($secret));
+        $this->assertEquals(\tool_mfa\local\secret_manager::VALID, $secman->validate_secret($secret));
         $this->assertEquals('code', $secret);
         $DB->delete_records('tool_mfa_secrets', []);
 
         // Test bad codes.
         $secret = $secman->create_secret(1800, false);
-        $this->assertEquals(\tool_mfa\secret_manager::NONVALID, $secman->validate_secret('nonvalid'));
+        $this->assertEquals(\tool_mfa\local\secret_manager::NONVALID, $secman->validate_secret('nonvalid'));
         $DB->delete_records('tool_mfa_secrets', []);
 
         // Test validate when no secrets present.
-        $this->assertEquals(\tool_mfa\secret_manager::NONVALID, $secman->validate_secret('nonvalid'));
+        $this->assertEquals(\tool_mfa\local\secret_manager::NONVALID, $secman->validate_secret('nonvalid'));
 
         // Test revoked secrets.
         $secret = $secman->create_secret(1800, false);
         $DB->set_field('tool_mfa_secrets', 'revoked', 1, []);
-        $this->assertEquals(\tool_mfa\secret_manager::REVOKED, $secman->validate_secret($secret));
+        $this->assertEquals(\tool_mfa\local\secret_manager::REVOKED, $secman->validate_secret($secret));
         $DB->delete_records('tool_mfa_secrets', []);
 
         // Test expired secrets.
         $secret = $secman->create_secret(-1, false);
-        $this->assertEquals(\tool_mfa\secret_manager::NONVALID, $secman->validate_secret($secret));
+        $this->assertEquals(\tool_mfa\local\secret_manager::NONVALID, $secman->validate_secret($secret));
         $DB->delete_records('tool_mfa_secrets', []);
 
         // Session locked code from the same session id.
@@ -153,13 +153,13 @@ class tool_mfa_secret_manager_testcase extends \advanced_testcase {
         $reflectedsessionid->setValue($secman, 'fakesession');
 
         $secret = $secman->create_secret(1800, true);
-        $this->assertEquals(\tool_mfa\secret_manager::VALID, $secman->validate_secret($secret));
+        $this->assertEquals(\tool_mfa\local\secret_manager::VALID, $secman->validate_secret($secret));
         $DB->delete_records('tool_mfa_secrets', []);
 
         // Now test a session locked code from a different sessionid.
         $secret = $secman->create_secret(1800, true);
         $reflectedsessionid->setValue($secman, 'diffsession');
-        $this->assertEquals(\tool_mfa\secret_manager::NONVALID, $secman->validate_secret($secret));
+        $this->assertEquals(\tool_mfa\local\secret_manager::NONVALID, $secman->validate_secret($secret));
         $DB->delete_records('tool_mfa_secrets', []);
     }
 
@@ -167,32 +167,32 @@ class tool_mfa_secret_manager_testcase extends \advanced_testcase {
         global $DB, $SESSION;
 
         $this->resetAfterTest(true);
-        $secman = new \tool_mfa\secret_manager('mock');
+        $secman = new \tool_mfa\local\secret_manager('mock');
         $this->setUser($this->getDataGenerator()->create_user());
 
         // Session secrets.
         $secret = $secman->create_secret(1800, true);
         $secman->revoke_secret($secret);
-        $this->assertEquals(\tool_mfa\secret_manager::REVOKED, $secman->validate_secret($secret));
+        $this->assertEquals(\tool_mfa\local\secret_manager::REVOKED, $secman->validate_secret($secret));
         unset($SESSION->tool_mfa_secrets_mock);
 
         // DB secrets.
         $secret = $secman->create_secret(1800, false);
         $secman->revoke_secret($secret);
-        $this->assertEquals(\tool_mfa\secret_manager::REVOKED, $secman->validate_secret($secret));
+        $this->assertEquals(\tool_mfa\local\secret_manager::REVOKED, $secman->validate_secret($secret));
         $DB->delete_records('tool_mfa_secrets', []);
 
         // Revoke a non-valid secret.
         $secret = $secman->create_secret(1800, false);
         $secman->revoke_secret('nonvalid');
-        $this->assertEquals(\tool_mfa\secret_manager::NONVALID, $secman->validate_secret('nonvalid'));
+        $this->assertEquals(\tool_mfa\local\secret_manager::NONVALID, $secman->validate_secret('nonvalid'));
     }
 
     public function test_has_active_secret() {
         global $DB;
 
         $this->resetAfterTest(true);
-        $secman = new \tool_mfa\secret_manager('mock');
+        $secman = new \tool_mfa\local\secret_manager('mock');
         $this->setUser($this->getDataGenerator()->create_user());
 
         // Let's make stuff public using reflection.
@@ -231,7 +231,7 @@ class tool_mfa_secret_manager_testcase extends \advanced_testcase {
         $this->assertFalse($reflectedmethod->invoke($secman, true));
         $DB->delete_records('tool_mfa_secrets', []);
         $secret = $secman->create_secret(1800, true);
-        $reflectedsessionid->setValue($secman, 'diffsession');
+         $reflectedsessionid->setValue($secman, 'diffsession');
         $this->assertFalse($reflectedmethod->invoke($secman, true));
     }
 }

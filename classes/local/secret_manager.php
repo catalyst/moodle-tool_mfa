@@ -23,7 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_mfa;
+namespace tool_mfa\local;
 
 defined('MOODLE_INTERNAL') || die();
 
