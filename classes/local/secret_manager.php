@@ -45,7 +45,7 @@ class secret_manager {
      * This function creates or takes a secret, and stores it in the database or session.
      *
      * @param integer $expires the length of time the secret is valid. e.g. 1 min = 60
-     * @param boolean $session whether this secret should be stored in the session.
+     * @param boolean $session whether this secret should be linked to the session.
      * @param string $secret an optional provided secret
      * @return string the secret code, or 0 if no new code created.
      */
@@ -164,15 +164,18 @@ class secret_manager {
      * Revokes the provided secret code for the user.
      *
      * @param string $secret the secret to revoke.
+     * @param int $userid the userid to revoke the secret for.
      * @return void
      */
-    public function revoke_secret(string $secret) {
+    public function revoke_secret(string $secret, $userid = null) {
         global $DB, $USER;
+
+        $userid = $userid ?? $USER->id;
 
         // We do not need to worry about session vs global here.
         // A factor should only ever use one.
         // We know this secret is valid, so we don't need to check expiry.
-        $DB->set_field('tool_mfa_secrets', 'revoked', 1, ['userid' => $USER->id, 'factor' => $this->factor, 'secret' => $secret]);
+        $DB->set_field('tool_mfa_secrets', 'revoked', 1, ['userid' => $userid, 'factor' => $this->factor, 'secret' => $secret]);
     }
 
     /**
@@ -212,17 +215,19 @@ class secret_manager {
     /**
      * Deletes any user secrets hanging around in the database.
      *
+     * @param int $userid the userid to cleanup temp secrets for.
      * @return void
      */
-    public function cleanup_temp_secrets() {
+    public function cleanup_temp_secrets($userid = null) {
         global $DB, $USER;
         // Session records are autocleaned up.
         // Only DB cleanup required.
 
+        $userid = $userid ?? $USER->id;
         $sql = 'DELETE FROM {tool_mfa_secrets}
                       WHERE userid = :userid
                         AND factor = :factor';
 
-        $DB->execute($sql, ['userid' => $USER->id, 'factor' => $this->factor]);
+        $DB->execute($sql, ['userid' => $userid, 'factor' => $this->factor]);
     }
 }

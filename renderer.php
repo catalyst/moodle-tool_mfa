@@ -62,9 +62,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
      * @return html
      */
     public function available_factors() {
-        global $OUTPUT;
-
-        $html = $OUTPUT->heading(get_string('preferences:availablefactors', 'tool_mfa'), 4);
+        $html = $this->output->heading(get_string('preferences:availablefactors', 'tool_mfa'), 4);
 
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
         foreach ($factors as $factor) {
@@ -80,8 +78,6 @@ class tool_mfa_renderer extends plugin_renderer_base {
     }
 
     public function setup_factor($factor) {
-        global $OUTPUT;
-
         $html = '';
 
         $html .= html_writer::start_tag('div', array('class' => 'card'));
@@ -91,7 +87,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
 
         $setupparams = array('action' => 'setup', 'factor' => $factor->name, 'sesskey' => sesskey());
         $setupurl = new \moodle_url('action.php', $setupparams);
-        $html .= $OUTPUT->single_button($setupurl, $factor->get_setup_string());
+        $html .= $this->output->single_button($setupurl, $factor->get_setup_string());
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('div');
         $html .= '<br>';
@@ -106,9 +102,9 @@ class tool_mfa_renderer extends plugin_renderer_base {
      * @throws \coding_exception
      */
     public function active_factors() {
-        global $OUTPUT, $USER;
+        global $USER;
 
-        $html = $OUTPUT->heading(get_string('preferences:activefactors', 'tool_mfa'), 4);
+        $html = $this->output->heading(get_string('preferences:activefactors', 'tool_mfa'), 4);
 
         $headers = get_strings(array(
             'factor',
@@ -192,7 +188,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
      * @return string $notification
      */
     public function not_enough_factors() {
-        global $CFG, $OUTPUT, $SITE;
+        global $CFG, $SITE;
 
         $notification = \html_writer::tag('h4', get_string('error:notenoughfactors', 'tool_mfa'));
         $notification .= \html_writer::tag('p', get_string('error:reauth', 'tool_mfa'));
@@ -212,7 +208,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
             $linktext = \html_writer::link($supportpage, $supportpage);
             $notification .= $linktext;
         }
-        $return = $OUTPUT->notification($notification, 'notifyerror');
+        $return = $this->output->notification($notification, 'notifyerror');
 
         // Logout button.
         $url = new \moodle_url('\admin\tool\mfa\auth.php', ['logout' => 1]);
