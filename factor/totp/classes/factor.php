@@ -331,6 +331,15 @@ class factor extends object_factor_base {
     }
 
     /**
+     * TOTP Factor implementation
+     *
+     * {@inheritDoc}
+     */
+    public function show_setup_buttons() {
+        return true;
+    }
+
+    /**
      * TOTP Factor implementation.
      * Empty override of parent.
      *
