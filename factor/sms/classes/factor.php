@@ -72,12 +72,22 @@ class factor extends object_factor_base {
     }
 
     /**
+     * Gets the string for setup button on preferences page.
+     */
+    public function get_setup_string() {
+        return get_string('setupfactor', 'factor_sms');
+    }
+
+    /**
      * SMS Factor implementation.
      *
      * {@inheritDoc}
      */
     public function setup_factor_form_definition($mform) {
-        global $SESSION, $USER;
+        global $SESSION, $USER, $OUTPUT;
+
+        $mform->addElement('html', $OUTPUT->heading(get_string('setupfactor', 'factor_sms'), 2));
+
         if (empty($USER->phone2) && empty($SESSION->tool_mfa_sms_number)) {
             $mform->addElement('hidden', 'verificationcode', 0);
             $mform->setType("verificationcode", PARAM_ALPHANUM);

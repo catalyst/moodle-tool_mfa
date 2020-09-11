@@ -123,7 +123,7 @@ class factor extends object_factor_base {
     public function setup_factor_form_definition_after_data($mform) {
         global $OUTPUT;
 
-        $mform->addElement('html', $OUTPUT->heading(get_string('setupfactor', 'factor_totp'), 3));
+        $mform->addElement('html', $OUTPUT->heading(get_string('setupfactor', 'factor_totp'), 2));
 
         $mform->addElement('text', 'devicename', get_string('devicename', 'factor_totp'),
             array('placeholder' => get_string('devicenameexample', 'factor_totp')));

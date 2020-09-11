@@ -23,10 +23,14 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'SMS factor';
-$string['privacy:metadata'] = 'The SMS factor plugin does not store any personal data';
+$string['pluginname'] = 'Mobile phone SMS';
+$string['awssdkrequired'] = 'The local_aws plugin leveraging the AWS SDK is required to use this factor. Please install local_aws.';
+$string['action:revoke'] = 'Revoke mobile phone number';
+$string['addnumber'] = 'Enter mobile phone number';
+$string['info'] = '<p>Setup a mobile phone number to receive SMS one-time security codes on.</p>';
 $string['loginsubmit'] = 'Verify code';
 $string['loginskip'] = "I didn't receive a code";
+$string['setupfactor'] = 'Setup mobile number';
 $string['settings:aws:usecredchain'] = 'Use the default credential provider chain to find AWS credentials';
 $string['settings:aws:key'] = 'Key';
 $string['settings:aws:key_help'] = 'Amazon API key credential.';
@@ -44,12 +48,8 @@ $string['smssent'] = 'An SMS message containing your verification code was sent 
 $string['smsstring'] = '{$a->code} is your {$a->fullname} one-time security code.
 
 @{$a->url} #{$a->code}';
-$string['info'] = 'Setup a phone number to receive one-time security codes on.';
-$string['setupfactor'] = 'SMS factor setup';
 $string['summarycondition'] = 'Using an SMS one-time security code';
-$string['wrongcode'] = 'Invalid security code.';
-$string['action:revoke'] = 'Revoke mobile phone number';
-$string['awssdkrequired'] = 'The local_aws plugin leveraging the AWS SDK is required to use this factor. Please install local_aws.';
-$string['addnumber'] = 'Enter mobile phone number';
 $string['phoneplaceholder'] = '04xx xxx xxx or +61 4xx xxx xxx';
 $string['phonehelp'] = 'Enter your local mobile phone number, or an international phone number starting with \'+\'.';
+$string['privacy:metadata'] = 'The mobile phone SMS	factor plugin does not store any personal data';
+$string['wrongcode'] = 'Invalid security code.';
