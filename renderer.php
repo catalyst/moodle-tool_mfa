@@ -62,7 +62,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
      * @return html
      */
     public function available_factors() {
-        $html = $this->output->heading(get_string('preferences:availablefactors', 'tool_mfa'), 4);
+        $html = $this->output->heading(get_string('preferences:availablefactors', 'tool_mfa'), 2);
 
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
         foreach ($factors as $factor) {
@@ -81,7 +81,8 @@ class tool_mfa_renderer extends plugin_renderer_base {
         $html = '';
 
         $html .= html_writer::start_tag('div', array('class' => 'card'));
-        $html .= html_writer::tag('div', $factor->get_display_name(), array('class' => 'card-header'));
+
+        $html .= html_writer::tag('h4', $factor->get_display_name(), array('class' => 'card-header'));
         $html .= html_writer::start_tag('div', array('class' => 'card-body'));
         $html .= $factor->get_info();
 
@@ -102,9 +103,11 @@ class tool_mfa_renderer extends plugin_renderer_base {
      * @throws \coding_exception
      */
     public function active_factors() {
-        global $USER;
+        global $USER, $CFG;
 
-        $html = $this->output->heading(get_string('preferences:activefactors', 'tool_mfa'), 4);
+        require_once($CFG->dirroot . '/iplookup/lib.php');
+
+        $html = $this->output->heading(get_string('preferences:activefactors', 'tool_mfa'), 2);
 
         $headers = get_strings(array(
             'factor',
@@ -158,14 +161,24 @@ class tool_mfa_renderer extends plugin_renderer_base {
                     $revokelink = "";
                 }
 
-                $timecreated = $userfactor->timecreated == '-' ? '-' : userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
-                $lastverified = $userfactor->lastverified == '-' ? '-' : userdate($userfactor->lastverified, '%l:%M %p %d/%m/%Y');
+                $timecreated  = $userfactor->timecreated == '-' ? '-'
+                    : userdate($userfactor->timecreated,  get_string('strftimedatetime'));
+                $lastverified = $userfactor->lastverified;
+                if ($lastverified != '-') {
+                    $lastverified = userdate($userfactor->lastverified, get_string('strftimedatetime'));
+                    $lastverified .= '<br>';
+                    $lastverified .= get_string('ago', 'core_message', format_time(time() - $userfactor->lastverified));
+                }
+
+                $info = iplookup_find_location($userfactor->createdfromip);
+                $ip = $userfactor->createdfromip;
+                $ip .= '<br>' . $info['country'] . ' - ' . $info['city'];
 
                 $row = new \html_table_row(array(
                     $factor->get_display_name(),
                     $userfactor->label,
                     $timecreated,
-                    $userfactor->createdfromip,
+                    $ip,
                     $lastverified,
                     $revokelink,
                 ));
