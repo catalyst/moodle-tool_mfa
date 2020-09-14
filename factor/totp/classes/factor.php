@@ -55,16 +55,17 @@ class factor extends object_factor_base {
 
     /**
      * Generates TOTP URI for given secret key.
-     * Uses site name, domain and user name to make GA account look like:
-     * "Sitename domain (username)"
+     * Uses site name, hostname and user name to make GA account look like:
+     * "Sitename hostname (username)".
      *
      * @param string $secret
      * @return string
      */
     public function generate_totp_uri($secret) {
         global $USER, $SITE, $CFG;
-        $domain = str_replace('http://', '', str_replace('https://', '', $CFG->wwwroot));
-        $issuer = $SITE->fullname.' '.$domain;
+        $host = parse_url($CFG->wwwroot, PHP_URL_HOST);
+        $sitename = str_replace(':', '', $SITE->fullname);
+        $issuer = $sitename.' '.$host;
         $totp = TOTP::create($secret);
         $totp->setLabel($USER->username);
         $totp->setIssuer($issuer);
