@@ -31,7 +31,8 @@ $string['loginskip'] = "I didn't receive a code";
 $string['setupfactor'] = 'Setup Telegram ID';
 $string['settings:duration'] = 'Validity duration';
 $string['settings:duration_help'] = 'The period of time that the code is valid.';
-$string['telegramsent'] = 'A Telegram message containing your verification code was sent to {$a}.';
+$string['telegramhelp'] = 'Enter your Telegram user name or, alternatively, your Telegram user ID.';
+$string['telegramsent'] = 'A Telegram message containing your verification code was sent to you ({$a}).';
 $string['telegramstring'] = '{$a->code} is your {$a->fullname} one-time security code.
 
 @{$a->url} #{$a->code}';
