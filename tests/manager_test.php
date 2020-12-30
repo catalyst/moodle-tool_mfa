@@ -346,7 +346,6 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
 
     public function test_core_hooks() {
         // Setup test and user.
-        require_once(__DIR__ . '/../../../../config.php');
         global $CFG, $SESSION;
         $this->resetAfterTest(true);
         $user = $this->getDataGenerator()->create_user();
