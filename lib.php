@@ -90,3 +90,12 @@ function tool_mfa_after_config() {
         }
     }
 }
+
+function tool_mfa_bulk_user_actions() {
+    return [
+        'tool_mfa_reset_factors' => new action_link(
+            new moodle_url('/admin/tool/mfa/reset_factor.php'),
+            get_string('resetfactor', 'tool_mfa')
+        ),
+    ];
+}

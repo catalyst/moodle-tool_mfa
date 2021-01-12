@@ -126,6 +126,7 @@ $string['redirecterrordetected'] = 'Unsupported redirect detected, script execut
 $string['resetfactor'] = 'Reset user factors';
 $string['resetuser'] = 'User:';
 $string['resetsuccess'] = 'Factor \'{$a->factor}\' successfully reset for user \'{$a->username}\'.';
+$string['resetsuccessbulk'] = 'Factor \'{$a}\' successfully reset for provided users.';
 $string['selectfactor'] = 'Select factor to reset:';
 $string['resetfactorplaceholder'] = 'Username or email';
 $string['userempty'] = 'User cannot be empty.';
