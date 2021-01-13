@@ -119,6 +119,7 @@ $string['factorsetup'] = 'Factor \'{$a}\' successfully setup.';
 $string['factorrevoked'] = 'Factor \'{$a}\' successfully revoked.';
 $string['factorlocked'] = 'Factor \'{$a}\' has been locked due to exceeded failed attempts.';
 $string['factorreset'] = 'Your MFA \'{$a->factor}\' has been reset by a site administrator. You may need to set up this factor again. {$a->url}';
+$string['factorresetall'] = 'All your MFA factors have been reset by a site administrator. You may need to set up these factors again. {$a}';
 $string['preferenceslink'] = 'Click here to go to user preferences.';
 $string['connector'] = 'AND';
 $string['pending'] = 'Pending';

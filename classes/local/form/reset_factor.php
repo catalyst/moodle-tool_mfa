@@ -40,6 +40,8 @@ class reset_factor extends \moodleform {
         $factors = array_map(function ($element) {
             return $element->get_display_name();
         }, $factors);
+        // Add an 'all' action.
+        $factors['all'] = get_string('all');
 
         $mform->addElement('select', 'factor', get_string('selectfactor', 'tool_mfa'), $factors);
 

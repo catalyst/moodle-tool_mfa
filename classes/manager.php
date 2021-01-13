@@ -366,6 +366,15 @@ class manager {
                     unset_user_preference($pref);
                 }
             }
+
+            // Also check for a global reset.
+            $allfactor = get_user_preferences('tool_mfa_reset_all', false);
+            if ($allfactor) {
+                $url = new \moodle_url('/admin/tool/mfa/user_preferences.php');
+                $link = \html_writer::link($url, get_string('preferenceslink', 'tool_mfa'));
+                \core\notification::warning(get_string('factorresetall', 'tool_mfa', $link));
+                unset_user_preference('tool_mfa_reset_all');
+            }
         }
     }
 
