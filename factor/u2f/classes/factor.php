@@ -50,7 +50,7 @@ class factor extends object_factor_base {
         $mform->addElement('html', $pressbuttonhtml);
         $mform->addElement('hidden', 'request', '', ["id" => 'id_request']);
         $mform->setType('request', PARAM_RAW);
-        $mform->addElement('hidden', 'response_input', '', ['id'=> 'id_response_input']);
+        $mform->addElement('hidden', 'response_input', '', ['id' => 'id_response_input']);
         $mform->setType('response_input', PARAM_RAW);
         $renderer = $PAGE->get_renderer('core');
 
@@ -65,7 +65,6 @@ class factor extends object_factor_base {
 
         $script = $renderer->render_from_template('factor_u2f/u2f-login', ['request' => json_encode($request)]);
         $mform->addElement('html', $script);
-        //$mform->_form->getAttribute()
         return $mform;
     }
 
@@ -78,7 +77,7 @@ class factor extends object_factor_base {
     public function login_form_validation($data) {
         global $USER, $CFG, $DB;
         $return = array();
-        if(empty($data['response_input'])) {
+        if (empty($data['response_input'])) {
             $return['verificationcode'] = get_string('error', 'factor_u2f');
             return $return;
         }
@@ -91,7 +90,8 @@ class factor extends object_factor_base {
         $url = parse_url($CFG->wwwroot);
         $u2f = new U2F($url['scheme'].'://'.$url['host']);
         try {
-            $authentication = $u2f->doAuthenticate(json_decode($data['request']), $registrations, json_decode($data['response_input']));
+            $authentication = $u2f->doAuthenticate(json_decode($data['request']), $registrations,
+                json_decode($data['response_input']));
             foreach ($registrations as $id => $registration) {
                 if ($authentication->keyHandle === $registration->keyHandle) {
                     $row = $DB->get_record('tool_mfa', array('id' => $id));
@@ -105,9 +105,8 @@ class factor extends object_factor_base {
                 }
             }
         } catch (Error $e) {
-            $return['verificationcode'] = get_string('error', 'factor_u2f'); //TODO
+            $return['verificationcode'] = get_string('error', 'factor_u2f');
         }
-
 
         return $return;
     }
@@ -166,16 +165,14 @@ class factor extends object_factor_base {
      * @param $mform
      */
     public function setup_factor_form_definition($mform) {
-        global $PAGE, $CFG;
-
-
+        global $PAGE, $CFG, $OUTPUT;
 
         // Prepare data for U2F request.
         $url = parse_url($CFG->wwwroot);
 
-        if($url['scheme'] == "http"){
-            $mform->addElement('html', '<div class="m-element-notification m-element-notification--warning">
-            You cannot use https for u2f authentication.</div></div>');
+        if ($url['scheme'] == 'http') {
+            $mform->addElement('html',
+                $OUTPUT->notification('You must use HTTPS for u2f authentication.', \core\output\notification::NOTIFY_ERROR));
         } else {
             $renderer = $PAGE->get_renderer('core');
             $pressbuttonhtml = $renderer->render_from_template('factor_u2f/press-button', [
@@ -187,7 +184,7 @@ class factor extends object_factor_base {
             $mform->addElement('html', $pressbuttonhtml);
             $mform->addElement('hidden', 'request', '', ["id" => 'id_request']);
             $mform->setType('request', PARAM_RAW);
-            $mform->addElement('hidden', 'response_input', '', ['id'=> 'id_response_input']);
+            $mform->addElement('hidden', 'response_input', '', ['id' => 'id_response_input']);
             $mform->setType('response_input', PARAM_RAW);
             $u2f = new U2F($url['scheme'].'://'.$url['host']);
             $data = $u2f->getRegisterData([]);
@@ -242,7 +239,6 @@ class factor extends object_factor_base {
     public function possible_states($user) {
         // U2F can return all states.
         return array(
-            \tool_mfa\plugininfo\factor::STATE_FAIL,
             \tool_mfa\plugininfo\factor::STATE_PASS,
             \tool_mfa\plugininfo\factor::STATE_NEUTRAL,
             \tool_mfa\plugininfo\factor::STATE_UNKNOWN,
