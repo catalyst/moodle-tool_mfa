@@ -189,8 +189,7 @@ class factor extends object_factor_base {
 
         $mform->addElement('html', $OUTPUT->heading(get_string('setupfactor', 'factor_telegram'), 2));
 
-
-        // $SESSION->tool_mfa_telegram_id temporarily stores an ID that the user has entered, but that has not been verified yet.
+        // The field $SESSION->tool_mfa_telegram_id temporarily stores an ID that the user has entered, but not yet verified.
         if (empty($SESSION->tool_mfa_telegram_id)) {
             $mform->addElement('hidden', 'verificationcode', 0);
             $mform->setType("verificationcode", PARAM_ALPHANUM);

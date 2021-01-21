@@ -39,8 +39,8 @@ $settings->add(new admin_setting_configduration('factor_telegram/duration',
 
 $settings->add(new admin_setting_configpasswordunmask('factor_telegram/telegrambottoken',
     new lang_string('settings:telegrambottoken', 'factor_telegram'),
-    new lang_string('settings:telegrambottoken_help', 'factor_telegram'), '',PARAM_TEXT));
+    new lang_string('settings:telegrambottoken_help', 'factor_telegram'), '', PARAM_TEXT));
 
 $settings->add(new admin_setting_configtext('factor_telegram/telegrambotname',
     new lang_string('settings:telegrambotname', 'factor_telegram'),
-    new lang_string('settings:telegrambotname_help', 'factor_telegram'), '',PARAM_TEXT));
+    new lang_string('settings:telegrambotname_help', 'factor_telegram'), '', PARAM_TEXT));
