@@ -62,15 +62,13 @@ class tool_mfa_renderer extends plugin_renderer_base {
      * @return html
      */
     public function available_factors() {
-        global $OUTPUT;
-
-        $html = $OUTPUT->heading(get_string('preferences:availablefactors', 'tool_mfa'), 4);
+        $html = $this->output->heading(get_string('preferences:availablefactors', 'tool_mfa'), 2);
 
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
         foreach ($factors as $factor) {
 
             // TODO is_configured / is_ready.
-            if (!$factor->has_setup()) {
+            if (!$factor->has_setup() || !$factor->show_setup_buttons()) {
                 continue;
             }
             $html .= $this->setup_factor($factor);
@@ -80,18 +78,17 @@ class tool_mfa_renderer extends plugin_renderer_base {
     }
 
     public function setup_factor($factor) {
-        global $OUTPUT;
-
         $html = '';
 
         $html .= html_writer::start_tag('div', array('class' => 'card'));
-        $html .= html_writer::tag('div', $factor->get_display_name(), array('class' => 'card-header'));
+
+        $html .= html_writer::tag('h4', $factor->get_display_name(), array('class' => 'card-header'));
         $html .= html_writer::start_tag('div', array('class' => 'card-body'));
         $html .= $factor->get_info();
 
         $setupparams = array('action' => 'setup', 'factor' => $factor->name, 'sesskey' => sesskey());
         $setupurl = new \moodle_url('action.php', $setupparams);
-        $html .= $OUTPUT->single_button($setupurl, $factor->get_setup_string());
+        $html .= $this->output->single_button($setupurl, $factor->get_setup_string());
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('div');
         $html .= '<br>';
@@ -106,9 +103,11 @@ class tool_mfa_renderer extends plugin_renderer_base {
      * @throws \coding_exception
      */
     public function active_factors() {
-        global $OUTPUT, $USER;
+        global $USER, $CFG;
 
-        $html = $OUTPUT->heading(get_string('preferences:activefactors', 'tool_mfa'), 4);
+        require_once($CFG->dirroot . '/iplookup/lib.php');
+
+        $html = $this->output->heading(get_string('preferences:activefactors', 'tool_mfa'), 2);
 
         $headers = get_strings(array(
             'factor',
@@ -162,14 +161,24 @@ class tool_mfa_renderer extends plugin_renderer_base {
                     $revokelink = "";
                 }
 
-                $timecreated = $userfactor->timecreated == '-' ? '-' : userdate($userfactor->timecreated, '%l:%M %p %d/%m/%Y');
-                $lastverified = $userfactor->lastverified == '-' ? '-' : userdate($userfactor->lastverified, '%l:%M %p %d/%m/%Y');
+                $timecreated  = $userfactor->timecreated == '-' ? '-'
+                    : userdate($userfactor->timecreated,  get_string('strftimedatetime'));
+                $lastverified = $userfactor->lastverified;
+                if ($lastverified != '-') {
+                    $lastverified = userdate($userfactor->lastverified, get_string('strftimedatetime'));
+                    $lastverified .= '<br>';
+                    $lastverified .= get_string('ago', 'core_message', format_time(time() - $userfactor->lastverified));
+                }
+
+                $info = iplookup_find_location($userfactor->createdfromip);
+                $ip = $userfactor->createdfromip;
+                $ip .= '<br>' . $info['country'] . ' - ' . $info['city'];
 
                 $row = new \html_table_row(array(
                     $factor->get_display_name(),
                     $userfactor->label,
                     $timecreated,
-                    $userfactor->createdfromip,
+                    $ip,
                     $lastverified,
                     $revokelink,
                 ));
@@ -192,7 +201,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
      * @return string $notification
      */
     public function not_enough_factors() {
-        global $CFG, $OUTPUT, $SITE;
+        global $CFG, $SITE;
 
         $notification = \html_writer::tag('h4', get_string('error:notenoughfactors', 'tool_mfa'));
         $notification .= \html_writer::tag('p', get_string('error:reauth', 'tool_mfa'));
@@ -212,7 +221,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
             $linktext = \html_writer::link($supportpage, $supportpage);
             $notification .= $linktext;
         }
-        $return = $OUTPUT->notification($notification, 'notifyerror');
+        $return = $this->output->notification($notification, 'notifyerror');
 
         // Logout button.
         $url = new \moodle_url('/admin/tool/mfa/auth.php', ['logout' => 1]);

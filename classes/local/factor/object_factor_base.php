@@ -41,6 +41,13 @@ abstract class object_factor_base implements object_factor {
     private $lockcounter;
 
     /**
+     * Secret manager
+     *
+     * @var \tool_mfa\local\secret_manager
+     */
+    protected $secretmanager;
+
+    /**
      * Class constructor
      *
      * @param string factor name
@@ -49,6 +56,9 @@ abstract class object_factor_base implements object_factor {
     public function __construct($name) {
         global $DB, $USER;
         $this->name = $name;
+
+        // Setup secret manager.
+        $this->secretmanager = new \tool_mfa\local\secret_manager($this->name);
 
         // Check if lockcounter column exists (incase upgrade hasnt run yet).
         try {
@@ -318,6 +328,15 @@ abstract class object_factor_base implements object_factor {
     }
 
     /**
+     * If has_setup returns true, decides if the setup buttons should be shown on the preferences page.
+     *
+     * @return bool
+     */
+    public function show_setup_buttons() {
+        return $this->has_setup();
+    }
+
+    /**
      * Returns true if a factor requires input from the user to verify.
      *
      * Override in child class if necessary
@@ -390,6 +409,9 @@ abstract class object_factor_base implements object_factor {
         if ($this->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
             $this->update_lastverified();
         }
+
+        // Now clean temp secrets for factor.
+        $this->secretmanager->cleanup_temp_secrets();
     }
 
     /**

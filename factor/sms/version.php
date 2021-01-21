@@ -17,16 +17,18 @@
 /**
  * Plugin version and other meta-data are defined here.
  *
- * @package     tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
+ * @package     factor_sms
+ * @subpackage  tool_mfa
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020090300;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->release   = 2020090300;      // Same as version.
-$plugin->requires  = 2017051500.00;   // Support back to 3.3 - Totara 12. Patches required.
-$plugin->component = 'tool_mfa';
-$plugin->maturity  = MATURITY_STABLE;
+$plugin->version      = 2020090800;      // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires     = 2017051500.00;   // Support back to 3.3 - Totara 12. Patches required.
+$plugin->component    = 'factor_sms';
+$plugin->release      = 'v0.1';
+$plugin->maturity     = MATURITY_STABLE;
+$plugin->dependencies = array('tool_mfa' => 2019102400);

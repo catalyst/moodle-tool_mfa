@@ -1,4 +1,4 @@
-<?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,18 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Module to autosubmit the verification code element when it reaches 6 characters.
  *
- * @package     tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @module     tool_mfa/autosubmit_verification_code
+ * @copyright  2020 Peter Burnett <peterburnett@catalyst-au.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2020090300;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->release   = 2020090300;      // Same as version.
-$plugin->requires  = 2017051500.00;   // Support back to 3.3 - Totara 12. Patches required.
-$plugin->component = 'tool_mfa';
-$plugin->maturity  = MATURITY_STABLE;
+define([], function() {
+    return {
+        init: function() {
+            document.querySelector("#id_verificationcode").addEventListener('keyup', function() {
+                if (this.value.length == 6) {
+                    // Submits the closes form (parent).
+                    this.closest("form").submit();
+                }
+            });
+        }
+    };
+});

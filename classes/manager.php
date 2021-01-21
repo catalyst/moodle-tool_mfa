@@ -366,6 +366,15 @@ class manager {
                     unset_user_preference($pref);
                 }
             }
+
+            // Also check for a global reset.
+            $allfactor = get_user_preferences('tool_mfa_reset_all', false);
+            if ($allfactor) {
+                $url = new \moodle_url('/admin/tool/mfa/user_preferences.php');
+                $link = \html_writer::link($url, get_string('preferenceslink', 'tool_mfa'));
+                \core\notification::warning(get_string('factorresetall', 'tool_mfa', $link));
+                unset_user_preference('tool_mfa_reset_all');
+            }
         }
     }
 
@@ -387,6 +396,12 @@ class manager {
 
         // Soft maintenance mode.
         if (!empty($CFG->maintenance_enabled)) {
+            return self::NO_REDIRECT;
+        }
+
+        // Dont redirect logo images from pluginfile.php (for example: logo in header)
+        $authurl = new \moodle_url('/pluginfile.php/1/core_admin/logocompact/');
+        if ($url->compare($authurl)) {
             return self::NO_REDIRECT;
         }
 
@@ -434,7 +449,7 @@ class manager {
 
         // Site policy.
         if (isset($USER->policyagreed) && !$USER->policyagreed) {
-            // Privacy classes may not exist in older Moodles/Totara
+            // Privacy classes may not exist in older Moodles/Totara.
             if (class_exists('\core_privacy\local\sitepolicy\manager')) {
                 $manager = new \core_privacy\local\sitepolicy\manager();
                 $policyurl = $manager->get_redirect_url(false);

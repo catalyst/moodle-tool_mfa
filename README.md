@@ -9,14 +9,20 @@
 * [Branches](#branches)
 * [Installation](#installation)
 * [Configuration](#configuration)
-  * [IP range](#ip-range)
-  * [TOTP](#totp)
-  * [Auth type](#auth-type)
-  * [Non-admin](#non-admin)
-  * [Email](#email)
-  * [Grace mode](#grace-mode)
-  * [Np-setup factor](#no-setup-factor)
-  * [Other factors](#other-factors)
+  * [Authentication factors](#authentication-factors)
+    * [TOTP](#totp)
+    * [Mobile SMS](#mobile-sms)
+    * [IP Range](#ip-range)
+    * [Email](#email)
+  * [User filtering factors](#user-filtering-factors)
+    * [Auth type](#auth-type)
+    * [Non-admin](#non-admin)
+    * [User capability](#user-capability)
+    * [Role factor](#role-factor)
+  * [Login flow factors](#login-flow-factors)
+    * [Grace mode](#grace-mode)
+    * [No-setup factor](#no-setup-factor)
+    * [Other factors](#other-factors)
 * [Points and examples](#points-and-examples)
 * [Debugging](#debugging)
 * [Support](#support)
@@ -41,7 +47,7 @@ https://tracker.moodle.org/browse/MDL-66173
 
 https://docs.moodle.org/dev/Login_callbacks
 
-The other major difference is that we support multiple authentication factor **types** as sub plugins, eg IP Range, Email, TOPT and in future others such as SMS or hardware tokens or anything else as new sub-plugins. They can be flexible configured so that different combinations of factors are considered enough.
+The other major difference is that we support multiple authentication factor **types** as sub plugins, eg SMS, IP Range, Email, TOTP and in future others such as hardware tokens or anything else as new sub-plugins. They can be flexibly configured so that different combinations of factors are considered enough.
 
 ## Branches
 
@@ -79,7 +85,7 @@ https://docs.moodle.org/en/Installing_plugins
 Step 2: Apply core patches
 -------------------------------
 
-This plugin requires [MDL-60470](https://tracker.moodle.org/browse/MDL-60470) which was only added 3.7, and [MDL-66340](https://tracker.moodle.org/browse/MDL-66340), which was added in 3.8.
+This plugin requires [MDL-60470](https://tracker.moodle.org/browse/MDL-60470) which was only added in 3.7, and [MDL-66340](https://tracker.moodle.org/browse/MDL-66340), which was added in 3.8.
 
 You can easily backport these patches in one line for 3.5, 3.6 and 3.7:
 
@@ -128,47 +134,61 @@ WARNING: Do not try to fully configure this plugin in the web GUI immediately af
 
 The main concept to understand is the concept of factors. Each user must satisfy some combination of factors which sum to 100 points in order to login. By configuring multiple factors and weighting them you can easily have quite complex and flexible rules.
 
-### IP Range
+### Authentication factors
+
+These are what you would consider 'normal' 2FA or MFA factors.
+
+#### TOTP
+
+This is standard Time-base One Time Password ([TOTP](https://en.wikipedia.org/wiki/Time-based_One-time_Password_algorithm)) using Google Authenticator, Authy, Duo or any other app which conforms to the open standard.
+
+#### Mobile SMS
+
+Send One Time security codes to mobile via SMS using AWS SNS.
+
+#### IP Range
 
 Use this factor to say that if you are on a secure network then that counts for something. This is very useful because it requires no setup by the end user, so you can set it up so that you can login fully via a secure network, and once logged in they can setup other factors like TOTP, and then use those other factors for logging in when not on a secure network.
 
-### TOTP
-
-This is standard TOTP using Google Authenticator or any other app which conforms to the open standard.
-
-### Auth Type
-
-This is so you can specify that users with certain auth types, eg SAML via ADFS, which may have already done it's own MFA checks, is worth 100 points which makes it exempt from additional checks.
-
-### Non-admin
-
-This factor enables you to give points for free to a user who is not an admin. This makes it easy to require admin users to have 2 or more factors while not affecting normal users.
-
-### Email
-
-*** Not recommended for production use ***
+#### Email
 
 A simple factor which sends a short lived code to your email which you then need to enter to login. Generally speaking this is a low security factor because typically the same username and password which logs you into moodle is the same which logs you into your email so it doesn't add much value.
 
 This factor was implemented as a proof of concept of a factor which can return a hard FAIL state, ie positive evidence that your account is compromised rather than NEUTRAL where we simply lack evidence of additional factors that the end user is who they say they are.
 
-### Grace mode
+### User filtering factors
 
-The grace mode is a pseudo factor to allow users to log in without interacting with MFA for a set period of time. Users can only achieve the points for this factor if there are no other input factors for them to interact with during the login process. This factor should be placed last in the list, that way all other factors are interacted with during the login process first. On the first page after login, if a user is currently within their grace period, regardless of whether they used gracemode as a login factor, they are presented a notification informing them of the grace period length, and that they may need to setup other factors or risk being locked out once the grace period expires.
+These are pseudo factors which make it easier to setup policies around who MFA should apply to or not. 
 
-### No-setup Factor
+#### Auth Type
 
-This pseudo factor is designed to allow people to pass only if they have not setup other factors for MFA already. Once another factor, such as TOTP is setup for a user, this factor no longer gives points, therefore the user must use TOTP to authenticate. This allows for an optional MFA rollout, where only users who wish to use MFA are affected by the MFA rollout.
+This is so you can specify that users with certain auth types, eg SAML via ADFS, which may have already done it's own MFA checks, is worth 100 points which makes it exempt from additional checks.
 
-### User capability
+#### Non-admin
+
+This factor enables you to give points for free to a user who is not an admin. This makes it easy to require admin users to have 2 or more factors while not affecting normal users.
+
+#### User capability
 
 This factor checks whether a user has a capability, in the system context. If the user has this capability, they will not gain the points for this factor, and must instead use other factors to authenticate with the system. This is similar to the non-admin factor, however it operates on a role basis. In practice, the capability 'factor/capability:cannotpassfactor' should be given to roles who must use other factors to authenticate to the system. There is an additional setting for this factor, that will allow admins to gain points for this factor, as by default they will always gain no points for this factor.
 
-### Role Factor
+#### Role Factor
 
 This factor checks whether a user has any chosen roles assigned in any context, and does not provide points if so. This can be used to ensure the selected roles must use a higher level of authentication such as TOTP, while letting non-specified roles authenticate seamlessly. This factor should generally have high privilege roles such as Manager and Administrator selected to enforce higher account security for these groups.
 
-### Other factors
+### Login flow factors
+
+These pseudo factors affect the overall setup flow for users.
+
+#### Grace mode
+
+The grace mode is a pseudo factor to allow users to log in without interacting with MFA for a set period of time. Users can only achieve the points for this factor if there are no other input factors for them to interact with during the login process. This factor should be placed last in the list, that way all other factors are interacted with during the login process first. On the first page after login, if a user is currently within their grace period, regardless of whether they used gracemode as a login factor, they are presented a notification informing them of the grace period length, and that they may need to setup other factors or risk being locked out once the grace period expires.
+
+#### No-setup Factor
+
+This pseudo factor is designed to allow people to pass only if they have not setup other factors for MFA already. Once another factor, such as TOTP is setup for a user, this factor no longer gives points, therefore the user must use TOTP to authenticate. This allows for an optional MFA rollout, where only users who wish to use MFA are affected by the MFA rollout.
+
+#### Other factors
 
 In theory you could impement almost anything as a factor, such as time of day, retina scans, or push notificatons. For a list of potential factor ideas see:
 

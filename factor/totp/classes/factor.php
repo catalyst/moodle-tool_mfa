@@ -55,16 +55,17 @@ class factor extends object_factor_base {
 
     /**
      * Generates TOTP URI for given secret key.
-     * Uses site name, domain and user name to make GA account look like:
-     * "Sitename domain (username)"
+     * Uses site name, hostname and user name to make GA account look like:
+     * "Sitename hostname (username)".
      *
      * @param string $secret
      * @return string
      */
     public function generate_totp_uri($secret) {
         global $USER, $SITE, $CFG;
-        $domain = str_replace('http://', '', str_replace('https://', '', $CFG->wwwroot));
-        $issuer = $SITE->fullname.' '.$domain;
+        $host = parse_url($CFG->wwwroot, PHP_URL_HOST);
+        $sitename = str_replace(':', '', $SITE->fullname);
+        $issuer = $sitename.' '.$host;
         $totp = TOTP::create($secret);
         $totp->setLabel($USER->username);
         $totp->setIssuer($issuer);
@@ -123,7 +124,7 @@ class factor extends object_factor_base {
     public function setup_factor_form_definition_after_data($mform) {
         global $OUTPUT;
 
-        $mform->addElement('html', $OUTPUT->heading(get_string('setupfactor', 'factor_totp'), 3));
+        $mform->addElement('html', $OUTPUT->heading(get_string('setupfactor', 'factor_totp'), 2));
 
         $mform->addElement('text', 'devicename', get_string('devicename', 'factor_totp'),
             array('placeholder' => get_string('devicenameexample', 'factor_totp')));
@@ -327,6 +328,15 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function has_setup() {
+        return true;
+    }
+
+    /**
+     * TOTP Factor implementation
+     *
+     * {@inheritDoc}
+     */
+    public function show_setup_buttons() {
         return true;
     }
 

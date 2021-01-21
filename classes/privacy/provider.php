@@ -64,6 +64,17 @@ class provider implements
             'privacy:metadata:tool_mfa'
         );
 
+        $collection->add_database_table(
+            'tool_mfa_secrets',
+            [
+                'userid' => 'privacy:metadata:tool_mfa_secrets:userid',
+                'factor' => 'privacy:metadata:tool_mfa_secrets:factor',
+                'secret' => 'privacy:metadata:tool_mfa_secrets:secret',
+                'sessionid' => 'privacy:metadata:tool_mfa_secrets:sessionid',
+            ],
+            'privacy:metadata:tool_mfa_secrets'
+        );
+
         return $collection;
     }
 
@@ -81,7 +92,7 @@ class provider implements
     }
 
     /**
-     * Gets the list of users who have data with a context.
+     * Gets the list of users who have data with a context. Secrets context is a subset of this table.
      *
      * @param userlist $userlist the userlist containing users who have data in this context.
      */
@@ -97,7 +108,7 @@ class provider implements
     }
 
     /**
-     * Exports all data stored in provided contexts for user.
+     * Exports all data stored in provided contexts for user. Secrets should not be exported as they are transient.
      *
      * @param approved_contextlist $contextlist the list of contexts to export for.
      */
@@ -147,10 +158,8 @@ class provider implements
         global $DB;
         // All data contained in system context.
         if ($context->contextlevel == CONTEXT_SYSTEM) {
-            $sql = "
-            DELETE
-            FROM {tool_mfa}";
-            $DB->execute($sql);
+            $DB->delete_records('tool_mfa', []);
+            $DB->delete_records('tool_mfa_secrets', []);
         }
     }
 
@@ -165,11 +174,8 @@ class provider implements
         foreach ($contextlist as $context) {
             // If not in system context, skip context.
             if ($context->contextlevel == CONTEXT_SYSTEM) {
-                $sql = "DELETE
-                        FROM {tool_mfa} mfa
-                        WHERE mfa.userid = :userid";
-
-                $DB->execute($sql, array('userid' => $userid));
+                $DB->delete_records('tool_mfa', ['userid' => $userid]);
+                $DB->delete_records('tool_mfa_secrets', ['userid' => $userid]);
             }
         }
     }

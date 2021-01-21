@@ -15,18 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * SMS Gateway interface
  *
- * @package     tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
+ * @package     factor_sms
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace factor_sms\local\smsgateway;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020090300;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->release   = 2020090300;      // Same as version.
-$plugin->requires  = 2017051500.00;   // Support back to 3.3 - Totara 12. Patches required.
-$plugin->component = 'tool_mfa';
-$plugin->maturity  = MATURITY_STABLE;
+interface gateway_interface {
+    /**
+     * @param string $messagecontent the content to send in the SMS message.
+     * @param string $target the destination for the message.
+     *
+     * @return bool true on message send success
+     */
+    public function send_sms_message(string $messagecontent, string $phonenumber) : bool;
+}

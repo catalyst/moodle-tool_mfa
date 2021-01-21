@@ -32,38 +32,49 @@ class reset_factor extends \moodleform {
     public function definition() {
         $mform = $this->_form;
         $factors = $this->_customdata['factors'];
+        $bulkaction = $this->_customdata['bulk'];
+
+        $mform->addElement('hidden', 'bulkaction', $bulkaction);
+        $mform->setType('bulkaction', PARAM_BOOL);
+
         $factors = array_map(function ($element) {
             return $element->get_display_name();
         }, $factors);
+        // Add an 'all' action.
+        $factors['all'] = get_string('all');
 
         $mform->addElement('select', 'factor', get_string('selectfactor', 'tool_mfa'), $factors);
 
-        $mform->addElement('text', 'resetfactor', get_string('resetuser', 'tool_mfa'),
+        if (!$bulkaction) {
+            $mform->addElement('text', 'resetfactor', get_string('resetuser', 'tool_mfa'),
             array('placeholder' => get_string('resetfactorplaceholder', 'tool_mfa')));
-        $mform->setType('resetfactor', PARAM_TEXT);
-        $mform->addRule('resetfactor', get_string('userempty', 'tool_mfa'), 'required');
+            $mform->setType('resetfactor', PARAM_TEXT);
+            $mform->addRule('resetfactor', get_string('userempty', 'tool_mfa'), 'required');
+        }
 
         $this->add_action_buttons(true, get_string('resetconfirm', 'tool_mfa'));
     }
 
     public function validation($data, $files) {
-        global $DB, $SESSION;
+        global $DB;
         $errors = parent::validation($data, $files);
 
-        $userinfo = $data['resetfactor'];
-        // Try input as username first, then email.
-        $user = $DB->get_record('user', array('username' => $userinfo));
-        if (empty($user)) {
-            // If not found, try username.
-            $user = $DB->get_record('user', array('email' => $userinfo));
-        }
+        if (!$data['bulkaction']) {
+            $userinfo = $data['resetfactor'];
+            // Try input as username first, then email.
+            $user = $DB->get_record('user', array('username' => $userinfo));
+            if (empty($user)) {
+                // If not found, try username.
+                $user = $DB->get_record('user', array('email' => $userinfo));
+            }
 
-        if (empty($user)) {
-            $errors['resetfactor'] = get_string('usernotfound', 'tool_mfa');
-        } else {
-            // Add custom field to store user.
-            $this->_form->addElement('hidden', 'user', $user);
-            $this->_form->setType('user', PARAM_RAW);
+            if (empty($user)) {
+                $errors['resetfactor'] = get_string('usernotfound', 'tool_mfa');
+            } else {
+                // Add custom field to store user.
+                $this->_form->addElement('hidden', 'user', $user);
+                $this->_form->setType('user', PARAM_RAW);
+            }
         }
 
         return $errors;
