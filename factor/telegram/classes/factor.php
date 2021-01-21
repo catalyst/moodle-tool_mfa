@@ -198,7 +198,11 @@ class factor extends object_factor_base {
             // Field that specifies the user's Telegram ID.
             $mform->addElement('text', 'telegramid', get_string('addtelegramid', 'factor_telegram'));
             $mform->setType('telegramid', PARAM_TEXT);
-            $mform->addElement('html', \html_writer::tag('p', get_string('telegramhelp', 'factor_telegram')));
+            $botname = get_config('factor_telegram', 'telegrambotname');
+            if (strpos($botname, '@') === 0) {
+                $botname = substr($botname, 1);
+            }
+            $mform->addElement('html', \html_writer::tag('p', get_string('telegramhelp', 'factor_telegram', $botname)));
         }
     }
 

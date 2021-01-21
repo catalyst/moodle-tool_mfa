@@ -31,9 +31,11 @@ $string['loginskip'] = "I didn't receive a code";
 $string['setupfactor'] = 'Setup Telegram ID';
 $string['settings:duration'] = 'Validity duration';
 $string['settings:duration_help'] = 'The period of time that the code is valid.';
-$string['settings:telegrambottoken'] = 'Token of Telegram bot';
+$string['settings:telegrambottoken'] = 'Token of your Telegram bot';
 $string['settings:telegrambottoken_help'] = 'Register a new Telegram bot <a href="https://core.telegram.org/bots#6-botfather">as described in the Telegram documentation</a> and enter its token here.';
-$string['telegramhelp'] = 'Enter your Telegram user name or, alternatively, your Telegram user ID.';
+$string['settings:telegrambotname'] = 'Username of your Telegram bot';
+$string['settings:telegrambotname_help'] = 'Enter the username of your bot (e. g., @Moodlebot), as entered during the registration. This name will be displayed to users so that they can set up their own factor.';
+$string['telegramhelp'] = 'First, send a message containing the text "/start" to <a href="https://t.me/{$a}">@{$a}</a>. Afterwards(!), enter your Telegram user name or, alternatively, <a href="https://telegram.me/userinfobot">your Telegram user ID</a>.';
 $string['telegramsent'] = 'A Telegram message containing your verification code was sent to you ({$a}).';
 $string['telegramstring'] = '{$a->code} is your {$a->fullname} one-time security code.
 
