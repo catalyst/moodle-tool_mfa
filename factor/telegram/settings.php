@@ -37,6 +37,6 @@ $settings->add(new admin_setting_configduration('factor_telegram/duration',
     get_string('settings:duration', 'tool_mfa'),
     get_string('settings:duration_help', 'tool_mfa'), 30 * MINSECS, MINSECS));
 
-$settings->add(new admin_setting_configtext('factor_telegram/telegrambottoken',
+$settings->add(new admin_setting_configpasswordunmask('factor_telegram/telegrambottoken',
     new lang_string('settings:telegrambottoken', 'factor_telegram'),
-    new lang_string('settings:telegrambottoken', 'factor_telegram'), '',PARAM_TEXT));
+    new lang_string('settings:telegrambottoken_help', 'factor_telegram'), '',PARAM_TEXT));
