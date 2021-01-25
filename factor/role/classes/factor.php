@@ -84,6 +84,13 @@ class factor extends object_factor_base {
         }
 
         $selected = explode(',', $rolestring);
+        $syscon = \context_system::instance();
+        $specials = get_user_roles_with_special($syscon, $USER->id);
+        // Transform the special roles to the matching format.
+        $specials = array_map(function($el) {
+            return $el->roleid;
+        }, $specials);
+
         foreach ($selected as $id) {
             if ($id === 'admin') {
                 if (is_siteadmin()) {
@@ -91,6 +98,11 @@ class factor extends object_factor_base {
                 }
             } else {
                 if (user_has_role_assignment($USER->id, $id)) {
+                    return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+                }
+
+                // Some system default roles do not have an explicit binding. eg Authenticated user.
+                if (in_array((int) $id, $specials)) {
                     return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
                 }
             }
