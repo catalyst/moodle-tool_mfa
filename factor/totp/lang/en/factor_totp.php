@@ -46,7 +46,12 @@ $string['settings:window'] = 'TOTP verification window';
 $string['settings:window_help'] = 'How long each code is valid for. You can set this to a higher value as a workaround if your users device clocks are often slightly wrong.
     Rounded down to the nearest 30 seconds, which is the time between new generated codes.';
 $string['setupfactor'] = 'TOTP authenticator setup';
-$string['setupfactor:scan'] = 'Enter secret or scan QR code';
+$string['setupfactor:account'] = 'Account:';
+$string['setupfactor:mode'] = 'Mode:';
+$string['setupfactor:mode:timebased'] = 'Time-based';
+$string['setupfactor:scan'] = 'Scan QR code:';
+$string['setupfactor:enter'] = '<b> OR </b> enter details manually:';
+$string['setupfactor:enter_help'] = 'When manually adding the secret code, set the account name in the app to something that will help to identify this code to the platform, such as the site name. Ensure the selected mode is time-based.';
 $string['setupfactor:key'] = 'Secret key: ';
 $string['verificationcode'] = 'Enter your 6 digit verification code';
 $string['verificationcode_help'] = 'Open your authenticator app such as Google Authenticator and look for the 6 digit code which matches this site and username';

@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/form/text.php');
 
 class verification_field extends \MoodleQuickForm_text {
 
-    public function __construct($attributes=null) {
+    public function __construct($attributes=null, $submit = true) {
         global $PAGE;
 
         // Force attributes.
@@ -46,7 +46,9 @@ class verification_field extends \MoodleQuickForm_text {
         $attributes['class'] = 'tool-mfa-verification-code';
 
         // Load JS for element.
-        $PAGE->requires->js_call_amd('tool_mfa/autosubmit_verification_code', 'init', []);
+        if ($submit) {
+            $PAGE->requires->js_call_amd('tool_mfa/autosubmit_verification_code', 'init', []);
+        }
 
         // Force element name to match JS.
         $elementname = 'verificationcode';
