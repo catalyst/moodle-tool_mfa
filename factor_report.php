@@ -27,8 +27,44 @@ require_once($CFG->libdir.'/adminlib.php');
 
 admin_externalpage_setup('factorreport');
 
+$reset = optional_param('reset', null, PARAM_TEXT);
+$userid = optional_param('id', null, PARAM_INT);
+$view = optional_param('view', null, PARAM_TEXT);
+
 $PAGE->set_title(get_string('factorreport', 'tool_mfa'));
 $PAGE->set_heading(get_string('factorreport', 'tool_mfa'));
+$renderer = $PAGE->get_renderer('tool_mfa');
+
+// Handle page actions.
+if (!empty($reset) && confirm_sesskey()) {
+    // Check factor is valid.
+    $factor = \tool_mfa\plugininfo\factor::get_factor($reset);
+    if (!$factor instanceof \tool_mfa\local\factor\object_factor_base) {
+        throw new moodle_exception('error:factornotfound', 'tool_mfa');
+    }
+
+    // One user.
+    if (!empty($userid)) {
+        // Just reset the factor and reload.
+        $DB->delete_records('tool_mfa', ['factor' => $factor->name, 'userid' => $userid]);
+        $stringarr = ['factor' => $factor->name, 'username' => $userid];
+        redirect(new moodle_url($PAGE->url, ['view' => $factor->name]), get_string('resetsuccess', 'tool_mfa', $stringarr));
+    }
+
+    // Bulk action for locked users.
+    $locklevel = (int) get_config('tool_mfa', 'lockout');
+    $sql = "SELECT DISTINCT(userid)
+              FROM {tool_mfa}
+             WHERE factor = ?
+               AND lockcounter >= ?
+               AND revoked = 0";
+    $lockedusers = $DB->get_records_sql($sql, [$factor->name, $locklevel]);
+    $lockedusers = array_map(function($el) {
+        return $el->userid;
+    }, (array)$lockedusers);
+    $SESSION->bulk_users = $lockedusers;
+    redirect(new moodle_url('/admin/user/user_bulk.php'));
+}
 
 // Configure the lookback period for the report.
 $days = optional_param('days', 0, PARAM_INT);
@@ -37,108 +73,6 @@ if ($days === 0) {
 } else {
     $lookback = time() - (DAYSECS * $days);
 }
-
-$factors = \tool_mfa\plugininfo\factor::get_factors();
-
-// Setup 2 arrays, one with internal names, one pretty.
-$columns = array('');
-$displaynames = $columns;
-$colclasses = array('center');
-
-// Force the first 2 columns to custom data.
-$displaynames[] = get_string('totalusers', 'tool_mfa');
-$displaynames[] = get_string('usersauthedinperiod', 'tool_mfa');
-$colclasses[] = 'center';
-$colclasses[] = 'center';
-
-foreach ($factors as $factor) {
-    $columns[] = $factor->name;
-    $displaynames[] = get_string('pluginname', 'factor_'.$factor->name);
-    $colclasses[] = 'right';
-}
-
-// Add total column to the end.
-$displaynames[] = get_string('total');
-$colclasses[] = 'center';
-
-$table = new \html_table();
-$table->head = $displaynames;
-$table->align = $colclasses;
-
-// Manually handle Total users and MFA users.
-$alluserssql = "SELECT auth,
-                       COUNT(id)
-                  FROM {user}
-                 WHERE deleted = 0
-                   AND suspended = 0
-              GROUP BY auth";
-$allusersinfo = $DB->get_records_sql($alluserssql, []);
-
-$mfauserssql = "SELECT auth,
-                       COUNT(DISTINCT tm.userid)
-                  FROM {tool_mfa} tm
-                  JOIN {user} u ON u.id = tm.userid
-                 WHERE tm.lastverified >= ?
-                   AND u.deleted = 0
-                   AND u.suspended = 0
-              GROUP BY u.auth";
-$mfausersinfo = $DB->get_records_sql($mfauserssql, [$lookback]);
-
-$factorsusedsql = "SELECT CONCAT(u.auth, '_', tm.factor) as id,
-                          COUNT(*)
-                     FROM {tool_mfa} tm
-                     JOIN {user} u ON u.id = tm.userid
-                    WHERE tm.lastverified >= ?
-                      AND u.deleted = 0
-                      AND u.suspended = 0
-                      AND (tm.revoked = 0 OR (tm.revoked = 1 AND tm.timemodified > ?))
-                 GROUP BY CONCAT(u.auth, '_', tm.factor)";
-$factorsusedinfo = $DB->get_records_sql($factorsusedsql, [$lookback, $lookback]);
-
-// Auth rows.
-$authtypes = get_enabled_auth_plugins(true);
-foreach ($authtypes as $authtype) {
-    $row = array();
-    $row[] = \html_writer::tag('b', $authtype);
-
-    // Setup the overall totals columns.
-    $row[] = $allusersinfo[$authtype]->count ?? '-';
-    $row[] = $mfausersinfo[$authtype]->count ?? '-';
-
-    // Create a running counter for the total.
-    $authtotal = 0;
-
-    // Now for each factor add the count from the factor query, and increment the running total.
-    foreach ($columns as $column) {
-        if (!empty($column)) {
-            // Get the information from the data key.
-            $key = $authtype . '_' . $column;
-            $count = $factorsusedinfo[$key]->count ?? 0;
-            $authtotal += $count;
-
-            $row[] = $count ? format_float($count, 0) : '-';
-        }
-    }
-
-    // Append the total of all factors to final column.
-    $row[] = $authtotal ? format_float($authtotal, 0) : '-';
-
-    $table->data[] = $row;
-}
-
-// Total row.
-$totals = [0 => html_writer::tag('b', get_string('total'))];
-for ($colcounter = 1; $colcounter < count($row); $colcounter++) {
-    $column = array_column($table->data, $colcounter);
-    // Transform string to int forcibly, remove -.
-    $column = array_map(function($element) {
-        return $element === '-' ? 0 : (int) $element;
-    }, $column);
-    $columnsum = array_sum($column);
-    $colvalue = $columnsum === 0 ? '-' : $columnsum;
-    $totals[$colcounter] = $colvalue;
-}
-$table->data[] = $totals;
 
 // Construct a select to use for viewing time periods.
 $selectarr = [
@@ -152,9 +86,34 @@ $selectarr = [
 ];
 $select = new single_select($PAGE->url, 'days', $selectarr);
 
-echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('factorreport', 'tool_mfa'));
-echo html_writer::tag('p', get_string('selectperiod', 'tool_mfa'));
-echo $OUTPUT->render($select);
-echo html_writer::table($table);
+echo $renderer->header();
+
+if (!empty($view)) {
+    // View locked users for a particular factor.
+    $factor = \tool_mfa\plugininfo\factor::get_factor($view);
+    if (!$factor instanceof \tool_mfa\local\factor\object_factor_base) {
+        throw new moodle_exception('error:factornotfound', 'tool_mfa');
+    }
+
+    $backbutton = new single_button(new moodle_url($PAGE->url), get_string('back'));
+    echo $renderer->heading(get_string('lockedusersforfactor', 'tool_mfa', $factor->get_display_name()));
+    echo \html_writer::tag('p', $renderer->factor_locked_users_table($factor));
+    echo $renderer->render($backbutton);
+
+} else {
+    echo $renderer->heading(get_string('factorreport', 'tool_mfa'));
+
+    // Regular page content.
+    echo html_writer::tag('p', get_string('selectperiod', 'tool_mfa'));
+    echo $renderer->render($select);
+
+    // Render the factors in use table.
+    echo html_writer::tag('p', $renderer->factors_in_use_table($lookback));
+
+    echo $renderer->heading(get_string('lockedusersforallfactors', 'tool_mfa'));
+
+    // Now output a locked factors table.
+    echo html_writer::tag('p', $renderer->factors_locked_table());
+}
+
 echo $OUTPUT->footer();
