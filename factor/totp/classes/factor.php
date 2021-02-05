@@ -122,7 +122,7 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function setup_factor_form_definition_after_data($mform) {
-        global $OUTPUT;
+        global $OUTPUT, $SITE, $USER;
 
         $mform->addElement('html', $OUTPUT->heading(get_string('setupfactor', 'factor_totp'), 2));
 
@@ -136,18 +136,29 @@ class factor extends object_factor_base {
         $secret = $secretfield->getValue();
         $qrcode = $this->generate_qrcode($secret);
 
+        $html = \html_writer::tag('p', $qrcode);
+        $mform->addElement('static', 'scan', get_string('setupfactor:scan', 'factor_totp'), $html);
+
         $secret = wordwrap($secret, 4, ' ', true) . '</code>';
         $secret = \html_writer::tag('code', $secret);
 
-        $html = '';
-        $html .= \html_writer::tag('p', get_string('setupfactor:key', 'factor_totp').$secret);
-        $html .= $qrcode;
+        $manualtable = new \html_table();
+        $manualtable->id = 'manualattributes';
+        $manualtable->attributes['class'] = 'generaltable table table-bordered table-sm w-auto';
+        $manualtable->attributes['style'] = 'width: auto;';
+        $manualtable->data = [
+            [get_string('setupfactor:key', 'factor_totp'), $secret],
+            [get_string('setupfactor:account', 'factor_totp'), "$SITE->fullname ($USER->username)"],
+            [get_string('setupfactor:mode', 'factor_totp'), get_string('setupfactor:mode:timebased', 'factor_totp')]
+        ];
 
-        $mform->addElement('static', 'description', get_string('setupfactor:scan', 'factor_totp'), $html);
+        $html = $OUTPUT->render($manualtable);
+        $mform->addElement('static', 'enter', get_string('setupfactor:enter', 'factor_totp'), $html);
+        $mform->addHelpButton('enter', 'setupfactor:enter', 'factor_totp');
 
-        $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'));
+        $mform->addElement(new \tool_mfa\local\form\verification_field(null, false));
+        $mform->setType('verificationcode', PARAM_ALPHANUM);
         $mform->addHelpButton('verificationcode', 'verificationcode', 'factor_totp');
-        $mform->setType("verificationcode", PARAM_INT);
         $mform->addRule('verificationcode', get_string('required'), 'required', null, 'client');
 
         return $mform;
@@ -176,13 +187,9 @@ class factor extends object_factor_base {
      */
     public function login_form_definition($mform) {
 
-        $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_totp'), [
-            'autofocus' => 'autofocus',
-            'inputmode' => 'numeric',
-            'pattern'   => '[0-9]*',
-            'autocomplete' => 'one-time-code',
-        ]);
-        $mform->setType("verificationcode", PARAM_ALPHANUM);
+        $mform->disable_form_change_checker();
+        $mform->addElement(new \tool_mfa\local\form\verification_field());
+        $mform->setType('verificationcode', PARAM_ALPHANUM);
         $mform->addHelpButton('verificationcode', 'verificationcode', 'factor_totp');
 
         return $mform;
