@@ -224,7 +224,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
         $return = $this->output->notification($notification, 'notifyerror');
 
         // Logout button.
-        $url = new \moodle_url('\admin\tool\mfa\auth.php', ['logout' => 1]);
+        $url = new \moodle_url('/admin/tool/mfa/auth.php', ['logout' => 1]);
         $btn = new \single_button($url, get_string('logout'), 'post', true);
         $return .= $this->render($btn);
 
