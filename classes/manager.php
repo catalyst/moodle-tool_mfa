@@ -399,7 +399,7 @@ class manager {
             return self::NO_REDIRECT;
         }
 
-        // Dont redirect logo images from pluginfile.php (for example: logo in header)
+        // Dont redirect logo images from pluginfile.php (for example: logo in header).
         $authurl = new \moodle_url('/pluginfile.php/1/core_admin/logocompact/');
         if ($url->compare($authurl)) {
             return self::NO_REDIRECT;

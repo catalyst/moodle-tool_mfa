@@ -80,13 +80,10 @@ class factor extends object_factor_base {
         $safetypes = get_config('factor_auth', 'goodauth');
         if (strlen($safetypes) != 0) {
             $safetypes = explode(',', $safetypes);
-            $authtypes = get_enabled_auth_plugins(true);
 
             // Check all safetypes against user auth.
-            foreach ($safetypes as $type) {
-                if ($authtypes[$type] == $USER->auth) {
-                    return \tool_mfa\plugininfo\factor::STATE_PASS;
-                }
+            if (in_array($USER->auth, $safetypes, true)) {
+                return \tool_mfa\plugininfo\factor::STATE_PASS;
             }
             return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
         } else {
@@ -112,17 +109,7 @@ class factor extends object_factor_base {
      */
     public function get_summary_condition() {
         $safetypes = get_config('factor_auth', 'goodauth');
-        $authtypes = get_enabled_auth_plugins(true);
 
-        $auths = [];
-        if (strlen($safetypes) > 0) {
-            $safetypes = explode(',', $safetypes);
-            foreach ($safetypes as $type) {
-                $auths[] = $authtypes[$type];
-            }
-        }
-        $string = implode(', ', $auths);
-
-        return get_string('summarycondition', 'factor_'.$this->name, $string);
+        return get_string('summarycondition', 'factor_'.$this->name, $safetypes);
     }
 }
