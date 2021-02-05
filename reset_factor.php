@@ -53,7 +53,7 @@ if ($form->is_cancelled()) {
     // Setup user array for bulk action.
     $users = $bulk ? $SESSION->bulk_users : [$fromform->user];
 
-    foreach($users as $user) {
+    foreach ($users as $user) {
         if (!$user instanceof stdClass) {
             $user = \core_user::get_user($user);
         }

@@ -158,7 +158,7 @@ This factor was implemented as a proof of concept of a factor which can return a
 
 ### User filtering factors
 
-These are pseudo factors which make it easier to setup policies around who MFA should apply to or not. 
+These are pseudo factors which make it easier to setup policies around who MFA should apply to or not.
 
 #### Auth Type
 
