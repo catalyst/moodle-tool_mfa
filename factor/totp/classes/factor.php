@@ -132,6 +132,7 @@ class factor extends object_factor_base {
         $mform->setType("devicename", PARAM_TEXT);
         $mform->addRule('devicename', get_string('required'), 'required', null, 'client');
 
+        // Scan.
         $secretfield = $mform->getElement('secret');
         $secret = $secretfield->getValue();
         $qrcode = $this->generate_qrcode($secret);
@@ -139,6 +140,13 @@ class factor extends object_factor_base {
         $html = \html_writer::tag('p', $qrcode);
         $mform->addElement('static', 'scan', get_string('setupfactor:scan', 'factor_totp'), $html);
 
+        // Link.
+        $uri = $this->generate_totp_uri($secret);
+        $html = $OUTPUT->action_link($uri, get_string('setupfactor:linklabel', 'factor_totp'));
+        $mform->addElement('static', 'link', get_string('setupfactor:link', 'factor_totp'), $html);
+        $mform->addHelpButton('link', 'setupfactor:link', 'factor_totp');
+
+        // Enter manually.
         $secret = wordwrap($secret, 4, ' ', true) . '</code>';
         $secret = \html_writer::tag('code', $secret);
 
@@ -152,7 +160,7 @@ class factor extends object_factor_base {
             [get_string('setupfactor:mode', 'factor_totp'), get_string('setupfactor:mode:timebased', 'factor_totp')]
         ];
 
-        $html = $OUTPUT->render($manualtable);
+        $html = \html_writer::table($manualtable);
         $mform->addElement('static', 'enter', get_string('setupfactor:enter', 'factor_totp'), $html);
         $mform->addHelpButton('enter', 'setupfactor:enter', 'factor_totp');
 
