@@ -34,6 +34,12 @@ $settings->add(new admin_setting_configtext('factor_auth/weight',
     new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
 
 $authtypes = get_enabled_auth_plugins(true);
+$authselect = [];
+foreach ($authtypes as $type) {
+    $auth = get_auth_plugin($type);
+    $authselect[$type] = $auth->get_title();
+}
+
 $settings->add(new admin_setting_configmulticheckbox('factor_auth/goodauth',
     get_string('settings:goodauth', 'factor_auth'),
-    get_string('settings:goodauth_help', 'factor_auth'), array(), $authtypes));
+    get_string('settings:goodauth_help', 'factor_auth'), array(), $authselect));

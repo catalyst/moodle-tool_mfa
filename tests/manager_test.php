@@ -64,7 +64,7 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
 
         // Now setup a no input factor, and check that weight is automatically added without input.
         $this->set_factor_state('auth', 1, 100);
-        set_config('goodauth', '0', 'factor_auth');
+        set_config('goodauth', 'manual', 'factor_auth');
 
         $this->assertEquals(300, \tool_mfa\manager::get_total_weight());
     }
@@ -81,7 +81,7 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
 
         // Now add a no input factor.
         $this->set_factor_state('auth', 1, 100);
-        set_config('goodauth', '0', 'factor_auth');
+        set_config('goodauth', 'manual', 'factor_auth');
 
         // Check state is now passing.
         $this->assertEquals(\tool_mfa\manager::get_status(), \tool_mfa\plugininfo\factor::STATE_PASS);
@@ -114,7 +114,7 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
 
         // Setup a no input factor.
         $this->set_factor_state('auth', 1, 100);
-        set_config('goodauth', '0', 'factor_auth');
+        set_config('goodauth', 'manual', 'factor_auth');
 
         // Check that is enough to pass.
         $this->assertEquals(\tool_mfa\manager::passed_enough_factors(), true);
