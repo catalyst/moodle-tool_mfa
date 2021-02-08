@@ -32,7 +32,10 @@ function xmldb_factor_auth_upgrade($oldversion) {
         $goodauth = explode(',', get_config('factor_auth', 'goodauth'));
         $newauths = [];
         foreach ($goodauth as $auth) {
-            $newauths[] = $authtypes[$auth];
+            // Check if index exists before access. If not, ignore, settings were out of sync.
+            if (array_key_exists($auth, $authtypes)) {
+                $newauths[] = $authtypes[$auth];
+            }
         }
         set_config('goodauth', implode(',', $newauths), 'factor_auth');
 
