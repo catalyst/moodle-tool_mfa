@@ -47,6 +47,9 @@ $string['settings:window_help'] = 'How long each code is valid for. You can set 
     Rounded down to the nearest 30 seconds, which is the time between new generated codes.';
 $string['setupfactor'] = 'TOTP authenticator setup';
 $string['setupfactor:account'] = 'Account:';
+$string['setupfactor:link'] = '<b> OR </b> open mobile app:';
+$string['setupfactor:link_help'] = 'If you are on a mobile device and already have an authenticator app installed this link may work. Note that using TOTP on the same device as you login on can weaken the benefits of MFA.';
+$string['setupfactor:linklabel'] = 'Open app already installed on this device';
 $string['setupfactor:mode'] = 'Mode:';
 $string['setupfactor:mode:timebased'] = 'Time-based';
 $string['setupfactor:scan'] = 'Scan QR code:';
