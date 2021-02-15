@@ -148,7 +148,7 @@ class factor extends object_factor_base {
 
             $data = array('url' => $link, 'time' => $time);
             $message = get_string('setupfactors', 'factor_grace', $data);
-            \core\notification::info($message);
+            \core\notification::error($message);
         }
     }
 
