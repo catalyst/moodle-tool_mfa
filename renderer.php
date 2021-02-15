@@ -342,7 +342,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
         }
         $table->data[] = $totals;
 
-        return $this->render($table);
+        return \html_writer::table($table);
     }
 
     /**
@@ -396,7 +396,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
             ];
         }
 
-        return $this->render($table);
+        return \html_writer::table($table);
     }
 
     /**
@@ -473,6 +473,6 @@ class tool_mfa_renderer extends plugin_renderer_base {
             ];
         }
 
-        return $this->render($table);
+        return \html_writer::table($table);
     }
 }
