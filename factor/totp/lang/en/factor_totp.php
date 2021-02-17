@@ -42,6 +42,8 @@ $string['pluginname'] = 'Authenticator app';
 $string['privacy:metadata'] = 'The TOTP factor plugin does not store any personal data';
 $string['settings:secretlength'] = 'TOTP secret key length';
 $string['settings:secretlength_help'] = 'Generated TOTP secret key string length';
+$string['settings:totplink'] = 'Show mobile app setup link';
+$string['settings:totplink_help'] = 'If enabled the user will see a 3rd setup option with a direct otpauth:// link';
 $string['settings:window'] = 'TOTP verification window';
 $string['settings:window_help'] = 'How long each code is valid for. You can set this to a higher value as a workaround if your users device clocks are often slightly wrong.
     Rounded down to the nearest 30 seconds, which is the time between new generated codes.';

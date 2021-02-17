@@ -26,8 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version      = 2021020300;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->release      = 2021020300;
+$plugin->version      = 2021021700;      // The current plugin version (Date: YYYYMMDDXX).
+$plugin->release      = 2021021700;
 $plugin->requires     = 2017051500.00;   // Support back to 3.3 - Totara 12. Patches required.
 $plugin->component    = 'factor_totp';
 $plugin->maturity     = MATURITY_STABLE;

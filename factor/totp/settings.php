@@ -37,3 +37,7 @@ $settings->add(new admin_setting_configtext('factor_totp/weight',
 $settings->add(new admin_setting_configduration('factor_totp/window',
     new lang_string('settings:window', 'factor_totp'),
     new lang_string('settings:window_help', 'factor_totp'), 30));
+
+$settings->add(new admin_setting_configcheckbox('factor_totp/totplink',
+    new lang_string('settings:totplink', 'factor_totp'),
+    new lang_string('settings:totplink_help', 'factor_totp'), 1));

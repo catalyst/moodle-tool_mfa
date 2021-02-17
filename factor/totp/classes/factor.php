@@ -141,10 +141,12 @@ class factor extends object_factor_base {
         $mform->addElement('static', 'scan', get_string('setupfactor:scan', 'factor_totp'), $html);
 
         // Link.
-        $uri = $this->generate_totp_uri($secret);
-        $html = $OUTPUT->action_link($uri, get_string('setupfactor:linklabel', 'factor_totp'));
-        $mform->addElement('static', 'link', get_string('setupfactor:link', 'factor_totp'), $html);
-        $mform->addHelpButton('link', 'setupfactor:link', 'factor_totp');
+        if (get_config('factor_totp', 'totplink')) {
+            $uri = $this->generate_totp_uri($secret);
+            $html = $OUTPUT->action_link($uri, get_string('setupfactor:linklabel', 'factor_totp'));
+            $mform->addElement('static', 'link', get_string('setupfactor:link', 'factor_totp'), $html);
+            $mform->addHelpButton('link', 'setupfactor:link', 'factor_totp');
+        }
 
         // Enter manually.
         $secret = wordwrap($secret, 4, ' ', true) . '</code>';
