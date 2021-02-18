@@ -368,6 +368,7 @@ class manager {
             }
 
             // Also check for a global reset.
+            // TODO: Delete this in a ferw months, the reset all preference is no longer set.
             $allfactor = get_user_preferences('tool_mfa_reset_all', false);
             if ($allfactor) {
                 $url = new \moodle_url('/admin/tool/mfa/user_preferences.php');
