@@ -186,6 +186,9 @@ class manager {
         $renderer = $PAGE->get_renderer('tool_mfa');
 
         echo $renderer->header();
+        if (get_config('tool_mfa', 'debugmode')) {
+            self::display_debug_notification();
+        }
         echo $renderer->not_enough_factors();
         echo $renderer->footer();
         // Emit an event for failure, then logout.
