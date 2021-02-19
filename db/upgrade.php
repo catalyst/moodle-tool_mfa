@@ -132,6 +132,5 @@ function xmldb_tool_mfa_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2021021900, 'tool', 'mfa');
     }
 
-
     return true;
 }

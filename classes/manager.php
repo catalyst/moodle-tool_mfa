@@ -26,7 +26,6 @@
 namespace tool_mfa;
 
 use Exception;
-use tool_webanalytics\record;
 
 defined('MOODLE_INTERNAL') || die();
 

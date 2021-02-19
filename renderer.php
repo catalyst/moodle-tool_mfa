@@ -245,13 +245,13 @@ class tool_mfa_renderer extends plugin_renderer_base {
         // Setup 2 arrays, one with internal names, one pretty.
         $columns = array('');
         $displaynames = $columns;
-        $colclasses = array('center');
+        $colclasses = array('center', 'center', 'center', 'center', 'center');
 
-        // Force the first 2 columns to custom data.
+        // Force the first 4 columns to custom data.
         $displaynames[] = get_string('totalusers', 'tool_mfa');
         $displaynames[] = get_string('usersauthedinperiod', 'tool_mfa');
-        $colclasses[] = 'center';
-        $colclasses[] = 'center';
+        $displaynames[] = get_string('nonauthusers', 'tool_mfa');
+        $displaynames[] = get_string('nologinusers', 'tool_mfa');
 
         foreach ($factors as $factor) {
             $columns[] = $factor->name;
@@ -266,6 +266,8 @@ class tool_mfa_renderer extends plugin_renderer_base {
         $table = new \html_table();
         $table->head = $displaynames;
         $table->align = $colclasses;
+        $table->attributes['class'] = 'generaltable table table-bordered w-auto';
+        $table->attributes['style'] = 'width: auto; min-width: 50%; margin-bottom: 0;';
 
         // Manually handle Total users and MFA users.
         $alluserssql = "SELECT auth,
@@ -275,6 +277,23 @@ class tool_mfa_renderer extends plugin_renderer_base {
                         AND suspended = 0
                     GROUP BY auth";
         $allusersinfo = $DB->get_records_sql($alluserssql, []);
+
+        $noncompletesql = "SELECT u.auth, COUNT(u.id)
+                             FROM {user} u
+                        LEFT JOIN {tool_mfa_auth} mfaa ON u.id = mfaa.userid
+                            WHERE u.lastlogin >= ?
+                              AND (mfaa.lastverified < ?
+                               OR mfaa.lastverified IS NULL)
+                         GROUP BY u.auth";
+        $noncompleteinfo = $DB->get_records_sql($noncompletesql, [$lookback, $lookback]);
+
+        $nologinsql = "SELECT auth, COUNT(id)
+                         FROM {user}
+                        WHERE deleted = 0
+                          AND suspended = 0
+                          AND lastlogin < ?
+                     GROUP BY auth";
+        $nologininfo = $DB->get_records_sql($nologinsql, [$lookback]);
 
         $mfauserssql = "SELECT auth,
                             COUNT(DISTINCT tm.userid)
@@ -306,6 +325,8 @@ class tool_mfa_renderer extends plugin_renderer_base {
             // Setup the overall totals columns.
             $row[] = $allusersinfo[$authtype]->count ?? '-';
             $row[] = $mfausersinfo[$authtype]->count ?? '-';
+            $row[] = $noncompleteinfo[$authtype]->count ?? '-';
+            $row[] = $nologininfo[$authtype]->count ?? '-';
 
             // Create a running counter for the total.
             $authtotal = 0;
@@ -342,7 +363,8 @@ class tool_mfa_renderer extends plugin_renderer_base {
         }
         $table->data[] = $totals;
 
-        return \html_writer::table($table);
+        // Wrap in a div to cleanly scroll.
+        return \html_writer::div(\html_writer::table($table), '', ['style' => 'overflow:auto;']);
     }
 
     /**
