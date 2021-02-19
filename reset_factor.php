@@ -57,16 +57,17 @@ if ($form->is_cancelled()) {
         if (!$user instanceof stdClass) {
             $user = \core_user::get_user($user);
         }
-        if ($factor === 'all') {
-            $DB->delete_records('tool_mfa', ['userid' => $user->id]);
-        } else {
-            $factor->delete_factor_for_user($user);
-        }
 
         // Add a user preference, to display a notification to the user that their factor was reset.
-        $factorname = $factor === 'all' ? 'all' : $factor->name;
-        $prefname = 'tool_mfa_reset_' . $factorname;
-        set_user_preference($prefname, true, $user);
+        // This should only be done if the factor is active for the user, and has input.
+        $factors = $factor === 'all' ? \tool_mfa\plugininfo\factor::get_factors() : [$factor];
+        foreach ($factors as $factor) {
+            if (count($factor->get_active_user_factors($user)) > 0 && $factor->has_setup()) {
+                $factor->delete_factor_for_user($user);
+                $prefname = 'tool_mfa_reset_' . $factor->name;
+                set_user_preference($prefname, true, $user);
+            }
+        }
 
         // If we are just doing 1 user.
         if (!$bulk) {
