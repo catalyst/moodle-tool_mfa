@@ -75,6 +75,15 @@ class provider implements
             'privacy:metadata:tool_mfa_secrets'
         );
 
+        $collection->add_database_table(
+            'tool_mfa_auth',
+            [
+                'userid' => 'privacy:metadata:tool_mfa_auth:userid',
+                'lastverified' => 'privacy:metadata:tool_mfa_auth:lastverified',
+            ],
+            'privacy:metadata:tool_mfa_auth'
+        );
+
         return $collection;
     }
 
@@ -142,6 +151,13 @@ class provider implements
                     }
                 }
 
+                // Also get lastverified auth time for user, and add.
+                $lastverifiedauth = $DB->get_field('tool_mfa_auth', 'lastverified', ['userid' => $userid]);
+                if (!empty($lastverifiedauth)) {
+                    $lastverifiedauth = \core_privacy\local\request\transform::datetime($lastverifiedauth);
+                    $parentclass['lastverifiedauth'] = $lastverifiedauth;
+                }
+
                 writer::with_context($context)->export_data(
                     [get_string('privacy:metadata:tool_mfa', 'tool_mfa')],
                     (object) $parentclass);
@@ -160,6 +176,7 @@ class provider implements
         if ($context->contextlevel == CONTEXT_SYSTEM) {
             $DB->delete_records('tool_mfa', []);
             $DB->delete_records('tool_mfa_secrets', []);
+            $DB->delete_records('tool_mfa_auth', []);
         }
     }
 
@@ -176,6 +193,7 @@ class provider implements
             if ($context->contextlevel == CONTEXT_SYSTEM) {
                 $DB->delete_records('tool_mfa', ['userid' => $userid]);
                 $DB->delete_records('tool_mfa_secrets', ['userid' => $userid]);
+                $DB->delete_records('tool_mfa_auth', ['userid' => $userid]);
             }
         }
     }

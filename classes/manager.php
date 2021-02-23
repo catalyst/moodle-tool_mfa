@@ -329,6 +329,9 @@ class manager {
             $event = \tool_mfa\event\user_passed_mfa::user_passed_mfa_event($USER);
             $event->trigger();
 
+            // Add/update record in DB for users last mfa auth.
+            self::update_pass_time();
+
             // Unset session vars during mfa auth.
             unset($SESSION->mfa_redir_referer);
             unset($SESSION->mfa_redir_count);
@@ -379,6 +382,24 @@ class manager {
                 \core\notification::warning(get_string('factorresetall', 'tool_mfa', $link));
                 unset_user_preference('tool_mfa_reset_all');
             }
+        }
+    }
+
+    /**
+     * Inserts or updates user's last MFA pass time in DB.
+     * This should only be called from set_pass_state.
+     *
+     * @return void
+     */
+    private static function update_pass_time() {
+        global $DB, $USER;
+
+        $exists = $DB->record_exists('tool_mfa_auth', ['userid' => $USER->id]);
+
+        if ($exists) {
+            $DB->set_field('tool_mfa_auth', 'lastverified', time(), ['userid' => $USER->id]);
+        } else {
+            $DB->insert_record('tool_mfa_auth', ['userid' => $USER->id, 'lastverified' => time()]);
         }
     }
 
