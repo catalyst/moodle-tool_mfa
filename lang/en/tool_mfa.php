@@ -89,6 +89,7 @@ $string['privacy:metadata:tool_mfa_secrets:userid'] = 'The user this secret is a
 $string['privacy:metadata:tool_mfa_secrets:factor'] = 'The factor this secret is associated with.';
 $string['privacy:metadata:tool_mfa_secrets:secret'] = 'The secret security code.';
 $string['privacy:metadata:tool_mfa_secrets:sessionid'] = 'The sessionid this secret is associated with.';
+$string['privacy:metadata:tool_mfa_auth'] = 'This database table stores the last time a successful MFA auth was registered for a user id.';
 $string['privacy:metadata:tool_mfa_auth:userid'] = 'The user this timestamp is associated with.';
 $string['privacy:metadata:tool_mfa_auth:lastverified'] = 'Time user was last authenticated with';
 $string['revoke'] = 'Revoke';
