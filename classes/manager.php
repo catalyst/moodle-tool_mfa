@@ -531,11 +531,20 @@ class manager {
      * @return array
      */
     public static function get_factor_no_redirect_urls() {
+        global $CFG;
         $factors = \tool_mfa\plugininfo\factor::get_factors();
         $urls = array();
         foreach ($factors as $factor) {
             $urls = array_merge($urls, $factor->get_no_redirect_urls());
         }
+
+        // Allow forced redirection exclusions.
+        if (isset($CFG->tool_mfa_redir_exclusions)) {
+            foreach($CFG->tool_mfa_redir_exclusions as $exclusion) {
+                $urls[] = new \moodle_url($exclusion);
+            }
+        }
+
         return $urls;
     }
 
