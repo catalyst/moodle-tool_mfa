@@ -494,7 +494,7 @@ class manager {
         }
 
         // Check factor defined safe urls.
-        $factorurls = self::get_factor_no_redirect_urls();
+        $factorurls = self::get_no_redirect_urls();
         foreach ($factorurls as $factorurl) {
             if ($factorurl->compare($url)) {
                 return self::NO_REDIRECT;
@@ -530,12 +530,21 @@ class manager {
      *
      * @return array
      */
-    public static function get_factor_no_redirect_urls() {
+    public static function get_no_redirect_urls() {
+        global $CFG;
         $factors = \tool_mfa\plugininfo\factor::get_factors();
         $urls = array();
         foreach ($factors as $factor) {
             $urls = array_merge($urls, $factor->get_no_redirect_urls());
         }
+
+        // Allow forced redirection exclusions.
+        if ($exclusions = get_config('tool_mfa', 'redir_exclusions')) {
+            foreach(explode("\n", $exclusions) as $exclusion) {
+                $urls[] = new \moodle_url($exclusion);
+            }
+        }
+
         return $urls;
     }
 
