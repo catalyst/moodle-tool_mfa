@@ -539,8 +539,8 @@ class manager {
         }
 
         // Allow forced redirection exclusions.
-        if (isset($CFG->tool_mfa_redir_exclusions)) {
-            foreach($CFG->tool_mfa_redir_exclusions as $exclusion) {
+        if ($exclusions = get_config('tool_mfa', 'redir_exclusions')) {
+            foreach(explode("\n", $exclusions) as $exclusion) {
                 $urls[] = new \moodle_url($exclusion);
             }
         }

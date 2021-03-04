@@ -50,6 +50,10 @@ if ($hassiteconfig) {
     $description = new lang_string('settings:debugmode_help', 'tool_mfa');
     $settings->add(new admin_setting_configcheckbox('tool_mfa/debugmode', $name, $description, false));
 
+    $name = new lang_string('settings:redir_exclusions', 'tool_mfa');
+    $description = new lang_string('settings:redir_exclusions_help', 'tool_mfa');
+    $settings->add(new admin_setting_configtextarea('tool_mfa/redir_exclusions', $name, $description, ''));
+
     $ADMIN->add('toolmfafolder', $settings);
 
     foreach (core_plugin_manager::instance()->get_plugins_of_type('factor') as $plugin) {
