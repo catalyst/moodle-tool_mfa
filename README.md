@@ -19,6 +19,7 @@
     * [Non-admin](#non-admin)
     * [User capability](#user-capability)
     * [Role factor](#role-factor)
+    * [Login banner factor](#login-banner-factor)
   * [Login flow factors](#login-flow-factors)
     * [Grace mode](#grace-mode)
     * [No-setup factor](#no-setup-factor)
@@ -175,6 +176,10 @@ This factor checks whether a user has a capability, in the system context. If th
 #### Role Factor
 
 This factor checks whether a user has any chosen roles assigned in any context, and does not provide points if so. This can be used to ensure the selected roles must use a higher level of authentication such as TOTP, while letting non-specified roles authenticate seamlessly. This factor should generally have high privilege roles such as Manager and Administrator selected to enforce higher account security for these groups.
+
+#### Login banner Factor
+
+This factor allows for display of a policy which forces users to read and accept a policy on every login. This is more flexible than the Moodle policy tool, which is built for one time acceptance. To set the message, a custom language pack should be used to override factor_loginbanner/policytext. This means that it can be replaced with an arbitrary set of HTML to display to the users. This factor should be used with a weight of 0 if you wish it to be an additional layer over the top of the MFA flow, without contributing any weight.
 
 ### Login flow factors
 

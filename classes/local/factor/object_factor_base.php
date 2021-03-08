@@ -519,4 +519,13 @@ abstract class object_factor_base implements object_factor {
             return $lockthreshold - $this->lockcounter;
         }
     }
+
+    /**
+     * Process a cancel input from a user.
+     *
+     * @return void
+     */
+    public function process_cancel_action() {
+        $this->set_state(\tool_mfa\plugininfo\factor::STATE_NEUTRAL);
+    }
 }

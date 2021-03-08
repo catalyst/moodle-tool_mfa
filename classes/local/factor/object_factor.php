@@ -253,7 +253,7 @@ interface object_factor {
      */
     public function check_combination($combination);
 
-    /*
+    /**
      * Gets the string for setup button on preferences page.
      *
      * @return string the string to display on the button.
@@ -266,4 +266,11 @@ interface object_factor {
      * @param stdClass $user the user to delete for.
      */
     public function delete_factor_for_user($user);
+
+    /**
+     * Process a cancel action from a user.
+     *
+     * @return void
+     */
+    public function process_cancel_action();
 }

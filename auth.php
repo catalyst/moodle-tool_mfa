@@ -70,7 +70,7 @@ if ($form->is_submitted()) {
 
     // Set state from user actions.
     if ($form->is_cancelled()) {
-        $factor->set_state(\tool_mfa\plugininfo\factor::STATE_NEUTRAL);
+        $factor->process_cancel_action();
         // Move to next factor.
         \tool_mfa\manager::resolve_mfa_status(true);
     } else {
