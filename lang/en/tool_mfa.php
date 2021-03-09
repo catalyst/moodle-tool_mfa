@@ -54,6 +54,7 @@ $string['event:usersetupfactor'] = 'Factor setup';
 $string['event:userdeletedfactor'] = 'Factor Deleted';
 $string['event:userfailedmfa'] = 'User failed MFA authentication';
 $string['event:faillockout'] = 'MFA Authentication failed due to too many attempts.';
+$string['event:failnotenoughfactors'] = 'MFA Authentication failed due to not enough satisfied factors.';
 $string['event:failfactor'] = 'MFA Authentication failed due to a failed factor.';
 $string['factor'] = 'Factor';
 $string['fallback'] = 'Fallback factor';

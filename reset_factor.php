@@ -62,8 +62,8 @@ if ($form->is_cancelled()) {
         // This should only be done if the factor is active for the user, and has input.
         $factors = $factor === 'all' ? \tool_mfa\plugininfo\factor::get_factors() : [$factor];
         foreach ($factors as $factor) {
+            $factor->delete_factor_for_user($user);
             if (count($factor->get_active_user_factors($user)) > 0 && $factor->has_setup()) {
-                $factor->delete_factor_for_user($user);
                 $prefname = 'tool_mfa_reset_' . $factor->name;
                 set_user_preference($prefname, true, $user);
             }
