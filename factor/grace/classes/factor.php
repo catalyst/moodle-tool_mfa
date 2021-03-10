@@ -91,9 +91,15 @@ class factor extends object_factor_base {
 
         // First check if user has any other input or setup factors active.
         $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        $total = 0;
         foreach ($factors as $factor) {
             if ($factor->has_input() || $factor->has_setup()) {
-                return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+                $total += $factor->get_weight();
+                // If we have hit 100 total, then we know it is possible to auth with the current setup.
+                // Gracemode should no longer give points.
+                if ($total >= 100) {
+                    return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+                }
             }
         }
 
