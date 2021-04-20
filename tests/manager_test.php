@@ -173,17 +173,22 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
         global $CFG;
         $this->resetAfterTest(true);
         $user = $this->getDataGenerator()->create_user();
-        $this->setUser($user);
 
         $badurl = new \moodle_url('/');
 
-        // Maintenance mode.
+        // Upgrade checks.
+        $this->setAdminUser();
         $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::REDIRECT);
-        $CFG->maintenance_enabled = 1;
+        $oldhash = $CFG->allversionshash;
+        $CFG->allversionshash = 'abc';
         $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::NO_REDIRECT);
-        $CFG->maintenance_enabled = 0;
+        $CFG->allversionshash = $oldhash;
+        $upgradesettings = new \moodle_url('/admin/upgradesettings.php');
+        $this->assertEquals(\tool_mfa\manager::should_require_mfa($upgradesettings, false), \tool_mfa\manager::NO_REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::REDIRECT);
 
         // Admin not setup.
+        $this->setUser($user);
         $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::REDIRECT);
         $CFG->adminsetuppending = 1;
         $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::NO_REDIRECT);
