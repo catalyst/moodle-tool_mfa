@@ -419,9 +419,19 @@ class manager {
             return self::NO_REDIRECT;
         }
 
-        // Soft maintenance mode.
-        if (!empty($CFG->maintenance_enabled)) {
-            return self::NO_REDIRECT;
+        // Checks for upgrades pending.
+        if (is_siteadmin()) {
+            // We should only allow an upgrade from the frontend to complete.
+            // After that is completed, only the settings shouldn't redirect.
+            // Everything else should be safe to enforce MFA.
+            if (moodle_needs_upgrading()) {
+                return self::NO_REDIRECT;
+            }
+            // An upgrade isn't complete if there are settings that must be saved.
+            $upgradesettings = new \moodle_url('/admin/upgradesettings.php');
+            if ($url->compare($upgradesettings, URL_MATCH_BASE)) {
+                return self::NO_REDIRECT;
+            }
         }
 
         // Dont redirect logo images from pluginfile.php (for example: logo in header).
