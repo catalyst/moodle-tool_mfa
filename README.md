@@ -24,6 +24,7 @@
     * [Grace mode](#grace-mode)
     * [No-setup factor](#no-setup-factor)
     * [Other factors](#other-factors)
+  * [Moodle Mobile app](#moodle-mobile-app)
 * [Points and examples](#points-and-examples)
 * [Debugging](#debugging)
 * [Support](#support)
@@ -198,6 +199,12 @@ This pseudo factor is designed to allow people to pass only if they have not set
 In theory you could impement almost anything as a factor, such as time of day, retina scans, or push notificatons. For a list of potential factor ideas see:
 
 https://en.wikipedia.org/wiki/Multi-factor_authentication#Authentication_factors
+
+### Moodle Mobile App
+
+By default the Moodle Mobile app handles the authentication of users directly, which circumvents the steps that tool_mfa adds.
+
+To enforce MFA for the app as well you must set the tool_mobile 'typeoflogin' admin setting to be 'Via a browser window'.
 
 ## Points and examples
 
