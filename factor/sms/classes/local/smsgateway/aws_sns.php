@@ -61,8 +61,8 @@ class aws_sns implements gateway_interface {
 
         // Setup the sender information.
         $senderid = $SITE->shortname;
-        // Remove spaces from ID.
-        $senderid = str_replace(' ', '', (trim($senderid)));
+        // Remove spaces and non-alphanumeric characters from ID.
+        $senderid = preg_replace("/[^A-Za-z0-9]/", '', trim($senderid));
         // We have to truncate the senderID to 11 chars.
         $senderid = substr($senderid, 0, 11);
 
