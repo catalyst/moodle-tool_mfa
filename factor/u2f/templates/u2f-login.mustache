@@ -1,0 +1,56 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template factor_u2f/u2f-login
+
+    Example context (json):
+    {
+
+    }
+}}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('id_submitbutton').style.display = 'none';
+        require(['core/templates'], function (templates) {
+            var req = {{{request}}};
+            u2f.sign(req[0].appId, req[0].challenge, req,
+                    function (deviceResponse) {
+                        if (deviceResponse.errorCode === 0) {
+                            document.getElementById('id_response_input').value = JSON.stringify(deviceResponse);
+                            document.getElementById('id_request').value = JSON.stringify(req);
+                            document.getElementById('id_response_input').form.submit();
+                            templates.render('factor_u2f/press-button-done', {})
+                                    .then(function (html, js) {
+                                        templates.replaceNode('#factor_u2f-press-button', html, js);
+                                        document.getElementById('id_submitbutton').disabled = false;
+                                    });
+                        } else {
+                            var div = document.createElement('div');
+                            div.setAttribute('class', 'alert alert-danger alert-block fade in')
+                            div.textContent = "Wrong U2F device.";
+                            var button = document.createElement('button');
+                            button.setAttribute('class', 'close');
+                            button.setAttribute('data-dismiss', 'alert');
+                            button.innerHTML = "x";
+                            div.appendChild(button);
+                            var form_element = document.getElementById(document.getElementById('id_request').form.getAttribute('id'));
+                            form_element.appendChild(div);
+                        }
+                    });
+        })
+    });
+</script>
