@@ -24,7 +24,7 @@
     * [Grace mode](#grace-mode)
     * [No-setup factor](#no-setup-factor)
     * [Security questions](#security-questions)
-    * [Other factors](#other-factors)
+  * [Other factors](#other-factors)
   * [Moodle Mobile app](#moodle-mobile-app)
 * [Points and examples](#points-and-examples)
 * [Debugging](#debugging)
@@ -206,7 +206,7 @@ It is possible that this factor could be turned into a proper factor which accep
 https://github.com/catalyst/moodle-tool_securityquestions
 
 
-#### Other factors
+### Other factors
 
 In theory you could impement almost anything as a factor, such as time of day, retina scans, or push notificatons. For a list of potential factor ideas see:
 
