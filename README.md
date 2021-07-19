@@ -23,6 +23,7 @@
   * [Login flow factors](#login-flow-factors)
     * [Grace mode](#grace-mode)
     * [No-setup factor](#no-setup-factor)
+    * [Security questions](#security-questions)
     * [Other factors](#other-factors)
   * [Moodle Mobile app](#moodle-mobile-app)
 * [Points and examples](#points-and-examples)
@@ -193,6 +194,17 @@ The grace mode is a pseudo factor to allow users to log in without interacting w
 #### No-setup Factor
 
 This pseudo factor is designed to allow people to pass only if they have not setup other factors for MFA already. Once another factor, such as TOTP is setup for a user, this factor no longer gives points, therefore the user must use TOTP to authenticate. This allows for an optional MFA rollout, where only users who wish to use MFA are affected by the MFA rollout.
+
+#### Security Questions
+
+Another Catalyst plugin is the Security Questions plugin which augments the password reset process to be based off questions specific to the user rather than only access to the users email.
+
+There is a Security Questions factor, BUT this is only because both plugins use the same callbacks and clash so this factor makes the two plugins compatible with each other.
+
+It is possible that this factor could be turned into a proper factor which accepts answers to these questions if no other factors can be used.
+
+https://github.com/catalyst/moodle-tool_securityquestions
+
 
 #### Other factors
 
