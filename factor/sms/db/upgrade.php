@@ -15,20 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * factor_sms upgrade.
  *
- * @package     factor_sms
- * @subpackage  tool_mfa
- * @author      Peter Burnett <peterburnett@catalyst-au.net>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    factor_sms
+ * @copyright  Alex Morris <alex.morris@catalyst.net.nz>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version      = 2021081300;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires     = 2017051500.00;   // Support back to 3.3 - Totara 12. Patches required.
-$plugin->component    = 'factor_sms';
-$plugin->release      = 'v0.1';
-$plugin->maturity     = MATURITY_STABLE;
-$plugin->dependencies = array('tool_mfa' => 2019102400);
+function xmldb_factor_sms_upgrade($oldversion) {
+    if ($oldversion < 2021081300) {
+        set_config('gateway', 'aws_sns', 'factor_sms');
+        upgrade_plugin_savepoint(true, 2021081300, 'factor', 'sms');
+    }
+
+    return true;
+}
