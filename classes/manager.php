@@ -225,6 +225,9 @@ class manager {
         // Check for any instant fail states.
         $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
         foreach ($factors as $factor) {
+
+            $factor->load_locked_state();
+
             if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_FAIL) {
                 return \tool_mfa\plugininfo\factor::STATE_FAIL;
             }

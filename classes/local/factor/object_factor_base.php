@@ -59,21 +59,39 @@ abstract class object_factor_base implements object_factor {
 
         // Setup secret manager.
         $this->secretmanager = new \tool_mfa\local\secret_manager($this->name);
+    }
+
+    /**
+     * This loads the locked state from the DB
+     *
+     * Base class implementation.
+     *
+     */
+    public function load_locked_state() {
+        global $DB, $USER;
 
         // Check if lockcounter column exists (incase upgrade hasnt run yet).
-        try {
-            // Setup the lock counter.
-            $sql = "SELECT MAX(lockcounter) FROM {tool_mfa} WHERE userid = ? AND factor = ?";
-            @$this->lockcounter = $DB->get_field_sql($sql, [$USER->id, $name]);
+        // Only 'input factors' are lockable.
+        if ($this->is_enabled() && $this->is_lockable()) {
+            try {
 
-            // Now lock this factor if over the counter.
-            $lockthreshold = get_config('tool_mfa', 'lockout');
-            if ($this->lockcounter >= $lockthreshold) {
-                $this->set_state(\tool_mfa\plugininfo\factor::STATE_LOCKED);
+                // Setup the lock counter.
+                $sql = "SELECT MAX(lockcounter) FROM {tool_mfa} WHERE userid = ? AND factor = ? AND revoked = ?";
+                @$this->lockcounter = $DB->get_field_sql($sql, [$USER->id, $this->name, 0]);
+
+                if (empty($this->lockcounter)) {
+                    $this->lockcounter = 0;
+                }
+
+                // Now lock this factor if over the counter.
+                $lockthreshold = get_config('tool_mfa', 'lockout');
+                if ($this->lockcounter >= $lockthreshold) {
+                    $this->set_state(\tool_mfa\plugininfo\factor::STATE_LOCKED);
+                }
+            } catch (\dml_exception $e) {
+                // Set counter to -1.
+                $this->lockcounter = -1;
             }
-        } catch (\dml_exception $e) {
-            // Set counter to -1.
-            $this->lockcounter = -1;
         }
     }
 
@@ -348,6 +366,18 @@ abstract class object_factor_base implements object_factor {
     }
 
     /**
+     * Returns true if a factor is able to be locked if it fails.
+     *
+     * Generally only input factors are lockable.
+     * Override in child class if necessary
+     *
+     * @return bool
+     */
+    public function is_lockable() {
+        return $this->has_input();
+    }
+
+    /**
      * Returns the state of the factor from session information.
      *
      * Implementation for factors that require input.
@@ -485,6 +515,9 @@ abstract class object_factor_base implements object_factor {
      */
     public function increment_lock_counter() {
         global $DB, $USER;
+
+        // First make sure the state is loaded.
+        $this->load_locked_state();
 
         // If lockcounter is negative, the field does not exist yet.
         if ($this->lockcounter === -1) {
