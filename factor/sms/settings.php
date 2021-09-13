@@ -60,5 +60,4 @@ if (empty(get_config('factor_sms', 'gateway'))) {
 }
 
 $class = '\factor_sms\local\smsgateway\\' . get_config('factor_sms', 'gateway');
-$gateway = new $class();
-$gateway->add_settings($settings);
+call_user_func($class . '::add_settings', $settings);

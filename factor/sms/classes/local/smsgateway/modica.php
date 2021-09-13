@@ -66,7 +66,7 @@ class modica implements gateway_interface {
         return !empty($info['http_code']) && $info['http_code'] == 201;
     }
 
-    public function add_settings($settings) {
+    public static function add_settings($settings) {
         $settings->add(new \admin_setting_configtext('factor_sms/modica_url',
             get_string('settings:modica:url', 'factor_sms'),
             get_string('settings:modica:url_help', 'factor_sms'),
@@ -81,7 +81,7 @@ class modica implements gateway_interface {
             get_string('settings:modica:password_help', 'factor_sms'), ''));
     }
 
-    public function is_gateway_enabled(): bool {
+    public static function is_gateway_enabled(): bool {
         return true;
     }
 }

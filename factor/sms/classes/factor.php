@@ -271,8 +271,7 @@ class factor extends object_factor_base {
         }
 
         $class = '\factor_sms\local\smsgateway\\' . get_config('factor_sms', 'gateway');
-        $gateway = new $class();
-        if (!$gateway->is_gateway_enabled()) {
+        if (!call_user_func($class . '::is_gateway_enabled')) {
             return false;
         }
         return parent::is_enabled();

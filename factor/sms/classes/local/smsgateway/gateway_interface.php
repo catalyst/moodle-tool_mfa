@@ -42,7 +42,7 @@ interface gateway_interface {
      * @param $settings \admin_settingpage
      * @return void
      */
-    public function add_settings($settings);
+    public static function add_settings($settings);
 
-    public function is_gateway_enabled() : bool;
+    public static function is_gateway_enabled() : bool;
 }

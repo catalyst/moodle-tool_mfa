@@ -25,7 +25,6 @@
 
 namespace factor_sms;
 
-
 defined('MOODLE_INTERNAL') || die();
 
 class helper {

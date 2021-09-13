@@ -27,11 +27,12 @@ namespace factor_sms\local\smsgateway;
 
 defined('MOODLE_INTERNAL') || die();
 
-if (file_exists($CFG->dirroot . '/local/aws/version.php')) {
-    require_once($CFG->dirroot . '/local/aws/sdk/aws-autoloader.php');
-}
-
 class aws_sns implements gateway_interface {
+
+    public function __construct() {
+        global $CFG;
+        require_once($CFG->dirroot . '/local/aws/sdk/aws-autoloader.php');
+    }
 
     /**
      * Sends a message using the AWS SNS API
@@ -87,7 +88,7 @@ class aws_sns implements gateway_interface {
         }
     }
 
-    public function add_settings($settings) {
+    public static function add_settings($settings) {
         global $CFG, $OUTPUT;
 
         if (file_exists($CFG->dirroot . '/local/aws/classes/admin_settings_aws_region.php')) {
@@ -122,7 +123,7 @@ class aws_sns implements gateway_interface {
         }
     }
 
-    public function is_gateway_enabled() : bool {
+    public static function is_gateway_enabled() : bool {
         global $CFG;
         if (!file_exists($CFG->dirroot . '/local/aws/version.php')) {
             return false;
