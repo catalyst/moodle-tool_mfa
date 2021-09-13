@@ -25,6 +25,8 @@
 
 namespace factor_sms\local\smsgateway;
 
+use factor_sms\event\sms_sent;
+
 defined('MOODLE_INTERNAL') || die();
 
 class modica implements gateway_interface {
@@ -35,7 +37,7 @@ class modica implements gateway_interface {
      * {@inheritDoc}
      */
     public function send_sms_message(string $messagecontent, string $phonenumber): bool {
-        global $CFG, $SITE;
+        global $USER;
 
         $config = get_config('factor_sms');
 
@@ -58,10 +60,25 @@ class modica implements gateway_interface {
 
         $curl = new \curl();
         $curl->setHeader(array('Accept: application/json', 'Expect:'));
-        $curl->post($params['http'] . '/messages', $json, [
+        $body = $curl->post($params['http'] . '/messages', $json, [
             'CURLOPT_USERPWD' => $params['username'] . ':' . $params['password'],
         ]);
         $info = $curl->get_info();
+
+        $data = array(
+            'relateduserid' => null,
+            'context' => \context_user::instance($USER->id),
+            'other' => array(
+                'userid' => $USER->id,
+                'debug' => array(
+                    'phonenumber' => $phonenumber,
+                    'messageid' => $body,
+                    'httpcode' => $info['http_code']
+                )
+            )
+        );
+        $event = sms_sent::create($data);
+        $event->trigger();
 
         return !empty($info['http_code']) && $info['http_code'] == 201;
     }
