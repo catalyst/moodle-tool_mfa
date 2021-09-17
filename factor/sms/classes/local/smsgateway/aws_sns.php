@@ -91,7 +91,6 @@ class aws_sns implements gateway_interface {
                 'other' => array(
                     'userid' => $USER->id,
                     'debug' => array(
-                        'phonenumber' => $phonenumber,
                         'messageid' => $result->get('MessageId'),
                     )
                 )

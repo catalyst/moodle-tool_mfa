@@ -35,7 +35,7 @@ class sms_sent extends \core\event\base {
     }
 
     public function get_description() {
-        return "The user with id '{$this->other['userid']}' had an SMS message sent to them. <br> Information: {$this->other['debug']}";
+        return "The user with id '{$this->other['userid']}' had a verification code sent to them via SMS <br> Information: {$this->other['debug']}";
     }
 
     public static function get_name() {

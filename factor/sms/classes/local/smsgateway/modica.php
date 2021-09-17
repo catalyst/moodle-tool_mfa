@@ -71,7 +71,6 @@ class modica implements gateway_interface {
             'other' => array(
                 'userid' => $USER->id,
                 'debug' => array(
-                    'phonenumber' => $phonenumber,
                     'messageid' => $body,
                     'httpcode' => $info['http_code']
                 )
