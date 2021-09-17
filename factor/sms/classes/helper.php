@@ -55,4 +55,19 @@ class helper {
 
         return $phonenumber;
     }
+
+    /**
+     * Redact the phone number for displaying on screen.
+     *
+     * @param string $phonenumber the phone number
+     * @return string the redacted phone number
+     */
+    public static function redact_phonenumber(string $phonenumber): string {
+        // Create partial num for display.
+        $len = strlen($phonenumber);
+        // Keep last 3 characters.
+        $redacted = str_repeat('x', $len - 3);
+        $redacted .= substr($phonenumber, -3);
+        return $redacted;
+    }
 }
