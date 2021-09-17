@@ -266,13 +266,15 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function is_enabled() {
-        global $CFG;
-        // If local_aws is not installed, not enabled.
-        if (!file_exists($CFG->dirroot . '/local/aws/version.php')) {
+        if (empty(get_config('factor_sms', 'gateway'))) {
             return false;
-        } else {
-            return parent::is_enabled();
         }
+
+        $class = '\factor_sms\local\smsgateway\\' . get_config('factor_sms', 'gateway');
+        if (!call_user_func($class . '::is_gateway_enabled')) {
+            return false;
+        }
+        return parent::is_enabled();
     }
 
     /**
@@ -361,7 +363,8 @@ class factor extends object_factor_base {
             'code' => $secret];
         $message = get_string('smsstring', 'factor_sms', $content);
 
-        $gateway = new \factor_sms\local\smsgateway\aws_sns();
+        $class = '\factor_sms\local\smsgateway\\' . get_config('factor_sms', 'gateway');
+        $gateway = new $class();
         $gateway->send_sms_message($message, $phonenumber);
     }
 

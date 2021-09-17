@@ -25,12 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG, $OUTPUT;
-if (file_exists($CFG->dirroot . '/local/aws/classes/admin_settings_aws_region.php')) {
-    require_once($CFG->dirroot . '/local/aws/classes/admin_settings_aws_region.php');
-    $reqs = true;
-} else {
-    $reqs = false;
-}
 
 $settings->add(new admin_setting_configcheckbox('factor_sms/enabled',
     new lang_string('settings:enablefactor', 'tool_mfa'),
@@ -51,26 +45,19 @@ $settings->add(new admin_setting_configtext('factor_sms/countrycode',
     get_string('settings:countrycode', 'factor_sms'),
     get_string('settings:countrycode_help', 'factor_sms', $link), '', PARAM_INT));
 
-if (!$reqs) {
-    $warning = $OUTPUT->notification(get_string('awssdkrequired', 'factor_sms'), 'notifyerror');
-    $settings->add(new admin_setting_heading('factor_sms/awssdkwarning', '', $warning));
-} else {
-    $settings->add(new admin_setting_configcheckbox('factor_sms/usecredchain',
-    get_string('settings:aws:usecredchain', 'factor_sms'), '', 0));
+$gateways = [
+    'aws_sns' => get_string('settings:aws', 'factor_sms'),
+    'modica' => get_string('settings:modica', 'factor_sms')
+];
 
-    if (!get_config('factor_sms', 'usecredchain')) {
-        // AWS Settings.
-        $settings->add(new admin_setting_configtext('factor_sms/api_key',
-            get_string('settings:aws:key', 'factor_sms'),
-            get_string('settings:aws:key_help', 'factor_sms'), ''));
+$settings->add(new admin_setting_configselect('factor_sms/gateway',
+    get_string('settings:gateway', 'factor_sms'),
+    get_string('settings:gateway_help', 'factor_sms'),
+    'aws_sns', $gateways));
 
-        $settings->add(new admin_setting_configpasswordunmask('factor_sms/api_secret',
-            get_string('settings:aws:secret', 'factor_sms'),
-            get_string('settings:aws:secret_help', 'factor_sms'), ''));
-    }
-
-    $settings->add(new local_aws\admin_settings_aws_region('factor_sms/api_region',
-    get_string('settings:aws:region', 'factor_sms'),
-    get_string('settings:aws:region_help', 'factor_sms'),
-    'ap-southeast-2'));
+if (empty(get_config('factor_sms', 'gateway'))) {
+    return;
 }
+
+$class = '\factor_sms\local\smsgateway\\' . get_config('factor_sms', 'gateway');
+call_user_func($class . '::add_settings', $settings);

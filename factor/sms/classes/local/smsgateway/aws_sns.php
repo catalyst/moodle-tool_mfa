@@ -27,10 +27,12 @@ namespace factor_sms\local\smsgateway;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/local/aws/sdk/aws-autoloader.php');
-use Aws\Sns\SnsClient;
-
 class aws_sns implements gateway_interface {
+
+    public function __construct() {
+        global $CFG;
+        require_once($CFG->dirroot . '/local/aws/sdk/aws-autoloader.php');
+    }
 
     /**
      * Sends a message using the AWS SNS API
@@ -38,7 +40,7 @@ class aws_sns implements gateway_interface {
      * {@inheritDoc}
      */
     public function send_sms_message(string $messagecontent, string $phonenumber) : bool {
-        global $CFG, $SITE;
+        global $SITE;
 
         $config = get_config('factor_sms');
 
@@ -54,10 +56,10 @@ class aws_sns implements gateway_interface {
                 'secret' => $config->api_secret
             ];
         }
-        $client = new SnsClient($params);
+        $client = new \Aws\Sns\SnsClient($params);
 
         // Transform the phone number to international standard.
-        $phonenumber = $this->format_number($phonenumber);
+        $phonenumber = \factor_sms\helper::format_number($phonenumber);
 
         // Setup the sender information.
         $senderid = $SITE->shortname;
@@ -86,31 +88,46 @@ class aws_sns implements gateway_interface {
         }
     }
 
-    /**
-     * This function internationalises a number to E.164 standard.
-     * https://46elks.com/kb/e164
-     *
-     * @param string $phonenumber the phone number to format.
-     * @return string the formatted phone number.
-     */
-    private function format_number(string $phonenumber) : string {
-        // Remove all whitespace, dashes and brackets.
-        $phonenumber = preg_replace('/[ \(\)-]/', '', $phonenumber);
+    public static function add_settings($settings) {
+        global $CFG, $OUTPUT;
 
-        // Number is already in international format. Do nothing.
-        if (strpos($phonenumber, '+') === 0) {
-            return $phonenumber;
+        if (file_exists($CFG->dirroot . '/local/aws/classes/admin_settings_aws_region.php')) {
+            require_once($CFG->dirroot . '/local/aws/classes/admin_settings_aws_region.php');
+            $reqs = true;
+        } else {
+            $reqs = false;
         }
 
-        // Strip leading 0 if found.
-        if (strpos($phonenumber, '0') === 0) {
-            $phonenumber = substr($phonenumber, 1);
+        if (!$reqs) {
+            $warning = $OUTPUT->notification(get_string('awssdkrequired', 'factor_sms'), 'notifyerror');
+            $settings->add(new \admin_setting_heading('factor_sms/awssdkwarning', '', $warning));
+        } else {
+            $settings->add(new \admin_setting_configcheckbox('factor_sms/usecredchain',
+                get_string('settings:aws:usecredchain', 'factor_sms'), '', 0));
+
+            if (!get_config('factor_sms', 'usecredchain')) {
+                // AWS Settings.
+                $settings->add(new \admin_setting_configtext('factor_sms/api_key',
+                    get_string('settings:aws:key', 'factor_sms'),
+                    get_string('settings:aws:key_help', 'factor_sms'), ''));
+
+                $settings->add(new \admin_setting_configpasswordunmask('factor_sms/api_secret',
+                    get_string('settings:aws:secret', 'factor_sms'),
+                    get_string('settings:aws:secret_help', 'factor_sms'), ''));
+            }
+
+            $settings->add(new \local_aws\admin_settings_aws_region('factor_sms/api_region',
+                get_string('settings:aws:region', 'factor_sms'),
+                get_string('settings:aws:region_help', 'factor_sms'),
+                'ap-southeast-2'));
         }
+    }
 
-        // Prepend country code.
-        $countrycode = get_config('factor_sms', 'countrycode');
-        $phonenumber = '+' . $countrycode . $phonenumber;
-
-        return $phonenumber;
+    public static function is_gateway_enabled() : bool {
+        global $CFG;
+        if (!file_exists($CFG->dirroot . '/local/aws/version.php')) {
+            return false;
+        }
+        return true;
     }
 }
