@@ -82,10 +82,11 @@ class factor extends object_factor_base {
      * Grace Factor implementation.
      * Checks the user login time against their first login after MFA activation.
      *
-     * {@inheritDoc}
+     * @param bool $redirectable should this state call be allowed to redirect the user?
+     * @return string state constant
      */
-    public function get_state() {
-        global $USER;
+    public function get_state($redirectable = true) {
+        global $PAGE, $USER;
         $records = ($this->get_all_user_factors($USER));
         $record = reset($records);
 
@@ -111,9 +112,27 @@ class factor extends object_factor_base {
             $duration = get_config('factor_grace', 'graceperiod');
 
             if (!empty($duration)) {
-                return (time() <= $starttime + $duration)
-                ? \tool_mfa\plugininfo\factor::STATE_PASS
-                : \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+                if (time() > $starttime + $duration) {
+                    // If gracemode would have given points, but now doesnt,
+                    // Jump out of the loop and force a factor setup.
+                    // We will return once there is a setup, or the user tries to leave.
+                    if (get_config('factor_grace', 'forcesetup') && $redirectable) {
+                        $factorurls = \tool_mfa\manager::get_no_redirect_urls();
+                        foreach ($factorurls as $factorurl) {
+                            if ($factorurl->compare($PAGE->url)) {
+                                $redirectable = false;
+                            }
+                        }
+
+                        if ($redirectable) {
+                            redirect(new \moodle_url('/admin/tool/mfa/user_preferences.php'),
+                                get_string('redirectsetup', 'factor_grace'));
+                        }
+                    }
+                    return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+                } else {
+                    return \tool_mfa\plugininfo\factor::STATE_PASS;
+                }
             } else {
                 return \tool_mfa\plugininfo\factor::STATE_UNKNOWN;
             }
@@ -183,5 +202,26 @@ class factor extends object_factor_base {
             \tool_mfa\plugininfo\factor::STATE_PASS,
             \tool_mfa\plugininfo\factor::STATE_NEUTRAL
         );
+    }
+
+    /**
+     * Grace factor implementation.
+     *
+     * If grace period should redirect at end, make this a no-redirect url.
+     *
+     * @return array
+     */
+    public function get_no_redirect_urls() {
+        $redirect = get_config('factor_grace', 'forcesetup');
+
+        if ($redirect && $this->get_state(true) === \tool_mfa\plugininfo\factor::STATE_NEUTRAL) {
+            // If the config is enabled, the user should be able to access + setup a factor using these pages.
+            return [
+                new \moodle_url('/admin/tool/mfa/user_preferences.php'),
+                new \moodle_url('/admin/tool/mfa/action.php')
+            ];
+        } else {
+            return [];
+        }
     }
 }
