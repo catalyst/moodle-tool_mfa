@@ -25,12 +25,15 @@
 
 $string['pluginname'] = 'Grace period';
 $string['info'] = 'Allows login without other factor for a specified period of time.';
+$string['settings:forcesetup'] = 'Force factor setup';
+$string['settings:forcesetup_help'] = 'Forces a user to the preferences page to setup MFA when the gracemode period expires. If set to off, users will be unable to authenticate when the grace period expires.';
 $string['settings:graceperiod'] = 'Grace period';
 $string['settings:graceperiod_help'] = 'Period of time when users can access Moodle without configured and enabled factors';
 $string['setupfactors'] = 'You are currently in grace mode, and may not have enough factors setup to login once the grace period is over.
     Visit {$a->url} to check your authentication status, and setup more authentication factors. Your grace period expires in {$a->time}.';
 $string['preferences'] = 'User Preferences';
 $string['summarycondition'] = 'is within grace period';
+$string['redirectsetup'] = 'You must complete setup for Multi-factor authentication before you can proceed.';
 $string['revokeexpiredfactors'] = 'Revoke expired gracemode factors';
 
 $string['privacy:metadata'] = 'The Grace period factor plugin does not store any personal data';

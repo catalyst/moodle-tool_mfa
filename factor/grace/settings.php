@@ -33,6 +33,10 @@ $settings->add(new admin_setting_configtext('factor_grace/weight',
     new lang_string('settings:weight', 'tool_mfa'),
     new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
 
+$settings->add(new admin_setting_configcheckbox('factor_grace/forcesetup',
+    new lang_string('settings:forcesetup', 'factor_grace'),
+    new lang_string('settings:forcesetup_help', 'factor_grace'), 0));
+
 $name = new lang_string('settings:graceperiod', 'factor_grace');
 $description = new lang_string('settings:graceperiod_help', 'factor_grace');
 $settings->add(new admin_setting_configduration('factor_grace/graceperiod', $name, $description, '604800'));
