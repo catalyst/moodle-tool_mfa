@@ -25,6 +25,8 @@
 
 namespace factor_sms\local\smsgateway;
 
+use factor_sms\event\sms_sent;
+
 defined('MOODLE_INTERNAL') || die();
 
 class aws_sns implements gateway_interface {
@@ -40,7 +42,7 @@ class aws_sns implements gateway_interface {
      * {@inheritDoc}
      */
     public function send_sms_message(string $messagecontent, string $phonenumber) : bool {
-        global $SITE;
+        global $SITE, $USER;
 
         $config = get_config('factor_sms');
 
@@ -78,10 +80,24 @@ class aws_sns implements gateway_interface {
 
         // Actually send the message.
         try {
-            $client->publish([
+            $result = $client->publish([
                 'Message' => $messagecontent,
                 'PhoneNumber' => $phonenumber,
             ]);
+
+            $data = array(
+                'relateduserid' => null,
+                'context' => \context_user::instance($USER->id),
+                'other' => array(
+                    'userid' => $USER->id,
+                    'debug' => array(
+                        'messageid' => $result->get('MessageId'),
+                    )
+                )
+            );
+            $event = sms_sent::create($data);
+            $event->trigger();
+
             return true;
         } catch (\Exception $e) {
             return false;

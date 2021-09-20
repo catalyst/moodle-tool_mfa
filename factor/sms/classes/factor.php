@@ -232,11 +232,7 @@ class factor extends object_factor_base {
             $phonenumber = !empty($number) ? $number : $USER->phone2;
         }
 
-        // Create partial num for display.
-        $len = strlen($phonenumber);
-        // Keep last 3 characters.
-        $redacted = str_repeat('x', $len - 3);
-        $redacted .= substr($phonenumber, -3);
+        $redacted = helper::redact_phonenumber($phonenumber);
 
         $mform->addElement('html', \html_writer::tag('p', get_string('smssent', 'factor_sms', $redacted) . '<br>'));
         return $mform;
