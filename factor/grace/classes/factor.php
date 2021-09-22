@@ -214,7 +214,7 @@ class factor extends object_factor_base {
     public function get_no_redirect_urls() {
         $redirect = get_config('factor_grace', 'forcesetup');
 
-        if ($redirect && $this->get_state(true) === \tool_mfa\plugininfo\factor::STATE_NEUTRAL) {
+        if ($redirect && $this->get_state(false) === \tool_mfa\plugininfo\factor::STATE_NEUTRAL) {
             // If the config is enabled, the user should be able to access + setup a factor using these pages.
             return [
                 new \moodle_url('/admin/tool/mfa/user_preferences.php'),
