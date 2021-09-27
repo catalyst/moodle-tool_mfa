@@ -118,17 +118,17 @@ class factor extends object_factor_base {
                     // We will return once there is a setup, or the user tries to leave.
                     if (get_config('factor_grace', 'forcesetup') && $redirectable) {
                         $factorurls = \tool_mfa\manager::get_no_redirect_urls();
-                        if ($PAGE->has_set_url()) {
-                            $cleanurl = $PAGE->url;
-                        } else {
-                            // Use $FULLME instead.
-                            $cleanurl = new \moodle_url($FULLME);
-                        }
+                        $cleanurl = new \moodle_url($FULLME);
 
                         foreach ($factorurls as $factorurl) {
                             if ($factorurl->compare($cleanurl)) {
                                 $redirectable = false;
                             }
+                        }
+
+                        // We should never redirect if we have already passed.
+                        if (\tool_mfa\manager::get_cumulative_weight() >= 100) {
+                            $redirectable = false;
                         }
 
                         if ($redirectable) {
