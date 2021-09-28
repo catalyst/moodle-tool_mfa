@@ -86,7 +86,7 @@ class factor extends object_factor_base {
      * @return string state constant
      */
     public function get_state($redirectable = true) {
-        global $FULLME, $PAGE, $USER;
+        global $FULLME, $SESSION, $USER;
         $records = ($this->get_all_user_factors($USER));
         $record = reset($records);
 
@@ -117,23 +117,30 @@ class factor extends object_factor_base {
                     // Jump out of the loop and force a factor setup.
                     // We will return once there is a setup, or the user tries to leave.
                     if (get_config('factor_grace', 'forcesetup') && $redirectable) {
-                        $factorurls = \tool_mfa\manager::get_no_redirect_urls();
-                        $cleanurl = new \moodle_url($FULLME);
+                        if (empty($SESSION->mfa_gracemode_recursive)) {
+                            // Set a gracemode lock so any further recursive gets fall past any recursive calls.
+                            $SESSION->mfa_gracemode_recursive = true;
 
-                        foreach ($factorurls as $factorurl) {
-                            if ($factorurl->compare($cleanurl)) {
+                            $factorurls = \tool_mfa\manager::get_no_redirect_urls();
+                            $cleanurl = new \moodle_url($FULLME);
+
+                            foreach ($factorurls as $factorurl) {
+                                if ($factorurl->compare($cleanurl)) {
+                                    $redirectable = false;
+                                }
+                            }
+
+                            // We should never redirect if we have already passed.
+                            if ($redirectable && \tool_mfa\manager::get_cumulative_weight() >= 100) {
                                 $redirectable = false;
                             }
-                        }
 
-                        // We should never redirect if we have already passed.
-                        if (\tool_mfa\manager::get_cumulative_weight() >= 100) {
-                            $redirectable = false;
-                        }
+                            unset($SESSION->mfa_gracemode_recursive);
 
-                        if ($redirectable) {
-                            redirect(new \moodle_url('/admin/tool/mfa/user_preferences.php'),
-                                get_string('redirectsetup', 'factor_grace'));
+                            if ($redirectable) {
+                                redirect(new \moodle_url('/admin/tool/mfa/user_preferences.php'),
+                                    get_string('redirectsetup', 'factor_grace'));
+                            }
                         }
                     }
                     return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
