@@ -544,9 +544,11 @@ class manager {
      * @return array
      */
     public static function get_no_redirect_urls() {
-        global $CFG;
         $factors = \tool_mfa\plugininfo\factor::get_factors();
-        $urls = [new \moodle_url('/login/logout.php')];
+        $urls = [
+            new \moodle_url('/login/logout.php'),
+            new \moodle_url('/admin/tool/mfa/guide.php')
+        ];
         foreach ($factors as $factor) {
             $urls = array_merge($urls, $factor->get_no_redirect_urls());
         }

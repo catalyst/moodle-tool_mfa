@@ -228,6 +228,8 @@ class tool_mfa_renderer extends plugin_renderer_base {
         $btn = new \single_button($url, get_string('logout'), 'post', true);
         $return .= $this->render($btn);
 
+        $return .= $this->guide_link();
+
         return $return;
     }
 
@@ -496,5 +498,13 @@ class tool_mfa_renderer extends plugin_renderer_base {
         }
 
         return \html_writer::table($table);
+    }
+
+    public function guide_link() {
+        if (!get_config('tool_mfa', 'guidance')) {
+            return '';
+        }
+
+        return $this->render_from_template('tool_mfa/guide_link', []);
     }
 }

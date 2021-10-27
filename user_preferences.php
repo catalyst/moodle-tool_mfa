@@ -63,6 +63,8 @@ if (!empty($action)) {
 echo $OUTPUT->active_factors();
 echo $OUTPUT->available_factors();
 
+echo $OUTPUT->guide_link();
+
 \tool_mfa\manager::display_debug_notification();
 
 echo $OUTPUT->footer();
