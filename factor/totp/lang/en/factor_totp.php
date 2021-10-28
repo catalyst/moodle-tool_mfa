@@ -35,7 +35,8 @@ $string['error:oldcode'] = 'This code is too old. Please verify the time on your
 $string['error:futurecode'] = 'This code is invalid. Please verify the time on your authenticator device is correct and try again.
     Current system time is {$a}.';
 $string['info'] = '<p>Use any TOTP authenticator app to get a verification code on your phone even when it is offline.</p>
-<p>eg Google Authenticator for <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8" target="_blank">iPhone</a> or <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</a></p>';
+<p>eg Google Authenticator for <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8" target="_blank">iOS</a> or <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</a></p>
+<p>Note: Please ensure your device time and date has been set to "Auto" or "Network provided".</p>';
 $string['loginsubmit'] = 'Verify code';
 $string['loginskip'] = 'I don\'t have my device';
 $string['pluginname'] = 'Authenticator app';
