@@ -86,7 +86,7 @@ if ($form->is_submitted()) {
         }
     }
 }
-
+$renderer = $PAGE->get_renderer('tool_mfa');
 echo $OUTPUT->header();
 
 \tool_mfa\manager::display_debug_notification();
@@ -98,4 +98,6 @@ if ($remattempts < get_config('tool_mfa', 'lockout')) {
     echo $OUTPUT->notification(get_string('lockoutnotification', 'tool_mfa', $remattempts), 'notifyerror');
 }
 $form->display();
+
+echo $renderer->guide_link();
 echo $OUTPUT->footer();

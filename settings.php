@@ -54,6 +54,14 @@ if ($hassiteconfig) {
     $description = new lang_string('settings:redir_exclusions_help', 'tool_mfa');
     $settings->add(new admin_setting_configtextarea('tool_mfa/redir_exclusions', $name, $description, ''));
 
+    $name = new lang_string('settings:guidancecheck', 'tool_mfa');
+    $description = new lang_string('settings:guidancecheck_help', 'tool_mfa');
+    $settings->add(new admin_setting_configcheckbox('tool_mfa/guidance', $name, $description, false));
+
+    $name = new lang_string('settings:guidancepage', 'tool_mfa');
+    $description = new lang_string('settings:guidancepage_help', 'tool_mfa');
+    $settings->add(new admin_setting_confightmleditor('tool_mfa/guidancecontent', $name, $description, '', PARAM_RAW));
+
     $ADMIN->add('toolmfafolder', $settings);
 
     foreach (core_plugin_manager::instance()->get_plugins_of_type('factor') as $plugin) {
