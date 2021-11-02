@@ -504,7 +504,8 @@ class tool_mfa_renderer extends plugin_renderer_base {
         if (!get_config('tool_mfa', 'guidance')) {
             return '';
         }
-
-        return $this->render_from_template('tool_mfa/guide_link', []);
+        $html = $this->heading(get_string('needhelp', 'tool_mfa'), 3);
+        $html .= $this->render_from_template('tool_mfa/guide_link', []);
+        return $this->notification($html, 'info');
     }
 }

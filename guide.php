@@ -50,5 +50,23 @@ $PAGE->navbar->add(get_string('guidance', 'tool_mfa'), new \moodle_url('/admin/t
 
 echo $OUTPUT->header();
 $html = get_config('tool_mfa', 'guidancecontent');
+
+// We need to go through and replace file markups with a matching filename.
+$fs = get_file_storage();
+$context = context_system::instance();
+$files = $fs->get_area_files($context->id, 'tool_mfa', 'guidance', 0, 'filepath, filename', false);
+foreach ($files as $file) {
+    $filename = $file->get_filename();
+    $url = moodle_url::make_pluginfile_url(
+        $file->get_contextid(),
+        $file->get_component(),
+        $file->get_filearea(),
+        $file->get_itemid(),
+        $file->get_filepath(),
+        $file->get_filename()
+    );
+    $html = str_replace('{{' . $filename . '}}', html_writer::link($url, $url), $html);
+}
+
 echo format_text($html);
 echo $OUTPUT->footer();
