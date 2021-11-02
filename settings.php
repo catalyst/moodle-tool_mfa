@@ -62,6 +62,12 @@ if ($hassiteconfig) {
     $description = new lang_string('settings:guidancepage_help', 'tool_mfa');
     $settings->add(new admin_setting_confightmleditor('tool_mfa/guidancecontent', $name, $description, '', PARAM_RAW));
 
+    $name = new lang_string('settings:guidancefiles', 'tool_mfa');
+    $description = new lang_string('settings:guidancefiles_help', 'tool_mfa');
+    $settings->add(new admin_setting_configstoredfile('tool_mfa/guidancefiles', $name, $description, 'guidance', 0, [
+                'maxfiles' => -1
+            ]));
+
     $ADMIN->add('toolmfafolder', $settings);
 
     foreach (core_plugin_manager::instance()->get_plugins_of_type('factor') as $plugin) {
