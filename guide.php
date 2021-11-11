@@ -21,6 +21,8 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+// Require_login is not needed here.
+// phpcs:disable moodle.Files.RequireLogin.Missing
 require_once(__DIR__ . '/../../../config.php');
 
 // No require_login, unauthenticated page.
@@ -65,8 +67,15 @@ foreach ($files as $file) {
         $file->get_filepath(),
         $file->get_filename()
     );
-    $html = str_replace('{{' . $filename . '}}', html_writer::link($url, $url), $html);
+    // For cases where the format is {{{filename}}}, preserve the default
+    // behaviour of converting this to a html link.
+    $html = str_replace('{{{' . $filename . '}}}', html_writer::link($url, $url), $html);
+    // When used with {{filename}}, the template string will be replaced with
+    // the resolved value (similar to Mustache templates). Usage will most
+    // likely be used for direct embeds within links, imgs, etc.
+    $html = str_replace('{{' . $filename . '}}', $url, $html);
 }
 
-echo format_text($html);
+// Parses and returns the text after default moodle filters with cleaning disabled, to allow for any inline styles.
+echo format_text($html, FORMAT_MOODLE, ['noclean' => true]);
 echo $OUTPUT->footer();
