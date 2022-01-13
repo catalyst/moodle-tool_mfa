@@ -508,4 +508,21 @@ class tool_mfa_renderer extends plugin_renderer_base {
         $html .= $this->render_from_template('tool_mfa/guide_link', []);
         return $this->notification($html, 'info');
     }
+
+    public function mform_element($element, $required, $advanced, $error, $ingroup) {
+        $script = null;
+        if ($element instanceof tool_mfa\local\form\verification_field) {
+            if ($this->page->pagelayout === 'secure') {
+                $script = $element->secure_js();
+            }
+        }
+
+        $result = parent::mform_element($element, $required, $advanced, $error, $ingroup);
+
+        if (!empty($script)) {
+            $result .= $script;
+        }
+
+        return $result;
+    }
 }

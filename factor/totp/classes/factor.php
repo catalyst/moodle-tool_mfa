@@ -307,7 +307,7 @@ class factor extends object_factor_base {
             $row->timecreated = time();
             $row->createdfromip = $USER->lastip;
             $row->timemodified = time();
-            $row->lastverified = time();
+            $row->lastverified = 0;
             $row->revoked = 0;
 
             $id = $DB->insert_record('tool_mfa', $row);

@@ -31,6 +31,9 @@ require_once($CFG->libdir . '/form/text.php');
 
 class verification_field extends \MoodleQuickForm_text {
 
+    /** @var bool $appendjs */
+    private $appendjs;
+
     public function __construct($attributes=null, $submit = true) {
         global $PAGE;
 
@@ -46,8 +49,13 @@ class verification_field extends \MoodleQuickForm_text {
         $attributes['class'] = 'tool-mfa-verification-code';
 
         // Load JS for element.
+        $this->appendjs = false;
         if ($submit) {
-            $PAGE->requires->js_call_amd('tool_mfa/autosubmit_verification_code', 'init', []);
+            if ($PAGE->pagelayout === 'secure') {
+                $this->appendjs = true;
+            } else {
+                $PAGE->requires->js_call_amd('tool_mfa/autosubmit_verification_code', 'init', []);
+            }
         }
 
         // Force element name to match JS.
@@ -61,7 +69,40 @@ class verification_field extends \MoodleQuickForm_text {
     public function toHtml() {
         // Empty the value after all attributes decided.
         $this->_attributes['value'] = '';
-        return parent::toHtml();
+        $result = parent::toHtml();
+
+        $submitjs = "<script>
+            document.querySelector('#id_verificationcode').addEventListener('keyup', function() {
+                if (this.value.length == 6) {
+                    // Submits the closes form (parent).
+                    this.closest('form').submit();
+                }
+            });
+            </script>";
+
+        if ($this->appendjs) {
+            $result .= $submitjs;
+        }
+        return $result;
     }
     // @codingStandardsIgnoreEnd
+
+    /**
+     * Setup and return the script for autosubmission while inside the secure layout.
+     *
+     * @return string the JS to inline attach to the rendered object.
+     */
+    public function secure_js(): string {
+        // Empty the value after all attributes decided.
+        $this->_attributes['value'] = '';
+
+        return "<script>
+            document.querySelector('#id_verificationcode').addEventListener('keyup', function() {
+                if (this.value.length == 6) {
+                    // Submits the closes form (parent).
+                    this.closest('form').submit();
+                }
+            });
+        </script>";
+    }
 }
