@@ -23,8 +23,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 class tool_mfa_renderer extends plugin_renderer_base {
 
     /**
@@ -507,5 +505,22 @@ class tool_mfa_renderer extends plugin_renderer_base {
         $html = $this->heading(get_string('needhelp', 'tool_mfa'), 3);
         $html .= $this->render_from_template('tool_mfa/guide_link', []);
         return $this->notification($html, 'info');
+    }
+
+    public function mform_element($element, $required, $advanced, $error, $ingroup) {
+        $script = null;
+        if ($element instanceof tool_mfa\local\form\verification_field) {
+            if ($this->page->pagelayout === 'secure') {
+                $script = $element->secure_js();
+            }
+        }
+
+        $result = parent::mform_element($element, $required, $advanced, $error, $ingroup);
+
+        if (!empty($script)) {
+            $result .= $script;
+        }
+
+        return $result;
     }
 }

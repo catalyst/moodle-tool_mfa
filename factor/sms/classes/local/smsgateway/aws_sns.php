@@ -27,8 +27,6 @@ namespace factor_sms\local\smsgateway;
 
 use factor_sms\event\sms_sent;
 
-defined('MOODLE_INTERNAL') || die();
-
 class aws_sns implements gateway_interface {
 
     public function __construct() {

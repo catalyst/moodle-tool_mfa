@@ -25,8 +25,6 @@
 
 namespace factor_grace\task;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Scheduled task to revoke expired gracemode factors
  */

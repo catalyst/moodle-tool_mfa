@@ -26,8 +26,6 @@
 
 namespace factor_email;
 
-defined('MOODLE_INTERNAL') || die();
-
 use tool_mfa\local\factor\object_factor_base;
 
 class factor extends object_factor_base {

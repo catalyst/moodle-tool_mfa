@@ -26,8 +26,6 @@
 
 namespace factor_sms;
 
-defined('MOODLE_INTERNAL') || die();
-
 use moodle_url;
 use tool_mfa\local\factor\object_factor_base;
 

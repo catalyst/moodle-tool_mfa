@@ -25,8 +25,6 @@
 
 namespace tool_mfa\tests;
 
-defined('MOODLE_INTERNAL') || die();
-
 class tool_mfa_secret_manager_testcase extends \advanced_testcase {
     public function test_create_secret() {
         global $DB;

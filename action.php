@@ -42,19 +42,19 @@ $currenturl = new moodle_url('/admin/tool/mfa/action.php', $params);
 $returnurl = new moodle_url('/admin/tool/mfa/user_preferences.php');
 
 if (empty($factor) || empty($action)) {
-    print_error('error:directaccess', 'tool_mfa', $returnurl);
+    throw new moodle_exception('error:directaccess', 'tool_mfa', $returnurl);
 }
 
 if (!\tool_mfa\plugininfo\factor::factor_exists($factor)) {
-    print_error('error:factornotfound', 'tool_mfa', $returnurl, $factor);
+    throw new moodle_exception('error:factornotfound', 'tool_mfa', $returnurl, $factor);
 }
 
 if (!in_array($action, \tool_mfa\plugininfo\factor::get_factor_actions())) {
-    print_error('error:actionnotfound', 'tool_mfa', $returnurl, $action);
+    throw new moodle_exception('error:actionnotfound', 'tool_mfa', $returnurl, $action);
 }
 
 if (!empty($factorid) && !\tool_mfa\manager::is_factorid_valid($factorid, $USER)) {
-    print_error('error:incorrectfactorid', 'tool_mfa', $returnurl, $factorid);
+    throw new moodle_exception('error:incorrectfactorid', 'tool_mfa', $returnurl, $factorid);
 }
 
 $factorobject = \tool_mfa\plugininfo\factor::get_factor($factor);
@@ -97,7 +97,7 @@ switch ($action) {
                     redirect($finalurl);
                 }
 
-                print_error('error:setupfactor', 'tool_mfa', $returnurl);
+                throw new moodle_exception('error:setupfactor', 'tool_mfa', $returnurl);
             }
         }
 
@@ -111,7 +111,7 @@ switch ($action) {
         require_sesskey();
 
         if (!$factorobject || !$factorobject->has_revoke()) {
-            print_error('error:revoke', 'tool_mfa', $returnurl);
+            throw new moodle_exception('error:revoke', 'tool_mfa', $returnurl);
         }
 
         $PAGE->navbar->add(get_string('action:revoke', 'factor_'.$factor));
@@ -136,7 +136,7 @@ switch ($action) {
                     redirect($finalurl);
                 }
 
-                print_error('error:revoke', 'tool_mfa', $returnurl);
+                throw new moodle_exception('error:revoke', 'tool_mfa', $returnurl);
             }
         }
 

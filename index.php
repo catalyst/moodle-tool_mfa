@@ -40,11 +40,11 @@ $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $factor = optional_param('factor', '', PARAM_ALPHANUMEXT);
 
 if (empty($factor) || !\tool_mfa\plugininfo\factor::factor_exists($factor)) {
-    print_error('factornotfound', 'tool_mfa', $returnurl, $factor);
+    throw new moodle_exception('factornotfound', 'tool_mfa', $returnurl, $factor);
 }
 
 if (empty($action) || !in_array($action, \tool_mfa\plugininfo\factor::get_factor_actions())) {
-    print_error('actionnotfound', 'tool_mfa', $returnurl, $action);
+    throw new moodle_exception('actionnotfound', 'tool_mfa', $returnurl, $action);
 }
 
 require_sesskey();

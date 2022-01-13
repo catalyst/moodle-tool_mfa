@@ -25,8 +25,6 @@
 
 namespace factor_sms\local\smsgateway;
 
-defined('MOODLE_INTERNAL') || die();
-
 interface gateway_interface {
     /**
      * @param string $messagecontent the content to send in the SMS message.

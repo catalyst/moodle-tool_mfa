@@ -25,8 +25,6 @@
 
 namespace tool_mfa\local\factor;
 
-defined('MOODLE_INTERNAL') || die();
-
 abstract class object_factor_base implements object_factor {
     /**
      * Factor name.

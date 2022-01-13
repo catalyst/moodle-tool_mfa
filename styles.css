@@ -1,4 +1,5 @@
-input.tool-mfa-verification-code {
+input.tool-mfa-verification-code,
+.tool-mfa-verification-code input {
     /* Some elements must be important to override form element*/
     font-size: 1.25em !important;
     letter-spacing: 1.05em;
