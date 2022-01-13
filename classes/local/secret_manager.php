@@ -25,8 +25,6 @@
 
 namespace tool_mfa\local;
 
-defined('MOODLE_INTERNAL') || die();
-
 class secret_manager {
 
     const REVOKED = 'revoked';

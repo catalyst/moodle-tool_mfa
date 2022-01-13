@@ -25,8 +25,6 @@
 
 namespace factor_email\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Event for when a user receives an unauthorised email from MFA.
  *

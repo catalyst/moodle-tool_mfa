@@ -25,8 +25,6 @@
 
 namespace factor_sms\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 class sms_sent extends \core\event\base {
 
     protected function init() {

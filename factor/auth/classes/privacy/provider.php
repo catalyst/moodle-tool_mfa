@@ -24,8 +24,6 @@
 
 namespace factor_auth\privacy;
 
-defined('MOODLE_INTERNAL') || die;
-
 use core_privacy\local\metadata\null_provider;
 use core_privacy\local\legacy_polyfill;
 

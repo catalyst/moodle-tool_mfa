@@ -43,8 +43,7 @@ $instance = $DB->get_record('tool_mfa', array('id' => $instanceid));
 // If pass is set, require login to force $SESSION and user, and pass for that session.
 if (!empty($instance) && $pass != 0 && $secret != 0) {
     if ($instance->secret != $secret) {
-        print_error('error:parameters');
-        die;
+        throw new moodle_exception('error:parameters', 'factor_email');
     }
     require_login();
     $factor = \tool_mfa\plugininfo\factor::get_factor('email');

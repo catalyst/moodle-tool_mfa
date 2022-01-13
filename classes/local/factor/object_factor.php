@@ -25,8 +25,6 @@
 
 namespace tool_mfa\local\factor;
 
-defined('MOODLE_INTERNAL') || die();
-
 interface object_factor {
     /**
      * Returns true if factor is enabled, otherwise false.

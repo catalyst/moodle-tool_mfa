@@ -25,8 +25,6 @@
 
 namespace tool_mfa\local\factor;
 
-defined('MOODLE_INTERNAL') || die();
-
 class fallback extends object_factor_base {
 
     /**
@@ -64,4 +62,3 @@ class fallback extends object_factor_base {
         return false;
     }
 }
-

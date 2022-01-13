@@ -25,8 +25,6 @@
 
 namespace tool_mfa\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Event for when user factor is deleted.
  *

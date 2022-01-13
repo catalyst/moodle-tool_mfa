@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 function xmldb_factor_sms_upgrade($oldversion) {
     if ($oldversion < 2021081300) {
         set_config('gateway', 'aws_sns', 'factor_sms');

@@ -25,8 +25,6 @@
 
 namespace tool_mfa\plugininfo;
 
-defined('MOODLE_INTERNAL') || die();
-
 class factor extends \core\plugininfo\base {
 
     const STATE_UNKNOWN = 'unknown';

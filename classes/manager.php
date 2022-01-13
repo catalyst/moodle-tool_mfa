@@ -27,8 +27,6 @@ namespace tool_mfa;
 
 use Exception;
 
-defined('MOODLE_INTERNAL') || die();
-
 class manager {
 
     const REDIRECT = 1;

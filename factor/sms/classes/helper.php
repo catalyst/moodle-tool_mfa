@@ -25,8 +25,6 @@
 
 namespace factor_sms;
 
-defined('MOODLE_INTERNAL') || die();
-
 class helper {
     /**
      * This function internationalises a number to E.164 standard.
