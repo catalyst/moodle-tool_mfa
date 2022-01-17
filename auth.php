@@ -74,6 +74,9 @@ if ($form->is_submitted()) {
             \tool_mfa\manager::resolve_mfa_status(true);
         } else {
             if ($data = $form->get_data()) {
+                // Validation has passed, so before processing, lets action the global form submissions as well.
+                $form->globalmanager->submit($data);
+
                 // Did user submit something that causes a fail state?
                 if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_FAIL) {
                     \tool_mfa\manager::resolve_mfa_status(true);

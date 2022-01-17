@@ -559,4 +559,44 @@ abstract class object_factor_base implements object_factor {
     public function process_cancel_action() {
         $this->set_state(\tool_mfa\plugininfo\factor::STATE_NEUTRAL);
     }
+
+    /**
+     * Hook point for global auth form action hooks.
+     *
+     * @param $mform Form to inject global elements into.
+     * @return void
+     */
+    public function global_definition($mform){
+        return;
+    }
+
+    /**
+     * Hook point for global auth form action hooks.
+     *
+     * @param $mform Form to inject global elements into.
+     * @return void
+     */
+    public function global_definition_after_data($mform) {
+        return;
+    }
+
+    /**
+     * Hook point for global auth form action hooks.
+     *
+     * @param array $data Data from the form.
+     * @param array $files Files form the form.
+     * @return array of errors from validation.
+     */
+    public function global_validation($data, $files): array {
+        return [];
+    }
+
+    /**
+     * Hook point for global auth form action hooks.
+     *
+     * @param array $data Data from the form.
+     */
+    public function global_submit($data) {
+        return;
+    }
 }
