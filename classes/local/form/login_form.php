@@ -32,11 +32,10 @@ class login_form extends \moodleform {
     /**@var \tool_mfa\local\form\global_form_manager */
     public $globalmanager;
 
-    public function __construct($action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true,
-    $ajaxformdata=null) {
+    public function __construct($action = null, $customdata = null, $method = 'post', $target = '',
+            $attributes = null, $editable = true, $ajaxformdata=null) {
         $this->globalmanager = new \tool_mfa\local\form\global_form_manager();
-        parent::__construct($action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true,
-            $ajaxformdata=null);
+        parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
     }
 
     /**
@@ -57,7 +56,6 @@ class login_form extends \moodleform {
     public function definition_after_data() {
         $mform = $this->_form;
         $factor = $this->_customdata['factor'];
-
 
         $factor->login_form_definition_after_data($mform);
         $this->globalmanager->definition_after_data($mform);

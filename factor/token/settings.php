@@ -15,21 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Language strings.
+ * Settings
  *
  * @package     factor_token
+ * @subpackage  tool_mfa
  * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Trust this device';
+defined('MOODLE_INTERNAL') || die();
 
-$string['event:token_created'] = 'MFA token created.';
-$string['form:trust'] = 'Trust this device for {$a}.';
-$string['privacy:metadata'] = 'The  token factor plugin does not store any personal data';
-$string['settings:expiry'] = 'Trust duration';
-$string['settings:expiry_help'] = 'The duration a device is trusted before requiring a new MFA authentication.';
-$string['settings:expireovernight'] = 'Expire trust overnight';
-$string['settings:expireovernight_help'] = 'This forces tokens to expire overnight, preventing mid-day interruptions for users. Instead they will be asked to MFA authenticate at the start of a day after expiry.';
-$string['summarycondition'] = 'the user has previously trusted this device';
+$settings->add(new admin_setting_configcheckbox('factor_token/enabled',
+    new lang_string('settings:enablefactor', 'tool_mfa'),
+    new lang_string('settings:enablefactor_help', 'tool_mfa'), 0));
+
+$settings->add(new admin_setting_configtext('factor_token/weight',
+    new lang_string('settings:weight', 'tool_mfa'),
+    new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
+
+$settings->add(new admin_setting_configduration('factor_token/expiry',
+    new lang_string('settings:expiry', 'factor_token'),
+    new lang_string('settings:expiry_help', 'factor_token'), DAYSECS));
+
+$settings->add(new admin_setting_configcheckbox('factor_token/expireovernight',
+    new lang_string('settings:expireovernight', 'factor_token'),
+    new lang_string('settings:expireovernight_help', 'factor_token'), 1));

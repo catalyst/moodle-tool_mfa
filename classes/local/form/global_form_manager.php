@@ -28,7 +28,6 @@ class global_form_manager {
     /**@var array $activefactors factors to call hooks upon.*/
     private $activefactors;
 
-
     public function __construct() {
         $this->activefactors = factor::get_active_user_factor_types();
     }

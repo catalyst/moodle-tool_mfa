@@ -26,11 +26,21 @@
 namespace factor_token;
 
 use tool_mfa\local\factor\object_factor_base;
+use tool_mfa\local\secret_manager;
 
 class factor extends object_factor_base {
 
     /**
-     * token implementation.
+     * Token implementation.
+     *
+     * {@inheritDoc}
+     */
+    public function has_input() {
+        return false;
+    }
+
+    /**
+     * Token implementation.
      * This factor is a singleton, return single instance.
      *
      * {@inheritDoc}
@@ -57,48 +67,185 @@ class factor extends object_factor_base {
     }
 
     /**
-     * Role implementation.
-     * Factor has no input
-     *
-     * {@inheritDoc}
-     */
-    public function has_input() {
-        // TODO
-        return false;
-    }
-
-    /**
-     * Role implementation.
+     * Token implementation.
      * Checks whether the user has selected roles in any context.
      *
      * {@inheritDoc}
      */
     public function get_state() {
-        // TODO
+        global $USER;
 
-        // If we got here, no roles matched, allow access.
-        return \tool_mfa\plugininfo\factor::STATE_PASS;
+        // Check if there was a previous locked status to return.
+        $state = parent::get_state();
+        if ($state === \tool_mfa\plugininfo\factor::STATE_LOCKED) {
+            return \tool_mfa\plugininfo\factor::STATE_LOCKED;
+        }
+
+        // Check cookie Exists.
+        if (!NO_MOODLE_COOKIES) {
+            $userid = $USER->id;
+            $cookie = 'MFA_TOKEN_' . $userid;
+
+            if (!empty($_COOKIE[$cookie])) {
+                $token = $_COOKIE[$cookie];
+            } else {
+                return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+            }
+        } else {
+            return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+        }
+        $secretmanager = new secret_manager($this->name);
+        $verified = $secretmanager->validate_secret($token, true);
+
+        // If we got a bad cookie value, someone is likely being dodgy.
+        // In this instance we should just lock and make the user re-MFA.
+        if ($verified === secret_manager::NONVALID) {
+            $this->set_state(\tool_mfa\plugininfo\factor::STATE_LOCKED);
+            return \tool_mfa\plugininfo\factor::STATE_LOCKED;
+        } else if ($verified === secret_manager::VALID) {
+            return \tool_mfa\plugininfo\factor::STATE_PASS;
+        }
+
+        // We should never get here. Factor cannot be revoked.
+        return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
     }
 
     /**
-     * Role implementation.
-     * Cannot set state, return true.
+     * Token Implementation.
+     * We can't get_state like the parent here or it will recurse forever.
      *
-     * {@inheritDoc}
+     * @param string $state
+     * @return void
      */
     public function set_state($state) {
-        // TODO
+        global $SESSION;
+        $property = 'factor_'.$this->name;
+        $SESSION->$property = $state;
         return true;
     }
 
     /**
-     * Role implementation.
-     * User can not influence. Result is whatever current state is.
+     * Token implementation.
      *
      * {@inheritDoc}
      */
     public function possible_states($user) {
-        // TODO
-        return [$this->get_state()];
+        return [
+            \tool_mfa\plugininfo\factor::STATE_PASS,
+            \tool_mfa\plugininfo\factor::STATE_NEUTRAL,
+            \tool_mfa\plugininfo\factor::STATE_LOCKED
+        ];
+    }
+
+    /**
+     * Token implementation.
+     * Inject a checkbox into every auth form if needed.
+     *
+     * {@inheritDoc}
+     */
+    public function global_definition_after_data($mform) {
+        global $SESSION;
+
+        // First thing, we need to decide on whether we should show the checkbox.
+        $noproperty = !property_exists($SESSION, 'tool_mfa_factor_token');
+        $nostate = $this->get_state() !== \tool_mfa\plugininfo\factor::STATE_PASS;
+
+        if ($noproperty && $nostate) {
+            $expiry = get_config('factor_token', 'expiry');
+            $expirystring = format_time($expiry);
+            $mform->addElement('advcheckbox', 'factor_token_trust', '', get_string('form:trust', 'factor_token', $expirystring));
+            $mform->setType('factor_token_trust', PARAM_BOOL);
+            $mform->setDefault('factor_token_trust', true);
+        }
+    }
+
+    /**
+     * Token implementation.
+     * Store information about the token status.
+     *
+     * {@inheritDoc}
+     */
+    public function global_submit($data) {
+        global $SESSION;
+
+        // Store any kind of response here, we shouldnt show again.
+        $trust = $data->factor_token_trust;
+        $SESSION->tool_mfa_factor_token = $trust;
+    }
+
+    /**
+     * Token implementation.
+     * Pass hook to set the cookie for use in subsequent auths.
+     *
+     * {@inheritDoc}
+     */
+    public function post_pass_state() {
+        global $SESSION, $USER;
+
+        if (!property_exists($SESSION, 'tool_mfa_factor_token')) {
+            return;
+        }
+        $settoken = $SESSION->tool_mfa_factor_token;
+        if (!$settoken) {
+            return;
+        }
+
+        $userid = $USER->id;
+        $cookie = 'MFA_TOKEN_' . $userid;
+
+        list($expirytime, $expiry) = $this->calculate_expiry_time();
+
+        // Store this secret in the database.
+        $secretmanager = new secret_manager($this->name);
+        $secret = base64_encode(random_bytes(256));
+        $secretmanager->create_secret($expiry, false, $secret);
+
+        // All the prep is now done, we can set this cookie.
+        setcookie($cookie, $secret, $expirytime, '/admin/tool/mfa', '', false, true);
+
+        // Finally emit a log event for storing the cookie.
+        $state = [
+            'expiry' => $expirytime,
+            'cookie' => $cookie
+        ];
+        $event = \factor_token\event\token_created::token_created_event($USER, $state);
+        $event->trigger();
+    }
+
+    /**
+     * Calculate the expiry time of the token, based on configuration.
+     *
+     * @param integer|null $basetime time to use for calcalations.
+     * @return array
+     */
+    public function calculate_expiry_time($basetime = null): array {
+        if (empty($basetime)) {
+            $basetime = time();
+        }
+
+        // Calculate the expiry time. This is provided by config,
+        // But optionally might need to be rounded  to expire a few hours after 0000 server time.
+        $expiry = get_config('factor_token', 'expiry');
+        if (get_config('factor_token', 'expireovernight')) {
+            $expirytime = $basetime + $expiry;
+            // Round this back to midnight, then add a couple hours padding.
+            $rounded = $expirytime - ($expirytime % DAYSECS) + (2 * HOURSECS);
+            // The rounded time is in GMT, need to convert to user time.
+            $timezone = \core_date::get_user_timezone_object();
+            $rdatetime = new \DateTime();
+            $rdatetime->setTimestamp($rounded);
+            $rounded = $rounded - $timezone->getOffset($rdatetime);
+            // If this is backwards in time, we can't expire overnight as the expiry is too short. Use raw expiry.
+            if ($rounded > $basetime) {
+                $expirytime = $rounded;
+            }
+
+            // Then use this timestamp to calculate the delta.
+            $expiry = $expirytime - $basetime;
+        } else {
+            $expirytime = $basetime + $expiry;
+        }
+
+        return [$expirytime, $expiry];
     }
 }

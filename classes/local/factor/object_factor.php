@@ -300,7 +300,7 @@ interface object_factor {
     /**
      * Hook point for global auth form action hooks.
      *
-     * @param array $data Data from the form.
+     * @param object $data Data from the form.
      */
     public function global_submit($data);
 }
