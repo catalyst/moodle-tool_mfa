@@ -101,7 +101,7 @@ class secret_manager {
      * @param bool $keep should the secret be kept for reuse until expiry?
      * @return string a secret manager state constant
      */
-    public function validate_secret(string $secret, bool $keep = false) : string {
+    public function validate_secret(string $secret, bool $keep = false): string {
         global $DB, $USER;
         $status = $this->check_secret_against_db($secret, $this->sessionid);
         if ($status !== self::NONVALID) {

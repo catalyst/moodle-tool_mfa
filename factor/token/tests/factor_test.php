@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace factor_token\tests;
+
 /**
  * Tests for MFA manager class.
  *
@@ -22,11 +24,6 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace factor_token\tests;
-
-defined('MOODLE_INTERNAL') || die();
-
 class factor_token_test extends \advanced_testcase {
 
     public function test_calculate_expiry_time() {
@@ -53,7 +50,7 @@ class factor_token_test extends \advanced_testcase {
         // Manually calculate the next reset time.
         $reset = strtotime('tomorrow 0200', $timestamp);
         $resetdelta = $reset - $timestamp;
-        // Confirm that a timestamp that doesnt reach reset time
+        // Confirm that a timestamp that doesnt reach reset time.
         if ($timestamp + HOURSECS < $reset) {
             $expiry = $method->invoke($factor, $timestamp);
             $this->assertGreaterThan(HOURSECS - 30, $expiry[1]);
@@ -61,7 +58,7 @@ class factor_token_test extends \advanced_testcase {
         }
 
         set_config('expiry', 2 * DAYSECS, 'factor_token');
-        // Now confirm that the returned expiry is less than the absolute amount
+        // Now confirm that the returned expiry is less than the absolute amount.
         $expiry = $method->invoke($factor, $timestamp);
         $this->assertGreaterThan(DAYSECS, $expiry[1]);
         $this->assertLessThan(2 * DAYSECS, $expiry[1]);

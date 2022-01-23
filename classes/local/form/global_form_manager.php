@@ -22,10 +22,12 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_mfa\local\form;
+
+use stdClass;
 use tool_mfa\plugininfo\factor;
 
 class global_form_manager {
-    /**@var array $activefactors factors to call hooks upon.*/
+    /** @var array $activefactors factors to call hooks upon.*/
     private $activefactors;
 
     public function __construct() {
@@ -77,7 +79,7 @@ class global_form_manager {
      * @param object $data Data from the form.
      * @return void
      */
-    public function submit(object $data) {
+    public function submit(stdClass $data) {
         foreach ($this->activefactors as $factor) {
             $factor->global_submit($data);
         }

@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace factor_token;
+
+use tool_mfa\local\factor\object_factor_base;
+use tool_mfa\local\secret_manager;
+
 /**
  * Token factor class.
  *
@@ -22,12 +27,6 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace factor_token;
-
-use tool_mfa\local\factor\object_factor_base;
-use tool_mfa\local\secret_manager;
-
 class factor extends object_factor_base {
 
     /**
@@ -47,21 +46,21 @@ class factor extends object_factor_base {
      */
     public function get_all_user_factors($user) {
         global $DB;
-        $records = $DB->get_records('tool_mfa', array('userid' => $user->id, 'factor' => $this->name));
+        $records = $DB->get_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
 
         if (!empty($records)) {
             return $records;
         }
 
         // Null records returned, build new record.
-        $record = array(
+        $record = [
             'userid' => $user->id,
             'factor' => $this->name,
             'timecreated' => time(),
             'createdfromip' => $user->lastip,
             'timemodified' => time(),
             'revoked' => 0,
-        );
+        ];
         $record['id'] = $DB->insert_record('tool_mfa', $record, true);
         return [(object) $record];
     }
@@ -82,18 +81,12 @@ class factor extends object_factor_base {
         }
 
         // Check cookie Exists.
-        if (!NO_MOODLE_COOKIES) {
-            $userid = $USER->id;
-            $cookie = 'MFA_TOKEN_' . $userid;
-
-            if (!empty($_COOKIE[$cookie])) {
-                $token = $_COOKIE[$cookie];
-            } else {
-                return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
-            }
-        } else {
+        $cookie = 'MFA_TOKEN_' . $USER->id;
+        if (NO_MOODLE_COOKIES || empty($_COOKIE[$cookie])) {
             return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
         }
+        $token = $_COOKIE[$cookie];
+
         $secretmanager = new secret_manager($this->name);
         $verified = $secretmanager->validate_secret($token, true);
 
@@ -119,7 +112,7 @@ class factor extends object_factor_base {
      */
     public function set_state($state) {
         global $SESSION;
-        $property = 'factor_'.$this->name;
+        $property = 'factor_' . $this->name;
         $SESSION->$property = $state;
         return true;
     }
@@ -189,9 +182,7 @@ class factor extends object_factor_base {
         if (!$settoken) {
             return;
         }
-
-        $userid = $USER->id;
-        $cookie = 'MFA_TOKEN_' . $userid;
+        $cookie = 'MFA_TOKEN_' . $USER->id;
 
         list($expirytime, $expiry) = $this->calculate_expiry_time();
 

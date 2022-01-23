@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace factor_token\event;
 /**
  * Event for a token being created for a user.
  *
@@ -22,9 +23,6 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace factor_token\event;
-
 class token_created extends \core\event\base {
 
     /**
@@ -38,15 +36,14 @@ class token_created extends \core\event\base {
      * @throws \coding_exception
      */
     public static function token_created_event($user, $state) {
-
-        $data = array(
+        $data = [
             'relateduserid' => $user->id,
             'context' => \context_user::instance($user->id),
             'other' => array (
                 'userid' => $user->id,
                 'state' => json_encode($state)
             )
-        );
+        ];
 
         return self::create($data);
     }

@@ -27,7 +27,7 @@ $string['pluginname'] = 'Trust this device';
 
 $string['event:token_created'] = 'MFA token created.';
 $string['form:trust'] = 'Trust this device for {$a}.';
-$string['privacy:metadata'] = 'The  token factor plugin does not store any personal data';
+$string['privacy:metadata'] = 'The token factor plugin does not store any personal data.';
 $string['settings:expiry'] = 'Trust duration';
 $string['settings:expiry_help'] = 'The duration a device is trusted before requiring a new MFA authentication.';
 $string['settings:expireovernight'] = 'Expire trust overnight';

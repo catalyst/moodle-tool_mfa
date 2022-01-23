@@ -29,11 +29,11 @@ require_once($CFG->libdir . "/formslib.php");
 
 class login_form extends \moodleform {
 
-    /**@var \tool_mfa\local\form\global_form_manager */
+    /** @var \tool_mfa\local\form\global_form_manager */
     public $globalmanager;
 
     public function __construct($action = null, $customdata = null, $method = 'post', $target = '',
-            $attributes = null, $editable = true, $ajaxformdata=null) {
+            $attributes = null, $editable = true, $ajaxformdata = null) {
         $this->globalmanager = new \tool_mfa\local\form\global_form_manager();
         parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
     }
