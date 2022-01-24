@@ -98,13 +98,14 @@ class secret_manager {
      * Validates whether the provided secret is currently valid.
      *
      * @param string $secret the secret to check
+     * @param bool $keep should the secret be kept for reuse until expiry?
      * @return string a secret manager state constant
      */
-    public function validate_secret(string $secret) : string {
+    public function validate_secret(string $secret, bool $keep = false): string {
         global $DB, $USER;
         $status = $this->check_secret_against_db($secret, $this->sessionid);
         if ($status !== self::NONVALID) {
-            if ($status === self::VALID) {
+            if ($status === self::VALID && !$keep) {
                 // Cleanup DB $record.
                 $DB->delete_records('tool_mfa_secrets', ['userid' => $USER->id, 'factor' => $this->factor]);
             }
