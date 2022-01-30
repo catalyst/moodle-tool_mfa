@@ -14,7 +14,7 @@
     * [Mobile SMS](#mobile-sms)
     * [IP Range](#ip-range)
     * [Email](#email)
-    * [Lockout](#lockout)
+    * [Lockout threshold](#lockout-threshold)
   * [User filtering factors](#user-filtering-factors)
     * [Auth type](#auth-type)
     * [Non-admin](#non-admin)
