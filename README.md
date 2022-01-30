@@ -14,6 +14,7 @@
     * [Mobile SMS](#mobile-sms)
     * [IP Range](#ip-range)
     * [Email](#email)
+    * [Lockout](#lockout)
   * [User filtering factors](#user-filtering-factors)
     * [Auth type](#auth-type)
     * [Non-admin](#non-admin)
@@ -158,6 +159,10 @@ Use this factor to say that if you are on a secure network then that counts for 
 A simple factor which sends a short lived code to your email which you then need to enter to login. Generally speaking this is a low security factor because typically the same username and password which logs you into moodle is the same which logs you into your email so it doesn't add much value.
 
 This factor was implemented as a proof of concept of a factor which can return a hard FAIL state, ie positive evidence that your account is compromised rather than NEUTRAL where we simply lack evidence of additional factors that the end user is who they say they are.
+
+#### Lockout threshold
+
+This is a generic setting which applies to all the 'input' factors above which is the amount of attempts a user has at answering input factors before they are not permitted to login. If your account is locked there is an admin report to find and unlock these users.
 
 ### User filtering factors
 
