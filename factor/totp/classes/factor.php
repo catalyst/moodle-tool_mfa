@@ -257,7 +257,7 @@ class factor extends object_factor_base {
     public function validate_code($code, $window, $totp, $factor) {
         // First check if this code matches the last verified timestamp.
         $lastverified = $this->get_lastverified($factor->id);
-        if ($totp->verify($code, $lastverified, $window)) {
+        if ($lastverified > 0 && $totp->verify($code, $lastverified, $window)) {
             return self::TOTP_USED;
         }
 
