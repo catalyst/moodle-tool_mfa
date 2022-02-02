@@ -192,7 +192,7 @@ class factor extends object_factor_base {
         $secretmanager->create_secret($expiry, false, $secret);
 
         // All the prep is now done, we can set this cookie.
-        setcookie($cookie, $secret, $expirytime, '/admin/tool/mfa', '', false, true);
+        setcookie($cookie, $secret, $expirytime, '/', '', false, true);
 
         // Finally emit a log event for storing the cookie.
         $state = [
