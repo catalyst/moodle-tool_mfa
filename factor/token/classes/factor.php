@@ -173,7 +173,7 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function post_pass_state() {
-        global $SESSION, $USER;
+        global $CFG, $SESSION, $USER;
 
         if (!property_exists($SESSION, 'tool_mfa_factor_token')) {
             return;
@@ -192,7 +192,7 @@ class factor extends object_factor_base {
         $secretmanager->create_secret($expiry, false, $secret);
 
         // All the prep is now done, we can set this cookie.
-        setcookie($cookie, $secret, $expirytime, '/', '', false, true);
+        setcookie($cookie, $secret, $expirytime, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, false, true);
 
         // Finally emit a log event for storing the cookie.
         $state = [
