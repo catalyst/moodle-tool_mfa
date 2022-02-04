@@ -89,16 +89,14 @@ class factor extends object_factor_base {
         $record = reset($records);
 
         // First check if user has any other input or setup factors active.
-        $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        $factors = $this->get_affecting_factors();
         $total = 0;
         foreach ($factors as $factor) {
-            if ($factor->has_input() || $factor->has_setup()) {
-                $total += $factor->get_weight();
-                // If we have hit 100 total, then we know it is possible to auth with the current setup.
-                // Gracemode should no longer give points.
-                if ($total >= 100) {
-                    return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
-                }
+            $total += $factor->get_weight();
+            // If we have hit 100 total, then we know it is possible to auth with the current setup.
+            // Gracemode should no longer give points.
+            if ($total >= 100) {
+                return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
             }
         }
 
@@ -235,5 +233,46 @@ class factor extends object_factor_base {
         } else {
             return [];
         }
+    }
+
+    /**
+     * Returns a list of factor objects that can affect gracemode giving points.
+     *
+     * Only factors that a user can setup or manually use can affect whether gracemode gives points.
+     * The intest is to provide a grace period for users to go in, setup factors, phone numbers, etc.,
+     * so that they are able to authenticate correctly once the grace period ends.
+     *
+     * @return array
+     */
+    public function get_all_affecting_factors(): array {
+        // Check if user has any other input or setup factors active.
+        $factors = \tool_mfa\plugininfo\factor::get_factors();
+        $factors = array_filter($factors, function($el) {
+            return $el->has_input() || $el->has_setup();
+        });
+        return $factors;
+    }
+
+    /**
+     * Get the factor list that is currently affecting gracemode. Active and not ignored.
+     *
+     * @return array
+     */
+    public function get_affecting_factors(): array {
+        // We need to filter all active user factors against the affecting factors and ignorelist.
+        // Map active to names for filtering.
+        $active = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        $active = array_map(function($el) {
+            return $el->name;
+        }, $active);
+        $factors = $this->get_all_affecting_factors();
+
+        $ignorelist = get_config('factor_grace', 'ignorelist');
+        $ignorelist = !empty($ignorelist) ? explode(',', $ignorelist) : [];
+
+        $factors = array_filter($factors, function($el) use ($ignorelist, $active) {
+            return !in_array($el->name, $ignorelist) && in_array($el->name, $active);
+        });
+        return $factors;
     }
 }

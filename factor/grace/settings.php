@@ -37,6 +37,16 @@ $settings->add(new admin_setting_configcheckbox('factor_grace/forcesetup',
     new lang_string('settings:forcesetup', 'factor_grace'),
     new lang_string('settings:forcesetup_help', 'factor_grace'), 0));
 
-$name = new lang_string('settings:graceperiod', 'factor_grace');
-$description = new lang_string('settings:graceperiod_help', 'factor_grace');
-$settings->add(new admin_setting_configduration('factor_grace/graceperiod', $name, $description, '604800'));
+$settings->add(new admin_setting_configduration('factor_grace/graceperiod',
+    new lang_string('settings:graceperiod', 'factor_grace'),
+    new lang_string('settings:graceperiod_help', 'factor_grace'), '604800'));
+
+$gracefactor = \tool_mfa\plugininfo\factor::get_factor('grace');
+$factors = $gracefactor->get_all_affecting_factors();
+$gracefactors = [];
+foreach ($factors as $factor) {
+    $gracefactors[$factor->name] = $factor->get_display_name();
+}
+$settings->add(new admin_setting_configmultiselect('factor_grace/ignorelist',
+    new lang_string('settings:ignorelist', 'factor_grace'),
+    new lang_string('settings:ignorelist_help', 'factor_grace'), [], $gracefactors));
