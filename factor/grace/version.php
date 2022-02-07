@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version      = 2020042301;      // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version      = 2022020400;      // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires     = 2017051500.00;   // Support back to 3.3 - Totara 12. Patches required.
 $plugin->component    = 'factor_grace';
 $plugin->release      = 'v0.1';

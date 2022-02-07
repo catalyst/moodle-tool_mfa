@@ -29,6 +29,8 @@ $string['settings:forcesetup'] = 'Force factor setup';
 $string['settings:forcesetup_help'] = 'Forces a user to the preferences page to setup MFA when the gracemode period expires. If set to off, users will be unable to authenticate when the grace period expires.';
 $string['settings:graceperiod'] = 'Grace period';
 $string['settings:graceperiod_help'] = 'Period of time when users can access Moodle without configured and enabled factors';
+$string['settings:ignorelist'] = 'Ignored factors';
+$string['settings:ignorelist_help'] = 'Grace will not give points if there are other factors that users can use to authenticate with MFA. Any factors here will not be counted by grace when deciding whether to give points. This can allow Grace to allow authentication if another factor like email, is suffering configuration or system issues.';
 $string['setupfactors'] = 'You are currently in grace mode, and may not have enough factors setup to login once the grace period is over.
     Visit {$a->url} to check your authentication status, and setup more authentication factors. Your grace period expires in {$a->time}.';
 $string['preferences'] = 'User Preferences';
