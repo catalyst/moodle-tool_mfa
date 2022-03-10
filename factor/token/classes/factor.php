@@ -217,24 +217,33 @@ class factor extends object_factor_base {
         // Calculate the expiry time. This is provided by config,
         // But optionally might need to be rounded  to expire a few hours after 0000 server time.
         $expiry = get_config('factor_token', 'expiry');
-        if (get_config('factor_token', 'expireovernight')) {
-            $expirytime = $basetime + $expiry;
-            // Round this back to midnight, then add a couple hours padding.
-            $rounded = $expirytime - ($expirytime % DAYSECS) + (2 * HOURSECS);
-            // The rounded time is in GMT, need to convert to user time.
+        $expirytime = $basetime + $expiry;
+
+        // If expiring overnight, it should expire at 2am the following morning, if required.
+        $expireovernight = get_config('factor_token', 'expireovernight');
+        if ($expireovernight) {
+            // Find out what 2am the following morning time is.
+            $datetime = new \DateTime();
             $timezone = \core_date::get_user_timezone_object();
-            $rdatetime = new \DateTime();
-            $rdatetime->setTimestamp($rounded);
-            $rounded = $rounded - $timezone->getOffset($rdatetime);
-            // If this is backwards in time, we can't expire overnight as the expiry is too short. Use raw expiry.
-            if ($rounded > $basetime) {
-                $expirytime = $rounded;
+
+            // Bit to ensure 'expireovernight' works when 'expire' is longer than one day.
+            $difftime = 0;
+            if ($expiry > DAYSECS) {
+                // Ensures a safe amount of days is added before doing the 2am checks.
+                $difftime = $expiry - DAYSECS;
             }
 
-            // Then use this timestamp to calculate the delta.
+            // Calculte the overnight expiry time, ignoring 'expiry' duration period.
+            $workingexpirytime = $basetime + $difftime;
+            $datetime->setTimezone($timezone);
+            $datetime->setTimestamp($workingexpirytime);
+            $datetime->add(new \DateInterval('P1D'));
+            $datetime->setTime(2, 0); // Set the hour to 2am.
+
+            // Ensure whatever happens, ensure the expiry never goes over the default 'expiry' time.
+            $overnightexpirytime = $datetime->getTimestamp();
+            $expirytime = min($overnightexpirytime, $expirytime);
             $expiry = $expirytime - $basetime;
-        } else {
-            $expirytime = $basetime + $expiry;
         }
 
         return [$expirytime, $expiry];
