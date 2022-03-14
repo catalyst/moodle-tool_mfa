@@ -28,14 +28,14 @@ require_once($CFG->libdir.'/adminlib.php');
 
 use tool_mfa\local\form\login_form;
 
-require_login(null, false);
-
 $context = context_user::instance($USER->id);
 $PAGE->set_context($context);
 $PAGE->set_url('/admin/tool/mfa/auth.php');
 $PAGE->set_pagelayout('secure');
 $pagetitle = $SITE->shortname.': '.get_string('mfa', 'tool_mfa');
 $PAGE->set_title($pagetitle);
+
+require_login(null, false);
 
 // The only page action allowed here is a logout if it was requested.
 $logout = optional_param('logout', false, PARAM_BOOL);
