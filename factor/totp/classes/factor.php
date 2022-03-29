@@ -82,7 +82,8 @@ class factor extends object_factor_base {
         $uri = $this->generate_totp_uri($secret);
         $qrcode = new \TCPDF2DBarcode($uri, 'QRCODE');
         $image = $qrcode->getBarcodePngData(7, 7);
-        $html = \html_writer::img('data:image/png;base64,' . base64_encode($image), '');
+        $html = \html_writer::img('data:image/png;base64,' . base64_encode($image), '', ['width' => '150px']);
+        $html .= \html_writer::tag('p', get_string('setupfactor:scanwithapp', 'factor_totp'));
         return $html;
     }
 
@@ -122,12 +123,16 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function setup_factor_form_definition_after_data($mform) {
-        global $OUTPUT, $SITE, $USER;
+        global $OUTPUT, $PAGE, $SITE, $USER;
 
         $mform->addElement('html', $OUTPUT->heading(get_string('setupfactor', 'factor_totp'), 2));
+        $mform->addElement('html', \html_writer::tag('p', get_string('info', 'factor_totp')));
+        $mform->addElement('html', \html_writer::tag('hr', ''));
 
-        $mform->addElement('text', 'devicename', get_string('devicename', 'factor_totp'),
-            array('placeholder' => get_string('devicenameexample', 'factor_totp')));
+        $mform->addElement('text', 'devicename', get_string('devicename', 'factor_totp'), [
+            'placeholder' => get_string('devicenameexample', 'factor_totp'),
+            'autofocus' => 'autofocus'
+        ]);
         $mform->addHelpButton('devicename', 'devicename', 'factor_totp');
         $mform->setType("devicename", PARAM_TEXT);
         $mform->addRule('devicename', get_string('required'), 'required', null, 'client');
@@ -163,8 +168,23 @@ class factor extends object_factor_base {
         ];
 
         $html = \html_writer::table($manualtable);
-        $mform->addElement('static', 'enter', get_string('setupfactor:enter', 'factor_totp'), $html);
-        $mform->addHelpButton('enter', 'setupfactor:enter', 'factor_totp');
+        $html = \html_writer::tag('p', get_string('setupfactor:enter', 'factor_totp')) . $html;
+        // Wrap the table in a couple of divs to be controlled via bootstrap.
+        $html = \html_writer::div($html, 'card card-body', ['style' => 'padding-left: 0 !important;']);
+        $html = \html_writer::div($html, 'collapse', ['id' => 'collapseManualAttributes']);
+
+        $togglelink = \html_writer::tag('btn', get_string('setupfactor:scanfail', 'factor_totp'), [
+            'class' => 'btn btn-secondary',
+            'type' => 'button',
+            'data-toggle' => 'collapse',
+            'data-target' => '#collapseManualAttributes',
+            'aria-expanded' => 'false',
+            'aria-controls' => 'collapseManualAttributes',
+            'style' => 'font-size: 14px;'
+        ]);
+
+        $html = $togglelink . $html;
+        $mform->addElement('static', 'enter', '', $html);
 
         $mform->addElement(new \tool_mfa\local\form\verification_field(null, false));
         $mform->setType('verificationcode', PARAM_ALPHANUM);
