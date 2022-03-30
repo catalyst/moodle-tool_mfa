@@ -25,6 +25,8 @@
 
 $string['pluginname'] = 'Grace period';
 $string['info'] = 'Allows login without other factor for a specified period of time.';
+$string['settings:customwarning'] = 'Warning banner content';
+$string['settings:customwarning_help'] = 'Add content here to replace the grace warning notification with custom HTML contents. Adding {timeremaining} in text will replace it with the current grace duration for the user, and {setuplink} will replace with the URL of the setup page for the user.';
 $string['settings:forcesetup'] = 'Force factor setup';
 $string['settings:forcesetup_help'] = 'Forces a user to the preferences page to setup MFA when the gracemode period expires. If set to off, users will be unable to authenticate when the grace period expires.';
 $string['settings:graceperiod'] = 'Grace period';

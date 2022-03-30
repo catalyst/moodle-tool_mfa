@@ -50,3 +50,7 @@ foreach ($factors as $factor) {
 $settings->add(new admin_setting_configmultiselect('factor_grace/ignorelist',
     new lang_string('settings:ignorelist', 'factor_grace'),
     new lang_string('settings:ignorelist_help', 'factor_grace'), [], $gracefactors));
+
+$settings->add(new admin_setting_confightmleditor('factor_grace/customwarning',
+    new lang_string('settings:customwarning', 'factor_grace'),
+    new lang_string('settings:customwarning_help', 'factor_grace'), '', PARAM_RAW));
