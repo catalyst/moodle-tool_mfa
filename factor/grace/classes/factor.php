@@ -182,7 +182,17 @@ class factor extends object_factor_base {
             $time = format_time($timeremaining);
 
             $data = array('url' => $link, 'time' => $time);
-            $message = get_string('setupfactors', 'factor_grace', $data);
+
+            $customwarning = get_config('factor_grace', 'customwarning');
+            if (!empty($customwarning)) {
+                // Clean text, then swap placeholders for time and the setup link.
+                $message = preg_replace("/{timeremaining}/", $time, $customwarning);
+                $message = preg_replace("/{setuplink}/", $url, $message);
+                $message = clean_text($message, FORMAT_MOODLE);
+            } else {
+                $message = get_string('setupfactors', 'factor_grace', $data);
+            }
+
             \core\notification::error($message);
         }
     }

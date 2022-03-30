@@ -37,12 +37,12 @@ class verification_field extends \MoodleQuickForm_text {
     /**
      * Verification field is a text entry box that features some useful extras.
      *
-     * Contains JS to autosubmit the auth page when entered, as well as additional styling.
+     * Contains JS to autosubmit the auth page when code is entered, as well as additional styling.
      *
      * @param array $attributes
-     * @param boolean $auth is this field used in auth.php?
+     * @param boolean $auth is this constructed in auth.php loginform_* definitions. Set to false to prevent autosubmission of form.
      */
-    public function __construct($attributes=null, $auth = true) {
+    public function __construct($attributes = null, $auth = true) {
         global $PAGE;
 
         // Force attributes.
