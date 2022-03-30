@@ -34,7 +34,15 @@ class verification_field extends \MoodleQuickForm_text {
     /** @var bool $appendjs */
     private $appendjs;
 
-    public function __construct($attributes=null, $submit = true) {
+    /**
+     * Verification field is a text entry box that features some useful extras.
+     *
+     * Contains JS to autosubmit the auth page when entered, as well as additional styling.
+     *
+     * @param array $attributes
+     * @param boolean $auth is this field used in auth.php?
+     */
+    public function __construct($attributes=null, $auth = true) {
         global $PAGE;
 
         // Force attributes.
@@ -43,14 +51,19 @@ class verification_field extends \MoodleQuickForm_text {
         }
 
         $attributes['autocomplete'] = 'one-time-code';
-        $attributes['autofocus'] = 'autofocus';
         $attributes['inputmode'] = 'numeric';
         $attributes['pattern'] = '[0-9]*';
         $attributes['class'] = 'tool-mfa-verification-code';
 
-        // Load JS for element.
+        // If we aren't on the auth page, this might be part of a larger form such as for setup.
+        // We shouldn't autofocus here, as it probably isn't the only element, or main target.
+        if ($auth) {
+            $attributes['autofocus'] = 'autofocus';
+        }
+
+        // If we are on the auth page, load JS for element.
         $this->appendjs = false;
-        if ($submit) {
+        if ($auth) {
             if ($PAGE->pagelayout === 'secure') {
                 $this->appendjs = true;
             } else {
