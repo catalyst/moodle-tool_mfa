@@ -82,8 +82,8 @@ class factor extends object_factor_base {
         $uri = $this->generate_totp_uri($secret);
         $qrcode = new \TCPDF2DBarcode($uri, 'QRCODE');
         $image = $qrcode->getBarcodePngData(7, 7);
-        $html = \html_writer::img('data:image/png;base64,' . base64_encode($image), '', ['width' => '150px']);
-        $html .= \html_writer::tag('p', get_string('setupfactor:scanwithapp', 'factor_totp'));
+        $html = \html_writer::tag('p', get_string('setupfactor:scanwithapp', 'factor_totp'));
+        $html .= \html_writer::img('data:image/png;base64,' . base64_encode($image), '', ['width' => '150px']);
         return $html;
     }
 
