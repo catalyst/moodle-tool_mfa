@@ -30,3 +30,4 @@ $plugin->release   = 2022033000;      // Same as version.
 $plugin->requires  = 2017051500.00;   // Support back to 3.3 - Totara 12. Patches required.
 $plugin->component = 'tool_mfa';
 $plugin->maturity  = MATURITY_STABLE;
+$plugin->supported  = [35, 401];
