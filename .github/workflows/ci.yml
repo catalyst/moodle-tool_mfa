@@ -6,9 +6,9 @@ on: [push, pull_request]
 jobs:
   test:
     uses: catalyst/catalyst-moodle-workflows/.github/workflows/ci.yml@main
-    secrets:
+    # secrets:
       # Required if you plan to publish (uncomment the below)
-      moodle_org_token: ${{ secrets.MOODLE_ORG_TOKEN }}
+      # moodle_org_token: ${{ secrets.MOODLE_ORG_TOKEN }}
     with:
       #Grunt fails due to CSS styling needing an !important.
       disable_grunt: true
