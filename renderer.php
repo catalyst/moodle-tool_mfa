@@ -162,7 +162,9 @@ class tool_mfa_renderer extends plugin_renderer_base {
                 $timecreated  = $userfactor->timecreated == '-' ? '-'
                     : userdate($userfactor->timecreated,  get_string('strftimedatetime'));
                 $lastverified = $userfactor->lastverified;
-                if ($lastverified != '-') {
+                if ($lastverified == 0) {
+                    $lastverified = '-';
+                } else if ($lastverified != '-') {
                     $lastverified = userdate($userfactor->lastverified, get_string('strftimedatetime'));
                     $lastverified .= '<br>';
                     $lastverified .= get_string('ago', 'core_message', format_time(time() - $userfactor->lastverified));
