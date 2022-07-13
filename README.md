@@ -306,7 +306,7 @@ php admin/cli/cfg.php --component=tool_mfa --name=enabled --set=0
 
 If you have issues please log them in github here
 
-https://github.com/catalyst/moodle-auth_saml2/issues
+https://github.com/catalyst/moodle-tool_mfa/issues
 
 Please note our time is limited, so if you need urgent support or want to
 sponsor a new feature then please contact Catalyst IT Australia:
