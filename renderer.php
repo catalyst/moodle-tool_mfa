@@ -519,7 +519,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
 
         $result = parent::mform_element($element, $required, $advanced, $error, $ingroup);
 
-        if (!empty($script)) {
+        if (!empty($script) && $result !== false) {
             $result .= $script;
         }
 
