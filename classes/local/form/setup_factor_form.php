@@ -38,6 +38,7 @@ class setup_factor_form extends \moodleform {
         $factorname = $this->_customdata['factorname'];
         $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
         $mform = $factor->setup_factor_form_definition($mform);
+        $this->xss_whitelist_static_form_elements($mform);
 
     }
 
@@ -68,6 +69,28 @@ class setup_factor_form extends \moodleform {
         $factorname = $this->_customdata['factorname'];
         $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
         $mform = $factor->setup_factor_form_definition_after_data($mform);
+        $this->xss_whitelist_static_form_elements($mform);
         $this->add_action_buttons();
+    }
+
+
+    /**
+     * In newer versions of Totara with consistent cleaning enabled we need to ensure to mark static elements
+     *  as "xss safe". Or in Totara's ideal world to use 'html' if form-like display is not required.
+     *
+     * @param \HTML_QuickForm $mform
+     * @return void
+     */
+    private function xss_whitelist_static_form_elements($mform) {
+        if (!method_exists('MoodleQuickForm_static', 'set_allow_xss')) {
+            return;
+        }
+
+        $elements = $mform->_elements;
+        foreach ($elements as $element) {
+            if (is_a($element, 'MoodleQuickForm_static')) {
+                $element->set_allow_xss(true);
+            }
+        }
     }
 }
