@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace factor_sms;
+
+use moodle_url;
+use tool_mfa\local\factor\object_factor_base;
+
 /**
  * SMS Factor class.
  *
@@ -23,17 +28,13 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace factor_sms;
-
-use moodle_url;
-use tool_mfa\local\factor\object_factor_base;
-
 class factor extends object_factor_base {
+
     /**
      * SMS Factor implementation.
      *
-     * {@inheritDoc}
+     * @param \MoodleQuickForm $mform
+     * @return object $mform
      */
     public function login_form_definition($mform) {
         $mform->addElement(new \tool_mfa\local\form\verification_field());
@@ -44,7 +45,8 @@ class factor extends object_factor_base {
     /**
      * SMS Factor implementation.
      *
-     * {@inheritDoc}
+     * @param \MoodleQuickForm $mform Form to inject global elements into.
+     * @return object $mform
      */
     public function login_form_definition_after_data($mform) {
         $instanceid = $this->generate_and_sms_code();
@@ -57,10 +59,11 @@ class factor extends object_factor_base {
     /**
      * SMS Factor implementation.
      *
-     * {@inheritDoc}
+     * @param array $data
+     * @return array
      */
     public function login_form_validation($data) {
-        $return = array();
+        $return = [];
 
         if (!$this->check_verification_code($data['verificationcode'])) {
             $return['verificationcode'] = get_string('wrongcode', 'factor_sms');
@@ -79,7 +82,8 @@ class factor extends object_factor_base {
     /**
      * SMS Factor implementation.
      *
-     * {@inheritDoc}
+     * @param \MoodleQuickForm $mform
+     * @return object $mform
      */
     public function setup_factor_form_definition($mform) {
         global $SESSION, $USER, $OUTPUT;
@@ -88,7 +92,7 @@ class factor extends object_factor_base {
 
         if (empty($USER->phone2) && empty($SESSION->tool_mfa_sms_number)) {
             $mform->addElement('hidden', 'verificationcode', 0);
-            $mform->setType("verificationcode", PARAM_ALPHANUM);
+            $mform->setType('verificationcode', PARAM_ALPHANUM);
 
             // Add field for phone number setup.
             $mform->addElement('text', 'phonenumber', get_string('addnumber', 'factor_sms'),
@@ -105,7 +109,8 @@ class factor extends object_factor_base {
     /**
      * SMS Factor implementation.
      *
-     * {@inheritDoc}
+     * @param \MoodleQuickForm $mform
+     * @return object $mform
      */
     public function setup_factor_form_definition_after_data($mform) {
         global $SESSION, $USER;
@@ -141,7 +146,8 @@ class factor extends object_factor_base {
     /**
      * SMS Factor implementation.
      *
-     * {@inheritDoc}
+     * @param array $data
+     * @return array
      */
     public function setup_factor_form_validation($data) {
         global $SESSION, $USER;
@@ -163,7 +169,8 @@ class factor extends object_factor_base {
     /**
      * Adds an instance of the factor for a user, from form data.
      *
-     * {@inheritDoc}
+     * @param array $data
+     * @return stdClass the factor record, or null.
      */
     public function setup_user_factor($data) {
         global $DB, $SESSION, $USER;
@@ -205,7 +212,7 @@ class factor extends object_factor_base {
         $row->revoked = 0;
 
         $id = $DB->insert_record('tool_mfa', $row);
-        $record = $DB->get_record('tool_mfa', array('id' => $id));
+        $record = $DB->get_record('tool_mfa', ['id' => $id]);
         $this->create_event_after_factor_setup($USER);
 
         // Remove session phone number.
@@ -239,7 +246,8 @@ class factor extends object_factor_base {
     /**
      * SMS Factor implementation.
      *
-     * {@inheritDoc}
+     * @param stdClass $user the user to check against.
+     * @return array
      */
     public function get_all_user_factors($user) {
         global $DB;
@@ -354,7 +362,8 @@ class factor extends object_factor_base {
             'shortname' => $SITE->shortname,
             'supportname' => $CFG->supportname,
             'url' => $url->get_host(),
-            'code' => $secret];
+            'code' => $secret,
+        ];
         $message = get_string('smsstring', 'factor_sms', $content);
 
         $class = '\factor_sms\local\smsgateway\\' . get_config('factor_sms', 'gateway');
@@ -365,6 +374,7 @@ class factor extends object_factor_base {
     /**
      * Verifies entered code against stored DB record.
      *
+     * @param string $enteredcode
      * @return bool
      */
     private function check_verification_code($enteredcode) {
@@ -378,14 +388,14 @@ class factor extends object_factor_base {
     /**
      * SMS factor implementation.
      *
-     * {@inheritDoc}
+     * @param \stdClass $user
      */
     public function possible_states($user) {
-        return array(
+        return [
             \tool_mfa\plugininfo\factor::STATE_PASS,
             \tool_mfa\plugininfo\factor::STATE_NEUTRAL,
             \tool_mfa\plugininfo\factor::STATE_FAIL,
             \tool_mfa\plugininfo\factor::STATE_UNKNOWN,
-        );
+        ];
     }
 }

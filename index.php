@@ -49,7 +49,7 @@ if (empty($action) || !in_array($action, \tool_mfa\plugininfo\factor::get_factor
 
 require_sesskey();
 
-$enabledfactors = array();
+$enabledfactors = [];
 foreach (\tool_mfa\plugininfo\factor::get_enabled_factors() as $enabledfactor) {
     $enabledfactors[] = $enabledfactor->name;
 }
@@ -58,7 +58,7 @@ foreach (\tool_mfa\plugininfo\factor::get_enabled_factors() as $enabledfactor) {
 switch ($action) {
     case 'disable':
         if (in_array($factor, $enabledfactors)) {
-            \tool_mfa\manager::set_factor_config(array('enabled' => 0), 'factor_' . $factor);
+            \tool_mfa\manager::set_factor_config(['enabled' => 0], 'factor_' . $factor);
             \tool_mfa\manager::do_factor_action($factor, $action);
 
             \core\session\manager::gc(); // Remove stale sessions.
@@ -68,7 +68,7 @@ switch ($action) {
 
     case 'enable':
         if (!in_array($factor, $enabledfactors)) {
-            \tool_mfa\manager::set_factor_config(array('enabled' => 1), 'factor_' . $factor);
+            \tool_mfa\manager::set_factor_config(['enabled' => 1], 'factor_' . $factor);
             \tool_mfa\manager::do_factor_action($factor, $action);
 
             \core\session\manager::gc(); // Remove stale sessions.

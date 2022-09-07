@@ -14,21 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Form to reset gracemode timer for users.
- *
- * @package     factor_grace
- * @author      Peter Burnett <peterburnett@catalyst-au.net>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_mfa\local\form;
 
 defined('MOODLE_INTERNAL') || die();
 require_once("$CFG->libdir/formslib.php");
 
+/**
+ * Form to reset gracemode timer for users.
+ *
+ * @package     tool_mfa
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
+ * @copyright   Catalyst IT
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class reset_factor extends \moodleform {
+
+    /**
+     * Form definition.
+     */
     public function definition() {
         $mform = $this->_form;
         $factors = $this->_customdata['factors'];
@@ -47,7 +50,7 @@ class reset_factor extends \moodleform {
 
         if (!$bulkaction) {
             $mform->addElement('text', 'resetfactor', get_string('resetuser', 'tool_mfa'),
-            array('placeholder' => get_string('resetfactorplaceholder', 'tool_mfa')));
+            ['placeholder' => get_string('resetfactorplaceholder', 'tool_mfa')]);
             $mform->setType('resetfactor', PARAM_TEXT);
             $mform->addRule('resetfactor', get_string('userempty', 'tool_mfa'), 'required');
         }
@@ -55,6 +58,16 @@ class reset_factor extends \moodleform {
         $this->add_action_buttons(true, get_string('resetconfirm', 'tool_mfa'));
     }
 
+    /**
+     * Form validation.
+     *
+     * Server side rules do not work for uploaded files, implement serverside rules here if needed.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK (true allowed for backwards compatibility too).
+     */
     public function validation($data, $files) {
         global $DB;
         $errors = parent::validation($data, $files);
@@ -62,10 +75,10 @@ class reset_factor extends \moodleform {
         if (!$data['bulkaction']) {
             $userinfo = $data['resetfactor'];
             // Try input as username first, then email.
-            $user = $DB->get_record('user', array('username' => $userinfo));
+            $user = $DB->get_record('user', ['username' => $userinfo]);
             if (empty($user)) {
                 // If not found, try username.
-                $user = $DB->get_record('user', array('email' => $userinfo));
+                $user = $DB->get_record('user', ['email' => $userinfo]);
             }
 
             if (empty($user)) {

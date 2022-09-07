@@ -19,13 +19,13 @@ namespace factor_token\tests;
 /**
  * Tests for MFA manager class.
  *
- * @package     tool_mfa
+ * @package     factor_token
  * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @author      Kevin Pham <kevinpham@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class factor_token_test extends \advanced_testcase {
+class factor_test extends \advanced_testcase {
 
     public function setUp(): void {
         $this->resetAfterTest();
@@ -75,6 +75,7 @@ class factor_token_test extends \advanced_testcase {
      * value, provided it never goes past raw value expiry time, and when it
      * needs to be 2am, it's 2am on the following morning.
      *
+     * @param int $timestamp
      * @dataProvider timestamp_provider
      */
     public function test_calculate_expiry_time_for_overnight_expiry_with_one_day_expiry($timestamp) {
@@ -122,6 +123,7 @@ class factor_token_test extends \advanced_testcase {
      * value, provided it never goes past raw value expiry time, and when it
      * needs to be 2am, it's 2am on the morning after tomorrow.
      *
+     * @param int $timestamp
      * @dataProvider timestamp_provider
      */
     public function test_calculate_expiry_time_for_overnight_expiry_with_two_day_expiry($timestamp) {
@@ -170,6 +172,8 @@ class factor_token_test extends \advanced_testcase {
 
     /**
      * This should check if the 3am expiry is pushed back to 2am as expected, but everything else appears as expected
+     *
+     * @param int $timestamp
      * @dataProvider timestamp_provider
      */
     public function test_calculate_expiry_time_for_overnight_expiry_with_three_hour_expiry($timestamp) {
@@ -212,6 +216,8 @@ class factor_token_test extends \advanced_testcase {
 
     /**
      * Only relevant based on the hour padding used, which is currently set to 2 hours (2am).
+     *
+     * @param int $timestamp
      * @dataProvider timestamp_provider
      */
     public function test_calculate_expiry_time_for_overnight_expiry_with_an_hour_expiry($timestamp) {

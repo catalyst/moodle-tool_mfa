@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_mfa;
+
 /**
  * MFA management class.
  *
@@ -22,15 +24,15 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace tool_mfa;
-
-use Exception;
-
 class manager {
 
+    /** @var int */
     const REDIRECT = 1;
+
+    /** @var int */
     const NO_REDIRECT = 0;
+
+    /** @var int */
     const REDIRECT_EXCEPTION = -1;
 
     /**
@@ -45,28 +47,27 @@ class manager {
         $html = $OUTPUT->heading(get_string('debugmode:heading', 'tool_mfa'), 3);
 
         $table = new \html_table();
-        $table->head = array(
+        $table->head = [
             get_string('weight', 'tool_mfa'),
             get_string('factor', 'tool_mfa'),
             get_string('setup', 'tool_mfa'),
             get_string('achievedweight', 'tool_mfa'),
             get_string('status'),
-        );
+        ];
         $table->attributes['class'] = 'admintable generaltable table table-bordered';
-        $table->colclasses = array(
+        $table->colclasses = [
             'text-right',
             '',
             '',
             'text-right',
             'text-center',
-        );
+        ];
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
         $userfactors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
         $runningtotal = 0;
         $weighttoggle = false;
 
         foreach ($factors as $factor) {
-
             $namespace = 'factor_'.$factor->name;
             $name = get_string('pluginname', $namespace);
 
@@ -80,7 +81,6 @@ class manager {
                 $achieved = $factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS ? $factor->get_weight() : 0;
                 $achieved = '+'.$achieved;
                 $runningtotal += $achieved;
-
             } else {
                 $achieved = '';
             }
@@ -107,13 +107,13 @@ class manager {
                 $state = $OUTPUT->get_state_badge($factor->get_state());
             }
 
-            $table->data[] = array(
+            $table->data[] = [
                 $factor->get_weight(),
                 $name,
                 $setup,
                 $achieved,
                 $state,
-            );
+            ];
 
             // If we just hit 100, flip toggle.
             if ($runningtotal >= 100) {
@@ -122,13 +122,13 @@ class manager {
         }
 
         $finalstate = self::get_status();
-        $table->data[] = array(
+        $table->data[] = [
             '',
             '',
             '<b>' . get_string('overall', 'tool_mfa') . '</b>',
             self::get_cumulative_weight(),
             $OUTPUT->get_state_badge($finalstate),
-        );
+        ];
 
         $html .= \html_writer::table($table);
         echo $html;
@@ -154,7 +154,6 @@ class manager {
     /**
      * Checks that provided factorid exists and belongs to current user.
      *
-     * @param string $factorname
      * @param int $factorid
      * @param object $user
      * @return bool
@@ -162,7 +161,7 @@ class manager {
      */
     public static function is_factorid_valid($factorid, $user) {
         global $DB;
-        return $DB->record_exists('tool_mfa', array('userid' => $user->id, 'id' => $factorid));
+        return $DB->record_exists('tool_mfa', ['userid' => $user->id, 'id' => $factorid]);
     }
 
     /**
@@ -223,7 +222,6 @@ class manager {
         // Check for any instant fail states.
         $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
         foreach ($factors as $factor) {
-
             $factor->load_locked_state();
 
             if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_FAIL) {
@@ -237,7 +235,6 @@ class manager {
         // Check next factor for instant fail (fallback).
         if (\tool_mfa\plugininfo\factor::get_next_user_factor()->get_state() ==
             \tool_mfa\plugininfo\factor::STATE_FAIL) {
-
             // We need to handle a special case here, where someone reached the fallback,
             // If they were able to modify their state on the error page, such as passing iprange,
             // We must return pass.
@@ -342,7 +339,7 @@ class manager {
                 // Clear locked user factors, they may now reauth with anything.
                 @$DB->set_field('tool_mfa', 'lockcounter', 0, ['userid' => $USER->id]);
             // @codingStandardsIgnoreStart
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // This occurs when upgrade.php hasn't been run. Nothing to do here.
                 // Coding standards ignored, they break on empty catches.
             }
@@ -405,6 +402,8 @@ class manager {
     /**
      * Checks whether the user should be redirected from the provided url.
      *
+     * @param string $url
+     * @param bool $preventredirect
      * @return int
      */
     public static function should_require_mfa($url, $preventredirect) {
@@ -543,7 +542,7 @@ class manager {
         $factors = \tool_mfa\plugininfo\factor::get_factors();
         $urls = [
             new \moodle_url('/login/logout.php'),
-            new \moodle_url('/admin/tool/mfa/guide.php')
+            new \moodle_url('/admin/tool/mfa/guide.php'),
         ];
         foreach ($factors as $factor) {
             $urls = array_merge($urls, $factor->get_no_redirect_urls());
@@ -578,10 +577,15 @@ class manager {
         sleep($duration);
     }
 
-    /*
+    /**
      * If MFA Plugin is ready check tool_mfa_authenticated USER property and
      * start MFA authentication if it's not set or false.
      *
+     * @param mixed $courseorid
+     * @param mixed $autologinguest
+     * @param mixed $cm
+     * @param mixed $setwantsurltome
+     * @param mixed $preventredirect
      * @return void
      */
     public static function require_auth($courseorid = null, $autologinguest = null, $cm = null,
@@ -626,7 +630,6 @@ class manager {
 
                 // Call resolve_status to instantly pass if no redirect is required.
                 self::resolve_mfa_status(true);
-
             } else if ($redir == self::REDIRECT_EXCEPTION) {
                 if (!empty($SESSION->mfa_redir_referer)) {
                     throw new \moodle_exception('redirecterrordetected', 'tool_mfa',
@@ -653,7 +656,6 @@ class manager {
             if (empty($factorconf->$key)) {
                 add_to_config_log($key, null, $newvalue, $factor);
                 set_config($key, $newvalue, $factor);
-
             } else if ($factorconf->$key != $newvalue) {
                 add_to_config_log($key, $factorconf->$key, $newvalue, $factor);
                 set_config($key, $newvalue, $factor);
@@ -743,7 +745,7 @@ class manager {
             default:
                 break;
         }
-        self::set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
+        self::set_factor_config(['factor_order' => implode(',', $order)], 'tool_mfa');
     }
 
     /**
@@ -806,13 +808,13 @@ class manager {
     /**
      * Checks whether the factor was actually used in the login process.
      *
-     * @param string factorname the name of the factor.
+     * @param string $factorname the name of the factor.
      * @return bool true if factor is pending.
      */
     public static function check_factor_pending($factorname) {
         $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
         // Setup vars.
-        $pending = array();
+        $pending = [];
         $totalweight = 0;
         $weighttoggle = false;
 

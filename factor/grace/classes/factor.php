@@ -14,44 +14,44 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Grace period factor class.
- *
- * @package     tool_mfa
- * @author      Peter Burnett <peterburnett@catalyst-au.net>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace factor_grace;
 
 use tool_mfa\local\factor\object_factor_base;
 
+/**
+ * Grace period factor class.
+ *
+ * @package     factor_grace
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
+ * @copyright   Catalyst IT
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class factor extends object_factor_base {
 
     /**
      * Grace Factor implementation.
      * This factor is a singleton, return single instance.
      *
-     * {@inheritDoc}
+     * @param stdClass $user the user to check against.
+     * @return array
      */
     public function get_all_user_factors($user) {
         global $DB;
 
-        $records = $DB->get_records('tool_mfa', array('userid' => $user->id, 'factor' => $this->name));
+        $records = $DB->get_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
 
         if (!empty($records)) {
             return $records;
         }
 
         // Null records returned, build new record.
-        $record = array(
+        $record = [
             'userid' => $user->id,
             'factor' => $this->name,
             'createdfromip' => $user->lastip,
             'timecreated' => time(),
             'revoked' => 0,
-        );
+        ];
         $record['id'] = $DB->insert_record('tool_mfa', $record, true);
         return [(object) $record];
     }
@@ -60,6 +60,7 @@ class factor extends object_factor_base {
      * Grace Factor implementation.
      * Singleton instance, no additional filtering needed.
      *
+     * @param stdClass $user object to check against.
      * @return array the array of active factors.
      */
     public function get_active_user_factors($user) {
@@ -153,7 +154,8 @@ class factor extends object_factor_base {
      * Grace Factor implementation.
      * State cannot be set. Return true.
      *
-     * {@inheritDoc}
+     * @param mixed $state the state constant to set
+     * @return bool
      */
     public function set_state($state) {
         return true;
@@ -181,7 +183,7 @@ class factor extends object_factor_base {
             $timeremaining = ($starttime + get_config('factor_grace', 'graceperiod')) - time();
             $time = format_time($timeremaining);
 
-            $data = array('url' => $link, 'time' => $time);
+            $data = ['url' => $link, 'time' => $time];
 
             $customwarning = get_config('factor_grace', 'customwarning');
             if (!empty($customwarning)) {
@@ -201,7 +203,8 @@ class factor extends object_factor_base {
      * Grace Factor implementation.
      * Gracemode should not be a valid combination with another factor.
      *
-     * {@inheritDoc}
+     * @param array $combination array of factors that make up the combination
+     * @return bool
      */
     public function check_combination($combination) {
         // If this combination has more than 1 factor that has setup or input, not valid.
@@ -216,12 +219,14 @@ class factor extends object_factor_base {
     /**
      * Grace Factor implementation.
      * Gracemode can change outcome just by waiting, or based on other factors.
+     *
+     * @param \stdClass $user
      */
     public function possible_states($user) {
-        return array(
+        return [
             \tool_mfa\plugininfo\factor::STATE_PASS,
-            \tool_mfa\plugininfo\factor::STATE_NEUTRAL
-        );
+            \tool_mfa\plugininfo\factor::STATE_NEUTRAL,
+        ];
     }
 
     /**
@@ -238,7 +243,7 @@ class factor extends object_factor_base {
             // If the config is enabled, the user should be able to access + setup a factor using these pages.
             return [
                 new \moodle_url('/admin/tool/mfa/user_preferences.php'),
-                new \moodle_url('/admin/tool/mfa/action.php')
+                new \moodle_url('/admin/tool/mfa/action.php'),
             ];
         } else {
             return [];
@@ -257,7 +262,7 @@ class factor extends object_factor_base {
     public function get_all_affecting_factors(): array {
         // Check if user has any other input or setup factors active.
         $factors = \tool_mfa\plugininfo\factor::get_factors();
-        $factors = array_filter($factors, function($el) {
+        $factors = array_filter($factors, function ($el) {
             return $el->has_input() || $el->has_setup();
         });
         return $factors;
@@ -272,7 +277,7 @@ class factor extends object_factor_base {
         // We need to filter all active user factors against the affecting factors and ignorelist.
         // Map active to names for filtering.
         $active = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
-        $active = array_map(function($el) {
+        $active = array_map(function ($el) {
             return $el->name;
         }, $active);
         $factors = $this->get_all_affecting_factors();
@@ -280,7 +285,7 @@ class factor extends object_factor_base {
         $ignorelist = get_config('factor_grace', 'ignorelist');
         $ignorelist = !empty($ignorelist) ? explode(',', $ignorelist) : [];
 
-        $factors = array_filter($factors, function($el) use ($ignorelist, $active) {
+        $factors = array_filter($factors, function ($el) use ($ignorelist, $active) {
             return !in_array($el->name, $ignorelist) && in_array($el->name, $active);
         });
         return $factors;

@@ -22,13 +22,18 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Function to upgrade tool_mfa.
+ *
+ * @param int $oldversion the version we are upgrading from
+ * @return bool result
+ */
 function xmldb_tool_mfa_upgrade($oldversion) {
     global $DB;
 
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2020050700) {
-
         // Define field lockcounter to be added to tool_mfa.
         $table = new xmldb_table('tool_mfa');
         $field = new xmldb_field('lockcounter', XMLDB_TYPE_INTEGER, '5', null, XMLDB_NOTNULL, null, '0', 'revoked');
@@ -43,10 +48,9 @@ function xmldb_tool_mfa_upgrade($oldversion) {
     }
 
     if ($oldversion < 2020051900) {
-
         // Define index userid (not unique) to be added to tool_mfa.
         $table = new xmldb_table('tool_mfa');
-        $index = new xmldb_index('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
+        $index = new xmldb_index('userid', XMLDB_INDEX_NOTUNIQUE, ['userid']);
 
         // Conditionally launch add index userid.
         if (!$dbman->index_exists($table, $index)) {
@@ -55,7 +59,7 @@ function xmldb_tool_mfa_upgrade($oldversion) {
 
         // Define index factor (not unique) to be added to tool_mfa.
         $table = new xmldb_table('tool_mfa');
-        $index = new xmldb_index('factor', XMLDB_INDEX_NOTUNIQUE, array('factor'));
+        $index = new xmldb_index('factor', XMLDB_INDEX_NOTUNIQUE, ['factor']);
 
         // Conditionally launch add index factor.
         if (!$dbman->index_exists($table, $index)) {
@@ -64,7 +68,7 @@ function xmldb_tool_mfa_upgrade($oldversion) {
 
         // Define index lockcounter (not unique) to be added to tool_mfa.
         $table = new xmldb_table('tool_mfa');
-        $index = new xmldb_index('lockcounter', XMLDB_INDEX_NOTUNIQUE, array('userid', 'factor', 'lockcounter'));
+        $index = new xmldb_index('lockcounter', XMLDB_INDEX_NOTUNIQUE, ['userid', 'factor', 'lockcounter']);
 
         // Conditionally launch add index lockcounter.
         if (!$dbman->index_exists($table, $index)) {
@@ -76,7 +80,6 @@ function xmldb_tool_mfa_upgrade($oldversion) {
     }
 
     if ($oldversion < 2020090300) {
-
         // Define table tool_mfa_secrets to be created.
         $table = new xmldb_table('tool_mfa_secrets');
 
@@ -91,12 +94,12 @@ function xmldb_tool_mfa_upgrade($oldversion) {
         $table->add_field('sessionid', XMLDB_TYPE_CHAR, '100', null, null, null, null);
 
         // Adding keys to table tool_mfa_secrets.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
 
         // Adding indexes to table tool_mfa_secrets.
-        $table->add_index('factor', XMLDB_INDEX_NOTUNIQUE, array('factor'));
-        $table->add_index('expiry', XMLDB_INDEX_NOTUNIQUE, array('expiry'));
+        $table->add_index('factor', XMLDB_INDEX_NOTUNIQUE, ['factor']);
+        $table->add_index('expiry', XMLDB_INDEX_NOTUNIQUE, ['expiry']);
 
         // Conditionally launch create table for tool_mfa_secrets.
         if (!$dbman->table_exists($table)) {
@@ -108,7 +111,6 @@ function xmldb_tool_mfa_upgrade($oldversion) {
     }
 
     if ($oldversion < 2021021900) {
-
         // Define table tool_mfa_auth to be created.
         $table = new xmldb_table('tool_mfa_auth');
 
@@ -118,8 +120,8 @@ function xmldb_tool_mfa_upgrade($oldversion) {
         $table->add_field('lastverified', XMLDB_TYPE_INTEGER, '15', null, XMLDB_NOTNULL, null, '0');
 
         // Adding keys to table tool_mfa_auth.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
 
         // Conditionally launch create table for tool_mfa_auth.
         if (!$dbman->table_exists($table)) {

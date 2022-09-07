@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace factor_sms;
+
 /**
  * Helper class for shared sms gateway functions
  *
@@ -22,10 +24,8 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace factor_sms;
-
 class helper {
+
     /**
      * This function internationalises a number to E.164 standard.
      * https://46elks.com/kb/e164

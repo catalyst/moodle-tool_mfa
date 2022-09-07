@@ -31,4 +31,4 @@ $plugin->requires     = 2017051500.00;   // Support back to 3.3 - Totara 12. Pat
 $plugin->component    = 'factor_token';
 $plugin->release      = 2022011700;
 $plugin->maturity     = MATURITY_STABLE;
-$plugin->dependencies = array('tool_mfa' => 2019102400);
+$plugin->dependencies = ['tool_mfa' => 2019102400];

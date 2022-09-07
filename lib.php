@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Moodle MFA plugin lib
  *
@@ -25,6 +26,13 @@
 /**
  * Main hook.
  *
+ * e.g. Add permissions logic across a site or course
+ *
+ * @param mixed $courseorid
+ * @param mixed $autologinguest
+ * @param mixed $cm
+ * @param mixed $setwantsurltome
+ * @param mixed $preventredirect
  * @return void
  * @throws \moodle_exception
  */
@@ -72,6 +80,10 @@ function tool_mfa_extend_navigation_user_settings($navigation, $user, $userconte
     }
 }
 
+/**
+ * Triggered as soon as practical on every moodle bootstrap after config has
+ * been loaded. The $USER object is available at this point too.
+ */
 function tool_mfa_after_config() {
     global $CFG, $SESSION;
 
@@ -90,6 +102,9 @@ function tool_mfa_after_config() {
     }
 }
 
+/**
+ * Any plugin typically an admin tool can add new bulk user actions
+ */
 function tool_mfa_bulk_user_actions() {
     return [
         'tool_mfa_reset_factors' => new action_link(
@@ -111,7 +126,7 @@ function tool_mfa_bulk_user_actions() {
  * @param array $options
  * @return bool
  */
-function tool_mfa_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+function tool_mfa_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
     // Hardcode to only send guidance files from the top level.
     $fs = get_file_storage();
     $file = $fs->get_file(

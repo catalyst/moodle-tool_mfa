@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace factor_sms\event;
+
 /**
  * Event for a sent SMS
  *
@@ -22,20 +24,33 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace factor_sms\event;
-
 class sms_sent extends \core\event\base {
 
+    /**
+     * Init sms sent event
+     */
     protected function init() {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
+    /**
+     * Returns non-localised event description with id's for admin use only.
+     *
+     * @return string
+     */
     public function get_description() {
-        return "The user with id '{$this->other['userid']}' had a verification code sent to them via SMS <br> Information: {$this->other['debug']}";
+        return "The user with id '{$this->other['userid']}'" .
+            " had a verification code sent to them via SMS <br> Information: {$this->other['debug']}";
     }
 
+    /**
+     * Returns localised general event name.
+     *
+     * Override in subclass, we can not make it static and abstract at the same time.
+     *
+     * @return string
+     */
     public static function get_name() {
         return get_string('event:smssent', 'factor_sms');
     }

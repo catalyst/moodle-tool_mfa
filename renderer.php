@@ -22,35 +22,35 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class tool_mfa_renderer extends plugin_renderer_base {
 
     /**
      * Returns the state of the factor as a badge
      *
+     * @param string $state
      * @return html
      */
     public function get_state_badge($state) {
 
         switch ($state) {
             case \tool_mfa\plugininfo\factor::STATE_PASS:
-                return \html_writer::tag('span', get_string('state:pass', 'tool_mfa'), array('class' => 'badge badge-success'));
+                return \html_writer::tag('span', get_string('state:pass', 'tool_mfa'), ['class' => 'badge badge-success']);
 
             case \tool_mfa\plugininfo\factor::STATE_FAIL:
-                return \html_writer::tag('span', get_string('state:fail', 'tool_mfa'), array('class' => 'badge badge-danger'));
+                return \html_writer::tag('span', get_string('state:fail', 'tool_mfa'), ['class' => 'badge badge-danger']);
 
             case \tool_mfa\plugininfo\factor::STATE_NEUTRAL:
-                return \html_writer::tag('span', get_string('state:neutral', 'tool_mfa'), array('class' => 'badge badge-warning'));
+                return \html_writer::tag('span', get_string('state:neutral', 'tool_mfa'), ['class' => 'badge badge-warning']);
 
             case \tool_mfa\plugininfo\factor::STATE_UNKNOWN:
                 return \html_writer::tag('span', get_string('state:unknown', 'tool_mfa'),
-                        array('class' => 'badge badge-secondary'));
+                        ['class' => 'badge badge-secondary']);
 
             case \tool_mfa\plugininfo\factor::STATE_LOCKED:
-                return \html_writer::tag('span', get_string('state:locked', 'tool_mfa'), array('class' => 'badge badge-error'));
+                return \html_writer::tag('span', get_string('state:locked', 'tool_mfa'), ['class' => 'badge badge-error']);
 
             default:
-                return \html_writer::tag('span', get_string('pending', 'tool_mfa'), array('class' => 'badge badge-secondary'));
+                return \html_writer::tag('span', get_string('pending', 'tool_mfa'), ['class' => 'badge badge-secondary']);
         }
     }
 
@@ -64,7 +64,6 @@ class tool_mfa_renderer extends plugin_renderer_base {
 
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
         foreach ($factors as $factor) {
-
             // TODO is_configured / is_ready.
             if (!$factor->has_setup() || !$factor->show_setup_buttons()) {
                 continue;
@@ -75,16 +74,22 @@ class tool_mfa_renderer extends plugin_renderer_base {
         return $html;
     }
 
+    /**
+     * Returns the html section for factor setup
+     *
+     * @param   object $factor object of the factor class
+     * @return  void
+     */
     public function setup_factor($factor) {
         $html = '';
 
-        $html .= html_writer::start_tag('div', array('class' => 'card'));
+        $html .= html_writer::start_tag('div', ['class' => 'card']);
 
-        $html .= html_writer::tag('h4', $factor->get_display_name(), array('class' => 'card-header'));
-        $html .= html_writer::start_tag('div', array('class' => 'card-body'));
+        $html .= html_writer::tag('h4', $factor->get_display_name(), ['class' => 'card-header']);
+        $html .= html_writer::start_tag('div', ['class' => 'card-body']);
         $html .= $factor->get_info();
 
-        $setupparams = array('action' => 'setup', 'factor' => $factor->name, 'sesskey' => sesskey());
+        $setupparams = ['action' => 'setup', 'factor' => $factor->name, 'sesskey' => sesskey()];
         $setupurl = new \moodle_url('action.php', $setupparams);
         $html .= $this->output->single_button($setupurl, $factor->get_setup_string());
         $html .= html_writer::end_tag('div');
@@ -107,27 +112,27 @@ class tool_mfa_renderer extends plugin_renderer_base {
 
         $html = $this->output->heading(get_string('preferences:activefactors', 'tool_mfa'), 2);
 
-        $headers = get_strings(array(
+        $headers = get_strings([
             'factor',
             'devicename',
             'created',
             'createdfromip',
             'lastverified',
             'revoke',
-        ), 'tool_mfa');
+        ], 'tool_mfa');
 
         $table = new \html_table();
         $table->id = 'active_factors';
         $table->attributes['class'] = 'generaltable table table-bordered';
-        $table->head  = array(
+        $table->head  = [
             $headers->factor,
             $headers->devicename,
             $headers->created,
             $headers->createdfromip,
             $headers->lastverified,
             $headers->revoke,
-        );
-        $table->colclasses = array(
+        ];
+        $table->colclasses = [
             'leftalign',
             'leftalign',
             'centeralign',
@@ -136,13 +141,12 @@ class tool_mfa_renderer extends plugin_renderer_base {
             'centeralign',
             'centeralign',
             'centeralign',
-        );
-        $table->data  = array();
+        ];
+        $table->data  = [];
 
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
 
         foreach ($factors as $factor) {
-
             $userfactors = $factor->get_active_user_factors($USER);
 
             if (!$factor->has_setup()) {
@@ -151,12 +155,14 @@ class tool_mfa_renderer extends plugin_renderer_base {
 
             foreach ($userfactors as $userfactor) {
                 if ($factor->has_revoke()) {
-                    $revokeparams = array('action' => 'revoke', 'factor' => $factor->name,
-                        'factorid' => $userfactor->id, 'sesskey' => sesskey());
+                    $revokeparams = [
+                        'action' => 'revoke', 'factor' => $factor->name,
+                        'factorid' => $userfactor->id, 'sesskey' => sesskey(),
+                    ];
                     $revokeurl = new \moodle_url('action.php', $revokeparams);
                     $revokelink = \html_writer::link($revokeurl, $headers->revoke);
                 } else {
-                    $revokelink = "";
+                    $revokelink = '';
                 }
 
                 $timecreated  = $userfactor->timecreated == '-' ? '-'
@@ -174,14 +180,14 @@ class tool_mfa_renderer extends plugin_renderer_base {
                 $ip = $userfactor->createdfromip;
                 $ip .= '<br>' . $info['country'] . ' - ' . $info['city'];
 
-                $row = new \html_table_row(array(
+                $row = new \html_table_row([
                     $factor->get_display_name(),
                     $userfactor->label,
                     $timecreated,
                     $ip,
                     $lastverified,
                     $revokelink,
-                ));
+                ]);
                 $table->data[] = $row;
             }
         }
@@ -245,9 +251,9 @@ class tool_mfa_renderer extends plugin_renderer_base {
         $factors = \tool_mfa\plugininfo\factor::get_factors();
 
         // Setup 2 arrays, one with internal names, one pretty.
-        $columns = array('');
+        $columns = [''];
         $displaynames = $columns;
-        $colclasses = array('center', 'center', 'center', 'center', 'center');
+        $colclasses = ['center', 'center', 'center', 'center', 'center'];
 
         // Force the first 4 columns to custom data.
         $displaynames[] = get_string('totalusers', 'tool_mfa');
@@ -321,7 +327,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
         // Auth rows.
         $authtypes = get_enabled_auth_plugins(true);
         foreach ($authtypes as $authtype) {
-            $row = array();
+            $row = [];
             $row[] = \html_writer::tag('b', $authtype);
 
             // Setup the overall totals columns.
@@ -356,7 +362,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
         for ($colcounter = 1; $colcounter < count($row); $colcounter++) {
             $column = array_column($table->data, $colcounter);
             // Transform string to int forcibly, remove -.
-            $column = array_map(function($element) {
+            $column = array_map(function ($element) {
                 return $element === '-' ? 0 : (int) $element;
             }, $column);
             $columnsum = array_sum($column);
@@ -388,13 +394,13 @@ class tool_mfa_renderer extends plugin_renderer_base {
             'factor' => get_string('factor', 'tool_mfa'),
             'active' => get_string('active'),
             'locked' => get_string('state:locked', 'tool_mfa'),
-            'actions' => get_string('actions')
+            'actions' => get_string('actions'),
         ];
         $table->align = [
             'left',
             'left',
             'right',
-            'right'
+            'right',
         ];
         $table->data = [];
         $locklevel = (int) get_config('tool_mfa', 'lockout');
@@ -416,7 +422,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
                 $factor->get_display_name(),
                 $enabled,
                 $lockedusers,
-                $actions
+                $actions,
             ];
         }
 
@@ -426,6 +432,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
     /**
      * Displays a table of all users with a locked instance of the given factor.
      *
+     * @param object $factor the factor class
      * @return string the HTML for the table
      */
     public function factor_locked_users_table($factor) {
@@ -440,7 +447,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
             'factorip' => get_string('ipatcreation', 'tool_mfa'),
             'lastip' => get_string('lastip'),
             'modified' => get_string('modified'),
-            'actions' => get_string('actions')
+            'actions' => get_string('actions'),
         ];
         $table->align = [
             'left',
@@ -448,7 +455,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
             'left',
             'left',
             'left',
-            'right'
+            'right',
         ];
         $table->data = [];
 
@@ -462,7 +469,6 @@ class tool_mfa_renderer extends plugin_renderer_base {
         $records = $DB->get_records_sql($sql, [$factor->name, $locklevel]);
 
         foreach ($records as $record) {
-
             // Construct profile link.
             $proflink = \html_writer::link(new moodle_url('/user/profile.php',
                 ['id' => $record->id]), fullname($record));
@@ -473,11 +479,11 @@ class tool_mfa_renderer extends plugin_renderer_base {
             $lastiplink = \html_writer::link(new moodle_url('/iplookup/index.php',
                 ['ip' => $record->lastip]), $record->lastip);
 
-            // Deep link to logs
+            // Deep link to logs.
             $logicon = $this->pix_icon('i/report', get_string('userlogs', 'tool_mfa'));
             $actions = \html_writer::link(new moodle_url('/report/log/index.php', [
                 'id' => 1, // Site.
-                'user' => $record->id
+                'user' => $record->id,
             ]), $logicon);
 
             $action = new confirm_action(get_string('resetfactorconfirm', 'tool_mfa', fullname($record)));
@@ -493,13 +499,18 @@ class tool_mfa_renderer extends plugin_renderer_base {
                 $creatediplink,
                 $lastiplink,
                 userdate($record->timemodified, get_string('strftimedatetime', 'langconfig')),
-                $actions
+                $actions,
             ];
         }
 
         return \html_writer::table($table);
     }
 
+    /**
+     * Returns a html section render of the guide link template
+     *
+     * @return  string
+     */
     public function guide_link() {
         if (!get_config('tool_mfa', 'guidance')) {
             return '';
@@ -509,6 +520,18 @@ class tool_mfa_renderer extends plugin_renderer_base {
         return $this->notification($html, 'info');
     }
 
+    /**
+     * Renders an mform element from a template
+     *
+     * In certain situations, includes a script element which adds autosubmission behaviour.
+     *
+     * @param HTML_QuickForm_element $element element
+     * @param bool $required if input is required field
+     * @param bool $advanced if input is an advanced field
+     * @param string $error error message to display
+     * @param bool $ingroup True if this element is rendered as part of a group
+     * @return mixed string|bool
+     */
     public function mform_element($element, $required, $advanced, $error, $ingroup) {
         $script = null;
         if ($element instanceof tool_mfa\local\form\verification_field) {

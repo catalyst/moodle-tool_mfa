@@ -30,7 +30,7 @@ admin_externalpage_setup('tool_mfa_resetfactor');
 $bulk = !empty($SESSION->bulk_users);
 
 $factors = \tool_mfa\plugininfo\factor::get_factors();
-$form = new \tool_mfa\local\form\reset_factor(null, array('factors' => $factors, 'bulk' => $bulk));
+$form = new \tool_mfa\local\form\reset_factor(null, ['factors' => $factors, 'bulk' => $bulk]);
 
 if ($form->is_cancelled()) {
     if ($bulk) {
@@ -71,7 +71,7 @@ if ($form->is_cancelled()) {
 
         // If we are just doing 1 user.
         if (!$bulk) {
-            $stringarr = array('factor' => $stringvar, 'username' => $user->username);
+            $stringarr = ['factor' => $stringvar, 'username' => $user->username];
             \core\notification::success(get_string('resetsuccess', 'tool_mfa', $stringarr));
 
             // Reload page.

@@ -36,7 +36,7 @@ $action = optional_param('action', '', PARAM_ALPHANUMEXT);
 $factor = optional_param('factor', '', PARAM_ALPHANUMEXT);
 $factorid = optional_param('factorid', '', PARAM_INT);
 
-$params = array('action' => $action, 'factor' => $factor, 'factorid' => $factorid);
+$params = ['action' => $action, 'factor' => $factor, 'factorid' => $factorid];
 $currenturl = new moodle_url('/admin/tool/mfa/action.php', $params);
 
 $returnurl = new moodle_url('/admin/tool/mfa/user_preferences.php');
@@ -80,7 +80,7 @@ switch ($action) {
 
         $PAGE->navbar->add(get_string('setupfactor', 'factor_'.$factor));
         $OUTPUT = $PAGE->get_renderer('tool_mfa');
-        $form = new setup_factor_form($currenturl, array('factorname' => $factor));
+        $form = new setup_factor_form($currenturl, ['factorname' => $factor]);
 
         if ($form->is_submitted()) {
             $form->is_validated();
@@ -93,7 +93,7 @@ switch ($action) {
                 $record = $factorobject->setup_user_factor($data);
                 if (!empty($record)) {
                     $factorobject->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
-                    $finalurl = new moodle_url($returnurl, array('action' => 'setup', 'factorid' => $record->id));
+                    $finalurl = new moodle_url($returnurl, ['action' => 'setup', 'factorid' => $record->id]);
                     redirect($finalurl);
                 }
 
@@ -117,10 +117,10 @@ switch ($action) {
         $PAGE->navbar->add(get_string('action:revoke', 'factor_'.$factor));
         $OUTPUT = $PAGE->get_renderer('tool_mfa');
 
-        $revokeparams = array(
+        $revokeparams = [
             'factorname' => $factorobject->get_display_name(),
-            'devicename' => $factorobject->get_label($factorid)
-        );
+            'devicename' => $factorobject->get_label($factorid),
+        ];
         $form = new revoke_factor_form($currenturl, $revokeparams);
 
         if ($form->is_submitted()) {
@@ -132,7 +132,7 @@ switch ($action) {
 
             if ($form->get_data()) {
                 if ($factorobject->revoke_user_factor($factorid)) {
-                    $finalurl = new moodle_url($returnurl, array('action' => 'revoked', 'factorid' => $factorid));
+                    $finalurl = new moodle_url($returnurl, ['action' => 'revoked', 'factorid' => $factorid]);
                     redirect($finalurl);
                 }
 

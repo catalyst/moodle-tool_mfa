@@ -33,12 +33,12 @@ $secret = optional_param('secret', 0, PARAM_INT);
 $context = context_system::instance();
 $PAGE->set_context($context);
 $url = new moodle_url('/admin/tool/mfa/factor/email/email.php',
-    array('instance' => $instanceid, 'pass' => $pass, 'secret' => $secret));
+    ['instance' => $instanceid, 'pass' => $pass, 'secret' => $secret]);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('secure');
 $PAGE->set_title(get_string('unauthemail', 'factor_email'));
 $PAGE->set_cacheable(false);
-$instance = $DB->get_record('tool_mfa', array('id' => $instanceid));
+$instance = $DB->get_record('tool_mfa', ['id' => $instanceid]);
 
 // If pass is set, require login to force $SESSION and user, and pass for that session.
 if (!empty($instance) && $pass != 0 && $secret != 0) {
@@ -59,16 +59,15 @@ if (!empty($instance) && $pass != 0 && $secret != 0) {
 $form = new \factor_email\form\email($url);
 
 if ($form->is_cancelled()) {
-
     redirect(new moodle_url('/'));
 } else if ($fromform = $form->get_data()) {
     if (empty($instance)) {
         $message = get_string('error:badcode', 'factor_email');
     } else {
-        $user = $DB->get_record('user', array('id' => $instance->userid));
+        $user = $DB->get_record('user', ['id' => $instance->userid]);
 
         // Stop attacker from using email factor at all, by revoking all email until admin fixes.
-        $DB->set_field('tool_mfa', 'revoked', 1, array('userid' => $user->id, 'factor' => 'email'));
+        $DB->set_field('tool_mfa', 'revoked', 1, ['userid' => $user->id, 'factor' => 'email']);
 
         // Remotely logout all sessions for user.
         $manager = \core\session\manager::kill_user_sessions($instance->userid);
@@ -81,7 +80,7 @@ if ($form->is_cancelled()) {
 
         // Suspend user account.
         if (get_config('factor_email', 'suspend')) {
-            $DB->set_field('user', 'suspended', 1, array('id' => $userid));
+            $DB->set_field('user', 'suspended', 1, ['id' => $userid]);
         }
 
         $message = get_string('email:revokesuccess', 'factor_email', fullname($user));

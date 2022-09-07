@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace factor_sms\local\smsgateway;
+
+use factor_sms\event\sms_sent;
+
 /**
  * Modica Group Gateway class
  *
@@ -22,17 +26,14 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace factor_sms\local\smsgateway;
-
-use factor_sms\event\sms_sent;
-
 class modica implements gateway_interface {
 
     /**
      * Sends a message using the Modica Group Mobile Gateway API
      *
-     * {@inheritDoc}
+     * @param string $messagecontent the content to send in the SMS message.
+     * @param string $phonenumber the destination for the message.
+     * @return bool true on message send success
      */
     public function send_sms_message(string $messagecontent, string $phonenumber): bool {
         global $USER;
@@ -42,7 +43,7 @@ class modica implements gateway_interface {
         $params = [
             'http' => isset($config->modica_url) ? 'https://api.modicagroup.com/rest/gateway' : $config->modica_url,
             'username' => $config->modica_application,
-            'password' => $config->modica_password
+            'password' => $config->modica_password,
         ];
 
         // Transform the phone number to international standard.
@@ -52,34 +53,40 @@ class modica implements gateway_interface {
         $json = json_encode(
             [
                 'destination' => $phonenumber,
-                'content' => $messagecontent
+                'content' => $messagecontent,
             ]
         );
 
         $curl = new \curl();
-        $curl->setHeader(array('Accept: application/json', 'Expect:'));
+        $curl->setHeader(['Accept: application/json', 'Expect:']);
         $body = $curl->post($params['http'] . '/messages', $json, [
             'CURLOPT_USERPWD' => $params['username'] . ':' . $params['password'],
         ]);
         $info = $curl->get_info();
 
-        $data = array(
+        $data = [
             'relateduserid' => null,
             'context' => \context_user::instance($USER->id),
-            'other' => array(
+            'other' => [
                 'userid' => $USER->id,
-                'debug' => array(
+                'debug' => [
                     'messageid' => $body,
-                    'httpcode' => $info['http_code']
-                )
-            )
-        );
+                    'httpcode' => $info['http_code'],
+                ],
+            ],
+        ];
         $event = sms_sent::create($data);
         $event->trigger();
 
         return !empty($info['http_code']) && $info['http_code'] == 201;
     }
 
+    /**
+     * Add gateway specific settings to the SMS factor settings page.
+     *
+     * @param \admin_settingpage $settings
+     * @return void
+     */
     public static function add_settings($settings) {
         $settings->add(new \admin_setting_configtext('factor_sms/modica_url',
             get_string('settings:modica:url', 'factor_sms'),
@@ -95,6 +102,11 @@ class modica implements gateway_interface {
             get_string('settings:modica:password_help', 'factor_sms'), ''));
     }
 
+    /**
+     * Returns whether or not the gateway is enabled
+     *
+     * @return  bool
+     */
     public static function is_gateway_enabled(): bool {
         return true;
     }

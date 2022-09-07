@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '../../../../../../iplookup/lib.php');
+
 /**
  * Email renderer.
  *
@@ -22,26 +25,28 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-require_once(__DIR__ . '../../../../../../iplookup/lib.php');
-
 class factor_email_renderer extends plugin_renderer_base {
 
+    /**
+     * Generates an email
+     *
+     * @param   int $instanceid
+     * @return  string|boolean
+     */
     public function generate_email($instanceid) {
         global $DB;
-        $instance = $DB->get_record('tool_mfa', array('id' => $instanceid));
+        $instance = $DB->get_record('tool_mfa', ['id' => $instanceid]);
         $authurl = new \moodle_url('/admin/tool/mfa/factor/email/email.php',
-            array('instance' => $instance->id, 'pass' => 1, 'secret' => $instance->secret));
+            ['instance' => $instance->id, 'pass' => 1, 'secret' => $instance->secret]);
         $authurlstring = \html_writer::link($authurl, get_string('email:link', 'factor_email'));
-        $messagestrings = array('secret' => $instance->secret, 'link' => $authurlstring);
+        $messagestrings = ['secret' => $instance->secret, 'link' => $authurlstring];
         $geoinfo = iplookup_find_location($instance->createdfromip);
-        $info = array('city' => $geoinfo['city'], 'country' => $geoinfo['country']);
+        $info = ['city' => $geoinfo['city'], 'country' => $geoinfo['country']];
         $blockurl = new \moodle_url('/admin/tool/mfa/factor/email/email.php',
-            array('instance' => $instanceid));
+            ['instance' => $instanceid]);
         $blockurlstring = \html_writer::link($blockurl, get_string('email:link', 'factor_email'));
 
-        $templateinfo = array(
+        $templateinfo = [
             'title' => get_string('email:subject', 'factor_email'),
             'message' => get_string('email:message', 'factor_email', $messagestrings),
             'ipinformation' => get_string('email:ipinfo', 'factor_email'),
@@ -50,7 +55,7 @@ class factor_email_renderer extends plugin_renderer_base {
             'uadescription' => get_string('email:uadescription', 'factor_email'),
             'ua' => $instance->label,
             'linkstring' => get_string('email:revokelink', 'factor_email', $blockurlstring),
-        );
+        ];
         return $this->render_from_template('factor_email/email', $templateinfo);
     }
 }

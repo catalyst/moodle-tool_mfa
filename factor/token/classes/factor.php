@@ -42,7 +42,8 @@ class factor extends object_factor_base {
      * Token implementation.
      * This factor is a singleton, return single instance.
      *
-     * {@inheritDoc}
+     * @param stdClass $user the user to check against.
+     * @return array
      */
     public function get_all_user_factors($user) {
         global $DB;
@@ -107,8 +108,8 @@ class factor extends object_factor_base {
      * Token Implementation.
      * We can't get_state like the parent here or it will recurse forever.
      *
-     * @param string $state
-     * @return void
+     * @param mixed $state the state constant to set
+     * @return bool
      */
     public function set_state($state) {
         global $SESSION;
@@ -120,13 +121,13 @@ class factor extends object_factor_base {
     /**
      * Token implementation.
      *
-     * {@inheritDoc}
+     * @param \stdClass $user
      */
     public function possible_states($user) {
         return [
             \tool_mfa\plugininfo\factor::STATE_PASS,
             \tool_mfa\plugininfo\factor::STATE_NEUTRAL,
-            \tool_mfa\plugininfo\factor::STATE_LOCKED
+            \tool_mfa\plugininfo\factor::STATE_LOCKED,
         ];
     }
 
@@ -134,7 +135,8 @@ class factor extends object_factor_base {
      * Token implementation.
      * Inject a checkbox into every auth form if needed.
      *
-     * {@inheritDoc}
+     * @param \MoodleQuickForm $mform Form to inject global elements into.
+     * @return void
      */
     public function global_definition_after_data($mform) {
         global $SESSION;
@@ -156,7 +158,7 @@ class factor extends object_factor_base {
      * Token implementation.
      * Store information about the token status.
      *
-     * {@inheritDoc}
+     * @param object $data Data from the form.
      */
     public function global_submit($data) {
         global $SESSION;
@@ -197,7 +199,7 @@ class factor extends object_factor_base {
         // Finally emit a log event for storing the cookie.
         $state = [
             'expiry' => $expirytime,
-            'cookie' => $cookie
+            'cookie' => $cookie,
         ];
         $event = \factor_token\event\token_created::token_created_event($USER, $state);
         $event->trigger();

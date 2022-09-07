@@ -17,7 +17,7 @@
 /**
  * User capability factor access declaration.
  *
- * @package     tool_mfa
+ * @package     factor_capability
  * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,9 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
-    'factor/capability:cannotpassfactor' => array(
+$capabilities = [
+    'factor/capability:cannotpassfactor' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
-    ),
-);
+    ],
+];

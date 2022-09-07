@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_mfa\local\factor;
+
 /**
  * MFA factor abstract class.
  *
@@ -22,20 +24,12 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace tool_mfa\local\factor;
-
 abstract class object_factor_base implements object_factor {
-    /**
-     * Factor name.
-     *
-     * @var string
-     */
+
+    /** @var string Factor name */
     public $name;
 
-    /**
-     * Lock counter.
-     */
+    /** @var int Lock counter */
     private $lockcounter;
 
     /**
@@ -48,8 +42,7 @@ abstract class object_factor_base implements object_factor {
     /**
      * Class constructor
      *
-     * @param string factor name
-     *
+     * @param string $name factor name
      */
     public function __construct($name) {
         global $DB, $USER;
@@ -63,7 +56,6 @@ abstract class object_factor_base implements object_factor {
      * This loads the locked state from the DB
      *
      * Base class implementation.
-     *
      */
     public function load_locked_state() {
         global $DB, $USER;
@@ -72,7 +64,6 @@ abstract class object_factor_base implements object_factor {
         // Only 'input factors' are lockable.
         if ($this->is_enabled() && $this->is_lockable()) {
             try {
-
                 // Setup the lock counter.
                 $sql = "SELECT MAX(lockcounter) FROM {tool_mfa} WHERE userid = ? AND factor = ? AND revoked = ?";
                 @$this->lockcounter = $DB->get_field_sql($sql, [$USER->id, $this->name, 0]);
@@ -120,7 +111,7 @@ abstract class object_factor_base implements object_factor {
     public function get_weight() {
         $weight = get_config('factor_'.$this->name, 'weight');
         if ($weight) {
-            return (int)$weight;
+            return (int) $weight;
         }
         return 0;
     }
@@ -154,7 +145,7 @@ abstract class object_factor_base implements object_factor {
      *
      * Dummy implementation. Should be overridden in child class.
      *
-     * @param $mform
+     * @param \MoodleQuickForm $mform
      * @return object $mform
      */
     public function setup_factor_form_definition($mform) {
@@ -166,7 +157,7 @@ abstract class object_factor_base implements object_factor {
      *
      * Dummy implementation. Should be overridden in child class.
      *
-     * @param $mform
+     * @param \MoodleQuickForm $mform
      * @return object $mform
      */
     public function setup_factor_form_definition_after_data($mform) {
@@ -183,7 +174,7 @@ abstract class object_factor_base implements object_factor {
      * @return array
      */
     public function setup_factor_form_validation($data) {
-        return array();
+        return [];
     }
 
     /**
@@ -204,22 +195,22 @@ abstract class object_factor_base implements object_factor {
      *
      * Dummy implementation. Should be overridden in child class.
      *
-     * @param stdClass user the user to check against.
+     * @param stdClass $user the user to check against.
      * @return array
      */
     public function get_all_user_factors($user) {
-        return array();
+        return [];
     }
 
     /**
      * Returns an array of active user factor records.
      * Filters get_all_user_factors() output.
      *
-     * @param stdClass user object to check against.
+     * @param stdClass $user object to check against.
      * @return array
      */
     public function get_active_user_factors($user) {
-        $return = array();
+        $return = [];
         $factors = $this->get_all_user_factors($user);
         foreach ($factors as $factor) {
             if ($factor->revoked == 0) {
@@ -234,7 +225,7 @@ abstract class object_factor_base implements object_factor {
      *
      * Dummy implementation. Should be overridden in child class.
      *
-     * @param $mform
+     * @param \MoodleQuickForm $mform
      * @return object $mform
      */
     public function login_form_definition($mform) {
@@ -246,7 +237,7 @@ abstract class object_factor_base implements object_factor {
      *
      * Dummy implementation. Should be overridden in child class.
      *
-     * @param $mform
+     * @param \MoodleQuickForm $mform
      * @return object $mform
      */
     public function login_form_definition_after_data($mform) {
@@ -263,7 +254,7 @@ abstract class object_factor_base implements object_factor {
      * @return array
      */
     public function login_form_validation($data) {
-        return array();
+        return [];
     }
 
     /**
@@ -328,7 +319,7 @@ abstract class object_factor_base implements object_factor {
     public function get_lastverified($factorid) {
         global $DB;
 
-        $record = $DB->get_record('tool_mfa', array('id' => $factorid));
+        $record = $DB->get_record('tool_mfa', ['id' => $factorid]);
         return $record->lastverified;
     }
 
@@ -444,17 +435,19 @@ abstract class object_factor_base implements object_factor {
 
     /**
      * Function to retrieve the label for a factorid.
+     *
+     * @param int $factorid
      */
     public function get_label($factorid) {
         global $DB;
-        return $DB->get_field('tool_mfa', 'label', array('id' => $factorid));
+        return $DB->get_field('tool_mfa', 'label', ['id' => $factorid]);
     }
 
     /**
      * Function to get urls that should not be redirected from.
      */
     public function get_no_redirect_urls() {
-        return array();
+        return [];
     }
 
     /**
@@ -462,9 +455,11 @@ abstract class object_factor_base implements object_factor {
      * Implementation where state is based on deterministic user data.
      * This should be overridden in factors where state is non-deterministic.
      * E.g. IP changes based on whether a user is using a VPN.
+     *
+     * @param \stdClass $user
      */
     public function possible_states($user) {
-        return array($this->get_state());
+        return [$this->get_state()];
     }
 
     /**
@@ -473,19 +468,22 @@ abstract class object_factor_base implements object_factor {
      * Override for complex conditions such as auth type.
      */
     public function get_summary_condition() {
-        return get_string('summarycondition', "factor_".$this->name);
+        return get_string('summarycondition', 'factor_'.$this->name);
     }
 
     /**
      * Checks whether the factor combination is valid based on factor behaviour.
      * E.g. a combination with nosetup and another factor is not valid,
      * as you cannot pass nosetup with another factor.
+     *
+     * @param array $combination array of factors that make up the combination
+     * @return bool
      */
     public function check_combination($combination) {
         return true;
     }
 
-    /*
+    /**
      * Gets the string for setup button on preferences page.
      */
     public function get_setup_string() {
@@ -499,7 +497,7 @@ abstract class object_factor_base implements object_factor {
      */
     public function delete_factor_for_user($user) {
         global $DB, $USER;
-        $DB->delete_records('tool_mfa', array('userid' => $user->id, 'factor' => $this->name));
+        $DB->delete_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
 
         // Emit event for deletion.
         $event = \tool_mfa\event\user_deleted_factor::user_deleted_factor_event($user, $USER, $this->name);
@@ -563,7 +561,7 @@ abstract class object_factor_base implements object_factor {
     /**
      * Hook point for global auth form action hooks.
      *
-     * @param $mform Form to inject global elements into.
+     * @param \MoodleQuickForm $mform Form to inject global elements into.
      * @return void
      */
     public function global_definition($mform) {
@@ -573,7 +571,7 @@ abstract class object_factor_base implements object_factor {
     /**
      * Hook point for global auth form action hooks.
      *
-     * @param $mform Form to inject global elements into.
+     * @param \MoodleQuickForm $mform Form to inject global elements into.
      * @return void
      */
     public function global_definition_after_data($mform) {

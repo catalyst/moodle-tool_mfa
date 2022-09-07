@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Event for successful MFA authorization.
- *
- * @package     tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_mfa\event;
 
 /**
@@ -37,8 +28,8 @@ namespace tool_mfa\event;
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class user_failed_mfa extends \core\event\base {
+
     /**
      * Create instance of event.
      *
@@ -62,15 +53,15 @@ class user_failed_mfa extends \core\event\base {
             }
         }
 
-        $data = array(
+        $data = [
             'relateduserid' => null,
             'context' => \context_user::instance($user->id),
-            'other' => array (
+            'other' => [
                 'userid' => $user->id,
                 'debug' => $debug,
-                'failurereason' => $failurereason
-            )
-        );
+                'failurereason' => $failurereason,
+            ],
+        ];
 
         return self::create($data);
     }

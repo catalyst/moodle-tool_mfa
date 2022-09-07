@@ -26,6 +26,7 @@
 namespace tool_mfa\local\factor;
 
 interface object_factor {
+
     /**
      * Returns true if factor is enabled, otherwise false.
      *
@@ -61,7 +62,7 @@ interface object_factor {
     /**
      * Defines setup_factor form definition page for particular factor.
      *
-     * @param $mform
+     * @param \MoodleQuickForm $mform
      * @return object $mform
      * @throws \coding_exception
      */
@@ -70,7 +71,7 @@ interface object_factor {
     /**
      * Defines setup_factor form definition page after form data has been set.
      *
-     * @param $mform
+     * @param \MoodleQuickForm $mform
      * @return object $mform
      * @throws \coding_exception
      */
@@ -88,7 +89,7 @@ interface object_factor {
     /**
      * Defines login form definition page for particular factor.
      *
-     * @param $mform
+     * @param \MoodleQuickForm $mform
      * @return object $mform
      * @throws \coding_exception
      */
@@ -97,7 +98,7 @@ interface object_factor {
     /**
      * Defines login form definition page after form data has been set.
      *
-     * @param $mform
+     * @param \MoodleQuickForm $mform
      * @return object $mform
      * @throws \coding_exception
      */
@@ -124,7 +125,7 @@ interface object_factor {
     /**
      * Returns an array of all user factors of given type (both active and revoked).
      *
-     * @param stdClass user the user to check against.
+     * @param stdClass $user the user to check against.
      * @return array
      */
     public function get_all_user_factors($user);
@@ -133,7 +134,7 @@ interface object_factor {
      * Returns an array of active user factor records.
      * Filters get_all_user_factors() output.
      *
-     * @param stdClass user the user to check against.
+     * @param stdClass $user the user to check against.
      * @return array
      */
     public function get_active_user_factors($user);
@@ -150,6 +151,7 @@ interface object_factor {
      * Marks factor record as revoked.
      * If factorid is not provided, revoke all instances of factor.
      *
+     * @param int $factorid
      * @return bool
      */
     public function revoke_user_factor($factorid);
@@ -158,6 +160,7 @@ interface object_factor {
      * When validation code is correct - update lastverified field for given factor.
      * If factor id is not provided, update all factor entries for user.
      *
+     * @param int $factorid
      * @return bool
      */
     public function update_lastverified($factorid);
@@ -165,6 +168,7 @@ interface object_factor {
     /**
      * Gets lastverified timestamp.
      *
+     * @param int $factorid
      * @return int
      */
     public function get_lastverified($factorid);
@@ -216,6 +220,7 @@ interface object_factor {
     /**
      * Retrieves label for a factorid.
      *
+     * @param int $factorid
      * @return string
      */
     public function get_label($factorid);
@@ -230,7 +235,7 @@ interface object_factor {
     /**
      * Returns all possible states for a user.
      *
-     * @return array
+     * @param \stdClass $user
      */
     public function possible_states($user);
 
@@ -246,7 +251,7 @@ interface object_factor {
      * E.g. a combination with nosetup and another factor is not valid,
      * as you cannot pass nosetup with another factor.
      *
-     * @param array array of factors that make up the combination
+     * @param array $combination array of factors that make up the combination
      * @return bool
      */
     public function check_combination($combination);
@@ -275,7 +280,7 @@ interface object_factor {
     /**
      * Hook point for global auth form action hooks.
      *
-     * @param $mform Form to inject global elements into.
+     * @param \MoodleQuickForm $mform Form to inject global elements into.
      * @return void
      */
     public function global_definition($mform);
@@ -283,7 +288,7 @@ interface object_factor {
     /**
      * Hook point for global auth form action hooks.
      *
-     * @param $mform Form to inject global elements into.
+     * @param \MoodleQuickForm $mform Form to inject global elements into.
      * @return void
      */
     public function global_definition_after_data($mform);

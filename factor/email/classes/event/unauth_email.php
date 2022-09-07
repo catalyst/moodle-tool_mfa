@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Event for unauthorised email being received from MFA.
- *
- * @package     factor_email
- * @author      Peter Burnett <peterburnett@catalyst-au.net>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace factor_email\event;
 
 /**
@@ -37,8 +28,8 @@ namespace factor_email\event;
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class unauth_email extends \core\event\base {
+
     /**
      * Create instance of event.
      *
@@ -52,15 +43,15 @@ class unauth_email extends \core\event\base {
      */
     public static function unauth_email_event($user, $ip, $useragent) {
 
-        $data = array(
+        $data = [
             'relateduserid' => null,
             'context' => \context_user::instance($user->id),
-            'other' => array (
+            'other' => [
                 'userid' => $user->id,
                 'ip' => $ip,
-                'useragent' => $useragent
-            )
-        );
+                'useragent' => $useragent,
+            ],
+        ];
 
         return self::create($data);
     }

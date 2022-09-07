@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_mfa\local\factor;
+
 /**
  * Fallback factor class.
  *
@@ -22,9 +24,6 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace tool_mfa\local\factor;
-
 class fallback extends object_factor_base {
 
     /**
@@ -56,7 +55,11 @@ class fallback extends object_factor_base {
     }
 
     /**
-     * {@inheritDoc}
+     * Sets the state of the factor check into the session.
+     * Returns whether storing the var was successful.
+     *
+     * @param mixed $state
+     * @return bool
      */
     public function set_state($state) {
         return false;

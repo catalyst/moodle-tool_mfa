@@ -14,44 +14,44 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * User capability factor class.
- *
- * @package     tool_mfa
- * @author      Peter Burnett <peterburnett@catalyst-au.net>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace factor_capability;
 
 use tool_mfa\local\factor\object_factor_base;
 
+/**
+ * User capability factor class.
+ *
+ * @package     factor_capability
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
+ * @copyright   Catalyst IT
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class factor extends object_factor_base {
 
     /**
      * User capability implementation.
      * This factor is a singleton, return single instance.
      *
-     * {@inheritDoc}
+     * @param stdClass $user the user to check against.
+     * @return array
      */
     public function get_all_user_factors($user) {
         global $DB;
-        $records = $DB->get_records('tool_mfa', array('userid' => $user->id, 'factor' => $this->name));
+        $records = $DB->get_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
 
         if (!empty($records)) {
             return $records;
         }
 
         // Null records returned, build new record.
-        $record = array(
+        $record = [
             'userid' => $user->id,
             'factor' => $this->name,
             'timecreated' => time(),
             'createdfromip' => $user->lastip,
             'timemodified' => time(),
             'revoked' => 0,
-        );
+        ];
         $record['id'] = $DB->insert_record('tool_mfa', $record, true);
         return [(object) $record];
     }
@@ -88,7 +88,8 @@ class factor extends object_factor_base {
      * User Capability implementation.
      * Cannot set state, return true.
      *
-     * {@inheritDoc}
+     * @param mixed $state the state constant to set
+     * @return bool
      */
     public function set_state($state) {
         return true;
@@ -98,12 +99,12 @@ class factor extends object_factor_base {
      * User capability implementation.
      * Possible states are either neutral or pass.
      *
-     * {@inheritDoc}
+     * @param \stdClass $user
      */
     public function possible_states($user) {
-        return array(
+        return [
             \tool_mfa\plugininfo\factor::STATE_PASS,
-            \tool_mfa\plugininfo\factor::STATE_NEUTRAL
-        );
+            \tool_mfa\plugininfo\factor::STATE_NEUTRAL,
+        ];
     }
 }

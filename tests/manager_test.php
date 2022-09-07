@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_mfa\tests;
+
+defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/tool_mfa_testcase.php');
+
 /**
  * Tests for MFA manager class.
  *
@@ -22,12 +27,7 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace tool_mfa\tests;
-defined('MOODLE_INTERNAL') || die();
-require_once(__DIR__ . '/tool_mfa_testcase.php');
-
-class tool_mfa_manager_testcase extends tool_mfa_testcase {
+class manager_test extends tool_mfa_testcase {
 
     public function test_get_total_weight() {
         $this->resetAfterTest(true);
@@ -51,7 +51,7 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
         $factor = \tool_mfa\plugininfo\factor::get_factor('totp');
         $totpdata = [
             'secret' => 'fakekey',
-            'devicename' => 'fakedevice'
+            'devicename' => 'fakedevice',
         ];
         $this->assertNotEmpty($factor->setup_user_factor((object) $totpdata));
         $factor->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
@@ -133,6 +133,11 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
         $this->assertEquals(\tool_mfa\manager::passed_enough_factors(), true);
     }
 
+    /**
+     * The data provider for whether urls should be redirected or not
+     *
+     * @return  array
+     */
     public static function should_redirect_urls_provider() {
         $badurl1 = new \moodle_url('/');
         $badparam1 = $badurl1->out();
@@ -142,13 +147,13 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
             ['/', 'http://test.server', true],
             ['/admin/tool/mfa/action.php', 'http://test.server', true],
             ['/admin/tool/mfa/factor/totp/settings.php', 'http://test.server', true],
-            ['/', 'http://test.server', true, array('url' => $badparam1)],
-            ['/', 'http://test.server', true, array('url' => $badparam2)],
+            ['/', 'http://test.server', true, ['url' => $badparam1]],
+            ['/', 'http://test.server', true, ['url' => $badparam2]],
             ['/admin/tool/mfa/auth.php', 'http://test.server', false],
             ['/admin/tool/mfa/auth.php', 'http://test.server/parent/directory', false],
             ['/admin/tool/mfa/action.php', 'http://test.server/parent/directory', true],
-            ['/', 'http://test.server/parent/directory', true, array('url' => $badparam1)],
-            ['/', 'http://test.server/parent/directory', true, array('url' => $badparam2)],
+            ['/', 'http://test.server/parent/directory', true, ['url' => $badparam1]],
+            ['/', 'http://test.server/parent/directory', true, ['url' => $badparam2]],
             ['/admin/tool/securityquestions/set_responses.php', 'http://test.server', false],
             ['/admin/tool/securityquestions/set_responses.php', 'http://test.server', false, ['delete' => 1]],
             ['/admin/tool/securityquestions/randompage.php', 'http://test.server', true, ['delete' => 1]],
@@ -156,6 +161,12 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
     }
 
     /**
+     * Tests whether it should require mfa
+     *
+     * @param string $urlstring
+     * @param string $webroot
+     * @param bool $status
+     * @param array|null $params
      * @dataProvider should_redirect_urls_provider
      */
     public function test_should_require_mfa_urls($urlstring, $webroot, $status, $params = null) {
@@ -300,7 +311,7 @@ class tool_mfa_manager_testcase extends tool_mfa_testcase {
         set_config('enabled', 1, 'factor_totp');
         $totpdata = [
             'secret' => 'fakekey',
-            'devicename' => 'fakedevice'
+            'devicename' => 'fakedevice',
         ];
         $this->assertNotEmpty($totp->setup_user_factor((object) $totpdata));
         $this->assertTrue(\tool_mfa\manager::possible_factor_setup());

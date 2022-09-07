@@ -14,18 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace factor_grace\tests;
+
 /**
  * Tests for grace factor.
  *
- * @package     tool_mfa
+ * @package     factor_grace
  * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class factor_test extends \advanced_testcase {
 
-namespace factor_grace\tests;
-
-class factor_totp_testcase extends \advanced_testcase {
     public function test_affecting_factors() {
         $this->resetAfterTest(true);
         $user = $this->getDataGenerator()->create_user();
@@ -39,7 +39,7 @@ class factor_totp_testcase extends \advanced_testcase {
         $totpfactor = \tool_mfa\plugininfo\factor::get_factor('totp');
         $totpdata = [
             'secret' => 'fakekey',
-            'devicename' => 'fakedevice'
+            'devicename' => 'fakedevice',
         ];
         $totpfactor->setup_user_factor((object) $totpdata);
 

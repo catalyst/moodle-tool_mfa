@@ -59,9 +59,9 @@ if (!empty($reset) && confirm_sesskey()) {
                AND lockcounter >= ?
                AND revoked = 0";
     $lockedusers = $DB->get_records_sql($sql, [$factor->name, $locklevel]);
-    $lockedusers = array_map(function($el) {
+    $lockedusers = array_map(function ($el) {
         return $el->userid;
-    }, (array)$lockedusers);
+    }, (array) $lockedusers);
     $SESSION->bulk_users = $lockedusers;
     redirect(new moodle_url('/admin/user/user_bulk.php'));
 }
@@ -82,7 +82,7 @@ $selectarr = [
     31 => get_string('nummonth', '', 1),
     90 => get_string('nummonths', '', 3),
     180 => get_string('nummonths', '', 6),
-    365 => get_string('numyear', '', 1)
+    365 => get_string('numyear', '', 1),
 ];
 $select = new single_select($PAGE->url, 'days', $selectarr);
 
@@ -99,7 +99,6 @@ if (!empty($view)) {
     echo $renderer->heading(get_string('lockedusersforfactor', 'tool_mfa', $factor->get_display_name()));
     echo \html_writer::tag('p', $renderer->factor_locked_users_table($factor));
     echo $renderer->render($backbutton);
-
 } else {
     echo $renderer->heading(get_string('factorreport', 'tool_mfa'));
 

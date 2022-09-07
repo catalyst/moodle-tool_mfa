@@ -26,7 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-
     $ADMIN->add('tools', new admin_category('toolmfafolder', new lang_string('pluginname', 'tool_mfa'), false));
     $ADMIN->add('toolmfafolder', new admin_externalpage('tool_mfa_resetfactor',
     get_string('resetfactor', 'tool_mfa'),
@@ -65,7 +64,7 @@ if ($hassiteconfig) {
     $name = new lang_string('settings:guidancefiles', 'tool_mfa');
     $description = new lang_string('settings:guidancefiles_help', 'tool_mfa');
     $settings->add(new admin_setting_configstoredfile('tool_mfa/guidancefiles', $name, $description, 'guidance', 0, [
-                'maxfiles' => -1
+        'maxfiles' => -1,
             ]));
 
     $ADMIN->add('toolmfafolder', $settings);
@@ -85,5 +84,4 @@ if ($hassiteconfig) {
     $ADMIN->add($section,
             new admin_externalpage('factorreport', get_string('factorreport', 'tool_mfa'),
             new moodle_url('/admin/tool/mfa/factor_report.php')));
-
 }

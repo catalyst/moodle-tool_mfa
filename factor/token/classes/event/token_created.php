@@ -39,20 +39,30 @@ class token_created extends \core\event\base {
         $data = [
             'relateduserid' => $user->id,
             'context' => \context_user::instance($user->id),
-            'other' => array (
+            'other' => [
                 'userid' => $user->id,
-                'state' => json_encode($state)
-            )
+                'state' => json_encode($state),
+            ],
         ];
 
         return self::create($data);
     }
 
+    /**
+     * Init method.
+     *
+     * @return void
+     */
     protected function init() {
         $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
+    /**
+     * Returns description of what happened.
+     *
+     * @return string
+     */
     public function get_description() {
         $info = json_decode($this->other['state']);
         $string = '<br>';
@@ -67,6 +77,12 @@ class token_created extends \core\event\base {
         return "The user with id '{$this->other['userid']}' had an MFA token stored on their device. <br> Information:" . $string;
     }
 
+    /**
+     * Return localised event name.
+     *
+     * @return string
+     * @throws \coding_exception
+     */
     public static function get_name() {
         return get_string('event:token_created', 'factor_token');
     }

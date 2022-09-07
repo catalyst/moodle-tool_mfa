@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace factor_sms\local\smsgateway;
+
+use factor_sms\event\sms_sent;
+
 /**
  * AWS SNS SMS Gateway class
  *
@@ -22,13 +26,11 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace factor_sms\local\smsgateway;
-
-use factor_sms\event\sms_sent;
-
 class aws_sns implements gateway_interface {
 
+    /**
+     * Create an instance of this class.
+     */
     public function __construct() {
         global $CFG;
         require_once($CFG->dirroot . '/local/aws/sdk/aws-autoloader.php');
@@ -37,9 +39,11 @@ class aws_sns implements gateway_interface {
     /**
      * Sends a message using the AWS SNS API
      *
-     * {@inheritDoc}
+     * @param string $messagecontent the content to send in the SMS message.
+     * @param string $phonenumber the destination for the message.
+     * @return bool true on message send success
      */
-    public function send_sms_message(string $messagecontent, string $phonenumber) : bool {
+    public function send_sms_message(string $messagecontent, string $phonenumber): bool {
         global $SITE, $USER;
 
         $config = get_config('factor_sms');
@@ -48,12 +52,12 @@ class aws_sns implements gateway_interface {
         $params = [
             'version' => 'latest',
             'region' => $config->api_region,
-            'http' => ['proxy' => \local_aws\local\aws_helper::get_proxy_string()]
+            'http' => ['proxy' => \local_aws\local\aws_helper::get_proxy_string()],
         ];
         if (!$config->usecredchain) {
             $params['credentials'] = [
                 'key' => $config->api_key,
-                'secret' => $config->api_secret
+                'secret' => $config->api_secret,
             ];
         }
         $client = new \Aws\Sns\SnsClient($params);
@@ -83,16 +87,16 @@ class aws_sns implements gateway_interface {
                 'PhoneNumber' => $phonenumber,
             ]);
 
-            $data = array(
+            $data = [
                 'relateduserid' => null,
                 'context' => \context_user::instance($USER->id),
-                'other' => array(
+                'other' => [
                     'userid' => $USER->id,
-                    'debug' => array(
+                    'debug' => [
                         'messageid' => $result->get('MessageId'),
-                    )
-                )
-            );
+                    ],
+                ],
+            ];
             $event = sms_sent::create($data);
             $event->trigger();
 
@@ -102,6 +106,12 @@ class aws_sns implements gateway_interface {
         }
     }
 
+    /**
+     * Add gateway specific settings to the SMS factor settings page.
+     *
+     * @param \admin_settingpage $settings
+     * @return void
+     */
     public static function add_settings($settings) {
         global $CFG, $OUTPUT;
 
@@ -137,7 +147,12 @@ class aws_sns implements gateway_interface {
         }
     }
 
-    public static function is_gateway_enabled() : bool {
+    /**
+     * Returns whether or not the gateway is enabled
+     *
+     * @return  bool
+     */
+    public static function is_gateway_enabled(): bool {
         global $CFG;
         if (!file_exists($CFG->dirroot . '/local/aws/version.php')) {
             return false;

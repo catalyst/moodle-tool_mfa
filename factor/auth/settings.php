@@ -42,4 +42,4 @@ foreach ($authtypes as $type) {
 
 $settings->add(new admin_setting_configmulticheckbox('factor_auth/goodauth',
     get_string('settings:goodauth', 'factor_auth'),
-    get_string('settings:goodauth_help', 'factor_auth'), array(), $authselect));
+    get_string('settings:goodauth_help', 'factor_auth'), [], $authselect));

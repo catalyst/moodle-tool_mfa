@@ -14,44 +14,44 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Policy factor class.
- *
- * @package     factor_policy
- * @author      Peter Burnett <peterburnett@catalyst-au.net>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace factor_loginbanner;
 
 use tool_mfa\local\factor\object_factor_base;
 
+/**
+ * Policy factor class.
+ *
+ * @package     factor_loginbanner
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
+ * @copyright   Catalyst IT
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class factor extends object_factor_base {
 
     /**
      * Login banner Factor implementation.
      * Factor is a singleton, can only be one instance.
      *
-     * {@inheritDoc}
+     * @param stdClass $user the user to check against.
+     * @return array
      */
     public function get_all_user_factors($user) {
         global $DB;
-        $records = $DB->get_records('tool_mfa', array('userid' => $user->id, 'factor' => $this->name));
+        $records = $DB->get_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
 
         if (!empty($records)) {
             return $records;
         }
 
         // Null records returned, build new record.
-        $record = array(
+        $record = [
             'userid' => $user->id,
             'factor' => $this->name,
             'timecreated' => time(),
             'createdfromip' => $user->lastip,
             'timemodified' => time(),
             'revoked' => 0,
-        );
+        ];
         $record['id'] = $DB->insert_record('tool_mfa', $record, true);
         return [(object) $record];
     }
@@ -68,7 +68,8 @@ class factor extends object_factor_base {
     /**
      * Login banner factor implementation.
      *
-     * {@inheritDoc}
+     * @param \MoodleQuickForm $mform
+     * @return object $mform
      */
     public function login_form_definition($mform) {
         $mform->addElement('html', get_string('policytext', 'factor_loginbanner'));
@@ -93,14 +94,14 @@ class factor extends object_factor_base {
     /**
      * Login banner factor implementation.
      *
-     * {@inheritDoc}
+     * @param \stdClass $user
      */
     public function possible_states($user) {
         // Policy can only return a pass or fail when known.
-        return array(
+        return [
             \tool_mfa\plugininfo\factor::STATE_FAIL,
             \tool_mfa\plugininfo\factor::STATE_PASS,
             \tool_mfa\plugininfo\factor::STATE_UNKNOWN,
-        );
+        ];
     }
 }

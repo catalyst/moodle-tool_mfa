@@ -14,25 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Security Question factor class.
- *
- * @package     tool_mfa
- * @author      Peter Burnett <peterburnett@catalyst-au.net>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace factor_secq;
 
 use tool_mfa\local\factor\object_factor_base;
 
+/**
+ * Security Question factor class.
+ *
+ * @package     factor_secq
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
+ * @copyright   Catalyst IT
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class factor extends object_factor_base {
 
     /**
      * Security Questions Factor implementation.
      *
-     * {@inheritDoc}
+     * @param array $data
+     * @return stdClass the factor record, or null.
      */
     public function setup_user_factor($data) {
         // SETUP FUNCTIONALITY HERE.
@@ -42,11 +42,12 @@ class factor extends object_factor_base {
     /**
      * Security Questions Factor implementation.
      *
-     * {@inheritDoc}
+     * @param stdClass $user the user to check against.
+     * @return array
      */
     public function get_all_user_factors($user) {
         // FACTOR FUNCTIONALITY HERE.
-        return array();
+        return [];
     }
 
     /**
@@ -72,7 +73,8 @@ class factor extends object_factor_base {
     /**
      * Security Questions Factor implementation.
      *
-     * {@inheritDoc}
+     * @param mixed $state the state constant to set
+     * @return bool
      */
     public function set_state($state) {
         // SET STATE CORRECTLY HERE.
@@ -83,8 +85,6 @@ class factor extends object_factor_base {
      * Security Questions Factor Implementation.
      */
     public function get_no_redirect_urls() {
-        return array(
-            new \moodle_url('/admin/tool/securityquestions/set_responses.php')
-        );
+        return [new \moodle_url('/admin/tool/securityquestions/set_responses.php')];
     }
 }

@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_mfa\plugininfo;
+
 /**
  * Subplugin info class.
  *
@@ -22,16 +24,21 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace tool_mfa\plugininfo;
-
 class factor extends \core\plugininfo\base {
 
+    /** @var string */
     const STATE_UNKNOWN = 'unknown';
+
+    /** @var string */
     const STATE_PASS = 'pass';
+
+    /** @var string */
     const STATE_FAIL = 'fail';
+
+    /** @var string */
     const STATE_NEUTRAL = 'neutral';
-    // Locked state is identical to neutral, but can't be overridden.
+
+    /** @var string Locked state is identical to neutral, but can't be overridden */
     const STATE_LOCKED = 'locked';
 
     /**
@@ -40,7 +47,7 @@ class factor extends \core\plugininfo\base {
      * @return array of factor objects.
      */
     public static function get_factors() {
-        $return = array();
+        $return = [];
         $factors = \core_plugin_manager::instance()->get_plugins_of_type('factor');
 
         foreach ($factors as $factor) {
@@ -55,13 +62,12 @@ class factor extends \core\plugininfo\base {
     /**
      * Sorts factors by configured order.
      *
-     * @param array of factor objects
-     *
+     * @param array $unsorted of factor objects
      * @return array of factor objects
      * @throws \dml_exception
      */
     public static function sort_factors_by_order($unsorted) {
-        $sorted = array();
+        $sorted = [];
         $orderarray = explode(',', get_config('tool_mfa', 'factor_order'));
 
         foreach ($orderarray as $order => $factorname) {
@@ -105,7 +111,7 @@ class factor extends \core\plugininfo\base {
      * @return array of factor objects
      */
     public static function get_enabled_factors() {
-        $return = array();
+        $return = [];
         $factors = self::get_factors();
 
         foreach ($factors as $factor) {
@@ -124,7 +130,7 @@ class factor extends \core\plugininfo\base {
      */
     public static function get_active_user_factor_types() {
         global $USER;
-        $return = array();
+        $return = [];
         $factors = self::get_enabled_factors();
 
         foreach ($factors as $factor) {
@@ -144,7 +150,7 @@ class factor extends \core\plugininfo\base {
      * @return array of factor objects.
      */
     public static function get_active_other_user_factor_types($user) {
-        $return = array();
+        $return = [];
         $factors = self::get_enabled_factors();
 
         foreach ($factors as $factor) {
@@ -184,7 +190,7 @@ class factor extends \core\plugininfo\base {
      * @return array
      */
     public static function get_factor_actions() {
-        $actions = array();
+        $actions = [];
         $actions[] = 'setup';
         $actions[] = 'revoke';
         $actions[] = 'enable';
@@ -246,7 +252,7 @@ class factor extends \core\plugininfo\base {
             return;
         }
 
-        if (!$hassiteconfig or !file_exists($this->full_path('settings.php'))) {
+        if (!$hassiteconfig || !file_exists($this->full_path('settings.php'))) {
             return;
         }
 
@@ -282,6 +288,6 @@ class factor extends \core\plugininfo\base {
      */
     public static function get_instance_from_id($factorid) {
         global $DB;
-        return $DB->get_record('tool_mfa', array('id' => $factorid));
+        return $DB->get_record('tool_mfa', ['id' => $factorid]);
     }
 }

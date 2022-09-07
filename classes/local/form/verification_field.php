@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_mfa\local\form;
+
+defined('MOODLE_INTERNAL') || die();
+require_once($CFG->libdir . '/form/text.php');
+
 /**
  * MFA Verification code element.
  *
@@ -22,16 +27,9 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace tool_mfa\local\form;
-
-
-defined('MOODLE_INTERNAL') || die();
-require_once($CFG->libdir . '/form/text.php');
-
 class verification_field extends \MoodleQuickForm_text {
 
-    /** @var bool $appendjs */
+    /** @var bool */
     private $appendjs;
 
     /**
@@ -79,6 +77,11 @@ class verification_field extends \MoodleQuickForm_text {
     }
 
     // @codingStandardsIgnoreStart
+    /**
+     * Returns HTML for this form element.
+     *
+     * @return string
+     */
     public function toHtml() {
         // Empty the value after all attributes decided.
         $this->_attributes['value'] = '';
