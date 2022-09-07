@@ -14,26 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * No setup factor class.
- *
- * @package     tool_mfa
- * @author      Peter Burnett <peterburnett@catalyst-au.net>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace factor_nosetup;
 
 use tool_mfa\local\factor\object_factor_base;
 
+/**
+ * No setup factor class.
+ *
+ * @package     factor_nosetup
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
+ * @copyright   Catalyst IT
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class factor extends object_factor_base {
 
     /**
      * No Setup Factor implementation.
      * Factor is a singleton, can only be one instance.
      *
-     * {@inheritDoc}
+     * @param stdClass $user the user to check against.
+     * @return array
      */
     public function get_all_user_factors($user) {
         global $DB;
@@ -107,7 +107,8 @@ class factor extends object_factor_base {
      * No Setup Factor implementation.
      * The state can never be set. Always return true.
      *
-     * {@inheritDoc}
+     * @param mixed $state the state constant to set
+     * @return bool
      */
     public function set_state($state) {
         return true;
@@ -117,7 +118,8 @@ class factor extends object_factor_base {
      * No Setup Factor implementation.
      * nosetup should not be a valid combination with another factor.
      *
-     * {@inheritDoc}
+     * @param array $combination array of factors that make up the combination
+     * @return bool
      */
     public function check_combination($combination) {
         // If this combination has more than 1 factor that has setup or input, not valid.

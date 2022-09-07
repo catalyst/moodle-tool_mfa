@@ -14,6 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '../../../../../../iplookup/lib.php');
+
 /**
  * Email renderer.
  *
@@ -22,12 +25,14 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-require_once(__DIR__ . '../../../../../../iplookup/lib.php');
-
 class factor_email_renderer extends plugin_renderer_base {
 
+    /**
+     * Generates an email
+     *
+     * @param   int $instanceid
+     * @return  string|boolean
+     */
     public function generate_email($instanceid) {
         global $DB;
         $instance = $DB->get_record('tool_mfa', ['id' => $instanceid]);

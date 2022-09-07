@@ -14,26 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * IP Range factor class.
- *
- * @package     tool_mfa
- * @author      Peter Burnett <peterburnett@catalyst-au.net>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace factor_iprange;
 
 use tool_mfa\local\factor\object_factor_base;
 
+/**
+ * IP Range factor class.
+ *
+ * @package     factor_iprange
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
+ * @copyright   Catalyst IT
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class factor extends object_factor_base {
 
     /**
      * IP Range Factor implementation.
      * This factor is a singleton, return single instance.
      *
-     * {@inheritDoc}
+     * @param stdClass $user the user to check against.
+     * @return array
      */
     public function get_all_user_factors($user) {
         global $DB;
@@ -90,7 +90,8 @@ class factor extends object_factor_base {
      * IP Range Factor implementation.
      * Cannot set state, return true.
      *
-     * {@inheritDoc}
+     * @param mixed $state the state constant to set
+     * @return bool
      */
     public function set_state($state) {
         return true;
@@ -101,7 +102,7 @@ class factor extends object_factor_base {
      * User can influence state prior to login.
      * Possible states are either neutral or pass.
      *
-     * {@inheritDoc}
+     * @param \stdClass $user
      */
     public function possible_states($user) {
         return [

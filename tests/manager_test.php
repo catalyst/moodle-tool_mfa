@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_mfa\tests;
+
+defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/tool_mfa_testcase.php');
+
 /**
  * Tests for MFA manager class.
  *
@@ -22,11 +27,6 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace tool_mfa\tests;
-defined('MOODLE_INTERNAL') || die();
-require_once(__DIR__ . '/tool_mfa_testcase.php');
-
 class manager_test extends tool_mfa_testcase {
 
     public function test_get_total_weight() {
@@ -133,6 +133,11 @@ class manager_test extends tool_mfa_testcase {
         $this->assertEquals(\tool_mfa\manager::passed_enough_factors(), true);
     }
 
+    /**
+     * The data provider for whether urls should be redirected or not
+     *
+     * @return  array
+     */
     public static function should_redirect_urls_provider() {
         $badurl1 = new \moodle_url('/');
         $badparam1 = $badurl1->out();
@@ -156,6 +161,12 @@ class manager_test extends tool_mfa_testcase {
     }
 
     /**
+     * Tests whether it should require mfa
+     *
+     * @param string $urlstring
+     * @param string $webroot
+     * @param bool $status
+     * @param array|null $params
      * @dataProvider should_redirect_urls_provider
      */
     public function test_should_require_mfa_urls($urlstring, $webroot, $status, $params = null) {

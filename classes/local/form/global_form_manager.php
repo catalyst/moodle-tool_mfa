@@ -13,6 +13,11 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+namespace tool_mfa\local\form;
+
+use tool_mfa\plugininfo\factor;
+
 /**
  * MFA login form
  *
@@ -21,15 +26,13 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_mfa\local\form;
-
-use stdClass;
-use tool_mfa\plugininfo\factor;
-
 class global_form_manager {
     /** @var array factors to call hooks upon. */
     private $activefactors;
 
+    /**
+     * Create an instance of this class.
+     */
     public function __construct() {
         $this->activefactors = factor::get_active_user_factor_types();
     }
@@ -37,7 +40,7 @@ class global_form_manager {
     /**
      * Hook point for global auth form action hooks.
      *
-     * @param $mform Form to inject global elements into.
+     * @param \MoodleQuickForm $mform Form to inject global elements into.
      * @return void
      */
     public function definition(&$mform) {
@@ -49,7 +52,7 @@ class global_form_manager {
     /**
      * Hook point for global auth form action hooks.
      *
-     * @param $mform Form to inject global elements into.
+     * @param \MoodleQuickForm $mform Form to inject global elements into.
      * @return void
      */
     public function definition_after_data(&$mform) {
@@ -76,10 +79,10 @@ class global_form_manager {
     /**
      * Hook point for global auth form submission hooks.
      *
-     * @param object $data Data from the form.
+     * @param \stdClass $data Data from the form.
      * @return void
      */
-    public function submit(stdClass $data) {
+    public function submit(\stdClass $data) {
         foreach ($this->activefactors as $factor) {
             $factor->global_submit($data);
         }

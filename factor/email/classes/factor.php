@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace factor_email;
+
+use tool_mfa\local\factor\object_factor_base;
+
 /**
  * Email factor class.
  *
@@ -23,17 +27,13 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace factor_email;
-
-use tool_mfa\local\factor\object_factor_base;
-
 class factor extends object_factor_base {
 
     /**
      * E-Mail Factor implementation.
      *
-     * {@inheritDoc}
+     * @param \MoodleQuickForm $mform
+     * @return object $mform
      */
     public function login_form_definition($mform) {
 
@@ -45,7 +45,8 @@ class factor extends object_factor_base {
     /**
      * E-Mail Factor implementation.
      *
-     * {@inheritDoc}
+     * @param \MoodleQuickForm $mform Form to inject global elements into.
+     * @return object $mform
      */
     public function login_form_definition_after_data($mform) {
         $this->generate_and_email_code();
@@ -54,6 +55,8 @@ class factor extends object_factor_base {
 
     /**
      * Sends and e-mail to user with given verification code.
+     *
+     * @param int $instanceid
      */
     public static function email_verification_code($instanceid) {
         global $PAGE, $USER;
@@ -67,7 +70,8 @@ class factor extends object_factor_base {
     /**
      * E-Mail Factor implementation.
      *
-     * {@inheritDoc}
+     * @param array $data
+     * @return array
      */
     public function login_form_validation($data) {
         global $USER;
@@ -83,7 +87,8 @@ class factor extends object_factor_base {
     /**
      * E-Mail Factor implementation.
      *
-     * {@inheritDoc}
+     * @param stdClass $user the user to check against.
+     * @return array
      */
     public function get_all_user_factors($user) {
         global $DB;
@@ -216,6 +221,7 @@ class factor extends object_factor_base {
     /**
      * Verifies entered code against stored DB record.
      *
+     * @param string $enteredcode
      * @return bool
      */
     private function check_verification_code($enteredcode) {
@@ -271,7 +277,7 @@ class factor extends object_factor_base {
     /**
      * Email factor implementation.
      *
-     * {@inheritDoc}
+     * @param \stdClass $user
      */
     public function possible_states($user) {
         // Email can return all states.

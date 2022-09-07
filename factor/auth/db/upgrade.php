@@ -22,6 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Factor auth upgrade helper function
+ *
+ * @param int $oldversion
+ */
 function xmldb_factor_auth_upgrade($oldversion) {
 
     if ($oldversion < 2021020500) {

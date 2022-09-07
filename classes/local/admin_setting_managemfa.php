@@ -13,14 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-/**
- * Admin setting for MFA.
- *
- * @package     tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
 namespace tool_mfa\local;
 
@@ -30,6 +22,14 @@ require_once($CFG->libdir.'/ddllib.php');
 require_once($CFG->libdir.'/xmlize.php');
 require_once($CFG->libdir.'/messagelib.php');
 
+/**
+ * Admin setting for MFA.
+ *
+ * @package     tool_mfa
+ * @author      Mikhail Golenkov <golenkovm@gmail.com>
+ * @copyright   Catalyst IT
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class admin_setting_managemfa extends \admin_setting {
 
     /**
@@ -52,6 +52,7 @@ class admin_setting_managemfa extends \admin_setting {
     /**
      * Always returns '' and doesn't write anything
      *
+     * @param mixed $data
      * @return string Always returns ''
      */
     public function write_setting($data) {

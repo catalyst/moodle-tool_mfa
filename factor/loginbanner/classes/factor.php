@@ -14,26 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Policy factor class.
- *
- * @package     factor_policy
- * @author      Peter Burnett <peterburnett@catalyst-au.net>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace factor_loginbanner;
 
 use tool_mfa\local\factor\object_factor_base;
 
+/**
+ * Policy factor class.
+ *
+ * @package     factor_loginbanner
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
+ * @copyright   Catalyst IT
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class factor extends object_factor_base {
 
     /**
      * Login banner Factor implementation.
      * Factor is a singleton, can only be one instance.
      *
-     * {@inheritDoc}
+     * @param stdClass $user the user to check against.
+     * @return array
      */
     public function get_all_user_factors($user) {
         global $DB;
@@ -68,7 +68,8 @@ class factor extends object_factor_base {
     /**
      * Login banner factor implementation.
      *
-     * {@inheritDoc}
+     * @param \MoodleQuickForm $mform
+     * @return object $mform
      */
     public function login_form_definition($mform) {
         $mform->addElement('html', get_string('policytext', 'factor_loginbanner'));
@@ -93,7 +94,7 @@ class factor extends object_factor_base {
     /**
      * Login banner factor implementation.
      *
-     * {@inheritDoc}
+     * @param \stdClass $user
      */
     public function possible_states($user) {
         // Policy can only return a pass or fail when known.

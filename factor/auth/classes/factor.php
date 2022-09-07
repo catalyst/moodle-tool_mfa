@@ -14,26 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Auth factor class.
- *
- * @package     tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace factor_auth;
 
 use tool_mfa\local\factor\object_factor_base;
 
+/**
+ * Auth factor class.
+ *
+ * @package     factor_auth
+ * @author      Mikhail Golenkov <golenkovm@gmail.com>
+ * @copyright   Catalyst IT
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class factor extends object_factor_base {
 
     /**
      * Auth Factor implementation.
      * Factor is a singleton, can only be one instance.
      *
-     * {@inheritDoc}
+     * @param stdClass $user the user to check against.
+     * @return array
      */
     public function get_all_user_factors($user) {
         global $DB;
@@ -93,7 +93,8 @@ class factor extends object_factor_base {
      * Auth Factor implementation.
      * The state can never be set. Always return true.
      *
-     * {@inheritDoc}
+     * @param mixed $state the state constant to set
+     * @return bool
      */
     public function set_state($state) {
         return true;

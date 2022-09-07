@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace factor_sms;
+
+use moodle_url;
+use tool_mfa\local\factor\object_factor_base;
+
 /**
  * SMS Factor class.
  *
@@ -23,18 +28,13 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace factor_sms;
-
-use moodle_url;
-use tool_mfa\local\factor\object_factor_base;
-
 class factor extends object_factor_base {
 
     /**
      * SMS Factor implementation.
      *
-     * {@inheritDoc}
+     * @param \MoodleQuickForm $mform
+     * @return object $mform
      */
     public function login_form_definition($mform) {
         $mform->addElement(new \tool_mfa\local\form\verification_field());
@@ -45,7 +45,8 @@ class factor extends object_factor_base {
     /**
      * SMS Factor implementation.
      *
-     * {@inheritDoc}
+     * @param \MoodleQuickForm $mform Form to inject global elements into.
+     * @return object $mform
      */
     public function login_form_definition_after_data($mform) {
         $instanceid = $this->generate_and_sms_code();
@@ -58,7 +59,8 @@ class factor extends object_factor_base {
     /**
      * SMS Factor implementation.
      *
-     * {@inheritDoc}
+     * @param array $data
+     * @return array
      */
     public function login_form_validation($data) {
         $return = [];
@@ -80,7 +82,8 @@ class factor extends object_factor_base {
     /**
      * SMS Factor implementation.
      *
-     * {@inheritDoc}
+     * @param \MoodleQuickForm $mform
+     * @return object $mform
      */
     public function setup_factor_form_definition($mform) {
         global $SESSION, $USER, $OUTPUT;
@@ -106,7 +109,8 @@ class factor extends object_factor_base {
     /**
      * SMS Factor implementation.
      *
-     * {@inheritDoc}
+     * @param \MoodleQuickForm $mform
+     * @return object $mform
      */
     public function setup_factor_form_definition_after_data($mform) {
         global $SESSION, $USER;
@@ -142,7 +146,8 @@ class factor extends object_factor_base {
     /**
      * SMS Factor implementation.
      *
-     * {@inheritDoc}
+     * @param array $data
+     * @return array
      */
     public function setup_factor_form_validation($data) {
         global $SESSION, $USER;
@@ -164,7 +169,8 @@ class factor extends object_factor_base {
     /**
      * Adds an instance of the factor for a user, from form data.
      *
-     * {@inheritDoc}
+     * @param array $data
+     * @return stdClass the factor record, or null.
      */
     public function setup_user_factor($data) {
         global $DB, $SESSION, $USER;
@@ -240,7 +246,8 @@ class factor extends object_factor_base {
     /**
      * SMS Factor implementation.
      *
-     * {@inheritDoc}
+     * @param stdClass $user the user to check against.
+     * @return array
      */
     public function get_all_user_factors($user) {
         global $DB;
@@ -367,6 +374,7 @@ class factor extends object_factor_base {
     /**
      * Verifies entered code against stored DB record.
      *
+     * @param string $enteredcode
      * @return bool
      */
     private function check_verification_code($enteredcode) {
@@ -380,7 +388,7 @@ class factor extends object_factor_base {
     /**
      * SMS factor implementation.
      *
-     * {@inheritDoc}
+     * @param \stdClass $user
      */
     public function possible_states($user) {
         return [

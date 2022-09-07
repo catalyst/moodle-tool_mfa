@@ -32,8 +32,9 @@ use core_privacy\local\request\writer;
 use core_privacy\local\request\userlist;
 
 /**
- * Class provider
- * @package tool_mfa\privacy
+ * Privacy provider
+ *
+ * @package tool_mfa
  */
 class provider implements
     \core_privacy\local\metadata\provider,
@@ -194,6 +195,11 @@ class provider implements
         }
     }
 
+    /**
+     * Given a userlist, deletes all data in all provided contexts for the users
+     *
+     * @param approved_userlist $userlist the list of users to delete data for
+     */
     public static function delete_data_for_users(approved_userlist $userlist) {
         $users = $userlist->get_users();
         foreach ($users as $user) {

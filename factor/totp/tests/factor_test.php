@@ -14,16 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for TOTP factor.
- *
- * @package     tool_mfa
- * @author      Peter Burnett <peterburnett@catalyst-au.net>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace factor_totp\tests;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/../extlib/OTPHP/OTPInterface.php');
@@ -39,6 +31,14 @@ require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/EncoderInterface.php');
 require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Binary.php');
 require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Base32.php');
 
+/**
+ * Tests for TOTP factor.
+ *
+ * @package     factor_totp
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
+ * @copyright   Catalyst IT
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class factor_test extends \advanced_testcase {
 
     public function test_validate_code() {

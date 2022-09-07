@@ -14,26 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Role factor class.
- *
- * @package     tool_mfa
- * @author      Peter Burnett <peterburnett@catalyst-au.net>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace factor_role;
 
 use tool_mfa\local\factor\object_factor_base;
 
+/**
+ * Role factor class.
+ *
+ * @package     factor_role
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
+ * @copyright   Catalyst IT
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class factor extends object_factor_base {
 
     /**
      * Role implementation.
      * This factor is a singleton, return single instance.
      *
-     * {@inheritDoc}
+     * @param stdClass $user the user to check against.
+     * @return array
      */
     public function get_all_user_factors($user) {
         global $DB;
@@ -114,7 +114,8 @@ class factor extends object_factor_base {
      * Role implementation.
      * Cannot set state, return true.
      *
-     * {@inheritDoc}
+     * @param mixed $state the state constant to set
+     * @return bool
      */
     public function set_state($state) {
         return true;
@@ -124,7 +125,7 @@ class factor extends object_factor_base {
      * Role implementation.
      * User can not influence. Result is whatever current state is.
      *
-     * {@inheritDoc}
+     * @param \stdClass $user
      */
     public function possible_states($user) {
         return [$this->get_state()];

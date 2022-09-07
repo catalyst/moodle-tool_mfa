@@ -22,12 +22,12 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class tool_mfa_renderer extends plugin_renderer_base {
 
     /**
      * Returns the state of the factor as a badge
      *
+     * @param string $state
      * @return html
      */
     public function get_state_badge($state) {
@@ -74,6 +74,12 @@ class tool_mfa_renderer extends plugin_renderer_base {
         return $html;
     }
 
+    /**
+     * Returns the html section for factor setup
+     *
+     * @param   object $factor object of the factor class
+     * @return  void
+     */
     public function setup_factor($factor) {
         $html = '';
 
@@ -426,6 +432,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
     /**
      * Displays a table of all users with a locked instance of the given factor.
      *
+     * @param object $factor the factor class
      * @return string the HTML for the table
      */
     public function factor_locked_users_table($factor) {
@@ -472,7 +479,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
             $lastiplink = \html_writer::link(new moodle_url('/iplookup/index.php',
                 ['ip' => $record->lastip]), $record->lastip);
 
-            // Deep link to logs
+            // Deep link to logs.
             $logicon = $this->pix_icon('i/report', get_string('userlogs', 'tool_mfa'));
             $actions = \html_writer::link(new moodle_url('/report/log/index.php', [
                 'id' => 1, // Site.
@@ -499,6 +506,11 @@ class tool_mfa_renderer extends plugin_renderer_base {
         return \html_writer::table($table);
     }
 
+    /**
+     * Returns a html section render of the guide link template
+     *
+     * @return  string
+     */
     public function guide_link() {
         if (!get_config('tool_mfa', 'guidance')) {
             return '';
@@ -508,6 +520,18 @@ class tool_mfa_renderer extends plugin_renderer_base {
         return $this->notification($html, 'info');
     }
 
+    /**
+     * Renders an mform element from a template
+     *
+     * In certain situations, includes a script element which adds autosubmission behaviour.
+     *
+     * @param HTML_QuickForm_element $element element
+     * @param bool $required if input is required field
+     * @param bool $advanced if input is an advanced field
+     * @param string $error error message to display
+     * @param bool $ingroup True if this element is rendered as part of a group
+     * @return mixed string|bool
+     */
     public function mform_element($element, $required, $advanced, $error, $ingroup) {
         $script = null;
         if ($element instanceof tool_mfa\local\form\verification_field) {

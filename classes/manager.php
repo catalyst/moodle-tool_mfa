@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_mfa;
+
 /**
  * MFA management class.
  *
@@ -22,15 +24,15 @@
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace tool_mfa;
-
-use Exception;
-
 class manager {
 
+    /** @var int */
     const REDIRECT = 1;
+
+    /** @var int */
     const NO_REDIRECT = 0;
+
+    /** @var int */
     const REDIRECT_EXCEPTION = -1;
 
     /**
@@ -152,7 +154,6 @@ class manager {
     /**
      * Checks that provided factorid exists and belongs to current user.
      *
-     * @param string $factorname
      * @param int $factorid
      * @param object $user
      * @return bool
@@ -338,7 +339,7 @@ class manager {
                 // Clear locked user factors, they may now reauth with anything.
                 @$DB->set_field('tool_mfa', 'lockcounter', 0, ['userid' => $USER->id]);
             // @codingStandardsIgnoreStart
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // This occurs when upgrade.php hasn't been run. Nothing to do here.
                 // Coding standards ignored, they break on empty catches.
             }
@@ -401,6 +402,8 @@ class manager {
     /**
      * Checks whether the user should be redirected from the provided url.
      *
+     * @param string $url
+     * @param bool $preventredirect
      * @return int
      */
     public static function should_require_mfa($url, $preventredirect) {
@@ -574,10 +577,15 @@ class manager {
         sleep($duration);
     }
 
-    /*
+    /**
      * If MFA Plugin is ready check tool_mfa_authenticated USER property and
      * start MFA authentication if it's not set or false.
      *
+     * @param mixed $courseorid
+     * @param mixed $autologinguest
+     * @param mixed $cm
+     * @param mixed $setwantsurltome
+     * @param mixed $preventredirect
      * @return void
      */
     public static function require_auth($courseorid = null, $autologinguest = null, $cm = null,
@@ -800,7 +808,7 @@ class manager {
     /**
      * Checks whether the factor was actually used in the login process.
      *
-     * @param string factorname the name of the factor.
+     * @param string $factorname the name of the factor.
      * @return bool true if factor is pending.
      */
     public static function check_factor_pending($factorname) {

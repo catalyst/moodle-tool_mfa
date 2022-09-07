@@ -22,14 +22,37 @@ global $CFG;
 require_once($CFG->libdir.'/adminlib.php');
 require_once(__DIR__ . '/../lib.php');
 
+/**
+ * Base testcase class for testing this plugin
+ *
+ * @package     tool_mfa
+ * @author      Mikhail Golenkov <golenkovm@gmail.com>
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
+ * @copyright   Catalyst IT
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 abstract class tool_mfa_testcase extends \advanced_testcase {
 
+    /**
+     * Sets the state of the factor, in particular the weight and whether it is enabled
+     *
+     * @param   string $factorname
+     * @param   int $enabled
+     * @param   int $weight
+     */
     protected function set_factor_state($factorname, $enabled = 0, $weight = 100) {
         $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
         $this->set_factor_config($factor, 'enabled', $enabled);
         $this->set_factor_config($factor, 'weight', $weight);
     }
 
+    /**
+     * Sets config variable for given factor.
+     *
+     * @param   object $factor object of the factor class
+     * @param   string $key
+     * @param   mixed $value
+     */
     protected function set_factor_config($factor, $key, $value) {
         \tool_mfa\manager::set_factor_config([$key => $value], 'factor_' . $factor->name);
 

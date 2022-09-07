@@ -14,16 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * TOTP factor class.
- *
- * @package     factor_totp
- * @subpackage  tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace factor_totp;
 
 defined('MOODLE_INTERNAL') || die();
@@ -45,12 +35,30 @@ require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Base32.php');
 use tool_mfa\local\factor\object_factor_base;
 use OTPHP\TOTP;
 
+/**
+ * TOTP factor class.
+ *
+ * @package     factor_totp
+ * @subpackage  tool_mfa
+ * @author      Mikhail Golenkov <golenkovm@gmail.com>
+ * @copyright   Catalyst IT
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class factor extends object_factor_base {
 
+    /** @var string */
     const TOTP_OLD = 'old';
+
+    /** @var string */
     const TOTP_FUTURE = 'future';
+
+    /** @var string */
     const TOTP_USED = 'used';
+
+    /** @var string */
     const TOTP_VALID = 'valid';
+
+    /** @var string */
     const TOTP_INVALID = 'invalid';
 
     /**
@@ -107,7 +115,8 @@ class factor extends object_factor_base {
     /**
      * TOTP Factor implementation.
      *
-     * {@inheritDoc}
+     * @param \MoodleQuickForm $mform
+     * @return object $mform
      */
     public function setup_factor_form_definition($mform) {
         $secret = $this->generate_secret_code();
@@ -120,7 +129,8 @@ class factor extends object_factor_base {
     /**
      * TOTP Factor implementation.
      *
-     * {@inheritDoc}
+     * @param \MoodleQuickForm $mform
+     * @return object $mform
      */
     public function setup_factor_form_definition_after_data($mform) {
         global $OUTPUT, $SITE, $USER;
@@ -207,7 +217,8 @@ class factor extends object_factor_base {
     /**
      * TOTP Factor implementation.
      *
-     * {@inheritDoc}
+     * @param array $data
+     * @return array
      */
     public function setup_factor_form_validation($data) {
         $errors = [];
@@ -223,7 +234,8 @@ class factor extends object_factor_base {
     /**
      * TOTP Factor implementation.
      *
-     * {@inheritDoc}
+     * @param \MoodleQuickForm $mform
+     * @return object $mform
      */
     public function login_form_definition($mform) {
 
@@ -238,7 +250,8 @@ class factor extends object_factor_base {
     /**
      * TOTP Factor implementation.
      *
-     * {@inheritDoc}
+     * @param array $data
+     * @return array
      */
     public function login_form_validation($data) {
         global $USER;
@@ -323,7 +336,8 @@ class factor extends object_factor_base {
     /**
      * TOTP Factor implementation.
      *
-     * {@inheritDoc}
+     * @param array $data
+     * @return stdClass the factor record, or null.
      */
     public function setup_user_factor($data) {
         global $DB, $USER;
@@ -353,7 +367,8 @@ class factor extends object_factor_base {
     /**
      * TOTP Factor implementation.
      *
-     * {@inheritDoc}
+     * @param stdClass $user the user to check against.
+     * @return array
      */
     public function get_all_user_factors($user) {
         global $DB;
@@ -401,7 +416,7 @@ class factor extends object_factor_base {
      * TOTP Factor implementation.
      * TOTP cannot return fail state.
      *
-     * {@inheritDoc}
+     * @param \stdClass $user
      */
     public function possible_states($user) {
         return [

@@ -22,6 +22,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Factor sms upgrade helper function
+ *
+ * Sets the config of the gateway to aws_sns for factor sms
+ *
+ * @param int $oldversion
+ */
 function xmldb_factor_sms_upgrade($oldversion) {
     if ($oldversion < 2021081300) {
         set_config('gateway', 'aws_sns', 'factor_sms');

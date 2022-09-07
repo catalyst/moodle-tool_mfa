@@ -20,6 +20,15 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/tool_mfa_testcase.php');
 
+/**
+ * Tests for MFA admin settings
+ *
+ * @package     tool_mfa
+ * @author      Mikhail Golenkov <golenkovm@gmail.com>
+ * @author      Peter Burnett <peterburnett@catalyst-au.net>
+ * @copyright   Catalyst IT
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class admin_setting_managemfa_test extends tool_mfa_testcase {
 
     public function test_get_factor_combinations_default() {
@@ -113,8 +122,9 @@ class admin_setting_managemfa_test extends tool_mfa_testcase {
     }
 
     /**
-     * @dataProvider test_get_factor_combinations_provider
+     * Tests getting the factor combinations
      *
+     * @dataProvider test_get_factor_combinations_provider
      * @param array $factorset configured factors
      * @param int $combinationscount expected count of available combinations
      */
