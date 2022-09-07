@@ -125,10 +125,7 @@ class factor extends object_factor_base {
     public function setup_factor_form_definition_after_data($mform) {
         global $OUTPUT, $SITE, $USER;
 
-        /**
-         * Array of elements to allow XSS on when we're running Totara.
-         * @var array<\MoodleQuickForm_static>
-         */
+        // Array of elements to allow XSS on when we're running Totara.
         $xssallowedelements = [];
 
         $mform->addElement('html', $OUTPUT->heading(get_string('setupfactor', 'factor_totp'), 2));
@@ -137,10 +134,10 @@ class factor extends object_factor_base {
 
         $mform->addElement('text', 'devicename', get_string('devicename', 'factor_totp'), [
             'placeholder' => get_string('devicenameexample', 'factor_totp'),
-            'autofocus' => 'autofocus'
+            'autofocus' => 'autofocus',
         ]);
         $mform->addHelpButton('devicename', 'devicename', 'factor_totp');
-        $mform->setType("devicename", PARAM_TEXT);
+        $mform->setType('devicename', PARAM_TEXT);
         $mform->addRule('devicename', get_string('required'), 'required', null, 'client');
 
         // Scan.
@@ -170,7 +167,7 @@ class factor extends object_factor_base {
         $manualtable->data = [
             [get_string('setupfactor:key', 'factor_totp'), $secret],
             [get_string('setupfactor:account', 'factor_totp'), "$SITE->fullname ($USER->username)"],
-            [get_string('setupfactor:mode', 'factor_totp'), get_string('setupfactor:mode:timebased', 'factor_totp')]
+            [get_string('setupfactor:mode', 'factor_totp'), get_string('setupfactor:mode:timebased', 'factor_totp')],
         ];
 
         $html = \html_writer::table($manualtable);
@@ -186,7 +183,7 @@ class factor extends object_factor_base {
             'data-target' => '#collapseManualAttributes',
             'aria-expanded' => 'false',
             'aria-controls' => 'collapseManualAttributes',
-            'style' => 'font-size: 14px;'
+            'style' => 'font-size: 14px;',
         ]);
 
         $html = $togglelink . $html;
@@ -213,7 +210,7 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function setup_factor_form_validation($data) {
-        $errors = array();
+        $errors = [];
 
         $totp = TOTP::create($data['secret']);
         if (!$totp->verify($data['verificationcode'], time(), 1)) {
@@ -246,7 +243,7 @@ class factor extends object_factor_base {
     public function login_form_validation($data) {
         global $USER;
         $factors = $this->get_active_user_factors($USER);
-        $result = array('verificationcode' => get_string('error:wrongverification', 'factor_totp'));
+        $result = ['verificationcode' => get_string('error:wrongverification', 'factor_totp')];
         $windowconfig = get_config('factor_totp', 'window');
 
         foreach ($factors as $factor) {
@@ -258,17 +255,17 @@ class factor extends object_factor_base {
 
             switch ($factorresult) {
                 case self::TOTP_USED:
-                    return array('verificationcode' => get_string('error:codealreadyused', 'factor_totp'));
+                    return ['verificationcode' => get_string('error:codealreadyused', 'factor_totp')];
 
                 case self::TOTP_OLD:
-                    return array('verificationcode' => get_string('error:oldcode', 'factor_totp', $time));
+                    return ['verificationcode' => get_string('error:oldcode', 'factor_totp', $time)];
 
                 case self::TOTP_FUTURE:
-                    return array('verificationcode' => get_string('error:futurecode', 'factor_totp', $time));
+                    return ['verificationcode' => get_string('error:futurecode', 'factor_totp', $time)];
 
                 case self::TOTP_VALID:
                     $this->update_lastverified($factor->id);
-                    return array();
+                    return [];
 
                 default:
                     continue(2);
@@ -344,7 +341,7 @@ class factor extends object_factor_base {
             $row->revoked = 0;
 
             $id = $DB->insert_record('tool_mfa', $row);
-            $record = $DB->get_record('tool_mfa', array('id' => $id));
+            $record = $DB->get_record('tool_mfa', ['id' => $id]);
             $this->create_event_after_factor_setup($USER);
 
             return $record;
@@ -360,7 +357,7 @@ class factor extends object_factor_base {
      */
     public function get_all_user_factors($user) {
         global $DB;
-        return $DB->get_records('tool_mfa', array('userid' => $user->id, 'factor' => $this->name));
+        return $DB->get_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
     }
 
     /**
@@ -407,11 +404,11 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function possible_states($user) {
-        return array(
+        return [
             \tool_mfa\plugininfo\factor::STATE_PASS,
             \tool_mfa\plugininfo\factor::STATE_NEUTRAL,
             \tool_mfa\plugininfo\factor::STATE_UNKNOWN,
-        );
+        ];
     }
 
     /**

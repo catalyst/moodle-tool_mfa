@@ -31,7 +31,7 @@ abstract class tool_mfa_testcase extends \advanced_testcase {
     }
 
     protected function set_factor_config($factor, $key, $value) {
-        \tool_mfa\manager::set_factor_config(array($key => $value), 'factor_' . $factor->name);
+        \tool_mfa\manager::set_factor_config([$key => $value], 'factor_' . $factor->name);
 
         if ($key == 'enabled') {
             if ($value == 1) {

@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . "/formslib.php");
 
 class setup_factor_form extends \moodleform {
+
     /**
      * {@inheritDoc}
      * @see moodleform::definition()
@@ -61,7 +62,6 @@ class setup_factor_form extends \moodleform {
 
     /**
      * Invokes factor setup_factor_form_definition_after_data() method after form data has been set.
-     *
      */
     public function definition_after_data() {
         $mform = $this->_form;
@@ -72,7 +72,6 @@ class setup_factor_form extends \moodleform {
         $this->xss_whitelist_static_form_elements($mform);
         $this->add_action_buttons();
     }
-
 
     /**
      * In newer versions of Totara with consistent cleaning enabled we need to ensure to mark static elements

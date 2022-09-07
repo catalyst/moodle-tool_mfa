@@ -47,7 +47,7 @@ class secret_manager {
      * @param string $secret an optional provided secret
      * @return string the secret code, or 0 if no new code created.
      */
-    public function create_secret(int $expires, bool $session, string $secret = null) : string {
+    public function create_secret(int $expires, bool $session, string $secret = null): string {
         // Check if there already an active secret, unless we are forcibly given a code.
         if ($this->has_active_secret($session) && empty($secret)) {
             return '';
@@ -86,7 +86,7 @@ class secret_manager {
             'secret' => $secret,
             'timecreated' => time(),
             'expiry' => $expirytime,
-            'revoked' => 0
+            'revoked' => 0,
         ];
         if (!empty($sessionid)) {
             $data['sessionid'] = $sessionid;
@@ -122,7 +122,7 @@ class secret_manager {
      * @param string $sessionid the session id to check for.
      * @return string a secret manager state constant.
      */
-    private function check_secret_against_db(string $secret, string $sessionid) : string {
+    private function check_secret_against_db(string $secret, string $sessionid): string {
         global $DB, $USER;
 
         $sql = "SELECT *
@@ -136,7 +136,7 @@ class secret_manager {
             'secret' => $secret,
             'now' => time(),
             'userid' => $USER->id,
-            'factor' => $this->factor
+            'factor' => $this->factor,
         ];
 
         $record = $DB->get_record_sql($sql, $params);
@@ -183,7 +183,7 @@ class secret_manager {
      * @param boolean $checksession should we only check if a current session secret is active?
      * @return boolean
      */
-    private function has_active_secret(bool $checksession = false) : bool {
+    private function has_active_secret(bool $checksession = false): bool {
         global $DB, $USER;
 
         $sql = "SELECT *
@@ -196,11 +196,11 @@ class secret_manager {
         $params = [
             'now' => time(),
             'userid' => $USER->id,
-            'factor' => $this->factor
+            'factor' => $this->factor,
         ];
 
         if ($checksession) {
-            $sql .= " AND sessionid = :sessionid";
+            $sql .= ' AND sessionid = :sessionid';
             $params['sessionid'] = $this->sessionid;
         }
 

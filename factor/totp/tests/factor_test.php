@@ -39,7 +39,8 @@ require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/EncoderInterface.php');
 require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Binary.php');
 require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Base32.php');
 
-class factor_totp_testcase extends \advanced_testcase {
+class factor_test extends \advanced_testcase {
+
     public function test_validate_code() {
         global $DB;
 
@@ -54,39 +55,39 @@ class factor_totp_testcase extends \advanced_testcase {
         $totpfactor = \tool_mfa\plugininfo\factor::get_factor('totp');
         $totpdata = [
             'secret' => 'fakekey',
-            'devicename' => 'fakedevice'
+            'devicename' => 'fakedevice',
         ];
         $factorinstance = $totpfactor->setup_user_factor((object) $totpdata);
 
         // First check that a valid code is actually valid.
         $code = $totp->at(time());
         // Manually set timeverified of factor.
-        $DB->set_field('tool_mfa', 'lastverified', time() - WEEKSECS, array('id' => $factorinstance->id));
+        $DB->set_field('tool_mfa', 'lastverified', time() - WEEKSECS, ['id' => $factorinstance->id]);
         $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
         $this->assertEquals($totpfactor::TOTP_VALID, $result);
 
         // Now update timeverified to 2 mins ago, and check codes within window are blocked.
         $code = $totp->at(time() - (2 * MINSECS));
-        $DB->set_field('tool_mfa', 'lastverified', time() - (2 * MINSECS), array('id' => $factorinstance->id));
+        $DB->set_field('tool_mfa', 'lastverified', time() - (2 * MINSECS), ['id' => $factorinstance->id]);
         $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
         $this->assertEquals($totpfactor::TOTP_USED, $result);
 
         // Now update timeverified to 2 mins ago, and check codes within window are blocked.
         $code = $totp->at(time());
-        $DB->set_field('tool_mfa', 'lastverified', time() - (2 * MINSECS), array('id' => $factorinstance->id));
+        $DB->set_field('tool_mfa', 'lastverified', time() - (2 * MINSECS), ['id' => $factorinstance->id]);
         $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
         $this->assertEquals($totpfactor::TOTP_USED, $result);
 
         // Now update timeverified to 2 mins ago, and check codes within window are blocked.
         $code = $totp->at(time() - (4 * MINSECS));
-        $DB->set_field('tool_mfa', 'lastverified', time() - (2 * MINSECS), array('id' => $factorinstance->id));
+        $DB->set_field('tool_mfa', 'lastverified', time() - (2 * MINSECS), ['id' => $factorinstance->id]);
         $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
         $this->assertEquals($totpfactor::TOTP_USED, $result);
 
         // Now check future codes.
         $window = 1;
         $code = $totp->at(time() + (2 * MINSECS));
-        $DB->set_field('tool_mfa', 'lastverified', time() - WEEKSECS, array('id' => $factorinstance->id));
+        $DB->set_field('tool_mfa', 'lastverified', time() - WEEKSECS, ['id' => $factorinstance->id]);
         $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
         $this->assertEquals($totpfactor::TOTP_FUTURE, $result);
 

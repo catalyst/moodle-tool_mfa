@@ -49,7 +49,6 @@ abstract class object_factor_base implements object_factor {
      * Class constructor
      *
      * @param string factor name
-     *
      */
     public function __construct($name) {
         global $DB, $USER;
@@ -63,7 +62,6 @@ abstract class object_factor_base implements object_factor {
      * This loads the locked state from the DB
      *
      * Base class implementation.
-     *
      */
     public function load_locked_state() {
         global $DB, $USER;
@@ -72,7 +70,6 @@ abstract class object_factor_base implements object_factor {
         // Only 'input factors' are lockable.
         if ($this->is_enabled() && $this->is_lockable()) {
             try {
-
                 // Setup the lock counter.
                 $sql = "SELECT MAX(lockcounter) FROM {tool_mfa} WHERE userid = ? AND factor = ? AND revoked = ?";
                 @$this->lockcounter = $DB->get_field_sql($sql, [$USER->id, $this->name, 0]);
@@ -120,7 +117,7 @@ abstract class object_factor_base implements object_factor {
     public function get_weight() {
         $weight = get_config('factor_'.$this->name, 'weight');
         if ($weight) {
-            return (int)$weight;
+            return (int) $weight;
         }
         return 0;
     }
@@ -183,7 +180,7 @@ abstract class object_factor_base implements object_factor {
      * @return array
      */
     public function setup_factor_form_validation($data) {
-        return array();
+        return [];
     }
 
     /**
@@ -208,7 +205,7 @@ abstract class object_factor_base implements object_factor {
      * @return array
      */
     public function get_all_user_factors($user) {
-        return array();
+        return [];
     }
 
     /**
@@ -219,7 +216,7 @@ abstract class object_factor_base implements object_factor {
      * @return array
      */
     public function get_active_user_factors($user) {
-        $return = array();
+        $return = [];
         $factors = $this->get_all_user_factors($user);
         foreach ($factors as $factor) {
             if ($factor->revoked == 0) {
@@ -263,7 +260,7 @@ abstract class object_factor_base implements object_factor {
      * @return array
      */
     public function login_form_validation($data) {
-        return array();
+        return [];
     }
 
     /**
@@ -328,7 +325,7 @@ abstract class object_factor_base implements object_factor {
     public function get_lastverified($factorid) {
         global $DB;
 
-        $record = $DB->get_record('tool_mfa', array('id' => $factorid));
+        $record = $DB->get_record('tool_mfa', ['id' => $factorid]);
         return $record->lastverified;
     }
 
@@ -447,14 +444,14 @@ abstract class object_factor_base implements object_factor {
      */
     public function get_label($factorid) {
         global $DB;
-        return $DB->get_field('tool_mfa', 'label', array('id' => $factorid));
+        return $DB->get_field('tool_mfa', 'label', ['id' => $factorid]);
     }
 
     /**
      * Function to get urls that should not be redirected from.
      */
     public function get_no_redirect_urls() {
-        return array();
+        return [];
     }
 
     /**
@@ -464,7 +461,7 @@ abstract class object_factor_base implements object_factor {
      * E.g. IP changes based on whether a user is using a VPN.
      */
     public function possible_states($user) {
-        return array($this->get_state());
+        return [$this->get_state()];
     }
 
     /**
@@ -473,7 +470,7 @@ abstract class object_factor_base implements object_factor {
      * Override for complex conditions such as auth type.
      */
     public function get_summary_condition() {
-        return get_string('summarycondition', "factor_".$this->name);
+        return get_string('summarycondition', 'factor_'.$this->name);
     }
 
     /**
@@ -499,7 +496,7 @@ abstract class object_factor_base implements object_factor {
      */
     public function delete_factor_for_user($user) {
         global $DB, $USER;
-        $DB->delete_records('tool_mfa', array('userid' => $user->id, 'factor' => $this->name));
+        $DB->delete_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
 
         // Emit event for deletion.
         $event = \tool_mfa\event\user_deleted_factor::user_deleted_factor_event($user, $USER, $this->name);

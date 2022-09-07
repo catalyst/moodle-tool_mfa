@@ -24,12 +24,10 @@
  */
 defined('MOODLE_INTERNAL') || die;
 
-$capabilities = array(
-    'tool/mfa:mfaaccess' => array(
+$capabilities = [
+    'tool/mfa:mfaaccess' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_USER,
-        'archetypes' => array(
-            'user' => CAP_ALLOW
-        )
-    ),
- );
+        'archetypes' => ['user' => CAP_ALLOW],
+    ],
+];

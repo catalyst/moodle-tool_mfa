@@ -39,6 +39,7 @@ namespace tool_mfa\event;
  */
 
 class user_failed_mfa extends \core\event\base {
+
     /**
      * Create instance of event.
      *
@@ -62,15 +63,15 @@ class user_failed_mfa extends \core\event\base {
             }
         }
 
-        $data = array(
+        $data = [
             'relateduserid' => null,
             'context' => \context_user::instance($user->id),
-            'other' => array (
+            'other' => [
                 'userid' => $user->id,
                 'debug' => $debug,
-                'failurereason' => $failurereason
-            )
-        );
+                'failurereason' => $failurereason,
+            ],
+        ];
 
         return self::create($data);
     }

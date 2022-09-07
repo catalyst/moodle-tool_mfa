@@ -27,7 +27,7 @@ use stdClass;
 use tool_mfa\plugininfo\factor;
 
 class global_form_manager {
-    /** @var array $activefactors factors to call hooks upon.*/
+    /** @var array factors to call hooks upon. */
     private $activefactors;
 
     public function __construct() {

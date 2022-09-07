@@ -26,6 +26,7 @@
 namespace factor_sms;
 
 class helper {
+
     /**
      * This function internationalises a number to E.164 standard.
      * https://46elks.com/kb/e164

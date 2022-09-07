@@ -25,9 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
-    'factor/capability:cannotpassfactor' => array(
+$capabilities = [
+    'factor/capability:cannotpassfactor' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
-    ),
-);
+    ],
+];

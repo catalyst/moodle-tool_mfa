@@ -126,7 +126,7 @@ class factor extends object_factor_base {
         return [
             \tool_mfa\plugininfo\factor::STATE_PASS,
             \tool_mfa\plugininfo\factor::STATE_NEUTRAL,
-            \tool_mfa\plugininfo\factor::STATE_LOCKED
+            \tool_mfa\plugininfo\factor::STATE_LOCKED,
         ];
     }
 
@@ -197,7 +197,7 @@ class factor extends object_factor_base {
         // Finally emit a log event for storing the cookie.
         $state = [
             'expiry' => $expirytime,
-            'cookie' => $cookie
+            'cookie' => $cookie,
         ];
         $event = \factor_token\event\token_created::token_created_event($USER, $state);
         $event->trigger();

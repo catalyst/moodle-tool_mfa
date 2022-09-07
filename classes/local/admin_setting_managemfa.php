@@ -31,6 +31,7 @@ require_once($CFG->libdir.'/xmlize.php');
 require_once($CFG->libdir.'/messagelib.php');
 
 class admin_setting_managemfa extends \admin_setting {
+
     /**
      * Calls parent::__construct with specific arguments
      */
@@ -93,7 +94,7 @@ class admin_setting_managemfa extends \admin_setting {
         global $OUTPUT;
         $sesskey = sesskey();
 
-        $txt = get_strings(array('enable', 'disable', 'moveup', 'movedown', 'order', 'settings'));
+        $txt = get_strings(['enable', 'disable', 'moveup', 'movedown', 'order', 'settings']);
         $txt->factor = get_string('factor', 'tool_mfa');
         $txt->weight = get_string('weight', 'tool_mfa');
         $txt->setup = get_string('setuprequired', 'tool_mfa');
@@ -102,7 +103,7 @@ class admin_setting_managemfa extends \admin_setting {
         $table = new \html_table();
         $table->id = 'managemfatable';
         $table->attributes['class'] = 'admintable generaltable';
-        $table->head  = array(
+        $table->head  = [
             $txt->factor,
             $txt->enable,
             $txt->order,
@@ -110,35 +111,35 @@ class admin_setting_managemfa extends \admin_setting {
             $txt->settings,
             $txt->setup,
             $txt->input,
-        );
-        $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
-        $table->data  = array();
+        ];
+        $table->colclasses = ['leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign'];
+        $table->data  = [];
 
         $factors = \tool_mfa\plugininfo\factor::get_factors();
         $enabledfactors = \tool_mfa\plugininfo\factor::get_enabled_factors();
         $order = 1;
 
         foreach ($factors as $factor) {
-            $settingsparams = array('section' => 'factor_'.$factor->name);
+            $settingsparams = ['section' => 'factor_'.$factor->name];
             $settingsurl = new \moodle_url('settings.php', $settingsparams);
             $settingslink = \html_writer::link($settingsurl, $txt->settings);
 
             if ($factor->is_enabled()) {
-                $hideshowparams = array('action' => 'disable', 'factor' => $factor->name, 'sesskey' => $sesskey);
+                $hideshowparams = ['action' => 'disable', 'factor' => $factor->name, 'sesskey' => $sesskey];
                 $hideshowurl = new \moodle_url('tool/mfa/index.php', $hideshowparams);
                 $hideshowlink = \html_writer::link($hideshowurl, $OUTPUT->pix_icon('t/hide', $txt->disable));
                 $class = '';
 
                 if ($order > 1) {
-                    $upparams = array('action' => 'up', 'factor' => $factor->name, 'sesskey' => $sesskey);
+                    $upparams = ['action' => 'up', 'factor' => $factor->name, 'sesskey' => $sesskey];
                     $upurl = new \moodle_url('tool/mfa/index.php', $upparams);
                     $uplink = \html_writer::link($upurl, $OUTPUT->pix_icon('t/up', $txt->moveup));
                 } else {
-                    $uplink = \html_writer::link('', $uplink = $OUTPUT->spacer(array('style' => 'margin-right: .5rem')));
+                    $uplink = \html_writer::link('', $uplink = $OUTPUT->spacer(['style' => 'margin-right: .5rem']));
                 }
 
                 if ($order < count($enabledfactors)) {
-                    $downparams = array('action' => 'down', 'factor' => $factor->name, 'sesskey' => $sesskey);
+                    $downparams = ['action' => 'down', 'factor' => $factor->name, 'sesskey' => $sesskey];
                     $downurl = new \moodle_url('tool/mfa/index.php', $downparams);
                     $downlink = \html_writer::link($downurl, $OUTPUT->pix_icon('t/down', $txt->movedown));
                 } else {
@@ -147,7 +148,7 @@ class admin_setting_managemfa extends \admin_setting {
                 $updownlink = $uplink.$downlink;
                 $order++;
             } else {
-                $hideshowparams = array('action' => 'enable', 'factor' => $factor->name, 'sesskey' => $sesskey);
+                $hideshowparams = ['action' => 'enable', 'factor' => $factor->name, 'sesskey' => $sesskey];
                 $hideshowurl = new \moodle_url('tool/mfa/index.php', $hideshowparams);
                 $hideshowlink = \html_writer::link($hideshowurl, $OUTPUT->pix_icon('t/show', $txt->enable));
                 $class = 'dimmed_text';
@@ -157,7 +158,7 @@ class admin_setting_managemfa extends \admin_setting {
             $hassetup = $factor->has_setup() ? get_string('yes') : get_string('no');
             $hasinput = $factor->has_input() ? get_string('yes') : get_string('no');
 
-            $rowarray = array(
+            $rowarray = [
                 $factor->get_display_name(),
                 $hideshowlink,
                 $updownlink,
@@ -165,7 +166,7 @@ class admin_setting_managemfa extends \admin_setting {
                 $settingslink,
                 $hassetup,
                 $hasinput,
-            );
+            ];
             $row = new \html_table_row($rowarray);
             $row->attributes['class'] = $class;
 
@@ -190,13 +191,13 @@ class admin_setting_managemfa extends \admin_setting {
             return $OUTPUT->notification(get_string('error:notenoughfactors', 'tool_mfa'), 'notifyproblem');
         }
 
-        $txt = get_strings(array('combination', 'totalweight'), 'tool_mfa');
+        $txt = get_strings(['combination', 'totalweight'], 'tool_mfa');
         $table = new \html_table();
         $table->id = 'managemfatable';
         $table->attributes['class'] = 'admintable generaltable table table-bordered';
-        $table->head  = array($txt->combination, $txt->totalweight);
-        $table->colclasses = array('leftalign', 'centeralign');
-        $table->data  = array();
+        $table->head  = [$txt->combination, $txt->totalweight];
+        $table->colclasses = ['leftalign', 'centeralign'];
+        $table->data  = [];
 
         foreach ($combinations as $combination) {
             $string = '';
@@ -206,7 +207,7 @@ class admin_setting_managemfa extends \admin_setting {
             }
 
             $string = substr($string, 4);
-            $table->data[] = new \html_table_row(array($string, $combination['totalweight']));
+            $table->data[] = new \html_table_row([$string, $combination['totalweight']]);
         }
 
         return \html_writer::table($table);
@@ -226,7 +227,7 @@ class admin_setting_managemfa extends \admin_setting {
      * @return array
      */
     public function get_factor_combinations($allfactors, $start = 0, $end = 0,
-        $totalweight = 0, $combination = array(), $result = array()) {
+        $totalweight = 0, $combination = [], $result = []) {
 
         if ($totalweight >= 100) {
             // Ensure this is a valid combination before appending result.
@@ -237,7 +238,7 @@ class admin_setting_managemfa extends \admin_setting {
                 }
             }
             if ($valid) {
-                $result[] = array('totalweight' => $totalweight, 'combination' => $combination);
+                $result[] = ['totalweight' => $totalweight, 'combination' => $combination];
             }
             return $result;
         } else if ($start > $end) {

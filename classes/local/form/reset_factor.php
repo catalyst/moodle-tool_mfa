@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once("$CFG->libdir/formslib.php");
 
 class reset_factor extends \moodleform {
+
     public function definition() {
         $mform = $this->_form;
         $factors = $this->_customdata['factors'];
@@ -47,7 +48,7 @@ class reset_factor extends \moodleform {
 
         if (!$bulkaction) {
             $mform->addElement('text', 'resetfactor', get_string('resetuser', 'tool_mfa'),
-            array('placeholder' => get_string('resetfactorplaceholder', 'tool_mfa')));
+            ['placeholder' => get_string('resetfactorplaceholder', 'tool_mfa')]);
             $mform->setType('resetfactor', PARAM_TEXT);
             $mform->addRule('resetfactor', get_string('userempty', 'tool_mfa'), 'required');
         }
@@ -62,10 +63,10 @@ class reset_factor extends \moodleform {
         if (!$data['bulkaction']) {
             $userinfo = $data['resetfactor'];
             // Try input as username first, then email.
-            $user = $DB->get_record('user', array('username' => $userinfo));
+            $user = $DB->get_record('user', ['username' => $userinfo]);
             if (empty($user)) {
                 // If not found, try username.
-                $user = $DB->get_record('user', array('email' => $userinfo));
+                $user = $DB->get_record('user', ['email' => $userinfo]);
             }
 
             if (empty($user)) {

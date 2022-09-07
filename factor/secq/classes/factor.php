@@ -46,7 +46,7 @@ class factor extends object_factor_base {
      */
     public function get_all_user_factors($user) {
         // FACTOR FUNCTIONALITY HERE.
-        return array();
+        return [];
     }
 
     /**
@@ -83,8 +83,6 @@ class factor extends object_factor_base {
      * Security Questions Factor Implementation.
      */
     public function get_no_redirect_urls() {
-        return array(
-            new \moodle_url('/admin/tool/securityquestions/set_responses.php')
-        );
+        return [new \moodle_url('/admin/tool/securityquestions/set_responses.php')];
     }
 }

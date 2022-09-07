@@ -20,7 +20,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/tool_mfa_testcase.php');
 
-class admin_setting_managemfa_testcase extends tool_mfa_testcase {
+class admin_setting_managemfa_test extends tool_mfa_testcase {
 
     public function test_get_factor_combinations_default() {
         $namagemfa = new \tool_mfa\local\admin_setting_managemfa();
@@ -31,83 +31,83 @@ class admin_setting_managemfa_testcase extends tool_mfa_testcase {
     }
 
     public function test_get_factor_combinations_provider() {
-        $provider = array();
+        $provider = [];
 
-        $factors = array();
-        $provider[] = array($factors, 0);
+        $factors = [];
+        $provider[] = [$factors, 0];
 
-        $factors = array();
-        $factors[] = array('name' => 'totp', 'enabled' => 1, 'weight' => 90);
-        $provider[] = array($factors, 0);
+        $factors = [];
+        $factors[] = ['name' => 'totp', 'enabled' => 1, 'weight' => 90];
+        $provider[] = [$factors, 0];
 
-        $factors = array();
-        $factors[] = array('name' => 'email', 'enabled' => 1, 'weight' => 100);
-        $provider[] = array($factors, 1);
+        $factors = [];
+        $factors[] = ['name' => 'email', 'enabled' => 1, 'weight' => 100];
+        $provider[] = [$factors, 1];
 
-        $factors = array();
-        $factors[] = array('name' => 'iprange', 'enabled' => 1, 'weight' => 150);
-        $provider[] = array($factors, 1);
+        $factors = [];
+        $factors[] = ['name' => 'iprange', 'enabled' => 1, 'weight' => 150];
+        $provider[] = [$factors, 1];
 
-        $factors = array();
-        $factors[] = array('name' => 'iprange', 'enabled' => 1, 'weight' => 40);
-        $factors[] = array('name' => 'email', 'enabled' => 1, 'weight' => 40);
-        $provider[] = array($factors, 0);
+        $factors = [];
+        $factors[] = ['name' => 'iprange', 'enabled' => 1, 'weight' => 40];
+        $factors[] = ['name' => 'email', 'enabled' => 1, 'weight' => 40];
+        $provider[] = [$factors, 0];
 
-        $factors = array();
-        $factors[] = array('name' => 'email', 'enabled' => 1, 'weight' => 90);
-        $factors[] = array('name' => 'totp', 'enabled' => 1, 'weight' => 40);
-        $provider[] = array($factors, 1);
+        $factors = [];
+        $factors[] = ['name' => 'email', 'enabled' => 1, 'weight' => 90];
+        $factors[] = ['name' => 'totp', 'enabled' => 1, 'weight' => 40];
+        $provider[] = [$factors, 1];
 
-        $factors = array();
-        $factors[] = array('name' => 'totp', 'enabled' => 1, 'weight' => 100);
-        $factors[] = array('name' => 'email', 'enabled' => 1, 'weight' => 100);
-        $provider[] = array($factors, 2);
+        $factors = [];
+        $factors[] = ['name' => 'totp', 'enabled' => 1, 'weight' => 100];
+        $factors[] = ['name' => 'email', 'enabled' => 1, 'weight' => 100];
+        $provider[] = [$factors, 2];
 
-        $factors = array();
-        $factors[] = array('name' => 'totp', 'enabled' => 1, 'weight' => 100);
-        $factors[] = array('name' => 'email', 'enabled' => 1, 'weight' => 100);
-        $factors[] = array('name' => 'iprange', 'enabled' => 1, 'weight' => 100);
-        $provider[] = array($factors, 3);
+        $factors = [];
+        $factors[] = ['name' => 'totp', 'enabled' => 1, 'weight' => 100];
+        $factors[] = ['name' => 'email', 'enabled' => 1, 'weight' => 100];
+        $factors[] = ['name' => 'iprange', 'enabled' => 1, 'weight' => 100];
+        $provider[] = [$factors, 3];
 
-        $factors = array();
-        $factors[] = array('name' => 'totp', 'enabled' => 1, 'weight' => 90);
-        $factors[] = array('name' => 'email', 'enabled' => 1, 'weight' => 30);
-        $factors[] = array('name' => 'iprange', 'enabled' => 1, 'weight' => 40);
-        $provider[] = array($factors, 2);
+        $factors = [];
+        $factors[] = ['name' => 'totp', 'enabled' => 1, 'weight' => 90];
+        $factors[] = ['name' => 'email', 'enabled' => 1, 'weight' => 30];
+        $factors[] = ['name' => 'iprange', 'enabled' => 1, 'weight' => 40];
+        $provider[] = [$factors, 2];
 
-        $factors = array();
-        $factors[] = array('name' => 'email', 'enabled' => 1, 'weight' => 30);
-        $factors[] = array('name' => 'iprange', 'enabled' => 1, 'weight' => 40);
-        $factors[] = array('name' => 'totp', 'enabled' => 1, 'weight' => 90);
-        $provider[] = array($factors, 3);
+        $factors = [];
+        $factors[] = ['name' => 'email', 'enabled' => 1, 'weight' => 30];
+        $factors[] = ['name' => 'iprange', 'enabled' => 1, 'weight' => 40];
+        $factors[] = ['name' => 'totp', 'enabled' => 1, 'weight' => 90];
+        $provider[] = [$factors, 3];
 
-        $factors = array();
-        $factors[] = array('name' => 'email', 'enabled' => 1, 'weight' => 30);
-        $factors[] = array('name' => 'iprange', 'enabled' => 1, 'weight' => 40);
-        $factors[] = array('name' => 'totp', 'enabled' => 1, 'weight' => 90);
-        $factors[] = array('name' => 'auth', 'enabled' => 1, 'weight' => 90);
-        $provider[] = array($factors, 7);
+        $factors = [];
+        $factors[] = ['name' => 'email', 'enabled' => 1, 'weight' => 30];
+        $factors[] = ['name' => 'iprange', 'enabled' => 1, 'weight' => 40];
+        $factors[] = ['name' => 'totp', 'enabled' => 1, 'weight' => 90];
+        $factors[] = ['name' => 'auth', 'enabled' => 1, 'weight' => 90];
+        $provider[] = [$factors, 7];
 
-        $factors = array();
-        $factors[] = array('name' => 'email', 'enabled' => 1, 'weight' => 50);
-        $factors[] = array('name' => 'iprange', 'enabled' => 1, 'weight' => 50);
-        $factors[] = array('name' => 'totp', 'enabled' => 1, 'weight' => 50);
-        $factors[] = array('name' => 'auth', 'enabled' => 1, 'weight' => 50);
-        $provider[] = array($factors, 6);
+        $factors = [];
+        $factors[] = ['name' => 'email', 'enabled' => 1, 'weight' => 50];
+        $factors[] = ['name' => 'iprange', 'enabled' => 1, 'weight' => 50];
+        $factors[] = ['name' => 'totp', 'enabled' => 1, 'weight' => 50];
+        $factors[] = ['name' => 'auth', 'enabled' => 1, 'weight' => 50];
+        $provider[] = [$factors, 6];
 
-        $factors = array();
-        $factors[] = array('name' => 'email', 'enabled' => 0, 'weight' => 50);
-        $factors[] = array('name' => 'iprange', 'enabled' => 1, 'weight' => 50);
-        $factors[] = array('name' => 'totp', 'enabled' => 0, 'weight' => 50);
-        $factors[] = array('name' => 'auth', 'enabled' => 1, 'weight' => 50);
-        $provider[] = array($factors, 1);
+        $factors = [];
+        $factors[] = ['name' => 'email', 'enabled' => 0, 'weight' => 50];
+        $factors[] = ['name' => 'iprange', 'enabled' => 1, 'weight' => 50];
+        $factors[] = ['name' => 'totp', 'enabled' => 0, 'weight' => 50];
+        $factors[] = ['name' => 'auth', 'enabled' => 1, 'weight' => 50];
+        $provider[] = [$factors, 1];
 
-        $factors = array();
-        $factors[] = array('name' => 'email', 'enabled' => 0, 'weight' => 50);
-        $factors[] = array('name' => 'iprange', 'enabled' => 1, 'weight' => 50);
-        $factors[] = array('name' => 'totp', 'enabled' => 1, 'weight' => 50);
-        $factors[] = array('name' => 'auth', 'enabled' => 1, 'weight' => 50);
-        $provider[] = array($factors, 3);
+        $factors = [];
+        $factors[] = ['name' => 'email', 'enabled' => 0, 'weight' => 50];
+        $factors[] = ['name' => 'iprange', 'enabled' => 1, 'weight' => 50];
+        $factors[] = ['name' => 'totp', 'enabled' => 1, 'weight' => 50];
+        $factors[] = ['name' => 'auth', 'enabled' => 1, 'weight' => 50];
+        $provider[] = [$factors, 3];
 
         return $provider;
     }

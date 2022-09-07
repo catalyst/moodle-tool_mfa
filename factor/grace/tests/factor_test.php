@@ -25,7 +25,8 @@
 
 namespace factor_grace\tests;
 
-class factor_totp_testcase extends \advanced_testcase {
+class factor_test extends \advanced_testcase {
+
     public function test_affecting_factors() {
         $this->resetAfterTest(true);
         $user = $this->getDataGenerator()->create_user();
@@ -39,7 +40,7 @@ class factor_totp_testcase extends \advanced_testcase {
         $totpfactor = \tool_mfa\plugininfo\factor::get_factor('totp');
         $totpdata = [
             'secret' => 'fakekey',
-            'devicename' => 'fakedevice'
+            'devicename' => 'fakedevice',
         ];
         $totpfactor->setup_user_factor((object) $totpdata);
 

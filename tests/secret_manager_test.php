@@ -25,7 +25,8 @@
 
 namespace tool_mfa\tests;
 
-class tool_mfa_secret_manager_testcase extends \advanced_testcase {
+class secret_manager_test extends \advanced_testcase {
+
     public function test_create_secret() {
         global $DB;
 

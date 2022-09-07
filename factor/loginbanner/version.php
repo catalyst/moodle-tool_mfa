@@ -31,4 +31,4 @@ $plugin->release      = 2021030800;      // Keep in lockstep with version.
 $plugin->requires     = 2017051500.00;   // Support back to 3.3 - Totara 12. Patches required.
 $plugin->component    = 'factor_loginbanner';
 $plugin->maturity     = MATURITY_STABLE;
-$plugin->dependencies = array('tool_mfa' => 2019102400);
+$plugin->dependencies = ['tool_mfa' => 2019102400];

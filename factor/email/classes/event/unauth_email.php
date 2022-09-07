@@ -39,6 +39,7 @@ namespace factor_email\event;
  */
 
 class unauth_email extends \core\event\base {
+
     /**
      * Create instance of event.
      *
@@ -52,15 +53,15 @@ class unauth_email extends \core\event\base {
      */
     public static function unauth_email_event($user, $ip, $useragent) {
 
-        $data = array(
+        $data = [
             'relateduserid' => null,
             'context' => \context_user::instance($user->id),
-            'other' => array (
+            'other' => [
                 'userid' => $user->id,
                 'ip' => $ip,
-                'useragent' => $useragent
-            )
-        );
+                'useragent' => $useragent,
+            ],
+        ];
 
         return self::create($data);
     }

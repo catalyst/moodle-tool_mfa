@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/form/text.php');
 
 class verification_field extends \MoodleQuickForm_text {
 
-    /** @var bool $appendjs */
+    /** @var bool */
     private $appendjs;
 
     /**

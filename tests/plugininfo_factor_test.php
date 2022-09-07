@@ -23,7 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class tool_mfa_plugininfo_factor_testcase extends advanced_testcase {
+class plugininfo_factor_test extends advanced_testcase {
 
     public function test_get_next_user_factor() {
 
@@ -41,7 +41,7 @@ class tool_mfa_plugininfo_factor_testcase extends advanced_testcase {
         $totpfactor = \tool_mfa\plugininfo\factor::get_factor('totp');
         $totpdata = [
             'secret' => 'fakekey',
-            'devicename' => 'fakedevice'
+            'devicename' => 'fakedevice',
         ];
         $this->assertNotEmpty($totpfactor->setup_user_factor((object) $totpdata));
 

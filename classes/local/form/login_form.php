@@ -51,7 +51,6 @@ class login_form extends \moodleform {
 
     /**
      * Invokes factor login_form_definition_after_data() method after form data has been set.
-     *
      */
     public function definition_after_data() {
         $mform = $this->_form;
@@ -60,10 +59,10 @@ class login_form extends \moodleform {
         $factor->login_form_definition_after_data($mform);
         $this->globalmanager->definition_after_data($mform);
 
-        $buttonarray = array();
+        $buttonarray = [];
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('loginsubmit', 'factor_' . $factor->name));
         $buttonarray[] = &$mform->createElement('cancel', '', get_string('loginskip', 'factor_' . $factor->name));
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
         $mform->closeHeaderBefore('buttonar');
     }
 

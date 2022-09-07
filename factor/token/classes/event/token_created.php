@@ -39,10 +39,10 @@ class token_created extends \core\event\base {
         $data = [
             'relateduserid' => $user->id,
             'context' => \context_user::instance($user->id),
-            'other' => array (
+            'other' => [
                 'userid' => $user->id,
-                'state' => json_encode($state)
-            )
+                'state' => json_encode($state),
+            ],
         ];
 
         return self::create($data);

@@ -63,4 +63,4 @@ $string['phoneplaceholder'] = '04xx xxx xxx or +61 4xx xxx xxx';
 $string['phonehelp'] = 'Enter your local mobile phone number, or an international phone number starting with \'+\'.';
 $string['privacy:metadata'] = 'The mobile phone SMS	factor plugin does not store any personal data';
 $string['wrongcode'] = 'Invalid security code.';
-$string['event:smssent'] = "SMS Message sent";
+$string['event:smssent'] = 'SMS Message sent';

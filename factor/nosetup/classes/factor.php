@@ -37,21 +37,21 @@ class factor extends object_factor_base {
      */
     public function get_all_user_factors($user) {
         global $DB;
-        $records = $DB->get_records('tool_mfa', array('userid' => $user->id, 'factor' => $this->name));
+        $records = $DB->get_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
 
         if (!empty($records)) {
             return $records;
         }
 
         // Null records returned, build new record.
-        $record = array(
+        $record = [
             'userid' => $user->id,
             'factor' => $this->name,
             'timecreated' => time(),
             'createdfromip' => $user->lastip,
             'timemodified' => time(),
             'revoked' => 0,
-        );
+        ];
         $record['id'] = $DB->insert_record('tool_mfa', $record, true);
         return [(object) $record];
     }
@@ -96,11 +96,11 @@ class factor extends object_factor_base {
         $factors = \tool_mfa\plugininfo\factor::get_active_other_user_factor_types($user);
         foreach ($factors as $factor) {
             if ($factor->has_input() || $factor->has_setup()) {
-                return array(\tool_mfa\plugininfo\factor::STATE_NEUTRAL);
+                return [\tool_mfa\plugininfo\factor::STATE_NEUTRAL];
             }
         }
 
-        return array(\tool_mfa\plugininfo\factor::STATE_PASS);
+        return [\tool_mfa\plugininfo\factor::STATE_PASS];
     }
 
     /**

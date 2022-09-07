@@ -111,7 +111,7 @@ function tool_mfa_bulk_user_actions() {
  * @param array $options
  * @return bool
  */
-function tool_mfa_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+function tool_mfa_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
     // Hardcode to only send guidance files from the top level.
     $fs = get_file_storage();
     $file = $fs->get_file(

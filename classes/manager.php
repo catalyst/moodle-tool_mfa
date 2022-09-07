@@ -45,28 +45,27 @@ class manager {
         $html = $OUTPUT->heading(get_string('debugmode:heading', 'tool_mfa'), 3);
 
         $table = new \html_table();
-        $table->head = array(
+        $table->head = [
             get_string('weight', 'tool_mfa'),
             get_string('factor', 'tool_mfa'),
             get_string('setup', 'tool_mfa'),
             get_string('achievedweight', 'tool_mfa'),
             get_string('status'),
-        );
+        ];
         $table->attributes['class'] = 'admintable generaltable table table-bordered';
-        $table->colclasses = array(
+        $table->colclasses = [
             'text-right',
             '',
             '',
             'text-right',
             'text-center',
-        );
+        ];
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
         $userfactors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
         $runningtotal = 0;
         $weighttoggle = false;
 
         foreach ($factors as $factor) {
-
             $namespace = 'factor_'.$factor->name;
             $name = get_string('pluginname', $namespace);
 
@@ -80,7 +79,6 @@ class manager {
                 $achieved = $factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS ? $factor->get_weight() : 0;
                 $achieved = '+'.$achieved;
                 $runningtotal += $achieved;
-
             } else {
                 $achieved = '';
             }
@@ -107,13 +105,13 @@ class manager {
                 $state = $OUTPUT->get_state_badge($factor->get_state());
             }
 
-            $table->data[] = array(
+            $table->data[] = [
                 $factor->get_weight(),
                 $name,
                 $setup,
                 $achieved,
                 $state,
-            );
+            ];
 
             // If we just hit 100, flip toggle.
             if ($runningtotal >= 100) {
@@ -122,13 +120,13 @@ class manager {
         }
 
         $finalstate = self::get_status();
-        $table->data[] = array(
+        $table->data[] = [
             '',
             '',
             '<b>' . get_string('overall', 'tool_mfa') . '</b>',
             self::get_cumulative_weight(),
             $OUTPUT->get_state_badge($finalstate),
-        );
+        ];
 
         $html .= \html_writer::table($table);
         echo $html;
@@ -162,7 +160,7 @@ class manager {
      */
     public static function is_factorid_valid($factorid, $user) {
         global $DB;
-        return $DB->record_exists('tool_mfa', array('userid' => $user->id, 'id' => $factorid));
+        return $DB->record_exists('tool_mfa', ['userid' => $user->id, 'id' => $factorid]);
     }
 
     /**
@@ -223,7 +221,6 @@ class manager {
         // Check for any instant fail states.
         $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
         foreach ($factors as $factor) {
-
             $factor->load_locked_state();
 
             if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_FAIL) {
@@ -237,7 +234,6 @@ class manager {
         // Check next factor for instant fail (fallback).
         if (\tool_mfa\plugininfo\factor::get_next_user_factor()->get_state() ==
             \tool_mfa\plugininfo\factor::STATE_FAIL) {
-
             // We need to handle a special case here, where someone reached the fallback,
             // If they were able to modify their state on the error page, such as passing iprange,
             // We must return pass.
@@ -543,7 +539,7 @@ class manager {
         $factors = \tool_mfa\plugininfo\factor::get_factors();
         $urls = [
             new \moodle_url('/login/logout.php'),
-            new \moodle_url('/admin/tool/mfa/guide.php')
+            new \moodle_url('/admin/tool/mfa/guide.php'),
         ];
         foreach ($factors as $factor) {
             $urls = array_merge($urls, $factor->get_no_redirect_urls());
@@ -626,7 +622,6 @@ class manager {
 
                 // Call resolve_status to instantly pass if no redirect is required.
                 self::resolve_mfa_status(true);
-
             } else if ($redir == self::REDIRECT_EXCEPTION) {
                 if (!empty($SESSION->mfa_redir_referer)) {
                     throw new \moodle_exception('redirecterrordetected', 'tool_mfa',
@@ -653,7 +648,6 @@ class manager {
             if (empty($factorconf->$key)) {
                 add_to_config_log($key, null, $newvalue, $factor);
                 set_config($key, $newvalue, $factor);
-
             } else if ($factorconf->$key != $newvalue) {
                 add_to_config_log($key, $factorconf->$key, $newvalue, $factor);
                 set_config($key, $newvalue, $factor);
@@ -743,7 +737,7 @@ class manager {
             default:
                 break;
         }
-        self::set_factor_config(array('factor_order' => implode(',', $order)), 'tool_mfa');
+        self::set_factor_config(['factor_order' => implode(',', $order)], 'tool_mfa');
     }
 
     /**
@@ -812,7 +806,7 @@ class manager {
     public static function check_factor_pending($factorname) {
         $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
         // Setup vars.
-        $pending = array();
+        $pending = [];
         $totalweight = 0;
         $weighttoggle = false;
 

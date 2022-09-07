@@ -39,6 +39,7 @@ namespace tool_mfa\event;
  */
 
 class user_revoked_factor extends \core\event\base {
+
     /**
      * Create instance of event.
      *
@@ -51,14 +52,14 @@ class user_revoked_factor extends \core\event\base {
      */
     public static function user_revoked_factor_event($user, $factorname) {
 
-        $data = array(
+        $data = [
             'relateduserid' => null,
             'context' => \context_user::instance($user->id),
-            'other' => array (
+            'other' => [
                 'userid' => $user->id,
-                'factorname' => $factorname
-            )
-        );
+                'factorname' => $factorname,
+            ],
+        ];
 
         return self::create($data);
     }

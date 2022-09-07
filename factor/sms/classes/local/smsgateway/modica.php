@@ -42,7 +42,7 @@ class modica implements gateway_interface {
         $params = [
             'http' => isset($config->modica_url) ? 'https://api.modicagroup.com/rest/gateway' : $config->modica_url,
             'username' => $config->modica_application,
-            'password' => $config->modica_password
+            'password' => $config->modica_password,
         ];
 
         // Transform the phone number to international standard.
@@ -52,28 +52,28 @@ class modica implements gateway_interface {
         $json = json_encode(
             [
                 'destination' => $phonenumber,
-                'content' => $messagecontent
+                'content' => $messagecontent,
             ]
         );
 
         $curl = new \curl();
-        $curl->setHeader(array('Accept: application/json', 'Expect:'));
+        $curl->setHeader(['Accept: application/json', 'Expect:']);
         $body = $curl->post($params['http'] . '/messages', $json, [
             'CURLOPT_USERPWD' => $params['username'] . ':' . $params['password'],
         ]);
         $info = $curl->get_info();
 
-        $data = array(
+        $data = [
             'relateduserid' => null,
             'context' => \context_user::instance($USER->id),
-            'other' => array(
+            'other' => [
                 'userid' => $USER->id,
-                'debug' => array(
+                'debug' => [
                     'messageid' => $body,
-                    'httpcode' => $info['http_code']
-                )
-            )
-        );
+                    'httpcode' => $info['http_code'],
+                ],
+            ],
+        ];
         $event = sms_sent::create($data);
         $event->trigger();
 

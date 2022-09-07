@@ -26,13 +26,14 @@
 namespace factor_sms\local\smsgateway;
 
 interface gateway_interface {
+
     /**
      * @param string $messagecontent the content to send in the SMS message.
      * @param string $target the destination for the message.
      *
      * @return bool true on message send success
      */
-    public function send_sms_message(string $messagecontent, string $phonenumber) : bool;
+    public function send_sms_message(string $messagecontent, string $phonenumber): bool;
 
     /**
      * Add gateway specific settings to the SMS factor settings page.
@@ -42,5 +43,5 @@ interface gateway_interface {
      */
     public static function add_settings($settings);
 
-    public static function is_gateway_enabled() : bool;
+    public static function is_gateway_enabled(): bool;
 }

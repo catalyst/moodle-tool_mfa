@@ -26,6 +26,7 @@
 namespace tool_mfa\local\factor;
 
 interface object_factor {
+
     /**
      * Returns true if factor is enabled, otherwise false.
      *
