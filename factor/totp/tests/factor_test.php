@@ -124,6 +124,7 @@ class factor_test extends \advanced_testcase {
      * @covers ::setup_user_factor
      */
     public function test_wont_store_same_secret_twice() {
+        global $DB;
         $this->resetAfterTest(true);
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
@@ -134,10 +135,14 @@ class factor_test extends \advanced_testcase {
             'secret' => 'fakekey',
             'devicename' => 'fakedevice',
         ];
-        $totpfactor->setup_user_factor((object) $totpdata);
+        $record = $totpfactor->setup_user_factor((object) $totpdata);
 
-        // Trying to add the same TOTP should throw an exception.
-        $this->expectException(\moodle_exception::class);
-        $totpfactor->setup_user_factor((object) $totpdata);
+        // Trying to add the same TOTP should return the existing record (exactly).
+        $anotherecord = $totpfactor->setup_user_factor((object) $totpdata);
+        $this->assertEquals($record, $anotherecord);
+
+        // The total count for factors added should be 1 at this point.
+        $count = $DB->count_records('tool_mfa');
+        $this->assertEquals(1, $count);
     }
 }

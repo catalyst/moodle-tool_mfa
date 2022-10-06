@@ -338,7 +338,6 @@ class factor extends object_factor_base {
      *
      * @param stdClass $data
      * @return stdClass the factor record, or null.
-     * @throws \moodle_exception if the TOTP factor already exists in the DB
      */
     public function setup_user_factor($data) {
         global $DB, $USER;
@@ -355,14 +354,15 @@ class factor extends object_factor_base {
             $row->lastverified = 0;
             $row->revoked = 0;
 
-            // Check if a record with this secret already exists for the same user. If so, throw an exception.
-            $exists = $DB->record_exists('tool_mfa', [
+            // Check if a record with this configuration already exists, warning the user accordingly.
+            $record = $DB->get_record('tool_mfa', [
                 'userid' => $row->userid,
                 'secret' => $row->secret,
                 'factor' => $row->factor,
-            ]);
-            if ($exists) {
-                throw new \moodle_exception('error:alreadyregistered', 'factor_totp');
+            ], '*', IGNORE_MULTIPLE);
+            if ($record) {
+                \core\notification::warning(get_string('error:alreadyregistered', 'factor_totp'));
+                return $record;
             }
 
             $id = $DB->insert_record('tool_mfa', $row);
