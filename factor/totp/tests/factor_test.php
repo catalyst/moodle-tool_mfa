@@ -34,6 +34,7 @@ require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Base32.php');
 /**
  * Tests for TOTP factor.
  *
+ * @covers      \factor_totp\factor
  * @package     factor_totp
  * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
@@ -41,6 +42,9 @@ require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Base32.php');
  */
 class factor_test extends \advanced_testcase {
 
+    /**
+     * Test code validation of the TOTP factor
+     */
     public function test_validate_code() {
         global $DB;
 
@@ -112,5 +116,28 @@ class factor_test extends \advanced_testcase {
         $code = '123456';
         $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
         $this->assertEquals($totpfactor::TOTP_INVALID, $result);
+    }
+
+    /**
+     * Do not store the TOTP secret + user combination more than once
+     *
+     * @covers ::setup_user_factor
+     */
+    public function test_wont_store_same_secret_twice() {
+        $this->resetAfterTest(true);
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        set_config('enabled', 1, 'factor_totp');
+        $totpfactor = \tool_mfa\plugininfo\factor::get_factor('totp');
+        $totpdata = [
+            'secret' => 'fakekey',
+            'devicename' => 'fakedevice',
+        ];
+        $totpfactor->setup_user_factor((object) $totpdata);
+
+        // Trying to add the same TOTP should throw an exception.
+        $this->expectException(\moodle_exception::class);
+        $totpfactor->setup_user_factor((object) $totpdata);
     }
 }

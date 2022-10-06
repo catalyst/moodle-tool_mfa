@@ -73,7 +73,6 @@ $PAGE->navbar->add(get_string('preferences:header', 'tool_mfa'), new \moodle_url
 
 switch ($action) {
     case 'setup':
-
         if (!$factorobject || !$factorobject->has_setup()) {
             redirect($returnurl);
         }
