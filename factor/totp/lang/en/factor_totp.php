@@ -28,6 +28,7 @@ $string['action:revoke'] = 'Revoke TOTP authenticator';
 $string['devicename'] = 'Device label';
 $string['devicenameexample'] = 'eg "Work iPhone 11"';
 $string['devicename_help'] = 'This is the device you have an authenticator app installed on. You can setup multiple devices so this label helps track which ones are being used. You should setup each device with their own unique code so they can be revoked separately.';
+$string['error:alreadyregistered'] = 'This TOTP secret has already been registered';
 $string['error:wrongverification'] = 'Incorrect verification code';
 $string['error:codealreadyused'] = 'This code has already been used to authenticate. Please wait for a new code to be generated, and try again.';
 $string['error:oldcode'] = 'This code is too old. Please verify the time on your authenticator device is correct and try again.
