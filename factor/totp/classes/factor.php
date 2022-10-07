@@ -336,7 +336,7 @@ class factor extends object_factor_base {
     /**
      * TOTP Factor implementation.
      *
-     * @param array $data
+     * @param stdClass $data
      * @return stdClass the factor record, or null.
      */
     public function setup_user_factor($data) {
@@ -353,6 +353,17 @@ class factor extends object_factor_base {
             $row->timemodified = time();
             $row->lastverified = 0;
             $row->revoked = 0;
+
+            // Check if a record with this configuration already exists, warning the user accordingly.
+            $record = $DB->get_record('tool_mfa', [
+                'userid' => $row->userid,
+                'secret' => $row->secret,
+                'factor' => $row->factor,
+            ], '*', IGNORE_MULTIPLE);
+            if ($record) {
+                \core\notification::warning(get_string('error:alreadyregistered', 'factor_totp'));
+                return $record;
+            }
 
             $id = $DB->insert_record('tool_mfa', $row);
             $record = $DB->get_record('tool_mfa', ['id' => $id]);
