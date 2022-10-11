@@ -26,9 +26,13 @@
 defined('MOODLE_INTERNAL') || die();
 global $CFG, $OUTPUT;
 
-$settings->add(new admin_setting_configcheckbox('factor_sms/enabled',
+$enabled = new admin_setting_configcheckbox('factor_sms/enabled',
     new lang_string('settings:enablefactor', 'tool_mfa'),
-    new lang_string('settings:enablefactor_help', 'tool_mfa'), 0));
+    new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
+$enabled->set_updatedcallback(function () {
+    \tool_mfa\manager::do_factor_action('sms', get_config('factor_sms', 'enabled') ? 'enable' : 'disable');
+});
+$settings->add($enabled);
 
 $settings->add(new admin_setting_configtext('factor_sms/weight',
     new lang_string('settings:weight', 'tool_mfa'),
