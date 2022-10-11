@@ -25,9 +25,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$settings->add(new admin_setting_configcheckbox('factor_nosetup/enabled',
+$enabled = new admin_setting_configcheckbox('factor_nosetup/enabled',
     new lang_string('settings:enablefactor', 'tool_mfa'),
-    new lang_string('settings:enablefactor_help', 'tool_mfa'), 0));
+    new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
+$enabled->set_updatedcallback(function () {
+    \tool_mfa\manager::do_factor_action('nosetup', get_config('factor_nosetup', 'enabled') ? 'enable' : 'disable');
+});
+$settings->add($enabled);
 
 $settings->add(new admin_setting_configtext('factor_nosetup/weight',
     new lang_string('settings:weight', 'tool_mfa'),
