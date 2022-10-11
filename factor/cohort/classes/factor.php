@@ -40,7 +40,6 @@ class factor extends object_factor_base {
     public function get_all_user_factors($user) {
         global $DB;
         $records = $DB->get_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
-
         if (!empty($records)) {
             return $records;
         }
@@ -77,16 +76,13 @@ class factor extends object_factor_base {
     public function get_state() {
         global $USER;
         $cohortstring = get_config('factor_cohort', 'cohorts');
-
         // Nothing selected, everyone passes.
         if (empty($cohortstring)) {
             return \tool_mfa\plugininfo\factor::STATE_PASS;
         }
 
         $selected = explode(',', $cohortstring);
-
         foreach ($selected as $id) {
-            
                 if (cohort_is_member($id, $USER->id)) {
                     return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
                 }
@@ -125,20 +121,17 @@ class factor extends object_factor_base {
      */
     public function get_summary_condition() {
         global $DB;
-
         $selectedcohorts = get_config('factor_cohort', 'cohorts');
         if (empty($selectedcohorts)) {
             return get_string('summarycondition', 'factor_cohort', get_string('none'));
         } else {
             $selectedcohorts = explode(',', $selectedcohorts);
         }
-
         $names = [];
         foreach ($selectedcohorts as $cohort) {
                 $record = $DB->get_record('cohort', ['id' => $cohort]);
                 $names[] = $record->name;
         }
-
         $string = implode(', ', $names);
         return get_string('summarycondition', 'factor_cohort', $string);
     }
