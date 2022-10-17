@@ -83,9 +83,9 @@ class factor extends object_factor_base {
 
         $selected = explode(',', $cohortstring);
         foreach ($selected as $id) {
-                if (cohort_is_member($id, $USER->id)) {
-                    return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
-                }
+            if (cohort_is_member($id, $USER->id)) {
+                return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+            }
         }
 
         // If we got here, no cohorts matched, allow access.
