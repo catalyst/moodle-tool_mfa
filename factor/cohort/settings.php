@@ -24,7 +24,6 @@
  */
 
 require_once(__DIR__ . '/../../../../../cohort/lib.php');
-
 defined('MOODLE_INTERNAL') || die();
 
 $enabled = new admin_setting_configcheckbox('factor_cohort/enabled',
@@ -42,8 +41,8 @@ $settings->add(new admin_setting_configtext('factor_cohort/weight',
 $cohorts = cohort_get_all_cohorts();
 $choices = [];
 
-foreach($cohorts['cohorts'] as $cohort) {
-   $choices[$cohort->id] = $cohort->name;
+foreach ($cohorts['cohorts'] as $cohort) {
+    $choices[$cohort->id] = $cohort->name;
 }
 
 $settings->add(new admin_setting_configmultiselect('factor_cohort/cohorts',
