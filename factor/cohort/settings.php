@@ -23,9 +23,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../../../../../cohort/lib.php');
-
 defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__ . '/../../../../../cohort/lib.php');
 
 $enabled = new admin_setting_configcheckbox('factor_cohort/enabled',
     new lang_string('settings:enablefactor', 'tool_mfa'),
@@ -42,8 +41,8 @@ $settings->add(new admin_setting_configtext('factor_cohort/weight',
 $cohorts = cohort_get_all_cohorts();
 $choices = [];
 
-foreach($cohorts['cohorts'] as $cohort) {
-   $choices[$cohort->id] = $cohort->name;
+foreach ($cohorts['cohorts'] as $cohort) {
+    $choices[$cohort->id] = $cohort->name;
 }
 
 $settings->add(new admin_setting_configmultiselect('factor_cohort/cohorts',
