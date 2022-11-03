@@ -408,6 +408,13 @@ class manager {
      */
     public static function should_require_mfa($url, $preventredirect) {
         global $CFG, $USER, $SESSION;
+
+        // If no cookies then no session so cannot do MFA.
+        // Unit testing based on defines is not viable.
+        if (NO_MOODLE_COOKIES && !PHPUNIT_TEST) {
+            return self::NO_REDIRECT;
+        }
+
         // Remove all params before comparison.
         $url->remove_all_params();
 
