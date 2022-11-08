@@ -45,6 +45,8 @@ foreach ($cohorts['cohorts'] as $cohort) {
     $choices[$cohort->id] = $cohort->name;
 }
 
-$settings->add(new admin_setting_configmultiselect('factor_cohort/cohorts',
+if (!empty($choices)) {
+    $settings->add(new admin_setting_configmultiselect('factor_cohort/cohorts',
     new lang_string('settings:cohort', 'factor_cohort'),
-    new lang_string('settings:cohort_help', 'factor_cohort'), null, $choices));
+    new lang_string('settings:cohort_help', 'factor_cohort'), [], $choices));
+}
