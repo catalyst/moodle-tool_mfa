@@ -239,6 +239,18 @@ class factor extends object_factor_base {
     public function get_no_redirect_urls() {
         $redirect = get_config('factor_grace', 'forcesetup');
 
+        // First check if user has any other input or setup factors active.
+        $factors = $this->get_affecting_factors();
+        $total = 0;
+        foreach ($factors as $factor) {
+            $total += $factor->get_weight();
+            // If we have hit 100 total, then we know it is possible to auth with the current setup.
+            // The setup URL should no longer be a no-redirect URL. User MUST use existing auth.
+            if ($total >= 100) {
+                return [];
+            }
+        }
+
         if ($redirect && $this->get_state(false) === \tool_mfa\plugininfo\factor::STATE_NEUTRAL) {
             // If the config is enabled, the user should be able to access + setup a factor using these pages.
             return [
