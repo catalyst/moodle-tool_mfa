@@ -29,6 +29,7 @@
   * [Moodle Mobile app](#moodle-mobile-app)
 * [Points and examples](#points-and-examples)
 * [Debugging](#debugging)
+* [Security issues](#security-issue)
 * [Support](#support)
 
 ## What is this?
@@ -302,6 +303,14 @@ If you have inadvertantly messed things up and locked yourself out, you can disa
 ```sh
 php admin/cli/cfg.php --component=tool_mfa --name=enabled --set=0
 ```
+
+## Security issues
+
+If you find a security issue with this or any catalyst plugin, please DO NOT open a github issue.
+
+Instead please responsibly disclose the issue in private to use via email:
+
+security@catalyst-au.net
 
 ## Support
 
