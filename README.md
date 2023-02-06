@@ -29,7 +29,7 @@
   * [Moodle Mobile app](#moodle-mobile-app)
 * [Points and examples](#points-and-examples)
 * [Debugging](#debugging)
-* [Security issues](#security-issue)
+* [Security issues](#security-issues)
 * [Support](#support)
 
 ## What is this?
