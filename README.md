@@ -308,7 +308,7 @@ php admin/cli/cfg.php --component=tool_mfa --name=enabled --set=0
 
 If you find a security issue with this or any catalyst plugin, please DO NOT open a github issue.
 
-Instead please responsibly disclose the issue in private to use via email:
+Instead please responsibly disclose the issue in private to us via email:
 
 security@catalyst-au.net
 
