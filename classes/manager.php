@@ -599,6 +599,12 @@ class manager {
     $setwantsurltome = null, $preventredirect = null) {
         global $PAGE, $SESSION, $FULLME;
 
+        // Guest user should never interact with MFA,
+        // And $SESSION->tool_mfa_authenticated should never be set in a guest session.
+        if (isguestuser()) {
+            return;
+        }
+
         if (!self::is_ready()) {
             // Set session var so if MFA becomes ready, you dont get locked from session.
             $SESSION->tool_mfa_authenticated = true;
@@ -685,7 +691,7 @@ class manager {
 
         // Check if user can interact with MFA.
         $usercontext = \context_user::instance($USER->id);
-        if (!has_capability('tool/mfa:mfaaccess', $usercontext, $USER)) {
+        if (!has_capability('tool/mfa:mfaaccess', $usercontext)) {
             return false;
         }
 
