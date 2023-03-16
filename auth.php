@@ -58,6 +58,9 @@ $currenturl = new moodle_url('/admin/tool/mfa/auth.php');
 // Perform state check.
 \tool_mfa\manager::resolve_mfa_status();
 
+// We have a valid landing here, before doing any actions, clear any redir loop progress.
+\tool_mfa\manager::clear_redirect_counter();
+
 $factor = \tool_mfa\plugininfo\factor::get_next_user_factor();
 // If ok, perform form actions for input factor.
 $form = new login_form($currenturl, ['factor' => $factor]);

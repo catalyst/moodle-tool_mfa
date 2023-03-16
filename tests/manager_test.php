@@ -373,4 +373,28 @@ class manager_test extends tool_mfa_testcase {
         $this->assertTrue($CFG->mfa_config_hook_test);
         $this->assertTrue($SESSION->mfa_login_hook_test);
     }
+
+    public function test_circular_redirect_auth() {
+        // Setup test and user.
+        $this->resetAfterTest(true);
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Spoof the referrer for the redirect check.
+        $_SERVER['HTTP_REFERER'] = '/admin/tool/mfa/auth.php';
+        $baseurl = new \moodle_url('/my/naughty/page.php');
+
+        // After a single check, we should redirect.
+        $this->assertEquals(\tool_mfa\manager::REDIRECT,
+            \tool_mfa\manager::should_require_mfa($baseurl, false));
+
+        // Now hammer it up to the threshold to emulate a repeated force browse from auth.php
+        for ($i = 0; $i < \tool_mfa\manager::REDIR_LOOP_THRESHOLD; $i++) {
+            \tool_mfa\manager::should_require_mfa($baseurl, false);
+        }
+
+        // Now finally confirm that a 6th access attempt (after loop safety trigger) still redirects.
+        $this->assertEquals(\tool_mfa\manager::REDIRECT,
+            \tool_mfa\manager::should_require_mfa($baseurl, false));
+    }
 }

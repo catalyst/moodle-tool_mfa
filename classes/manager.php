@@ -35,6 +35,9 @@ class manager {
     /** @var int */
     const REDIRECT_EXCEPTION = -1;
 
+    /** @var int */
+    const REDIR_LOOP_THRESHOLD = 5;
+
     /**
      * Displays a debug table with current factor information.
      */
@@ -402,7 +405,7 @@ class manager {
     /**
      * Checks whether the user should be redirected from the provided url.
      *
-     * @param string $url
+     * @param \moodle_url $url
      * @param bool $preventredirect
      * @return int
      */
@@ -417,12 +420,6 @@ class manager {
 
         // Remove all params before comparison.
         $url->remove_all_params();
-
-        // Dont redirect if already on auth.php.
-        $authurl = new \moodle_url('/admin/tool/mfa/auth.php');
-        if ($url->compare($authurl, URL_MATCH_BASE)) {
-            return self::NO_REDIRECT;
-        }
 
         // Checks for upgrades pending.
         if (is_siteadmin()) {
@@ -440,8 +437,8 @@ class manager {
         }
 
         // Dont redirect logo images from pluginfile.php (for example: logo in header).
-        $authurl = new \moodle_url('/pluginfile.php/1/core_admin/logocompact/');
-        if ($url->compare($authurl)) {
+        $logourl = new \moodle_url('/pluginfile.php/1/core_admin/logocompact/');
+        if ($url->compare($logourl)) {
             return self::NO_REDIRECT;
         }
 
@@ -517,8 +514,10 @@ class manager {
         }
 
         // Circular checks.
+        $authurl = new \moodle_url('/admin/tool/mfa/auth.php');
+        $authlocal = $authurl->out_as_local_url();
         if (isset($SESSION->mfa_redir_referer)
-            && $SESSION->mfa_redir_referer != $authurl) {
+            && $SESSION->mfa_redir_referer != $authlocal) {
             if ($SESSION->mfa_redir_referer == get_local_referer(true)) {
                 // Possible redirect loop.
                 if (!isset($SESSION->mfa_redir_count)) {
@@ -526,7 +525,7 @@ class manager {
                 } else {
                     $SESSION->mfa_redir_count++;
                 }
-                if ($SESSION->mfa_redir_count > 5) {
+                if ($SESSION->mfa_redir_count > self::REDIR_LOOP_THRESHOLD) {
                     return self::REDIRECT_EXCEPTION;
                 }
             } else {
@@ -537,7 +536,23 @@ class manager {
         // Set referer after checks.
         $SESSION->mfa_redir_referer = get_local_referer(true);
 
+        // Don't redirect if already on auth.php.
+        if ($url->compare($authurl, URL_MATCH_BASE)) {
+            return self::NO_REDIRECT;
+        }
+
         return self::REDIRECT;
+    }
+
+    /**
+     * Clears the redirect counter for infinite redirect loops. Called from auth.php when a valid load is resolved.
+     *
+     */
+    public static function clear_redirect_counter() {
+        global $SESSION;
+
+        unset($SESSION->mfa_redir_referer);
+        unset($SESSION->mfa_redir_count);
     }
 
     /**
