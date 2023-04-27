@@ -704,18 +704,18 @@ class manager {
     public static function is_ready() {
         global $CFG, $USER;
 
-        // Check if user can interact with MFA.
-        $usercontext = \context_user::instance($USER->id);
-        if (!has_capability('tool/mfa:mfaaccess', $usercontext)) {
-            return false;
-        }
-
         if (!empty($CFG->upgraderunning)) {
             return false;
         }
 
         $pluginenabled = get_config('tool_mfa', 'enabled');
         if (empty($pluginenabled)) {
+            return false;
+        }
+
+        // Check if user can interact with MFA.
+        $usercontext = \context_user::instance($USER->id);
+        if (!has_capability('tool/mfa:mfaaccess', $usercontext)) {
             return false;
         }
 
