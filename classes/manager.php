@@ -792,6 +792,7 @@ class manager {
         // Check if there are enough factors that a user can ONLY pass, if so, don't display the menu.
         $weight = 0;
         foreach ($factors as $factor) {
+            if ( $factor->name == "nosetup") { continue; }
             $states = $factor->possible_states($USER);
             if (count($states) == 1 && reset($states) == \tool_mfa\plugininfo\factor::STATE_PASS) {
                 $weight += $factor->get_weight();
