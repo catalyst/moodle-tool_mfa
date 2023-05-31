@@ -154,7 +154,7 @@ Send One Time security codes to mobile via SMS using AWS SNS.
 
 #### Webauthn / Fido 2
 
-This is a factor which enables support for passkeys, security keys like Swissbit, Yubico or Solo and fingerprint on Android or Windows Hello. Note only [Swissbit]([https://portal.education.lu/cgie/](https://www.swissbit.com/en/)) and Yubikeys have been tested in this implementation.
+This is a factor which enables support for passkeys, security keys like [Swissbit](https://www.swissbit.com/en/), Yubico or Solo and fingerprint on Android or Windows Hello. Note only [Swissbit](https://www.swissbit.com/en/) and Yubikeys have been tested in this implementation.
 
 #### IP Range
 
@@ -336,4 +336,4 @@ https://www.catalyst-au.net/
 ## Warm thanks
 Thanks to the various authors and contributors to this plugin!
 
-Thanks to [Swissbit]([https://portal.education.lu/cgie/](https://www.swissbit.com/en/)) for sponsoring the work to add Webauthn support to this plugin
+Thanks to [Swissbit](https://www.swissbit.com/en/) for sponsoring the work to add Webauthn support to this plugin.
