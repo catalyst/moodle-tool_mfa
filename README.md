@@ -152,6 +152,10 @@ This is standard Time-base One Time Password ([TOTP](https://en.wikipedia.org/wi
 
 Send One Time security codes to mobile via SMS using AWS SNS.
 
+#### Webauthn / Fido 2
+
+This is a factor which enables support for passkeys, security keys like Swissbit, Yubico or Solo and fingerprint on Android or Windows Hello. Note only [Swissbit]([https://portal.education.lu/cgie/](https://www.swissbit.com/en/)) and Yubikeys have been tested in this implementation.
+
 #### IP Range
 
 Use this factor to say that if you are on a secure network then that counts for something. This is very useful because it requires no setup by the end user, so you can set it up so that you can login fully via a secure network, and once logged in they can setup other factors like TOTP, and then use those other factors for logging in when not on a secure network.
@@ -328,3 +332,8 @@ This plugin was developed by Catalyst IT Australia:
 https://www.catalyst-au.net/
 
 <img alt="Catalyst IT" src="https://cdn.rawgit.com/CatalystIT-AU/moodle-auth_saml2/master/pix/catalyst-logo.svg" width="400">
+
+## Warm thanks
+Thanks to the various authors and contributors to this plugin!
+
+Thanks to [Swissbit]([https://portal.education.lu/cgie/](https://www.swissbit.com/en/)) for sponsoring the work to add Webauthn support to this plugin
