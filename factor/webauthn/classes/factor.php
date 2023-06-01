@@ -306,6 +306,7 @@ class factor extends object_factor_base {
                 $this->webauthn->processCreate($clientdata, $attestationobject, $challenge, $this->userverification === 'required',
                     true, false);
             $registration->credentialId = base64_encode($registration->credentialId);
+            $registration->AAGUID = base64_encode($registration->AAGUID);
             unset($registration->certificate);
 
             $row = new \stdClass();
