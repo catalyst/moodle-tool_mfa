@@ -250,6 +250,7 @@ class factor extends object_factor_base {
 
         $mform->addElement('hidden', 'response_input', '', ['id' => 'id_response_input']);
         $mform->setType('response_input', PARAM_RAW);
+        $mform->addRule('response_input', get_string('required'), 'required', null, 'client');
 
         // Cross-platform: true if type internal is not allowed,
         // false if only internal is allowed,
@@ -288,7 +289,7 @@ class factor extends object_factor_base {
     public function setup_user_factor($data) {
         global $DB, $USER, $SESSION;
 
-        if (!empty($data->webauthn_name) && isset($SESSION->factor_webauthn_challenge)) {
+        if (!empty($data->webauthn_name) && !empty($data->response_input) && isset($SESSION->factor_webauthn_challenge)) {
             $post = json_decode($data->response_input, null, 512, JSON_THROW_ON_ERROR);
 
             $clientdata = base64_decode($post->clientDataJSON);
