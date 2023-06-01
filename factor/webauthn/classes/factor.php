@@ -148,9 +148,7 @@ class factor extends object_factor_base {
      * @return object $mform
      */
     public function login_form_definition($mform) {
-        global $PAGE, $USER, $SESSION, $DB;
-
-        $renderer = $PAGE->get_renderer('core');
+        global $PAGE, $USER, $SESSION;
 
         $mform->addElement('hidden', 'response_input', '', ['id' => 'id_response_input']);
         $mform->setType('response_input', PARAM_RAW);
@@ -168,8 +166,7 @@ class factor extends object_factor_base {
             $this->webauthn->getGetArgs($ids, 20, in_array('usb', $types), in_array('nfc', $types), in_array('ble', $types),
                 in_array('hybrid', $types), in_array('internal', $types), $this->userverification);
 
-        $script = $renderer->render_from_template('factor_webauthn/login', ['getargs' => json_encode($getargs)]);
-        $mform->addElement('html', $script);
+        $PAGE->requires->js_call_amd('factor_webauthn/login', 'init', [json_encode($getargs)]);
 
         // Challenge is regenerated on form submission, at this point we aren't aware if the form is submitted for being
         // loaded for the first time, so we store the existing and new challenge.
@@ -240,8 +237,6 @@ class factor extends object_factor_base {
     public function setup_factor_form_definition($mform) {
         global $PAGE, $USER, $SESSION;
 
-        $renderer = $PAGE->get_renderer('core');
-
         $mform->addElement('text', 'webauthn_name', 'Authenticator Name');
         $mform->setType('webauthn_name', PARAM_ALPHANUM);
         $mform->addRule('webauthn_name', get_string('required'), 'required', null, 'client');
@@ -272,8 +267,7 @@ class factor extends object_factor_base {
         $createargs = $this->webauthn->getCreateArgs($USER->id, $USER->username, fullname($USER), 20, false,
             $this->userverification, $crossplatformattachment);
 
-        $script = $renderer->render_from_template('factor_webauthn/registration', ['createargs' => json_encode($createargs)]);
-        $mform->addElement('html', $script);
+        $PAGE->requires->js_call_amd('factor_webauthn/register', 'init', [json_encode($createargs)]);
 
         // Challenge is regenerated on form submission, at this point we aren't aware if the form is submitted for being
         // loaded for the first time, so we store the existing and new challenge.
