@@ -281,7 +281,17 @@ abstract class object_factor_base implements object_factor {
         global $DB, $USER;
 
         if (!empty($factorid)) {
+            // If we have an explicit factor id, this means we need to be careful about the user.
             $params = ['id' => $factorid];
+            $existing = $DB->get_record('tool_mfa', $params);
+            if (empty($existing)) {
+                return false;
+            }
+            $matchinguser = $existing->userid == $USER->id;
+            if (!is_siteadmin() && !$matchinguser) {
+                // We aren't admin, and this isn't our factor.
+                return false;
+            }
         } else {
             $params = ['userid' => $USER->id, 'factor' => $this->name];
         }

@@ -29,13 +29,8 @@ if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');
 }
 
-$userid = optional_param('userid', $USER->id, PARAM_INT);
 $action = optional_param('action', '', PARAM_TEXT);
 $factorid = optional_param('factorid', 0, PARAM_INT);
-$user = core_user::get_user($userid);
-if (!$user || !core_user::is_real_user($userid)) {
-    throw new moodle_exception('invaliduser', 'error');
-}
 
 $context = context_user::instance($USER->id);
 $PAGE->set_context($context);
@@ -54,9 +49,12 @@ echo $OUTPUT->header();
 if (!empty($action)) {
     if ($factorid != 0) {
         $instance = \tool_mfa\plugininfo\factor::get_instance_from_id($factorid);
-        $factor = \tool_mfa\plugininfo\factor::get_factor($instance->factor);
-        $string = $factor->get_display_name().' - '.$instance->label;
-        echo $OUTPUT->notification(get_string('factor'.$action, 'tool_mfa', $string), 'notifysuccess');
+        // Confirm factor is valid for the accessing user.
+        if ($USER->id == $instance->userid) {
+            $factor = \tool_mfa\plugininfo\factor::get_factor($instance->factor);
+            $string = $factor->get_display_name().' - '.$instance->label;
+            echo $OUTPUT->notification(get_string('factor'.$action, 'tool_mfa', $string), 'notifysuccess');
+        }
     }
 }
 
