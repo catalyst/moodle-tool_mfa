@@ -25,7 +25,7 @@ require_once(__DIR__ . '/tool_mfa_testcase.php');
  * @copyright   2023 Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manager_test extends tool_mfa_testcase {
+class object_factor_base_test extends tool_mfa_testcase {
     public function test_revoke_user_factor() {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
