@@ -35,7 +35,7 @@ $string['settings:ignorelist'] = 'Ignored factors';
 $string['settings:ignorelist_help'] = 'Grace will not give points if there are other factors that users can use to authenticate with MFA. Any factors here will not be counted by grace when deciding whether to give points. This can allow Grace to allow authentication if another factor like email, is suffering configuration or system issues.';
 $string['setupfactors'] = 'You are currently in grace mode, and may not have enough factors setup to login once the grace period is over.
     Visit {$a->url} to check your authentication status, and setup more authentication factors. Your grace period expires in {$a->time}.';
-$string['preferences'] = 'User Preferences';
+$string['preferences'] = 'User preferences';
 $string['summarycondition'] = 'is within grace period';
 $string['redirectsetup'] = 'You must complete setup for Multi-factor authentication before you can proceed.';
 $string['revokeexpiredfactors'] = 'Revoke expired gracemode factors';
