@@ -596,7 +596,8 @@ class manager {
             $duration = 0.05;
         }
         set_user_preference('mfa_sleep_duration', $duration, $USER);
-        sleep($duration);
+        // Sleep for duration in microseconds.
+        usleep($duration * 1000000);
     }
 
     /**
