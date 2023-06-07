@@ -30,16 +30,15 @@ export const init = (initialCreateArgs) => {
             return;
         }
 
-        e.preventDefault();
         if (!navigator.credentials || !navigator.credentials.create) {
             throw new Error('Browser not supported.');
         }
 
         const createArgs = JSON.parse(initialCreateArgs);
-
         if (createArgs.success === false) {
             throw new Error(createArgs.msg || 'unknown error occured');
         }
+        e.preventDefault();
 
         utils.recursiveBase64StrToArrayBuffer(createArgs);
 

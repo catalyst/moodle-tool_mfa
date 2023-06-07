@@ -57,6 +57,8 @@ export const init = (initialArgs) => {
             throw new Error(getArgs.msg || 'unknown error occured');
         }
 
+        e.preventDefault();
+
         utils.recursiveBase64StrToArrayBuffer(getArgs);
 
         const cred = await navigator.credentials.get(getArgs);
