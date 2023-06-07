@@ -42,7 +42,7 @@ const getAttestationResponse = (cred) => {
     return response;
 };
 
-export const init = (getArgs) => {
+export const init = (initialArgs) => {
     document.addEventListener('click', async(e) => {
         if (!e.target.closest('#id_submitbutton')) {
             return;
@@ -52,7 +52,7 @@ export const init = (getArgs) => {
             throw new Error('This browser does not support webauthn.');
         }
 
-        getArgs = JSON.parse(getArgs);
+        const getArgs = JSON.parse(initialArgs);
         if (getArgs.success === false) {
             throw new Error(getArgs.msg || 'unknown error occured');
         }

@@ -24,7 +24,7 @@
 
 import * as utils from './utils';
 
-export const init = (createArgs) => {
+export const init = (initialCreateArgs) => {
     document.addEventListener('click', async(e) => {
         if (!e.target.closest('#factor_webauthn-register')) {
             return;
@@ -35,7 +35,7 @@ export const init = (createArgs) => {
             throw new Error('Browser not supported.');
         }
 
-        createArgs = JSON.parse(createArgs);
+        const createArgs = JSON.parse(initialCreateArgs);
 
         if (createArgs.success === false) {
             throw new Error(createArgs.msg || 'unknown error occured');
