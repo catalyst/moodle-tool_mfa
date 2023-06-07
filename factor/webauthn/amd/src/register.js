@@ -52,5 +52,8 @@ export const init = (initialCreateArgs) => {
 
         const inputResponse = document.getElementById('id_response_input');
         inputResponse.value = JSON.stringify(authenticatorResponse);
+
+        // Do not use form.submit as it bypasses the change checker submit listener.
+        inputResponse.form.elements.submitbutton.click();
     });
 };
