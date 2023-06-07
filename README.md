@@ -1,7 +1,3 @@
-<a href="https://travis-ci.org/catalyst/moodle-tool_mfa">
-<img src="https://travis-ci.org/catalyst/moodle-tool_mfa.svg?branch=master">
-</a>
-
 # moodle-tool_mfa
 
 * [What is this?](#what-is-this)
@@ -55,10 +51,6 @@ https://docs.moodle.org/dev/Login_callbacks
 The other major difference is that we support multiple authentication factor **types** as sub plugins, eg SMS, IP Range, Email, TOTP and in future others such as hardware tokens or anything else as new sub-plugins. They can be flexibly configured so that different combinations of factors are considered enough.
 
 ## Branches
-
-`master` is considered stable and supports these versions, with the caveat of backporting the API's needed.
-A minimum of PHP7.0 is required to run this plugin.
-
 | Version         |  Branch      | Patches              |
 |-----------------|--------------|----------------------|
 | Moodle 4.0 - 4.2| MOODLE_400_STABLE | None            |
