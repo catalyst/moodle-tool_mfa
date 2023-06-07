@@ -23,44 +23,44 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Mobile phone SMS';
-$string['awssdkrequired'] = 'The local_aws plugin leveraging the AWS SDK is required to use this factor. Please install local_aws.';
 $string['action:revoke'] = 'Revoke mobile phone number';
 $string['addnumber'] = 'Enter mobile phone number';
+$string['awssdkrequired'] = 'The local_aws plugin leveraging the AWS SDK is required to use this factor. Please install local_aws.';
+$string['event:smssent'] = 'SMS Message sent';
 $string['info'] = '<p>Setup a mobile phone number to receive SMS one-time security codes on.</p>';
-$string['loginsubmit'] = 'Verify code';
 $string['loginskip'] = "I didn't receive a code";
-$string['setupfactor'] = 'Setup mobile number';
-$string['settings:gateway'] = 'SMS Gateway';
-$string['settings:gateway_help'] = 'The SMS provider you wish to send messages via';
+$string['loginsubmit'] = 'Verify code';
+$string['phonehelp'] = 'Enter your local mobile phone number, or an international phone number starting with \'+\'.';
+$string['phoneplaceholder'] = '04xx xxx xxx or +61 4xx xxx xxx';
+$string['pluginname'] = 'Mobile phone SMS';
+$string['privacy:metadata'] = 'The mobile phone SMS	factor plugin does not store any personal data';
 $string['settings:aws'] = 'AWS SNS';
-$string['settings:aws:usecredchain'] = 'Use the default credential provider chain to find AWS credentials';
 $string['settings:aws:key'] = 'Key';
 $string['settings:aws:key_help'] = 'Amazon API key credential.';
-$string['settings:aws:secret'] = 'Secret';
-$string['settings:aws:secret_help'] = 'Amazon API secret credential.';
 $string['settings:aws:region'] = 'Region';
 $string['settings:aws:region_help'] = 'Amazon API gateway region.';
-$string['settings:modica'] = 'Modica Mobile Gateway';
-$string['settings:modica:url'] = 'API URL';
-$string['settings:modica:url_help'] = 'Can be left blank in most cases';
-$string['settings:modica:application'] = 'Rest Application Name';
-$string['settings:modica:application_help'] = 'Mobile Gateway (API) Application name';
-$string['settings:modica:password'] = 'Password';
-$string['settings:modica:password_help'] = 'Mobile Gateway (API) Password';
-$string['settings:duration'] = 'Validity duration';
-$string['settings:duration_help'] = 'The period of time that the code is valid.';
+$string['settings:aws:secret'] = 'Secret';
+$string['settings:aws:secret_help'] = 'Amazon API secret credential.';
+$string['settings:aws:usecredchain'] = 'Use the default credential provider chain to find AWS credentials';
 $string['settings:countrycode'] = 'Country number code';
 $string['settings:countrycode_help'] = 'The calling code without the leading + as a default if users do not enter an international number with a + prefix.
 
 See this link for a list of calling codes: {$a}';
+$string['settings:duration'] = 'Validity duration';
+$string['settings:duration_help'] = 'The period of time that the code is valid.';
+$string['settings:gateway'] = 'SMS Gateway';
+$string['settings:gateway_help'] = 'The SMS provider you wish to send messages via';
+$string['settings:modica'] = 'Modica Mobile Gateway';
+$string['settings:modica:application'] = 'Rest Application Name';
+$string['settings:modica:application_help'] = 'Mobile Gateway (API) Application name';
+$string['settings:modica:password'] = 'Password';
+$string['settings:modica:password_help'] = 'Mobile Gateway (API) Password';
+$string['settings:modica:url'] = 'API URL';
+$string['settings:modica:url_help'] = 'Can be left blank in most cases';
+$string['setupfactor'] = 'Setup mobile number';
 $string['smssent'] = 'An SMS message containing your verification code was sent to {$a}.';
 $string['smsstring'] = '{$a->code} is your {$a->fullname} one-time security code.
 
 @{$a->url} #{$a->code}';
 $string['summarycondition'] = 'Using an SMS one-time security code';
-$string['phoneplaceholder'] = '04xx xxx xxx or +61 4xx xxx xxx';
-$string['phonehelp'] = 'Enter your local mobile phone number, or an international phone number starting with \'+\'.';
-$string['privacy:metadata'] = 'The mobile phone SMS	factor plugin does not store any personal data';
 $string['wrongcode'] = 'Invalid security code.';
-$string['event:smssent'] = 'SMS Message sent';

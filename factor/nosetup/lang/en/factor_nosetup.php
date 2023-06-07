@@ -23,10 +23,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'No other factors';
-$string['info'] = 'This factor passes if the user has no other factors setup.';
 $string['deleteunusablefactors'] = 'Delete unusable Nosetup factors';
-
-$string['summarycondition'] = 'has no other factors setup';
-
+$string['info'] = 'This factor passes if the user has no other factors setup.';
+$string['pluginname'] = 'No other factors';
 $string['privacy:metadata'] = 'The No other factors plugin does not store any personal data';
+$string['summarycondition'] = 'has no other factors setup';
