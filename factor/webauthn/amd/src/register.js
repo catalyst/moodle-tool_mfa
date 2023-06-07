@@ -22,34 +22,36 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['factor_webauthn/utils'], function(utils) {
-    return {
-        init: function(createArgs) {
-            document.getElementById('factor_webauthn-register').addEventListener('click', async function(e) {
-                e.preventDefault();
-                if (!navigator.credentials || !navigator.credentials.create) {
-                    throw new Error('Browser not supported.');
-                }
+import * as utils from './utils';
 
-                createArgs = JSON.parse(createArgs);
-
-                if (createArgs.success === false) {
-                    throw new Error(createArgs.msg || 'unknown error occured');
-                }
-
-                utils.recursiveBase64StrToArrayBuffer(createArgs);
-
-                const cred = await navigator.credentials.create(createArgs);
-
-                const authenticatorResponse = {
-                    transports: cred.response.getTransports ? cred.response.getTransports() : null,
-                    clientDataJSON: cred.response.clientDataJSON ? utils.arrayBufferToBase64(cred.response.clientDataJSON) : null,
-                    attestationObject:
-                        cred.response.attestationObject ? utils.arrayBufferToBase64(cred.response.attestationObject) : null
-                };
-
-                document.getElementById('id_response_input').value = JSON.stringify(authenticatorResponse);
-            });
+export const init = (createArgs) => {
+    document.addEventListener('click', async(e) => {
+        if (!e.target.closest('#factor_webauthn-register')) {
+            return;
         }
-    };
-});
+
+        e.preventDefault();
+        if (!navigator.credentials || !navigator.credentials.create) {
+            throw new Error('Browser not supported.');
+        }
+
+        createArgs = JSON.parse(createArgs);
+
+        if (createArgs.success === false) {
+            throw new Error(createArgs.msg || 'unknown error occured');
+        }
+
+        utils.recursiveBase64StrToArrayBuffer(createArgs);
+
+        const cred = await navigator.credentials.create(createArgs);
+
+        const authenticatorResponse = {
+            transports: cred.response.getTransports ? cred.response.getTransports() : null,
+            clientDataJSON: cred.response.clientDataJSON ? utils.arrayBufferToBase64(cred.response.clientDataJSON) : null,
+            attestationObject: cred.response.attestationObject ? utils.arrayBufferToBase64(cred.response.attestationObject) : null,
+        };
+
+        const inputResponse = document.getElementById('id_response_input');
+        inputResponse.value = JSON.stringify(authenticatorResponse);
+    });
+};

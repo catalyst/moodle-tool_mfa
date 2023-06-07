@@ -22,40 +22,39 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define([], function() {
-    return {
-        recursiveBase64StrToArrayBuffer: function(obj) {
-            let prefix = '=?BINARY?B?';
-            let suffix = '?=';
-            if (typeof obj === 'object') {
-                for (let key in obj) {
-                    if (typeof obj[key] === 'string') {
-                        let str = obj[key];
-                        if (str.substring(0, prefix.length) === prefix && str.substring(str.length - suffix.length) === suffix) {
-                            str = str.substring(prefix.length, str.length - suffix.length);
+const prefix = '=?BINARY?B?';
+const suffix = '?=';
 
-                            let binary_string = window.atob(str);
-                            let len = binary_string.length;
-                            let bytes = new Uint8Array(len);
-                            for (let i = 0; i < len; i++) {
-                                bytes[i] = binary_string.charCodeAt(i);
-                            }
-                            obj[key] = bytes.buffer;
-                        }
-                    } else {
-                        this.recursiveBase64StrToArrayBuffer(obj[key]);
-                    }
+export const recursiveBase64StrToArrayBuffer = (obj) => {
+    if (typeof obj !== 'object') {
+        return;
+    }
+    for (let key in obj) {
+        if (typeof obj[key] === 'string') {
+            let str = obj[key];
+            if (str.substring(0, prefix.length) === prefix && str.substring(str.length - suffix.length) === suffix) {
+                str = str.substring(prefix.length, str.length - suffix.length);
+
+                const binaryString = window.atob(str);
+                const len = binaryString.length;
+                const bytes = new Uint8Array(len);
+                for (let i = 0; i < len; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
                 }
+                obj[key] = bytes.buffer;
             }
-        },
-        arrayBufferToBase64: function(buffer) {
-            let binary = '';
-            let bytes = new Uint8Array(buffer);
-            let len = bytes.byteLength;
-            for (let i = 0; i < len; i++) {
-                binary += String.fromCharCode(bytes[i]);
-            }
-            return window.btoa(binary);
-        },
-    };
-});
+        } else {
+            recursiveBase64StrToArrayBuffer(obj[key]);
+        }
+    }
+};
+
+export const arrayBufferToBase64 = (buffer) => {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+};

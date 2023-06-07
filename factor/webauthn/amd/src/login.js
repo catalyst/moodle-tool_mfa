@@ -22,37 +22,47 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['factor_webauthn/utils'], function(utils) {
-    return {
-        init: function(getArgs) {
-            document.getElementById('id_submitbutton').addEventListener('click', async function(e) {
-                e.preventDefault();
-                if (!navigator.credentials || !navigator.credentials.create) {
-                    throw new Error('Browser not supported.');
-                }
+import * as utils from './utils';
 
-                getArgs = JSON.parse(getArgs);
-
-                if (getArgs.success === false) {
-                    throw new Error(getArgs.msg || 'unknown error occured');
-                }
-
-                utils.recursiveBase64StrToArrayBuffer(getArgs);
-
-                const cred = await navigator.credentials.get(getArgs);
-
-                const authenticatorAttestationResponse = {
-                    id: cred.rawId ? utils.arrayBufferToBase64(cred.rawId) : null,
-                    clientDataJSON: cred.response.clientDataJSON ? utils.arrayBufferToBase64(cred.response.clientDataJSON) : null,
-                    authenticatorData:
-                        cred.response.authenticatorData ? utils.arrayBufferToBase64(cred.response.authenticatorData) : null,
-                    signature: cred.response.signature ? utils.arrayBufferToBase64(cred.response.signature) : null,
-                    userHandle: cred.response.userHandle ? utils.arrayBufferToBase64(cred.response.userHandle) : null
-                };
-
-                document.getElementById('id_response_input').value = JSON.stringify(authenticatorAttestationResponse);
-                document.getElementById('id_response_input').form.submit();
-            });
-        }
+const getAttestationResponse = (cred) => {
+    const response = {
+        id: cred?.rawId,
+        clientDataJSON: cred.response?.clientDataJSON,
+        authenticatorData: cred.response?.authenticatorData,
+        signature: cred.response?.signature,
+        userHandle: cred.response?.userHandle,
     };
-});
+
+    Object.entries(response).forEach(([key, value]) => {
+        if (value) {
+            response[key] = utils.arrayBufferToBase64(value);
+        }
+    });
+
+    return response;
+};
+
+export const init = (getArgs) => {
+    document.addEventListener('click', async(e) => {
+        if (!e.target.closest('#id_submitbutton')) {
+            return;
+        }
+
+        if (!navigator.credentials || !navigator.credentials.create) {
+            throw new Error('This browser does not support webauthn.');
+        }
+
+        getArgs = JSON.parse(getArgs);
+        if (getArgs.success === false) {
+            throw new Error(getArgs.msg || 'unknown error occured');
+        }
+
+        utils.recursiveBase64StrToArrayBuffer(getArgs);
+
+        const cred = await navigator.credentials.get(getArgs);
+        const authenticatorAttestationResponse = getAttestationResponse(cred);
+
+        document.getElementById('id_response_input').value = JSON.stringify(authenticatorAttestationResponse);
+        document.getElementById('id_response_input').form.submit();
+    });
+};
