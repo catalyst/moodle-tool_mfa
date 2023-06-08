@@ -193,7 +193,7 @@ class factor extends object_factor_base {
             return $errors;
         }
 
-        $post = json_decode($data['response_input'], null, 512, JSON_THROW_ON_ERROR);
+        $post = json_decode($data['response_input']);
 
         $id = base64_decode($post->id);
         $clientdata = base64_decode($post->clientDataJSON);
@@ -290,7 +290,7 @@ class factor extends object_factor_base {
         global $DB, $USER, $SESSION;
 
         if (!empty($data->webauthn_name) && !empty($data->response_input) && isset($SESSION->factor_webauthn_challenge)) {
-            $post = json_decode($data->response_input, null, 512, JSON_THROW_ON_ERROR);
+            $post = json_decode($data->response_input);
 
             $clientdata = base64_decode($post->clientDataJSON);
             $attestationobject = base64_decode($post->attestationObject);

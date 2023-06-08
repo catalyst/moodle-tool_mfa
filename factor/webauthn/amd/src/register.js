@@ -24,14 +24,14 @@
 
 define(['factor_webauthn/utils'], function(utils) {
     return {
-        init: function(createArgs) {
+        init: function(initialCreateArgs) {
             document.getElementById('factor_webauthn-register').addEventListener('click', async function(e) {
-                e.preventDefault();
                 if (!navigator.credentials || !navigator.credentials.create) {
                     throw new Error('Browser not supported.');
                 }
+                e.preventDefault();
 
-                createArgs = JSON.parse(createArgs);
+                const createArgs = JSON.parse(initialCreateArgs);
 
                 if (createArgs.success === false) {
                     throw new Error(createArgs.msg || 'unknown error occured');
@@ -48,7 +48,11 @@ define(['factor_webauthn/utils'], function(utils) {
                         cred.response.attestationObject ? utils.arrayBufferToBase64(cred.response.attestationObject) : null
                 };
 
-                document.getElementById('id_response_input').value = JSON.stringify(authenticatorResponse);
+                const inputResponse = document.getElementById('id_response_input');
+                inputResponse.value = JSON.stringify(authenticatorResponse);
+
+                // Do not use form.submit as it bypasses the change checker submit listener.
+                inputResponse.form.elements.submitbutton.click();
             });
         }
     };

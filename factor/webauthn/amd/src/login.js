@@ -24,14 +24,14 @@
 
 define(['factor_webauthn/utils'], function(utils) {
     return {
-        init: function(getArgs) {
+        init: function(initialArgs) {
             document.getElementById('id_submitbutton').addEventListener('click', async function(e) {
-                e.preventDefault();
                 if (!navigator.credentials || !navigator.credentials.create) {
                     throw new Error('Browser not supported.');
                 }
+                e.preventDefault();
 
-                getArgs = JSON.parse(getArgs);
+                const getArgs = JSON.parse(initialArgs);
 
                 if (getArgs.success === false) {
                     throw new Error(getArgs.msg || 'unknown error occured');
