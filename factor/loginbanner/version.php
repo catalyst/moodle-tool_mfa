@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version      = 2021030800;      // The current plugin version (Date: YYYYMMDDXX).
 $plugin->release      = 2021030800;      // Keep in lockstep with version.
-$plugin->requires     = 2017051500.00;   // Support back to 3.3 - Totara 12. Patches required.
+$plugin->requires     = 2022041908; // Support Moodle 4.0 and higher.
 $plugin->component    = 'factor_loginbanner';
 $plugin->maturity     = MATURITY_STABLE;
 $plugin->dependencies = ['tool_mfa' => 2019102400];
