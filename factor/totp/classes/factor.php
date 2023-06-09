@@ -135,9 +135,6 @@ class factor extends object_factor_base {
     public function setup_factor_form_definition_after_data($mform) {
         global $OUTPUT, $SITE, $USER;
 
-        // Array of elements to allow XSS on when we're running Totara.
-        $xssallowedelements = [];
-
         $mform->addElement('html', $OUTPUT->heading(get_string('setupfactor', 'factor_totp'), 2));
         $mform->addElement('html', \html_writer::tag('p', get_string('info', 'factor_totp')));
         $mform->addElement('html', \html_writer::tag('hr', ''));
@@ -156,13 +153,13 @@ class factor extends object_factor_base {
         $qrcode = $this->generate_qrcode($secret);
 
         $html = \html_writer::tag('p', $qrcode);
-        $xssallowedelements[] = $mform->addElement('static', 'scan', get_string('setupfactor:scan', 'factor_totp'), $html);
+        $mform->addElement('static', 'scan', get_string('setupfactor:scan', 'factor_totp'), $html);
 
         // Link.
         if (get_config('factor_totp', 'totplink')) {
             $uri = $this->generate_totp_uri($secret);
             $html = $OUTPUT->action_link($uri, get_string('setupfactor:linklabel', 'factor_totp'));
-            $xssallowedelements[] = $mform->addElement('static', 'link', get_string('setupfactor:link', 'factor_totp'), $html);
+            $mform->addElement('static', 'link', get_string('setupfactor:link', 'factor_totp'), $html);
             $mform->addHelpButton('link', 'setupfactor:link', 'factor_totp');
         }
 
@@ -197,14 +194,7 @@ class factor extends object_factor_base {
         ]);
 
         $html = $togglelink . $html;
-        $xssallowedelements[] = $mform->addElement('static', 'enter', '', $html);
-
-        // Allow XSS on Totara.
-        if (method_exists('MoodleQuickForm_static', 'set_allow_xss')) {
-            foreach ($xssallowedelements as $xssallowedelement) {
-                $xssallowedelement->set_allow_xss(true);
-            }
-        }
+        $mform->addElement('static', 'enter', '', $html);
 
         $mform->addElement(new \tool_mfa\local\form\verification_field(null, false));
         $mform->setType('verificationcode', PARAM_ALPHANUM);
