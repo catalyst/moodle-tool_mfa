@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version      = 2019102400;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires     = 2017051500.00;   // Support back to 3.3 - Totara 12. Patches required.
+$plugin->requires     = 2022041908; // Support Moodle 4.0 and higher.
 $plugin->component    = 'factor_email';
 $plugin->release      = 'v0.1';
 $plugin->maturity     = MATURITY_STABLE;

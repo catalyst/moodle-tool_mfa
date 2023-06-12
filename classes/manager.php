@@ -486,13 +486,10 @@ class manager {
 
         // Site policy.
         if (isset($USER->policyagreed) && !$USER->policyagreed) {
-            // Privacy classes may not exist in older Moodles/Totara.
-            if (class_exists('\core_privacy\local\sitepolicy\manager')) {
-                $manager = new \core_privacy\local\sitepolicy\manager();
-                $policyurl = $manager->get_redirect_url(false);
-                if (!empty($policyurl) && $url->compare($policyurl, URL_MATCH_BASE)) {
-                    return self::NO_REDIRECT;
-                }
+            $manager = new \core_privacy\local\sitepolicy\manager();
+            $policyurl = $manager->get_redirect_url(false);
+            if (!empty($policyurl) && $url->compare($policyurl, URL_MATCH_BASE)) {
+                return self::NO_REDIRECT;
             }
         }
 

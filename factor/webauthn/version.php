@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version      = 2023052400;      // The current plugin version (Date: YYYYMMDDXX).
 $plugin->release      = 2023052400;
-$plugin->requires     = 2017051500.00;   // Support back to 3.3 - Totara 12. Patches required.
+$plugin->requires     = 2022041908; // Support Moodle 4.0 and higher.
 $plugin->component    = 'factor_webauthn';
 $plugin->maturity     = MATURITY_ALPHA;
 $plugin->dependencies = ['tool_mfa' => 2023031600];
