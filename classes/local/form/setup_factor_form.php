@@ -40,7 +40,6 @@ class setup_factor_form extends \moodleform {
         $factorname = $this->_customdata['factorname'];
         $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
         $mform = $factor->setup_factor_form_definition($mform);
-        $this->xss_whitelist_static_form_elements($mform);
 
     }
 
@@ -70,7 +69,6 @@ class setup_factor_form extends \moodleform {
         $factorname = $this->_customdata['factorname'];
         $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
         $mform = $factor->setup_factor_form_definition_after_data($mform);
-        $this->xss_whitelist_static_form_elements($mform);
         $this->add_action_buttons();
     }
 }
