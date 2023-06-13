@@ -265,6 +265,16 @@ class factor extends object_factor_base {
             $crossplatformattachment = false;
         }
 
+        // Only display warning if we limit the types of authenticators.
+        if ($types != ['usb', 'nfc', 'ble', 'hybrid', 'internal']) {
+            $authenticators = [];
+            foreach ($types as $type) {
+                $authenticators[] = get_string('authenticator:' . $type, 'factor_webauthn');
+            }
+            $mform->addElement('static', 'limited_types', '',
+                get_string('authenticatortypelimitation', 'factor_webauthn', implode(', ', $authenticators)));
+        }
+
         $createargs = $this->webauthn->getCreateArgs($USER->id, $USER->username, fullname($USER), 20, false,
             $this->userverification, $crossplatformattachment);
 
