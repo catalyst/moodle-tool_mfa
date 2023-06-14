@@ -25,6 +25,7 @@
 import * as utils from './utils';
 
 export const init = (initialCreateArgs) => {
+    document.getElementById('id_submitbutton').disabled = true;
     document.addEventListener('click', async(e) => {
         if (!e.target.closest('#factor_webauthn-register')) {
             return;
@@ -52,6 +53,7 @@ export const init = (initialCreateArgs) => {
 
         const inputResponse = document.getElementById('id_response_input');
         inputResponse.value = JSON.stringify(authenticatorResponse);
+        document.getElementById('id_submitbutton').disabled = false;
 
         // Do not use form.submit as it bypasses the change checker submit listener.
         inputResponse.form.elements.submitbutton.click();

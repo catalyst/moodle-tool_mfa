@@ -242,7 +242,7 @@ class factor extends object_factor_base {
         $mform->addRule('webauthn_name', get_string('required'), 'required', null, 'client');
 
         $registerbtn = \html_writer::tag('btn', get_string('register', 'factor_webauthn'), [
-            'class' => 'btn btn-secondary',
+            'class' => 'btn btn-primary',
             'type' => 'button',
             'id' => 'factor_webauthn-register'
         ]);
