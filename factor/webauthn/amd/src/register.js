@@ -25,6 +25,7 @@
 define(['factor_webauthn/utils'], function(utils) {
     return {
         init: function(initialCreateArgs) {
+            document.getElementById('id_submitbutton').disabled = true;
             document.getElementById('factor_webauthn-register').addEventListener('click', async function(e) {
                 if (!navigator.credentials || !navigator.credentials.create) {
                     throw new Error('Browser not supported.');
@@ -50,6 +51,7 @@ define(['factor_webauthn/utils'], function(utils) {
 
                 const inputResponse = document.getElementById('id_response_input');
                 inputResponse.value = JSON.stringify(authenticatorResponse);
+                document.getElementById('id_submitbutton').disabled = false;
 
                 // Do not use form.submit as it bypasses the change checker submit listener.
                 inputResponse.form.elements.submitbutton.click();
