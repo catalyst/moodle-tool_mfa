@@ -132,5 +132,15 @@ function xmldb_tool_mfa_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2021021900, 'tool', 'mfa');
     }
 
+    if ($oldversion < 2023031601) {
+        // Update the label field for TOTP to strip tags.
+        $records = $DB->get_records_select('tool_mfa', $DB->sql_like('label', '?'), ['%<%'], '', 'id, label');
+        foreach ($records as $record) {
+            $DB->set_field('tool_mfa', 'label', strip_tags($record->label), ['id' => $record->id]);
+        }
+        // Mfa savepoint reached.
+        upgrade_plugin_savepoint(true, 2023031601, 'tool', 'mfa');
+    }
+
     return true;
 }
