@@ -275,6 +275,11 @@ class factor extends object_factor_base {
                 get_string('authenticatortypelimitation', 'factor_webauthn', implode(', ', $authenticators)));
         }
 
+        // Warn about user verification required.
+        if (get_config('factor_webauthn', 'userverification') === 'required') {
+            $mform->addElement('static', 'userverification', '', get_string('userverificationrequired', 'factor_webauthn'));
+        }
+
         $createargs = $this->webauthn->getCreateArgs($USER->id, $USER->username, fullname($USER), 20, false,
             $this->userverification, $crossplatformattachment);
 
