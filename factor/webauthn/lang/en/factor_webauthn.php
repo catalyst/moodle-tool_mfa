@@ -46,3 +46,4 @@ $string['summarycondition'] = 'using a security key';
 $string['userverification:discouraged'] = 'User verification should not be employed, for example to minimize user interaction';
 $string['userverification:preferred'] = 'User verification is preferred, authentication will not fail if user verification is missing';
 $string['userverification:required'] = 'User verification is required (e.g. by pin). Authentication fails if key does not have user verification';
+$string['userverificationrequired'] = 'Your security key must support user verification (e.g. pin input) to be eligible for registration.';
