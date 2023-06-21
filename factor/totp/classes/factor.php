@@ -347,7 +347,7 @@ class factor extends object_factor_base {
             $row->userid = $USER->id;
             $row->factor = $this->name;
             $row->secret = $data->secret;
-            $row->label = strip_tags($data->devicename);
+            $row->label = htmlspecialchars(strip_tags($data->devicename));
             $row->timecreated = time();
             $row->createdfromip = $USER->lastip;
             $row->timemodified = time();
