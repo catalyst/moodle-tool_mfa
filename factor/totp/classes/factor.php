@@ -144,7 +144,7 @@ class factor extends object_factor_base {
             'autofocus' => 'autofocus',
         ]);
         $mform->addHelpButton('devicename', 'devicename', 'factor_totp');
-        $mform->setType('devicename', PARAM_TEXT);
+        $mform->setType('devicename', PARAM_ALPHANUMEXT);
         $mform->addRule('devicename', get_string('required'), 'required', null, 'client');
 
         // Scan.
@@ -337,7 +337,7 @@ class factor extends object_factor_base {
             $row->userid = $USER->id;
             $row->factor = $this->name;
             $row->secret = $data->secret;
-            $row->label = htmlspecialchars(strip_tags($data->devicename));
+            $row->label = clean_param($data->devicename, PARAM_ALPHANUMEXT);
             $row->timecreated = time();
             $row->createdfromip = $USER->lastip;
             $row->timemodified = time();
