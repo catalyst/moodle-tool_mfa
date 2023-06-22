@@ -145,4 +145,25 @@ class factor_test extends \advanced_testcase {
         $count = $DB->count_records('tool_mfa');
         $this->assertEquals(1, $count);
     }
+
+    /**
+     * Test devicename is saved clean
+     *
+     * @covers ::setup_user_factor
+     */
+    public function test_devicename_cleaned() {
+        global $DB;
+        $this->resetAfterTest();
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        set_config('enabled', 1, 'factor_totp');
+        $totpfactor = \tool_mfa\plugininfo\factor::get_factor('totp');
+        $totpdata = [
+            'secret' => 'fakekey',
+            'devicename' => 'devicename<b>with</b>tag',
+        ];
+        $record = $totpfactor->setup_user_factor((object) $totpdata);
+        $this->assertEquals('devicenamebwithbtag', $record->label);
+    }
 }
