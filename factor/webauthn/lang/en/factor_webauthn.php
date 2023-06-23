@@ -29,6 +29,7 @@ $string['authenticator:hybrid'] = 'Hybrid';
 $string['authenticator:internal'] = 'Internal';
 $string['authenticator:nfc'] = 'NFC';
 $string['authenticator:usb'] = 'USB';
+$string['authenticatorname'] = 'Security key name';
 $string['authenticatortypelimitation'] = 'Please note that you can only use security keys of one of these types: {$a}.<br>Registering other security keys is possible, but you cannot use them during login.';
 $string['error'] = 'Failed to authenticate';
 $string['info'] = '<p>Use a security key</p>';
