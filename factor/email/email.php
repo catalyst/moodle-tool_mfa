@@ -39,13 +39,21 @@ $PAGE->set_pagelayout('secure');
 $PAGE->set_title(get_string('unauthemail', 'factor_email'));
 $PAGE->set_cacheable(false);
 $instance = $DB->get_record('tool_mfa', ['id' => $instanceid]);
+$factor = \tool_mfa\plugininfo\factor::get_factor('email');
 
 // If pass is set, require login to force $SESSION and user, and pass for that session.
 if (!empty($instance) && $pass != 0 && $secret != 0) {
+    require_login();
+    if ($factor->get_state() === \tool_mfa\plugininfo\factor::STATE_LOCKED) {
+        // Redirect through to auth, this will bounce them to the next factor.
+        redirect(new moodle_url('/admin/tool/mfa/auth.php'));
+    }
+    // Check the code with the same measures on the page entry.
     if ($instance->secret != $secret) {
+        \tool_mfa\manager::sleep_timer();
+        $factor->increment_lock_counter();
         throw new moodle_exception('error:parameters', 'factor_email');
     }
-    require_login();
     $factor = \tool_mfa\plugininfo\factor::get_factor('email');
     $factor->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
     // If wantsurl is already set in session, go to it.
