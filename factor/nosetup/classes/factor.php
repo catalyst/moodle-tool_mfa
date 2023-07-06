@@ -92,15 +92,8 @@ class factor extends object_factor_base {
      * @return void
      */
     public function possible_states($user) {
-        // Check if user has any other input or setup factors active.
-        $factors = \tool_mfa\plugininfo\factor::get_active_other_user_factor_types($user);
-        foreach ($factors as $factor) {
-            if ($factor->has_input() || $factor->has_setup()) {
-                return [\tool_mfa\plugininfo\factor::STATE_NEUTRAL];
-            }
-        }
-
-        return [\tool_mfa\plugininfo\factor::STATE_PASS];
+        // We return Neutral here because to support optional rollouts it needs to report neutral or the menu to setup will not display.
+        return [\tool_mfa\plugininfo\factor::STATE_NEUTRAL];
     }
 
     /**
