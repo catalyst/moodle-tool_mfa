@@ -8,6 +8,7 @@
   * [Authentication factors](#authentication-factors)
     * [TOTP](#totp)
     * [Mobile SMS](#mobile-sms)
+    * [WebAuthn / FIDO2](#webauthn--fido2)
     * [IP Range](#ip-range)
     * [Email](#email)
     * [Lockout threshold](#lockout-threshold)
@@ -48,7 +49,7 @@ https://tracker.moodle.org/browse/MDL-66173
 
 https://docs.moodle.org/dev/Login_callbacks
 
-The other major difference is that we support multiple authentication factor **types** as sub plugins, eg SMS, IP Range, Email, TOTP and in future others such as hardware tokens or anything else as new sub-plugins. They can be flexibly configured so that different combinations of factors are considered enough.
+The other major difference is that we support multiple authentication factor **types** as sub plugins, e.g. SMS, IP Range, Email, TOTP and WebAuthn / FIDO2 and in future anything else as new sub-plugins. They can be flexible configured so that different combinations of factors are considered enough.
 
 ## Branches
 | Version         |  Branch      | Patches              |
@@ -145,9 +146,11 @@ This is standard Time-base One Time Password ([TOTP](https://en.wikipedia.org/wi
 
 Send One Time security codes to mobile via SMS using AWS SNS.
 
-#### Webauthn / Fido 2
+#### WebAuthn / FIDO2
 
-This is a factor which enables support for passkeys, security keys like [Swissbit](https://www.swissbit.com/en/), Yubico or Solo and fingerprint on Android or Windows Hello. Note only [Swissbit](https://www.swissbit.com/en/) and Yubikeys have been tested in this implementation.
+With [FIDO Authentication](https://fidoalliance.org/fido2/), users sign in with phishing resistant credentials, called passkeys. Passkeys can be stored on devices, like smartphones or hardware security keys, and enable password-only logins to be replaced with secure and fast login experiences across websites and apps.
+
+The WebAuthn / FIDO2 factor has been tested with the [Swissbit iShield Key series](https://www.swissbit.com/en/products/ishield-key/) and Yubico products. Other FIDO2 certified security keys should also be compatible with this plugin.
 
 #### IP Range
 
@@ -329,4 +332,4 @@ https://www.catalyst-au.net/
 ## Warm thanks
 Thanks to the various authors and contributors to this plugin!
 
-Thanks to [Swissbit](https://www.swissbit.com/en/) for sponsoring the work to add Webauthn support to this plugin.
+Thanks to [Swissbit](https://www.swissbit.com/en/) for sponsoring the work to add WebAuthn / FIDO2 support to this plugin.
