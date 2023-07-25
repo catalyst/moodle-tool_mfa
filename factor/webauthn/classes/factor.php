@@ -150,6 +150,8 @@ class factor extends object_factor_base {
     public function login_form_definition($mform) {
         global $PAGE, $USER, $SESSION;
 
+        $mform->addElement('html', get_string('loginexplanation', 'factor_webauthn'));
+
         $mform->addElement('hidden', 'response_input', '', ['id' => 'id_response_input']);
         $mform->setType('response_input', PARAM_RAW);
 
