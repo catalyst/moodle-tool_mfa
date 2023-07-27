@@ -26,7 +26,7 @@ define(['factor_webauthn/utils'], function(utils) {
     return {
         init: function(initialCreateArgs) {
             document.getElementById('id_submitbutton').disabled = true;
-            document.getElementById('factor_webauthn-register').addEventListener('click', async function(e) {
+            document.getElementById('factor_webauthn-register').addEventListener('click', function(e) {
                 if (!navigator.credentials || !navigator.credentials.create) {
                     throw new Error('Browser not supported.');
                 }
@@ -40,21 +40,22 @@ define(['factor_webauthn/utils'], function(utils) {
 
                 utils.recursiveBase64StrToArrayBuffer(createArgs);
 
-                const cred = await navigator.credentials.create(createArgs);
+                navigator.credentials.create(createArgs).then(function(cred) {
 
-                const authenticatorResponse = {
-                    transports: cred.response.getTransports ? cred.response.getTransports() : null,
-                    clientDataJSON: cred.response.clientDataJSON ? utils.arrayBufferToBase64(cred.response.clientDataJSON) : null,
-                    attestationObject:
-                        cred.response.attestationObject ? utils.arrayBufferToBase64(cred.response.attestationObject) : null
-                };
+                    const authenticatorResponse = {
+                        transports: cred.response.getTransports ? cred.response.getTransports() : null,
+                        clientDataJSON: cred.response.clientDataJSON ? utils.arrayBufferToBase64(cred.response.clientDataJSON) : null,
+                        attestationObject:
+                            cred.response.attestationObject ? utils.arrayBufferToBase64(cred.response.attestationObject) : null
+                    };
 
-                const inputResponse = document.getElementById('id_response_input');
-                inputResponse.value = JSON.stringify(authenticatorResponse);
-                document.getElementById('id_submitbutton').disabled = false;
+                    const inputResponse = document.getElementById('id_response_input');
+                    inputResponse.value = JSON.stringify(authenticatorResponse);
+                    document.getElementById('id_submitbutton').disabled = false;
 
-                // Do not use form.submit as it bypasses the change checker submit listener.
-                inputResponse.form.elements.submitbutton.click();
+                    // Do not use form.submit as it bypasses the change checker submit listener.
+                    inputResponse.form.elements.submitbutton.click();
+                });
             });
         }
     };

@@ -25,19 +25,19 @@
 define([], function() {
     return {
         recursiveBase64StrToArrayBuffer: function(obj) {
-            let prefix = '=?BINARY?B?';
-            let suffix = '?=';
+            const prefix = '=?BINARY?B?';
+            const suffix = '?=';
             if (typeof obj === 'object') {
-                for (let key in obj) {
+                for (var key in obj) {
                     if (typeof obj[key] === 'string') {
-                        let str = obj[key];
+                        var str = obj[key];
                         if (str.substring(0, prefix.length) === prefix && str.substring(str.length - suffix.length) === suffix) {
                             str = str.substring(prefix.length, str.length - suffix.length);
 
-                            let binary_string = window.atob(str);
-                            let len = binary_string.length;
-                            let bytes = new Uint8Array(len);
-                            for (let i = 0; i < len; i++) {
+                            const binary_string = window.atob(str);
+                            const len = binary_string.length;
+                            const bytes = new Uint8Array(len);
+                            for (var i = 0; i < len; i++) {
                                 bytes[i] = binary_string.charCodeAt(i);
                             }
                             obj[key] = bytes.buffer;
@@ -49,10 +49,10 @@ define([], function() {
             }
         },
         arrayBufferToBase64: function(buffer) {
-            let binary = '';
-            let bytes = new Uint8Array(buffer);
-            let len = bytes.byteLength;
-            for (let i = 0; i < len; i++) {
+            var binary = '';
+            const bytes = new Uint8Array(buffer);
+            const len = bytes.byteLength;
+            for (var i = 0; i < len; i++) {
                 binary += String.fromCharCode(bytes[i]);
             }
             return window.btoa(binary);
