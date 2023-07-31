@@ -33,6 +33,7 @@ $string['authenticatorname'] = 'Security key name';
 $string['authenticatortypelimitation'] = 'Please note that you can only use security keys of one of these types: {$a}.<br>Registering other security keys is possible, but you cannot use them during login.';
 $string['error'] = 'Failed to authenticate';
 $string['info'] = '<p>Use a security key</p>';
+$string['loginexplanation'] = 'Your account settings require that you authenticate with your security key in addition to your password.';
 $string['loginskip'] = 'I don\'t have my security key';
 $string['loginsubmit'] = 'Verify security key';
 $string['pluginname'] = 'Security Key';
