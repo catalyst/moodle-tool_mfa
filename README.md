@@ -51,14 +51,18 @@ https://docs.moodle.org/dev/Login_callbacks
 
 The other major difference is that we support multiple authentication factor **types** as sub plugins, e.g. SMS, IP Range, Email, TOTP and WebAuthn / FIDO2 and in future anything else as new sub-plugins. They can be flexible configured so that different combinations of factors are considered enough.
 
-## Branches
-| Version         |  Branch      | Patches              |
+## Moodle supported branches
+| Version         |  Branch      | Required patches     |
 |-----------------|--------------|----------------------|
 | Moodle 4.0 - 4.2| MOODLE_400_STABLE | None            |
-| Moodle 3.8 -3.9 | MOODLE_35_STABLE | None                 |
+| Moodle 3.8 -3.9 | MOODLE_35_STABLE | None             |
 | Moodle 3.7      | MOODLE_35_STABLE | MDL-66340            |
 | Moodle 3.5-3.6  | MOODLE_35_STABLE | MDL-66340, MDL-60470 |
-| Totara 12-15    | MOODLE_35_STABLE | MDL-66340, MDL-60470 |
+
+## Totara supported branches
+| Version         |  Branch      | Required patches     |
+|-----------------|--------------|----------------------|
+| Totara 12-17    | TOTARA_12 | MDL-66340, MDL-60470 |
 
 ## Installation
 
