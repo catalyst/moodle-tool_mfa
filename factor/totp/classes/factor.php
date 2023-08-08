@@ -314,13 +314,14 @@ class factor extends object_factor_base {
     }
 
     /**
-     * Generates cryptographically secure pseudo-random 16-digit secret code.
+     * Generates cryptographically secure pseudo-random 32-digit secret code
+     * i.e. 128 bit key length as requested by RFC 4226, section 4, requirement 6
      *
      * @return string
      */
     public function generate_secret_code() {
         $totp = TOTP::create();
-        return substr($totp->getSecret(), 0, 16);
+        return substr($totp->getSecret(), 0, 32);
     }
 
     /**
