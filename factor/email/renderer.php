@@ -40,8 +40,7 @@ class factor_email_renderer extends plugin_renderer_base {
             ['instance' => $instance->id, 'pass' => 1, 'secret' => $instance->secret]);
         $authurlstring = \html_writer::link($authurl, get_string('email:link', 'factor_email'));
         $messagestrings = ['secret' => $instance->secret, 'link' => $authurlstring];
-        $geoinfo = iplookup_find_location($instance->createdfromip);
-        $info = ['city' => $geoinfo['city'], 'country' => $geoinfo['country']];
+
         $blockurl = new \moodle_url('/admin/tool/mfa/factor/email/email.php',
             ['instance' => $instanceid]);
         $blockurlstring = \html_writer::link($blockurl, get_string('email:link', 'factor_email'));
@@ -51,11 +50,43 @@ class factor_email_renderer extends plugin_renderer_base {
             'message' => get_string('email:message', 'factor_email', $messagestrings),
             'ipinformation' => get_string('email:ipinfo', 'factor_email'),
             'ip' => get_string('email:originatingip', 'factor_email', $instance->createdfromip),
-            'geoinfo' => get_string('email:geoinfo', 'factor_email', $info),
+            'geoinfo' => $this->get_ip_location_origin_string($instance->createdfromip ?: ''),
             'uadescription' => get_string('email:uadescription', 'factor_email'),
             'ua' => $instance->label,
             'linkstring' => get_string('email:revokelink', 'factor_email', $blockurlstring),
         ];
         return $this->render_from_template('factor_email/email', $templateinfo);
+    }
+
+    /**
+     * Finds the location for the given IP address, handling errors.
+     *
+     * Returns a user readable string that explains where the request IP originated from.
+     *
+     * @param string $ipaddress
+     * @return string String with IP location details, or a unknown location message if there was an error.
+     */
+    private function get_ip_location_origin_string(string $ipaddress): string {
+        try {
+            $geoinfo = iplookup_find_location($ipaddress);
+            $city = $geoinfo['city'] ?: '';
+            $country = $geoinfo['country'] ?: '';
+
+            // It's possible for errors to be returned, or the geo lookup to simply be empty.
+            // In these cases, we want to return the 'unknown' string.
+            $iserror = !empty($geoinfo['error']);
+            $islookupempty = empty($city) || empty($country);
+
+            if ($iserror || $islookupempty) {
+                return get_string('email:geoinfo:unknown', 'factor_email');
+            }
+
+            // Location info was found - return details.
+            return get_string('email:geoinfo', 'factor_email', ['city' => $city, 'country' => $country]);
+
+        } catch (Throwable $e) {
+            // Some exception was thrown, so we cannot work out the location.
+            return get_string('email:geoinfo:unknown', 'factor_email');
+        }
     }
 }

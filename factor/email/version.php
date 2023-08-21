@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version      = 2019102400;      // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version      = 2023082100;      // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires     = 2017051500.00;   // Support back to 3.3 - Totara 12. Patches required.
 $plugin->component    = 'factor_email';
 $plugin->release      = 'v0.1';
