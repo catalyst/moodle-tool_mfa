@@ -176,9 +176,8 @@ class tool_mfa_renderer extends plugin_renderer_base {
                     $lastverified .= get_string('ago', 'core_message', format_time(time() - $userfactor->lastverified));
                 }
 
-                $info = iplookup_find_location($userfactor->createdfromip);
                 $ip = $userfactor->createdfromip;
-                $ip .= '<br>' . $info['country'] . ' - ' . $info['city'];
+                $ip = $this->append_location_to_ip($ip);
 
                 $row = new \html_table_row([
                     $factor->get_display_name(),
@@ -199,6 +198,38 @@ class tool_mfa_renderer extends plugin_renderer_base {
         $html .= '<br>';
 
         return $html;
+    }
+
+    /**
+     * Finds the location for the given IP address, handling errors.
+     *
+     * Appends location info to the end of the IP address.
+     *
+     * @param string $ip
+     * @return string String with the IP with location details appended to it, or Unknown location if could not be determined.
+     */
+    private function append_location_to_ip($ip): string {
+        try {
+            $geoinfo = iplookup_find_location($ip);
+            $city = $geoinfo['city'] ?: '';
+            $country = $geoinfo['country'] ?: '';
+
+            // It's possible for errors to be returned, or the geo lookup to simply be empty.
+            // In these cases, we want to return the 'unknown' string.
+            $iserror = !empty($geoinfo['error']);
+            $islookupempty = empty($city) || empty($country);
+
+            if ($iserror || $islookupempty) {
+                return get_string('ip:geoinfo:unknown', 'tool_mfa', $ip);
+            }
+
+            // Location info was found - return details.
+            return get_string('ip:geoinfo', 'tool_mfa', ['ip' => $ip, 'city' => $city, 'country' => $country]);
+
+        } catch (Throwable $e) {
+            // Some exception was thrown, so we cannot work out the location.
+            return get_string('ip:geoinfo:unknown', 'tool_mfa', $ip);
+        }
     }
 
     /**
