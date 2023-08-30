@@ -203,6 +203,34 @@ abstract class object_factor_base implements object_factor {
     }
 
     /**
+     * Given the user, returns a singleton record for this factor.
+     * If the record does not exist, it is created.
+     *
+     * @param stdClass $user
+     * @return array array containing the one factor.
+     */
+    protected function get_singleton_user_factor($user) {
+        global $DB;
+        $records = $DB->get_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
+
+        if (!empty($records)) {
+            return $records;
+        }
+
+        // Null records returned, build new record.
+        $record = [
+            'userid' => $user->id,
+            'factor' => $this->name,
+            'timecreated' => time(),
+            'createdfromip' => $user->lastip,
+            'timemodified' => time(),
+            'revoked' => 0,
+        ];
+        $record['id'] = $DB->insert_record('tool_mfa', $record, true);
+        return [(object) $record];
+    }
+
+    /**
      * Returns an array of active user factor records.
      * Filters get_all_user_factors() output.
      *

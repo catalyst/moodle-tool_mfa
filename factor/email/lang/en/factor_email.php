@@ -27,6 +27,7 @@ $string['email:accident'] = 'If you did not request this email, click continue t
     If you clicked this link by accident, click cancel, and no action will be taken.';
 $string['email:browseragent'] = 'The browser details for this request are: \'{$a}\'';
 $string['email:geoinfo'] = 'This request appears to have originated from approximately {$a->city}, {$a->country}.';
+$string['email:geoinfo:unknown'] = 'The location of the request could not be determined.';
 $string['email:ipinfo'] = 'IP Information';
 $string['email:link'] = 'this link';
 $string['email:message'] = 'You are trying to log in to Moodle. Your confirmation code is \'{$a->secret}\'.
