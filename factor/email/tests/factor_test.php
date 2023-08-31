@@ -100,12 +100,12 @@ class factor_test extends \advanced_testcase {
         $unknownstr = get_string('email:geoinfo:unknown', 'factor_email');
 
         if ($expectedunknown) {
-            $this->assertContains($unknownstr, $email);
+            $this->assertStringContainsString($unknownstr, $email);
         } else {
             // Ideally we would test the email contains the correct geo info,
             // but since the geo location of a real IP address can change
             // we instead test that the unknown message is not there.
-            $this->assertNotContains($unknownstr, $email);
+            $this->assertStringNotContainsString($unknownstr, $email);
         }
     }
 }
