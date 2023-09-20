@@ -28,9 +28,9 @@ require_once(__DIR__.'/../extlib/OTPHP/TOTP.php');
 require_once(__DIR__.'/../extlib/Assert/Assertion.php');
 require_once(__DIR__.'/../extlib/Assert/AssertionFailedException.php');
 require_once(__DIR__.'/../extlib/Assert/InvalidArgumentException.php');
-require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/EncoderInterface.php');
-require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Binary.php');
-require_once(__DIR__.'/../extlib/ParagonIE/ConstantTime/Base32.php');
+require_once($CFG->libraries.'/required/paragonie/constant_time_encoding/src/EncoderInterface.php');
+require_once($CFG->libraries.'/required/paragonie/constant_time_encoding/src/Binary.php');
+require_once($CFG->libraries.'/required/paragonie/constant_time_encoding/src/Base32.php');
 
 use tool_mfa\local\factor\object_factor_base;
 use OTPHP\TOTP;
