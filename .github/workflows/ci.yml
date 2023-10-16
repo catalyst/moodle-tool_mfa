@@ -13,4 +13,5 @@ jobs:
       #Grunt fails due to CSS styling needing an !important.
       disable_grunt: true
       disable_phpcpd: true
-      release_branches: master
+      release_branches: MOODLE_400_STABLE
+      disable_master: true

@@ -31,4 +31,6 @@ $string['settings:expireovernight'] = 'Expire trust overnight';
 $string['settings:expireovernight_help'] = 'This forces tokens to expire overnight, preventing mid-day interruptions for users. Instead they will be asked to MFA authenticate at the start of a day after expiry.';
 $string['settings:expiry'] = 'Trust duration';
 $string['settings:expiry_help'] = 'The duration a device is trusted before requiring a new MFA authentication.';
+$string['settings:adminexpiry'] = 'Administrator trust duration';
+$string['settings:adminexpiry_help'] = 'The duration an administrator device is trusted before requiring a new MFA authentication. This allows tighter restrictions on site administrators, or no trust.';
 $string['summarycondition'] = 'the user has previously trusted this device';
