@@ -27,6 +27,7 @@ namespace factor_token\tests;
  */
 class factor_test extends \advanced_testcase {
 
+    /** @var \factor_token\factor Token factor */
     private $factor;
 
     public function setUp(): void {
