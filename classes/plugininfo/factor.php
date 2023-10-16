@@ -59,6 +59,7 @@ class factor extends \core\plugininfo\base {
         return self::sort_factors_by_order($return);
     }
 
+
     /**
      * Sorts factors by configured order.
      *
@@ -260,9 +261,7 @@ class factor extends \core\plugininfo\base {
 
         $settings = new \admin_settingpage($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
 
-        if ($adminroot->fulltree) {
-            include($this->full_path('settings.php'));
-        }
+        include($this->full_path('settings.php'));
 
         $adminroot->add($parentnodename, $settings);
     }
