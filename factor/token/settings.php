@@ -42,6 +42,10 @@ $settings->add(new admin_setting_configduration('factor_token/expiry',
     new lang_string('settings:expiry', 'factor_token'),
     new lang_string('settings:expiry_help', 'factor_token'), DAYSECS));
 
+$settings->add(new admin_setting_configduration('factor_token/adminexpiry',
+    new lang_string('settings:adminexpiry', 'factor_token'),
+    new lang_string('settings:adminexpiry_help', 'factor_token'), DAYSECS));
+
 $settings->add(new admin_setting_configcheckbox('factor_token/expireovernight',
     new lang_string('settings:expireovernight', 'factor_token'),
     new lang_string('settings:expireovernight_help', 'factor_token'), 1));

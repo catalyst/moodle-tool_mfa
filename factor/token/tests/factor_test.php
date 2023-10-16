@@ -27,6 +27,8 @@ namespace factor_token\tests;
  */
 class factor_test extends \advanced_testcase {
 
+    private $factor;
+
     public function setUp(): void {
         $this->resetAfterTest();
         $this->factor = new \factor_token\factor('token');
@@ -36,6 +38,7 @@ class factor_test extends \advanced_testcase {
         $timestamp = 1642213800; // 1230 UTC.
 
         set_config('expireovernight', 0, 'factor_token');
+        set_config('adminexpiry', 8 * HOURSECS, 'factor_token');
         $method = new \ReflectionMethod($this->factor, 'calculate_expiry_time');
         $method->setAccessible(true);
 
@@ -67,6 +70,24 @@ class factor_test extends \advanced_testcase {
         $this->assertLessThan(2 * DAYSECS, $expiry[1]);
         $this->assertGreaterThan($resetdelta + DAYSECS - 30, $expiry[1]);
         $this->assertLessThan($resetdelta + DAYSECS + 30, $expiry[1]);
+    }
+
+    public function test_calculate_admin_expiry_time() {
+        $timestamp = 1642213800; // 1230 UTC.
+
+        set_config('expireovernight', 0, 'factor_token');
+        set_config('expiry', 24 * HOURSECS, 'factor_token');
+        set_config('adminexpiry', 8 * HOURSECS, 'factor_token');
+        $this->setAdminUser();
+
+        // Confirm that the expiry is based on the admin duration.
+        // Duration for regular users is covered by the general calc test.
+        $method = new \ReflectionMethod($this->factor, 'calculate_expiry_time');
+        $method->setAccessible(true);
+
+        $expiry = $method->invoke($this->factor, $timestamp);
+        $this->assertGreaterThan(7 * HOURSECS, $expiry[1]);
+        $this->assertLessThan(9 * HOURSECS, $expiry[1]);
     }
 
     /**
