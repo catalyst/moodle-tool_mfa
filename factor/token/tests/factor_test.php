@@ -72,6 +72,9 @@ class factor_test extends \advanced_testcase {
         $this->assertLessThan($resetdelta + DAYSECS + 30, $expiry[1]);
     }
 
+    /**
+     * Test the expiry time calculation for an administrator, using a seperate config from regular users.
+     */
     public function test_calculate_admin_expiry_time() {
         $timestamp = 1642213800; // 1230 UTC.
 
@@ -85,9 +88,9 @@ class factor_test extends \advanced_testcase {
         $method = new \ReflectionMethod($this->factor, 'calculate_expiry_time');
         $method->setAccessible(true);
 
-        $expiry = $method->invoke($this->factor, $timestamp);
-        $this->assertGreaterThan(7 * HOURSECS, $expiry[1]);
-        $this->assertLessThan(9 * HOURSECS, $expiry[1]);
+        [$expirytime, $expiry] = $method->invoke($this->factor, $timestamp);
+        $this->assertGreaterThan(7 * HOURSECS, $expiry);
+        $this->assertLessThan(9 * HOURSECS, $expiry);
     }
 
     /**
