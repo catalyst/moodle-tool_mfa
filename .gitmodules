@@ -1,0 +1,3 @@
+[submodule "factor/exemption"]
+	path = factor/exemption
+	url = git@github.com:catalyst/moodle-factor_exemption.git
