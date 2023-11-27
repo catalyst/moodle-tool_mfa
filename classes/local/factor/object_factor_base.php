@@ -635,4 +635,13 @@ abstract class object_factor_base implements object_factor {
     public function global_submit($data) {
         return;
     }
+
+    /**
+     * Returns whether or not the factor has passed
+     *
+     * @return bool
+     */
+    public function passed(): bool {
+        return $this->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS;
+    }
 }
