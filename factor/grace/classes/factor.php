@@ -110,6 +110,7 @@ class factor extends object_factor_base {
 
             if (!empty($duration)) {
                 if (time() > $starttime + $duration) {
+
                     // If gracemode would have given points, but now doesnt,
                     // Jump out of the loop and force a factor setup.
                     // We will return once there is a setup, or the user tries to leave.
@@ -316,7 +317,6 @@ class factor extends object_factor_base {
      */
     private function should_skip_force_setup(): bool {
         // Checking if there are contributing factors, that should not cause a redirect.
-        $active = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
         $noredirectlist = get_config('factor_grace', 'noredirectlist');
         if (!$noredirectlist) {
             return false;
@@ -325,6 +325,7 @@ class factor extends object_factor_base {
         $values = explode(',', $noredirectlist);
         $keys = array_flip($values);
 
+        $active = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
         foreach ($active as $factor) {
             if (isset($keys[$factor->name])
                 && $factor->passed()
