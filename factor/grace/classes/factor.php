@@ -110,10 +110,11 @@ class factor extends object_factor_base {
 
             if (!empty($duration)) {
                 if (time() > $starttime + $duration) {
+
                     // If gracemode would have given points, but now doesnt,
                     // Jump out of the loop and force a factor setup.
                     // We will return once there is a setup, or the user tries to leave.
-                    if (get_config('factor_grace', 'forcesetup') && $redirectable) {
+                    if ($redirectable && get_config('factor_grace', 'forcesetup')) {
                         if (empty($SESSION->mfa_gracemode_recursive)) {
                             // Set a gracemode lock so any further recursive gets fall past any recursive calls.
                             $SESSION->mfa_gracemode_recursive = true;
@@ -124,7 +125,13 @@ class factor extends object_factor_base {
                             foreach ($factorurls as $factorurl) {
                                 if ($factorurl->compare($cleanurl)) {
                                     $redirectable = false;
+                                    break;
                                 }
+                            }
+
+                            // Checking if there are contributing factors, that should not cause a redirect.
+                            if ($redirectable && $this->should_skip_force_setup()) {
+                                $redirectable = false;
                             }
 
                             // We should never redirect if we have already passed.
@@ -301,5 +308,32 @@ class factor extends object_factor_base {
             return !in_array($el->name, $ignorelist) && in_array($el->name, $active);
         });
         return $factors;
+    }
+
+    /**
+     * Returns whether or not the force setup of MFA is skippable
+     *
+     * @return bool
+     */
+    private function should_skip_force_setup(): bool {
+        // Checking if there are contributing factors, that should not cause a redirect.
+        $noredirectlist = get_config('factor_grace', 'noredirectlist');
+        if (!$noredirectlist) {
+            return false;
+        }
+
+        $values = explode(',', $noredirectlist);
+        $keys = array_flip($values);
+
+        $active = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        foreach ($active as $factor) {
+            if (isset($keys[$factor->name])
+                && $factor->passed()
+                && $factor->get_weight() > 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

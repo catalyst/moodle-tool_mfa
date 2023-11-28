@@ -81,7 +81,7 @@ class manager {
 
             // Stop adding weight if 100 achieved.
             if (!$weighttoggle) {
-                $achieved = $factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS ? $factor->get_weight() : 0;
+                $achieved = $factor->passed() ? $factor->get_weight() : 0;
                 $achieved = '+'.$achieved;
                 $runningtotal += $achieved;
             } else {
@@ -147,7 +147,7 @@ class manager {
         $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
 
         foreach ($factors as $factor) {
-            if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
+            if ($factor->passed()) {
                 $totalweight += $factor->get_weight();
             }
         }
@@ -818,7 +818,7 @@ class manager {
         $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
         $totalweight = 0;
         foreach ($factors as $factor) {
-            if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
+            if ($factor->passed()) {
                 $totalweight += $factor->get_weight();
                 // If over 100, break. Dont care about >100.
                 if ($totalweight >= 100) {
@@ -851,7 +851,7 @@ class manager {
                 continue;
             }
 
-            if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
+            if ($factor->passed()) {
                 $totalweight += $factor->get_weight();
                 if ($totalweight >= 100) {
                     $weighttoggle = true;

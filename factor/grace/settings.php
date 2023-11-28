@@ -41,6 +41,15 @@ $settings->add(new admin_setting_configcheckbox('factor_grace/forcesetup',
     new lang_string('settings:forcesetup', 'factor_grace'),
     new lang_string('settings:forcesetup_help', 'factor_grace'), 0));
 
+$allfactors = \tool_mfa\plugininfo\factor::get_factors();
+$noredirectlistfactors = [];
+foreach ($allfactors as $factor) {
+    $noredirectlistfactors[$factor->name] = $factor->get_display_name();
+}
+$settings->add(new admin_setting_configmultiselect('factor_grace/noredirectlist',
+    new lang_string('settings:noredirectlist', 'factor_grace'),
+    new lang_string('settings:noredirectlist_help', 'factor_grace'), [], $noredirectlistfactors));
+
 $settings->add(new admin_setting_configduration('factor_grace/graceperiod',
     new lang_string('settings:graceperiod', 'factor_grace'),
     new lang_string('settings:graceperiod_help', 'factor_grace'), '604800'));
