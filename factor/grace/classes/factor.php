@@ -135,7 +135,7 @@ class factor extends object_factor_base {
                             }
 
                             // We should never redirect if we have already passed.
-                            if ($redirectable && \tool_mfa\manager::get_cumulative_weight() >= 100) {
+                            if ($redirectable && \tool_mfa\manager::get_total_weight() >= 100) {
                                 $redirectable = false;
                             }
 
