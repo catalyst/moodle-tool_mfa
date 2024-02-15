@@ -38,7 +38,6 @@ $settings->add(new admin_setting_configtext('factor_cohort/weight',
     new lang_string('settings:weight', 'tool_mfa'),
     new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
 
-global $DB;
 $cohorts = $DB->get_records('cohort', null, 'name asc', 'id,name');
 $choices = [];
 
