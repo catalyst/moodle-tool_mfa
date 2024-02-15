@@ -23,6 +23,7 @@ namespace factor_grace\tests;
  * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers      \factor_grace
  */
 class factor_test extends \advanced_testcase {
 
@@ -124,5 +125,60 @@ class factor_test extends \advanced_testcase {
         }
 
         $this->assertFalse($redirected, 'The function cause a redirect, where none was expected.');
+    }
+
+    /**
+     * Tests that gracemode correctly calculates passing weight even when factors can return UNKNOWN
+     */
+    public function test_gracemode_unknown_factor_handling(): void {
+        $this->resetAfterTest(true);
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $grace = \tool_mfa\plugininfo\factor::get_factor('grace');
+
+        set_config('enabled', 1, 'factor_totp');
+        set_config('enabled', 1, 'factor_exemption');
+        set_config('enabled', 1, 'factor_grace');
+        set_config('enabled', 1, 'factor_loginbanner');
+        set_config('forcesetup', 1, 'factor_grace');
+        set_config('graceperiod', -1, 'factor_grace'); // Grace period expired.
+
+        // Setup the order so that the loginbanner is at the top.
+        set_config('factor_order', 'loginbanner,exemption,totp,grace');
+
+        // Login banner should give no points.
+        set_config('weight', 0, 'factor_loginbanner');
+
+        // Add exemption for user 1, but NOT user 2.
+        \factor_exemption\factor::add_exemption($user1);
+
+        // Get state for user 1. This should return a neutral and not redirect.
+        $this->setUser($user1);
+        $this->assertEquals(\tool_mfa\plugininfo\factor::STATE_NEUTRAL, $grace->get_state(true));
+        $redirected = null;
+        try {
+            $grace->get_state(true);
+            $redirected = false;
+        } catch (\Throwable $e) {
+            $expected = get_string('redirecterrordetected', 'error');
+            if ($expected === $e->getMessage()) {
+                $redirected = true;
+            }
+        }
+        $this->assertFalse($redirected);
+
+        // Get state for user 2. This should redirect them to the totp setup since they do not pass the exemption.
+        $this->setUser($user2);
+        $redirected = null;
+        try {
+            $grace->get_state(true);
+            $redirected = false;
+        } catch (\Throwable $e) {
+            $expected = get_string('redirecterrordetected', 'error');
+            if ($expected === $e->getMessage()) {
+                $redirected = true;
+            }
+        }
+        $this->assertTrue($redirected);
     }
 }
