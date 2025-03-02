@@ -29,7 +29,7 @@ class email_factor_test extends \core_phpunit\testcase {
      * Provides to test_generate_email_ip_address_location test.
      * @return array
      */
-    public function generate_email_ip_address_location_provider(): array {
+    public static function generate_email_ip_address_location_provider(): array {
         return [
             'real ip v4' => [
                 // Note - this is the same IP address used by core_iplookup_geoplugin_testcase.
