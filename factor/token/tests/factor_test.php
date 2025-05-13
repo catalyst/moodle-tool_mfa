@@ -25,6 +25,9 @@
  */
 class token_factor_test extends \core_phpunit\testcase {
 
+    /** @var string */
+    private $factor;
+
     public function setUp(): void {
         $this->resetAfterTest();
         $this->factor = new \factor_token\factor('token');
