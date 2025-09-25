@@ -614,7 +614,9 @@ class manager {
 
         if (!self::is_ready()) {
             // Set session var so if MFA becomes ready, you dont get locked from session.
-            $SESSION->tool_mfa_authenticated = true;
+            if (get_config('tool_mfa', 'enabled')) {
+                $SESSION->tool_mfa_authenticated = true;
+            }
             return;
         }
 
