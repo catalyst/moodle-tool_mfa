@@ -33,6 +33,11 @@ class token_factor_test extends \core_phpunit\testcase {
         $this->factor = new \factor_token\factor('token');
     }
 
+    protected function tearDown(): void {
+        $this->factor = null;
+        parent::tearDown();
+    }
+
     public function test_calculate_expiry_time_in_general() {
         $timestamp = 1642213800; // 1230 UTC.
 
