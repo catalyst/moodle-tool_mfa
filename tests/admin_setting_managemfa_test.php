@@ -37,7 +37,7 @@ class admin_setting_managemfa_test extends tool_mfa_testcase {
         $this->assertEquals(0, count($combinations));
     }
 
-    public static function test_get_factor_combinations_provider() {
+    public static function get_factor_combinations_provider() {
         $provider = [];
 
         $factors = [];
@@ -122,7 +122,7 @@ class admin_setting_managemfa_test extends tool_mfa_testcase {
     /**
      * Tests getting the factor combinations
      *
-     * @dataProvider test_get_factor_combinations_provider
+     * @dataProvider get_factor_combinations_provider
      * @param array $factorset configured factors
      * @param int $combinationscount expected count of available combinations
      */
