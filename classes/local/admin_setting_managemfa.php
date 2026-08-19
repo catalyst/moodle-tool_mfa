@@ -30,8 +30,7 @@ require_once($CFG->libdir.'/messagelib.php');
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_managemfa extends \admin_setting {
-
+class admin_setting_managemfa extends \core\setting\setting_base {
     /**
      * Calls parent::__construct with specific arguments
      */

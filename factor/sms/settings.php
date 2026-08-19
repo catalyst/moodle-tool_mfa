@@ -26,38 +26,56 @@
 defined('MOODLE_INTERNAL') || die();
 global $CFG, $OUTPUT;
 
-$enabled = new admin_setting_configcheckbox('factor_sms/enabled',
+$enabled = new core\setting\type\checkbox(
+    'factor_sms/enabled',
     new lang_string('settings:enablefactor', 'tool_mfa'),
-    new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
+    new lang_string('settings:enablefactor_help', 'tool_mfa'),
+    0
+);
 $enabled->set_updatedcallback(function () {
     \tool_mfa\manager::do_factor_action('sms', get_config('factor_sms', 'enabled') ? 'enable' : 'disable');
 });
 $settings->add($enabled);
 
-$settings->add(new admin_setting_configtext('factor_sms/weight',
+$settings->add(new core\setting\type\text(
+    'factor_sms/weight',
     new lang_string('settings:weight', 'tool_mfa'),
-    new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
+    new lang_string('settings:weight_help', 'tool_mfa'),
+    100,
+    PARAM_INT
+));
 
-$settings->add(new admin_setting_configduration('factor_sms/duration',
+$settings->add(new core\setting\type\duration(
+    'factor_sms/duration',
     get_string('settings:duration', 'tool_mfa'),
-    get_string('settings:duration_help', 'tool_mfa'), 30 * MINSECS, MINSECS));
+    get_string('settings:duration_help', 'tool_mfa'),
+    30 * MINSECS,
+    MINSECS
+));
 
 $codeslink = 'https://en.wikipedia.org/wiki/List_of_country_calling_codes';
 $link = \html_writer::link($codeslink, $codeslink);
 
-$settings->add(new admin_setting_configtext('factor_sms/countrycode',
+$settings->add(new core\setting\type\text(
+    'factor_sms/countrycode',
     get_string('settings:countrycode', 'factor_sms'),
-    get_string('settings:countrycode_help', 'factor_sms', $link), '', PARAM_INT));
+    get_string('settings:countrycode_help', 'factor_sms', $link),
+    '',
+    PARAM_INT
+));
 
 $gateways = [
     'aws_sns' => get_string('settings:aws', 'factor_sms'),
     'modica' => get_string('settings:modica', 'factor_sms'),
 ];
 
-$settings->add(new admin_setting_configselect('factor_sms/gateway',
+$settings->add(new core\setting\type\select(
+    'factor_sms/gateway',
     get_string('settings:gateway', 'factor_sms'),
     get_string('settings:gateway_help', 'factor_sms'),
-    'aws_sns', $gateways));
+    'aws_sns',
+    $gateways
+));
 
 if (empty(get_config('factor_sms', 'gateway'))) {
     return;

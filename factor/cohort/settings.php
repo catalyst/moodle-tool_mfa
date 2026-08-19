@@ -26,17 +26,24 @@
 defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/../../../../../cohort/lib.php');
 
-$enabled = new admin_setting_configcheckbox('factor_cohort/enabled',
+$enabled = new core\setting\type\checkbox(
+    'factor_cohort/enabled',
     new lang_string('settings:enablefactor', 'tool_mfa'),
-    new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
+    new lang_string('settings:enablefactor_help', 'tool_mfa'),
+    0
+);
 $enabled->set_updatedcallback(function () {
     \tool_mfa\manager::do_factor_action('cohort', get_config('factor_cohort', 'enabled') ? 'enable' : 'disable');
 });
 $settings->add($enabled);
 
-$settings->add(new admin_setting_configtext('factor_cohort/weight',
+$settings->add(new core\setting\type\text(
+    'factor_cohort/weight',
     new lang_string('settings:weight', 'tool_mfa'),
-    new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
+    new lang_string('settings:weight_help', 'tool_mfa'),
+    100,
+    PARAM_INT
+));
 
 $cohorts = cohort_get_all_cohorts();
 $choices = [];
@@ -46,7 +53,11 @@ foreach ($cohorts['cohorts'] as $cohort) {
 }
 
 if (!empty($choices)) {
-    $settings->add(new admin_setting_configmultiselect('factor_cohort/cohorts',
-    new lang_string('settings:cohort', 'factor_cohort'),
-    new lang_string('settings:cohort_help', 'factor_cohort'), [], $choices));
+    $settings->add(new core\setting\type\select_multiple(
+        'factor_cohort/cohorts',
+        new lang_string('settings:cohort', 'factor_cohort'),
+        new lang_string('settings:cohort_help', 'factor_cohort'),
+        [],
+        $choices
+    ));
 }

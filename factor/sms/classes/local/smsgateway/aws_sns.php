@@ -124,20 +124,30 @@ class aws_sns implements gateway_interface {
 
         if (!$reqs) {
             $warning = $OUTPUT->notification(get_string('awssdkrequired', 'factor_sms'), 'notifyerror');
-            $settings->add(new \admin_setting_heading('factor_sms/awssdkwarning', '', $warning));
+            $settings->add(new \core\setting\heading('factor_sms/awssdkwarning', '', $warning));
         } else {
-            $settings->add(new \admin_setting_configcheckbox('factor_sms/usecredchain',
-                get_string('settings:aws:usecredchain', 'factor_sms'), '', 0));
+            $settings->add(new \core\setting\type\checkbox(
+                'factor_sms/usecredchain',
+                get_string('settings:aws:usecredchain', 'factor_sms'),
+                '',
+                0
+            ));
 
             if (!get_config('factor_sms', 'usecredchain')) {
                 // AWS Settings.
-                $settings->add(new \admin_setting_configtext('factor_sms/api_key',
+                $settings->add(new \core\setting\type\text(
+                    'factor_sms/api_key',
                     get_string('settings:aws:key', 'factor_sms'),
-                    get_string('settings:aws:key_help', 'factor_sms'), ''));
+                    get_string('settings:aws:key_help', 'factor_sms'),
+                    ''
+                ));
 
-                $settings->add(new \admin_setting_configpasswordunmask('factor_sms/api_secret',
+                $settings->add(new \core\setting\type\password_unmask(
+                    'factor_sms/api_secret',
                     get_string('settings:aws:secret', 'factor_sms'),
-                    get_string('settings:aws:secret_help', 'factor_sms'), ''));
+                    get_string('settings:aws:secret_help', 'factor_sms'),
+                    ''
+                ));
             }
 
             $settings->add(new \local_aws\admin_settings_aws_region('factor_sms/api_region',

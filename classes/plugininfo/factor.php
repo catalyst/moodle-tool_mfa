@@ -146,7 +146,7 @@ class factor extends \core\plugininfo\base {
     /**
      * Finds active factors for given user.
      *
-     * @param stdClass $user the user to get types for.
+     * @param \stdClass $user the user to get types for.
      * @return array of factor objects.
      */
     public static function get_active_other_user_factor_types($user) {
@@ -242,11 +242,11 @@ class factor extends \core\plugininfo\base {
      * This function usually includes settings.php file in plugins folder.
      * Alternatively it can create a link to some settings page (instance of admin_externalpage)
      *
-     * @param \part_of_admin_tree $adminroot
+     * @param \core\setting\part\part_of_admin_tree $adminroot
      * @param string $parentnodename
      * @param bool $hassiteconfig whether the current user has moodle/site:config capability
      */
-    public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+    public function load_settings(\core\setting\part\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
 
         if (!$this->is_installed_and_upgraded()) {
             return;
@@ -258,7 +258,7 @@ class factor extends \core\plugininfo\base {
 
         $section = $this->get_settings_section_name();
 
-        $settings = new \admin_settingpage($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
+        $settings = new \core\setting\part\page($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
 
         if ($adminroot->fulltree) {
             include($this->full_path('settings.php'));

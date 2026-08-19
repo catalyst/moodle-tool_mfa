@@ -88,18 +88,26 @@ class modica implements gateway_interface {
      * @return void
      */
     public static function add_settings($settings) {
-        $settings->add(new \admin_setting_configtext('factor_sms/modica_url',
+        $settings->add(new \core\setting\type\text(
+            'factor_sms/modica_url',
             get_string('settings:modica:url', 'factor_sms'),
             get_string('settings:modica:url_help', 'factor_sms'),
-            'https://api.modicagroup.com/rest/gateway'));
+            'https://api.modicagroup.com/rest/gateway'
+        ));
 
-        $settings->add(new \admin_setting_configtext('factor_sms/modica_application',
+        $settings->add(new \core\setting\type\text(
+            'factor_sms/modica_application',
             get_string('settings:modica:application', 'factor_sms'),
-            get_string('settings:modica:application_help', 'factor_sms'), ''));
+            get_string('settings:modica:application_help', 'factor_sms'),
+            ''
+        ));
 
-        $settings->add(new \admin_setting_configpasswordunmask('factor_sms/modica_password',
+        $settings->add(new \core\setting\type\password_unmask(
+            'factor_sms/modica_password',
             get_string('settings:modica:password', 'factor_sms'),
-            get_string('settings:modica:password_help', 'factor_sms'), ''));
+            get_string('settings:modica:password_help', 'factor_sms'),
+            ''
+        ));
     }
 
     /**

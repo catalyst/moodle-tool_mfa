@@ -25,17 +25,24 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$enabled = new admin_setting_configcheckbox('factor_auth/enabled',
+$enabled = new core\setting\type\checkbox(
+    'factor_auth/enabled',
     new lang_string('settings:enablefactor', 'tool_mfa'),
-    new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
+    new lang_string('settings:enablefactor_help', 'tool_mfa'),
+    0
+);
 $enabled->set_updatedcallback(function () {
     \tool_mfa\manager::do_factor_action('auth', get_config('factor_auth', 'enabled') ? 'enable' : 'disable');
 });
 $settings->add($enabled);
 
-$settings->add(new admin_setting_configtext('factor_auth/weight',
+$settings->add(new core\setting\type\text(
+    'factor_auth/weight',
     new lang_string('settings:weight', 'tool_mfa'),
-    new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
+    new lang_string('settings:weight_help', 'tool_mfa'),
+    100,
+    PARAM_INT
+));
 
 $authtypes = get_enabled_auth_plugins(true);
 $authselect = [];
@@ -44,6 +51,10 @@ foreach ($authtypes as $type) {
     $authselect[$type] = $auth->get_title();
 }
 
-$settings->add(new admin_setting_configmulticheckbox('factor_auth/goodauth',
+$settings->add(new core\setting\type\checkbox_multiple(
+    'factor_auth/goodauth',
     get_string('settings:goodauth', 'factor_auth'),
-    get_string('settings:goodauth_help', 'factor_auth'), [], $authselect));
+    get_string('settings:goodauth_help', 'factor_auth'),
+    [],
+    $authselect
+));
