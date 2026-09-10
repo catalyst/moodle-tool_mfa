@@ -23,11 +23,15 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\setting\type\checkbox;
+use core\setting\type\list_ipaddresses;
+use core\setting\type\text;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $OUTPUT;
 
-$enabled = new admin_setting_configcheckbox('factor_iprange/enabled',
+$enabled = new checkbox('factor_iprange/enabled',
     new lang_string('settings:enablefactor', 'tool_mfa'),
     new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
 $enabled->set_updatedcallback(function () {
@@ -35,7 +39,7 @@ $enabled->set_updatedcallback(function () {
 });
 $settings->add($enabled);
 
-$settings->add(new admin_setting_configtext('factor_iprange/weight',
+$settings->add(new text('factor_iprange/weight',
     new lang_string('settings:weight', 'tool_mfa'),
     new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
 
@@ -54,7 +58,7 @@ if (trim($allowedips) == '') {
 };
 $info = $OUTPUT->notification(get_string($message, 'factor_iprange', ['ip' => getremoteaddr()]), $type);
 
-$settings->add(new admin_setting_configiplist('factor_iprange/safeips',
+$settings->add(new list_ipaddresses('factor_iprange/safeips',
     new lang_string('settings:safeips', 'factor_iprange'),
     new lang_string('settings:safeips_help', 'factor_iprange',
             ['info' => $info, 'syntax' => get_string('ipblockersyntax', 'admin')]), '', PARAM_TEXT));
