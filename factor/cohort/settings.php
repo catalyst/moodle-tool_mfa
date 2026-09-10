@@ -23,10 +23,14 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\setting\type\checkbox;
+use core\setting\type\select_multiple;
+use core\setting\type\text;
+
 defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/../../../../../cohort/lib.php');
 
-$enabled = new admin_setting_configcheckbox('factor_cohort/enabled',
+$enabled = new checkbox('factor_cohort/enabled',
     new lang_string('settings:enablefactor', 'tool_mfa'),
     new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
 $enabled->set_updatedcallback(function () {
@@ -34,7 +38,7 @@ $enabled->set_updatedcallback(function () {
 });
 $settings->add($enabled);
 
-$settings->add(new admin_setting_configtext('factor_cohort/weight',
+$settings->add(new text('factor_cohort/weight',
     new lang_string('settings:weight', 'tool_mfa'),
     new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
 
@@ -46,7 +50,7 @@ foreach ($cohorts['cohorts'] as $cohort) {
 }
 
 if (!empty($choices)) {
-    $settings->add(new admin_setting_configmultiselect('factor_cohort/cohorts',
+    $settings->add(new select_multiple('factor_cohort/cohorts',
     new lang_string('settings:cohort', 'factor_cohort'),
     new lang_string('settings:cohort_help', 'factor_cohort'), [], $choices));
 }

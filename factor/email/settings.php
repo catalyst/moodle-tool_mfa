@@ -23,9 +23,13 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\setting\type\checkbox;
+use core\setting\type\duration;
+use core\setting\type\text;
+
 defined('MOODLE_INTERNAL') || die();
 
-$enabled = new admin_setting_configcheckbox('factor_email/enabled',
+$enabled = new checkbox('factor_email/enabled',
     new lang_string('settings:enablefactor', 'tool_mfa'),
     new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
 $enabled->set_updatedcallback(function () {
@@ -33,14 +37,14 @@ $enabled->set_updatedcallback(function () {
 });
 $settings->add($enabled);
 
-$settings->add(new admin_setting_configtext('factor_email/weight',
+$settings->add(new text('factor_email/weight',
     new lang_string('settings:weight', 'tool_mfa'),
     new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
 
-$settings->add(new admin_setting_configduration('factor_email/duration',
+$settings->add(new duration('factor_email/duration',
     get_string('settings:duration', 'factor_email'),
     get_string('settings:duration_help', 'factor_email'), 30 * MINSECS, MINSECS));
 
-$settings->add(new admin_setting_configcheckbox('factor_email/suspend',
+$settings->add(new checkbox('factor_email/suspend',
     get_string('settings:suspend', 'factor_email'),
     get_string('settings:suspend_help', 'factor_email'), 0));

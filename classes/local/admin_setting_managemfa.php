@@ -16,6 +16,8 @@
 
 namespace tool_mfa\local;
 
+use core\setting\setting_base;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/ddllib.php');
@@ -30,7 +32,7 @@ require_once($CFG->libdir.'/messagelib.php');
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_managemfa extends \admin_setting {
+class admin_setting_managemfa extends setting_base {
 
     /**
      * Calls parent::__construct with specific arguments

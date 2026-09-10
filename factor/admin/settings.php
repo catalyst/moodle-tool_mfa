@@ -23,9 +23,12 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\setting\type\checkbox;
+use core\setting\type\text;
+
 defined('MOODLE_INTERNAL') || die();
 
-$enabled = new admin_setting_configcheckbox('factor_admin/enabled',
+$enabled = new checkbox('factor_admin/enabled',
     new lang_string('settings:enablefactor', 'tool_mfa'),
     new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
 $enabled->set_updatedcallback(function () {
@@ -33,6 +36,6 @@ $enabled->set_updatedcallback(function () {
 });
 $settings->add($enabled);
 
-$settings->add(new admin_setting_configtext('factor_admin/weight',
+$settings->add(new text('factor_admin/weight',
     new lang_string('settings:weight', 'tool_mfa'),
     new lang_string('settings:weight_help', 'factor_admin'), 100, PARAM_INT));
