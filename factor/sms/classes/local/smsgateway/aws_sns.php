@@ -16,6 +16,10 @@
 
 namespace factor_sms\local\smsgateway;
 
+use core\setting\heading;
+use core\setting\type\checkbox;
+use core\setting\type\password_unmask;
+use core\setting\type\text;
 use factor_sms\event\sms_sent;
 
 /**
@@ -124,18 +128,18 @@ class aws_sns implements gateway_interface {
 
         if (!$reqs) {
             $warning = $OUTPUT->notification(get_string('awssdkrequired', 'factor_sms'), 'notifyerror');
-            $settings->add(new \admin_setting_heading('factor_sms/awssdkwarning', '', $warning));
+            $settings->add(new heading('factor_sms/awssdkwarning', '', $warning));
         } else {
-            $settings->add(new \admin_setting_configcheckbox('factor_sms/usecredchain',
+            $settings->add(new checkbox('factor_sms/usecredchain',
                 get_string('settings:aws:usecredchain', 'factor_sms'), '', 0));
 
             if (!get_config('factor_sms', 'usecredchain')) {
                 // AWS Settings.
-                $settings->add(new \admin_setting_configtext('factor_sms/api_key',
+                $settings->add(new text('factor_sms/api_key',
                     get_string('settings:aws:key', 'factor_sms'),
                     get_string('settings:aws:key_help', 'factor_sms'), ''));
 
-                $settings->add(new \admin_setting_configpasswordunmask('factor_sms/api_secret',
+                $settings->add(new password_unmask('factor_sms/api_secret',
                     get_string('settings:aws:secret', 'factor_sms'),
                     get_string('settings:aws:secret_help', 'factor_sms'), ''));
             }
