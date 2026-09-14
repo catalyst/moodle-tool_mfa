@@ -16,6 +16,9 @@
 
 namespace tool_mfa\plugininfo;
 
+use core\setting\part\page;
+use core\setting\part\part_of_admin_tree;
+
 /**
  * Subplugin info class.
  *
@@ -242,11 +245,11 @@ class factor extends \core\plugininfo\base {
      * This function usually includes settings.php file in plugins folder.
      * Alternatively it can create a link to some settings page (instance of admin_externalpage)
      *
-     * @param \part_of_admin_tree $adminroot
+     * @param part_of_admin_tree $adminroot
      * @param string $parentnodename
      * @param bool $hassiteconfig whether the current user has moodle/site:config capability
      */
-    public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+    public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
 
         if (!$this->is_installed_and_upgraded()) {
             return;
@@ -258,7 +261,7 @@ class factor extends \core\plugininfo\base {
 
         $section = $this->get_settings_section_name();
 
-        $settings = new \admin_settingpage($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
+        $settings = new page($section, $this->displayname, 'moodle/site:config', $this->is_enabled() === false);
 
         if ($adminroot->fulltree) {
             include($this->full_path('settings.php'));
