@@ -94,4 +94,32 @@ class email_factor_test extends \core_phpunit\testcase {
         $containsunknown = strpos($email, get_string('email:geoinfo:unknown', 'factor_email')) != false;
         $this->assertTrue($containslocation || $containsunknown);
     }
+
+    /**
+     * The revoke link in the email must include the factor secret.
+     */
+    public function test_generate_email_revoke_link_contains_secret() {
+        global $DB, $PAGE;
+
+        $user = $this->getDataGenerator()->create_user();
+        $secret = 456789;
+        $record = [
+            'userid' => $user->id,
+            'factor' => 'email',
+            'secret' => $secret,
+            'label' => 'Test browser',
+            'createdfromip' => '',
+            'timecreated' => time(),
+            'revoked' => 0,
+        ];
+        $instanceid = $DB->insert_record('tool_mfa', $record, true);
+
+        $renderer = $PAGE->get_renderer('factor_email');
+        $email = $renderer->generate_email($instanceid);
+        $this->resetDebugging();
+
+        // The sign-in link also contains the secret, but has the additional pass parameter.
+        // This fragment uniquely identifies the revoke link.
+        $this->assertStringContainsString('instance=' . $instanceid . '&amp;secret=' . $secret, $email);
+    }
 }

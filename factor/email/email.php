@@ -27,7 +27,7 @@
 require_once(__DIR__ . '../../../../../../config.php');
 $instanceid = required_param('instance', PARAM_INT);
 $pass = optional_param('pass', '0', PARAM_INT);
-$secret = optional_param('secret', 0, PARAM_INT);
+$secret = required_param('secret', PARAM_INT);
 // @codingStandardsIgnoreEnds
 
 $context = context_system::instance();
@@ -72,7 +72,7 @@ $form = new \factor_email\form\email($url);
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/'));
 } else if ($fromform = $form->get_data()) {
-    if (empty($instance)) {
+    if (empty($instance) || ($instance->secret != $secret)) {
         $message = get_string('error:badcode', 'factor_email');
     } else {
         $user = $DB->get_record('user', ['id' => $instance->userid]);
@@ -81,7 +81,7 @@ if ($form->is_cancelled()) {
         $DB->set_field('tool_mfa', 'revoked', 1, ['userid' => $user->id, 'factor' => 'email']);
 
         // Remotely logout all sessions for user.
-        $manager = \core\session\manager::kill_user_sessions($instance->userid);
+        \core\session\manager::kill_user_sessions($instance->userid);
 
         // Log event.
         $ip = $instance->createdfromip;
