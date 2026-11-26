@@ -42,7 +42,7 @@ class factor_email_renderer extends plugin_renderer_base {
         $messagestrings = ['secret' => $instance->secret, 'link' => $authurlstring];
 
         $blockurl = new \moodle_url('/admin/tool/mfa/factor/email/email.php',
-            ['instance' => $instanceid]);
+            ['instance' => $instanceid, 'secret' => $instance->secret]);
         $blockurlstring = \html_writer::link($blockurl, get_string('email:link', 'factor_email'));
 
         $templateinfo = [
