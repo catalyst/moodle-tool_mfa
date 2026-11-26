@@ -493,6 +493,12 @@ class manager {
                 if (!empty($policyurl) && $url->compare($policyurl, URL_MATCH_BASE)) {
                     return self::NO_REDIRECT;
                 }
+            } else if (!empty($CFG->sitepolicy)) {
+                // Moodle 3.2-3.4: require_login() redirects to the core site policy page.
+                $policyurl = new \moodle_url('/user/policy.php');
+                if ($url->compare($policyurl, URL_MATCH_BASE)) {
+                    return self::NO_REDIRECT;
+                }
             }
         }
 
