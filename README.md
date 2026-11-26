@@ -58,6 +58,7 @@ The other major difference is that we support multiple authentication factor **t
 | Moodle 3.8 -3.9 | MOODLE_35_STABLE | None             |
 | Moodle 3.7      | MOODLE_35_STABLE | MDL-66340            |
 | Moodle 3.5-3.6  | MOODLE_35_STABLE | MDL-66340, MDL-60470 |
+| Moodle 3.2      | MOODLE_32_STABLE | MDL-66340, MDL-60470, MDL-53978 |
 
 ## Totara supported branches
 | Version         |  Branch      | Required patches     |
@@ -93,6 +94,12 @@ Step 2: Apply core patches
 This plugin requires [MDL-60470](https://tracker.moodle.org/browse/MDL-60470) which was only added in 3.7, and [MDL-66340](https://tracker.moodle.org/browse/MDL-66340), which was added in 3.8.
 
 You can easily backport these patches in one line for 3.5, 3.6 and 3.7:
+
+For Moodle 3.2 (also backports [MDL-53978](https://tracker.moodle.org/browse/MDL-53978), which was added in 3.3):
+
+```
+git am --whitespace=nowarn < admin/tool/mfa/patch/MOODLE_32_STABLE.diff
+```
 
 For Moodle 3.5:
 
